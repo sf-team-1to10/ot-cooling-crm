@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source_Detail__c</fullName>
+    <description>수집경로 보조 설명 (박람회명·소개자·캠페인명 등)</description>
+    <externalId>false</externalId>
+    <inlineHelpText>예: 2026 데이터센터엑스포 B홀, 김OO 부장 소개</inlineHelpText>
+    <label>출처 상세</label>
+    <length>255</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

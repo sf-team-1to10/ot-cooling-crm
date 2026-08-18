@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consent_Date__c</fullName>
+    <description>동의 취득일. 개인정보 보유기간 산정 기준일</description>
+    <inlineHelpText>동의를 받은 날짜. 동의상태를 &apos;동의&apos;로 바꿀 때 함께 입력하세요.</inlineHelpText>
+    <label>동의 일자</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>
