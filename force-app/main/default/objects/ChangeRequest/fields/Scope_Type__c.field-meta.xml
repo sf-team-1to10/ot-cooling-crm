@@ -8,9 +8,9 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>이관계약 범위</fullName>
+                <fullName>원계약 범위</fullName>
                 <default>false</default>
-                <label>이관계약 범위</label>
+                <label>원계약 범위</label>
             </value>
             <value>
                 <fullName>추가변경</fullName>
