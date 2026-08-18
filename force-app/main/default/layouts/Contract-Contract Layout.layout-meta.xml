@@ -209,6 +209,13 @@
         <relatedList>ChangeRequest.Contract__c</relatedList>
     </relatedLists>
     <relatedLists>
+        <fields>NAME</fields>
+        <fields>Technical_Review__c</fields>
+        <fields>Customer_Commitment__c</fields>
+        <fields>Quote__c</fields>
+        <relatedList>Technical_Baseline__c.Contract__c</relatedList>
+    </relatedLists>
+    <relatedLists>
         <fields>TASK.SUBJECT</fields>
         <fields>TASK.WHO_NAME</fields>
         <fields>ACTIVITY.TASK</fields>
