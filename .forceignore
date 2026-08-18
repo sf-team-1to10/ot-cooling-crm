@@ -1,0 +1,29 @@
+# List files or directories below to ignore them when running force:source:push, force:source:pull, and force:source:status
+# More information: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_exclude_source.htm
+#
+
+package.xml
+
+# LWC configuration files
+**/jsconfig.json
+**/.eslintrc.json
+
+# LWC Jest
+**/__tests__/**
+
+node_modules/
+
+
+# org마다 값이 달라 매번 diff가 뜨는 것들
+**/profiles/**
+**/settings/**
+**/*.settings-meta.xml
+
+# 개인 환경 · 빌드 산출물
+.sfdx/
+.sf/
+.vscode/
+node_modules/
+
+# 관리 패키지가 넣은 것 (Field Service 등)
+**/installedPackages/**
