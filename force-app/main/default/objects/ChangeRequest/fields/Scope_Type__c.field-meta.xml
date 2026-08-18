@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Scope_Type__c</fullName>
+    <label>범위 구분</label>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>이관계약 범위</fullName>
+                <default>false</default>
+                <label>이관계약 범위</label>
+            </value>
+            <value>
+                <fullName>추가변경</fullName>
+                <default>false</default>
+                <label>추가변경</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
