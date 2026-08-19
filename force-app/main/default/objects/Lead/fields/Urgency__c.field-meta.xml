@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Urgency__c</fullName>
+    <description>리드 시급성. 마스터 Picklist_가정 시트 기준</description>
+    <inlineHelpText>고객이 원하는 도입 시점 기준. 3개월 내면 &apos;높음&apos;.</inlineHelpText>
+    <label>시급성</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>높음</fullName>
+                <default>false</default>
+                <label>높음</label>
+            </value>
+            <value>
+                <fullName>보통</fullName>
+                <default>false</default>
+                <label>보통</label>
+            </value>
+            <value>
+                <fullName>낮음</fullName>
+                <default>false</default>
+                <label>낮음</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

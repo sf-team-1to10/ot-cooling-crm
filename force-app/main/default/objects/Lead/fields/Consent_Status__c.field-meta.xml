@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consent_Status__c</fullName>
+    <description>개인정보 마케팅 활용 동의. 미동의·철회 건은 캠페인 대상에서 제외할 것</description>
+    <inlineHelpText>동의를 명시적으로 받은 경우에만 &apos;동의&apos;. 거절했거나 확인 못 했으면 &apos;미동의&apos;. 동의 후 고객이 수신거부를 요청하면 &apos;철회&apos;.</inlineHelpText>
+    <label>동의 상태</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>동의</fullName>
+                <default>false</default>
+                <label>동의</label>
+            </value>
+            <value>
+                <fullName>미동의</fullName>
+                <default>false</default>
+                <label>미동의</label>
+            </value>
+            <value>
+                <fullName>철회</fullName>
+                <default>false</default>
+                <label>철회</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

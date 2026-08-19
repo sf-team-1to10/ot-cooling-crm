@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Measurement_Item_Code__c</fullName>
+    <label>측정 항목 코드</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>유량</fullName>
+                <default>false</default>
+                <label>유량</label>
+            </value>
+            <value>
+                <fullName>수온</fullName>
+                <default>false</default>
+                <label>수온</label>
+            </value>
+            <value>
+                <fullName>차압</fullName>
+                <default>false</default>
+                <label>차압</label>
+            </value>
+            <value>
+                <fullName>전류</fullName>
+                <default>false</default>
+                <label>전류</label>
+            </value>
+            <value>
+                <fullName>누기</fullName>
+                <default>false</default>
+                <label>누기</label>
+            </value>
+            <value>
+                <fullName>체결토크</fullName>
+                <default>false</default>
+                <label>체결토크</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
