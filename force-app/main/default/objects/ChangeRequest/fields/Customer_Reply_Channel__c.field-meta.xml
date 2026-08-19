@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Reply_Channel__c</fullName>
+    <label>회신 채널</label>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>이메일</fullName>
+                <default>false</default>
+                <label>이메일</label>
+            </value>
+            <value>
+                <fullName>전화</fullName>
+                <default>false</default>
+                <label>전화</label>
+            </value>
+            <value>
+                <fullName>공문</fullName>
+                <default>false</default>
+                <label>공문</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
