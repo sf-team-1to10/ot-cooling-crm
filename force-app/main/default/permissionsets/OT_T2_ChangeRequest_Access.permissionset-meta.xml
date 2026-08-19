@@ -121,4 +121,14 @@
         <readable>true</readable>
         <editable>true</editable>
     </fieldPermissions>
+    <fieldPermissions>
+        <field>ChangeRequest.Hold_Reason__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>ChangeRequest.Info_Requested_Date__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
 </PermissionSet>
