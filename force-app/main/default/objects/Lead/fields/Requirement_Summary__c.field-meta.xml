@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Requirement_Summary__c</fullName>
+    <description>자격심사 — 고객 요구 요약. Agentforce 초안 대상</description>
+    <inlineHelpText>고객이 말한 요구사항을 그대로 요약해 적으세요.</inlineHelpText>
+    <label>요구 요약</label>
+    <length>32000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>
