@@ -25,6 +25,11 @@
         </rules>
     </decisions>
     <environments>Default</environments>
+    <formulas>
+        <name>BaselineNameFormula</name>
+        <dataType>String</dataType>
+        <expression>{!Get_Commitment.Name} &amp; &quot; Baseline Rev.A&quot;</expression>
+    </formulas>
     <interviewLabel>Technical Baseline 생성 (Rev.A) {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Technical Baseline 생성 (Rev.A)</label>
     <processMetadataValues>
@@ -67,6 +72,12 @@
             <field>Customer_Commitment__c</field>
             <value>
                 <elementReference>Get_Commitment.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Name</field>
+            <value>
+                <elementReference>BaselineNameFormula</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
