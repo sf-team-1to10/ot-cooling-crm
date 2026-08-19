@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MilestoneType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>장애 접수 후 최초 대응 기한</description>
+    <recurrenceType>none</recurrenceType>
+</MilestoneType>
