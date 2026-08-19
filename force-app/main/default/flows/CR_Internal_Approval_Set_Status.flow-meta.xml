@@ -87,4 +87,5 @@
             </value>
         </assignmentItems>
     </assignments>
+    <triggerOrder>1</triggerOrder>
 </Flow>

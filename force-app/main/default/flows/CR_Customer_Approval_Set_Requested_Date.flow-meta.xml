@@ -42,4 +42,5 @@
             </value>
         </assignmentItems>
     </assignments>
+    <triggerOrder>2</triggerOrder>
 </Flow>
