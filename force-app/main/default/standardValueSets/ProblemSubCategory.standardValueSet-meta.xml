@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>체결토크 부족·이완</fullName>
+        <default>false</default>
+        <label>체결토크 부족·이완</label>
+    </standardValue>
+    <standardValue>
+        <fullName>개스킷·씰 열화</fullName>
+        <default>false</default>
+        <label>개스킷·씰 열화</label>
+    </standardValue>
+    <standardValue>
+        <fullName>유량 불균형</fullName>
+        <default>false</default>
+        <label>유량 불균형</label>
+    </standardValue>
+    <standardValue>
+        <fullName>이물·스케일 막힘</fullName>
+        <default>false</default>
+        <label>이물·스케일 막힘</label>
+    </standardValue>
+    <standardValue>
+        <fullName>열교환기 오염</fullName>
+        <default>false</default>
+        <label>열교환기 오염</label>
+    </standardValue>
+    <standardValue>
+        <fullName>센서 오차·고장</fullName>
+        <default>false</default>
+        <label>센서 오차·고장</label>
+    </standardValue>
+    <standardValue>
+        <fullName>펌프·팬 구동 이상</fullName>
+        <default>false</default>
+        <label>펌프·팬 구동 이상</label>
+    </standardValue>
+    <standardValue>
+        <fullName>시공 품질 편차</fullName>
+        <default>false</default>
+        <label>시공 품질 편차</label>
+    </standardValue>
+</StandardValueSet>
