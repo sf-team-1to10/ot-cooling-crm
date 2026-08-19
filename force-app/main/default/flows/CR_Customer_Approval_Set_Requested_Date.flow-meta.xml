@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <environments>Default</environments>
+    <interviewLabel>CR 고객승인대기 전환 시 요청일 기록 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>CR 고객승인대기 전환 시 수락 요청일 자동 기록</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Set_Customer_Approval_Requested_Date</targetReference>
+        </connector>
+        <filterFormula>ISPICKVAL({!$Record.Status}, &quot;고객승인대기&quot;) &amp;&amp; ISBLANK({!$Record.Customer_Approval_Requested_Date__c})</filterFormula>
+        <object>ChangeRequest</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+    <assignments>
+        <name>Set_Customer_Approval_Requested_Date</name>
+        <label>고객 수락 요청일 설정</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Customer_Approval_Requested_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+</Flow>
