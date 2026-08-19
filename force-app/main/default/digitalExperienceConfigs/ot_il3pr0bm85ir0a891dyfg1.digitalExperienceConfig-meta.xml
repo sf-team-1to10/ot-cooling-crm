@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DigitalExperienceConfig xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>OT전자 고객 포털</label>
+    <site>
+        <urlPathPrefix>otcustomer</urlPathPrefix>
+    </site>
+    <space>site/ot_il3pr0bm85ir0a891dyfg1</space>
+</DigitalExperienceConfig>

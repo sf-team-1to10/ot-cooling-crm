@@ -42,6 +42,9 @@ $RECYCLE.BIN/
 # Local environment variables
 .env
 
+# Local CSV data/import files
+*.csv
+
 # Python Salesforce Functions
 **/__pycache__/
 **/.venv/
