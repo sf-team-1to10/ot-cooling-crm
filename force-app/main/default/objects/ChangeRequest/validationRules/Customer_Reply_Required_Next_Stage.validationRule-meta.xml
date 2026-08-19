@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Reply_Required_Next_Stage</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    NOT(ISBLANK(TEXT(Scope_Type__c))),
+    ISBLANK(Customer_Reply_Date__c),
+    NOT(ISPICKVAL(Status, &quot;요청받음&quot;)),
+    NOT(ISPICKVAL(Status, &quot;검토중&quot;))
+)</errorConditionFormula>
+    <errorDisplayField>Status</errorDisplayField>
+    <errorMessage>범위 판별(Scope_Type__c) 완료 후에는 고객 회신일을 기록해야 다음 단계로 진행할 수 있습니다.</errorMessage>
+</ValidationRule>
