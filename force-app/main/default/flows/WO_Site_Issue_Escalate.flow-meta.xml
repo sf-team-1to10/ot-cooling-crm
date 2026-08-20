@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <description>Stores the User Id from the lookup result. Falls back to running user if not found.</description>
+        <name>Set_User_Fallback</name>
+        <label>Set User Fallback</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>Found_User_Id</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_User_Odo_Myeon.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Existing_Task</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Evaluates if Site_Issue_Status__c equals &apos;변경요청전환&apos; to determine whether to create a ChangeRequest.</description>
+        <name>Check_Change_Request_Status</name>
+        <label>Check Change Request Status</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>case_Change_Request_Path</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Site_Issue_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>변경요청전환</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Change_Request</targetReference>
+            </connector>
+            <label>Change Request Path</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>이미 이 WO에 현장이슈 Task가 있으면 생성 건너뜀 (중복 방지)</description>
+        <name>Check_Task_Exists</name>
+        <label>Check Task Exists</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Create_Task_For_Site_Issue</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Task 없음 - 생성</defaultConnectorLabel>
+        <rules>
+            <name>Task_Already_Exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Existing_Task</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Change_Request_Status</targetReference>
+            </connector>
+            <label>Task 이미 존재</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <description>Combines Site_Issue__c, Issue_Impact__c and WorkOrder reference</description>
+        <name>ChangeRequest_Description_Formula</name>
+        <dataType>String</dataType>
+        <expression>{!$Record.Site_Issue__c} &amp; &quot;\n\n[이슈 영향]\n&quot; &amp; {!$Record.Issue_Impact__c} &amp; &quot;\n\n[출처 WorkOrder]\n&quot; &amp; {!$Record.Subject} &amp; &quot; (Id: &quot; &amp; {!$Record.Id} &amp; &quot;)&quot;</expression>
+    </formulas>
+    <formulas>
+        <description>Concatenates &apos;[변경요청] &apos; prefix with WorkOrder.Subject, max 255 chars</description>
+        <name>ChangeRequest_Subject_Formula</name>
+        <dataType>String</dataType>
+        <expression>LEFT(&quot;[변경요청] &quot; &amp; {!$Record.Subject}, 255)</expression>
+    </formulas>
+    <formulas>
+        <description>Concatenates &apos;[현장이슈] &apos; prefix with WorkOrder.Subject</description>
+        <name>Task_Subject_Formula</name>
+        <dataType>String</dataType>
+        <expression>&quot;[현장이슈] &quot; &amp; {!$Record.Subject}</expression>
+    </formulas>
+    <interviewLabel>WorkOrder Site Issue Trigger</interviewLabel>
+    <label>WO_Site_Issue_Escalate</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Creates a ChangeRequest when Site_Issue_Status__c = &apos;변경요청전환&apos;.</description>
+        <name>Create_Change_Request</name>
+        <label>Create Change Request</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>ChangeRequest_Description_Formula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>ChangeRequest_Subject_Formula</elementReference>
+            </value>
+        </inputAssignments>
+        <object>ChangeRequest</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <description>Creates a Task linked to the WorkOrder assigned to 오도면 or running user.</description>
+        <name>Create_Task_For_Site_Issue</name>
+        <label>Create Task For Site Issue</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Change_Request_Status</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>$Record.Site_Issue__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>Found_User_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>Task_Subject_Formula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <description>이 WO에 현장이슈 Task가 이미 있는지 확인 (중복 방지)</description>
+        <name>Get_Existing_Task</name>
+        <label>Get Existing Task</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Task_Exists</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>WhatId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Subject</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Task_Subject_Formula</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Task</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Retrieves the User named &apos;오도면&apos;. Returns null if not found.</description>
+        <name>Get_User_Odo_Myeon</name>
+        <label>Get User Odo Myeon</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Set_User_Fallback</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>오도면</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_User_Odo_Myeon</targetReference>
+        </connector>
+        <filterLogic>1 OR 2</filterLogic>
+        <filters>
+            <field>Site_Issue_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>등록</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Site_Issue_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>변경요청전환</stringValue>
+            </value>
+        </filters>
+        <object>WorkOrder</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Stores the User Id of &apos;오도면&apos;. Falls back to $User.Id if not found.</description>
+        <name>Found_User_Id</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>
