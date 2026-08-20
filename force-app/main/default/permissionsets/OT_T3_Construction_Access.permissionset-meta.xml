@@ -219,27 +219,7 @@
     <fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Parent_Line_Item__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <readable>true</readable>
-        <editable>true</editable>
         <field>WorkOrderLineItem.Punch_Status__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <readable>true</readable>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Retest_Reason__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <readable>true</readable>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Retest_Round__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <readable>true</readable>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Root_Line_Item__c</field>
     </fieldPermissions>
     <fieldPermissions>
         <readable>true</readable>
