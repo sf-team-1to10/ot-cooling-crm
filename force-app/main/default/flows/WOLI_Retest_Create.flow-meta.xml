@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <dynamicChoiceSets>
+        <description>Dynamic choice set for Retest Reason picklist field</description>
+        <name>retestReasonChoices</name>
+        <dataType>Picklist</dataType>
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
+        <picklistField>Retest_Reason__c</picklistField>
+        <picklistObject>WorkOrderLineItem</picklistObject>
+        <sortOrder>Asc</sortOrder>
+    </dynamicChoiceSets>
+    <environments>Default</environments>
+    <formulas>
+        <description>Formula to calculate incremented Retest_Round__c by adding 1 to original round value</description>
+        <name>Calculate_Retest_Round</name>
+        <dataType>Number</dataType>
+        <expression>IF(ISBLANK({!Get_Original_WOLI.Retest_Round__c}), 1, {!Get_Original_WOLI.Retest_Round__c} + 1)</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <description>Formula to determine Root_Line_Item__c value conditionally - if original Root_Line_Item__c is null, use recordId; otherwise use original Root_Line_Item__c value</description>
+        <name>Calculate_Root_Line_Item</name>
+        <dataType>String</dataType>
+        <expression>IF(ISBLANK({!Get_Original_WOLI.Root_Line_Item__c}), {!recordId}, {!Get_Original_WOLI.Root_Line_Item__c})</expression>
+    </formulas>
+    <interviewLabel>Start Screen Flow</interviewLabel>
+    <label>WOLI_Retest_Create</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordCreates>
+        <description>Creates new WorkOrderLineItem record with copied fields from original WOLI and user-provided retest information</description>
+        <name>Create_New_WOLI</name>
+        <label>Create New WOLI</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Confirmation_Screen</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Corrective_Action__c</field>
+            <value>
+                <elementReference>correctiveAction</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Measurement_Item_Code__c</field>
+            <value>
+                <elementReference>Get_Original_WOLI.Measurement_Item_Code__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Parent_Line_Item__c</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Retest_Reason__c</field>
+            <value>
+                <elementReference>retestReason</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Retest_Round__c</field>
+            <value>
+                <elementReference>Calculate_Retest_Round</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Root_Line_Item__c</field>
+            <value>
+                <elementReference>Calculate_Root_Line_Item</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Unit__c</field>
+            <value>
+                <elementReference>Get_Original_WOLI.Unit__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WorkOrderId</field>
+            <value>
+                <elementReference>Get_Original_WOLI.WorkOrderId</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrderLineItem</object>
+    </recordCreates>
+    <recordLookups>
+        <description>Retrieves the original WorkOrderLineItem record using recordId to extract fields for copying</description>
+        <name>Get_Original_WOLI</name>
+        <label>Get Original WOLI</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Collect_Retest_Information</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrderLineItem</object>
+        <queriedFields>WorkOrderId</queriedFields>
+        <queriedFields>Measurement_Item_Code__c</queriedFields>
+        <queriedFields>Unit__c</queriedFields>
+        <queriedFields>Root_Line_Item__c</queriedFields>
+        <queriedFields>Retest_Round__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <description>Screen to collect Retest_Reason__c and Corrective_Action__c from user input</description>
+        <name>Collect_Retest_Information</name>
+        <label>Collect Retest Information</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>Create_New_WOLI</targetReference>
+        </connector>
+        <fields>
+            <description>User input field for selecting retest reason from picklist values</description>
+            <name>retestReason</name>
+            <choiceReferences>retestReasonChoices</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>재시험 사유</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <helpText>Select the reason for retesting this work order line item</helpText>
+            <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <fields>
+            <description>User input field for entering corrective action details as multi-line text</description>
+            <name>correctiveAction</name>
+            <fieldText>시정 조치</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <helpText>시정 사유인 경우 시정 조치 내용을 입력하세요</helpText>
+            <isRequired>false</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <description>Confirmation screen displaying success message after new WOLI creation</description>
+        <name>Confirmation_Screen</name>
+        <label>Confirmation Screen</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <description>Display text showing confirmation message that new retest WOLI was successfully created</description>
+            <name>confirmationMessage</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;재시험 항목이 생성됐습니다.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;원본 측정 항목은 그대로 보존되며, 새 재시험 항목에서 측정값을 입력할 수 있습니다.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Original_WOLI</targetReference>
+        </connector>
+        <triggerType>None</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Input variable containing the WorkOrderLineItem ID passed to the flow</description>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

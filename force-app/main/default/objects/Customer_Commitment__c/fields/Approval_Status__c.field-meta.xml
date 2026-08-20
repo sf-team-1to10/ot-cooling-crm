@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Approval_Status__c</fullName>
+    <description>고객 약속에 대한 내부 승인 상태. 약속을 실행 기준으로 확정하기 전 승인 절차의 현재 상태를 나타낸다.</description>
+    <inlineHelpText>이 약속의 내부 승인 상태를 선택하세요.</inlineHelpText>
+    <label>승인 상태</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>미승인</fullName>
+                <default>true</default>
+                <label>미승인</label>
+            </value>
+            <value>
+                <fullName>승인</fullName>
+                <default>false</default>
+                <label>승인</label>
+            </value>
+            <value>
+                <fullName>반려</fullName>
+                <default>false</default>
+                <label>반려</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

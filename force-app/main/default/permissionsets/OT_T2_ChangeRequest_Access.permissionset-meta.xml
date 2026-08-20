@@ -22,6 +22,11 @@
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
     <fieldPermissions>
+        <field>Asset.Applied_Revision__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>ChangeRequestRelatedItem.Application_Status__c</field>
         <readable>true</readable>
         <editable>true</editable>
