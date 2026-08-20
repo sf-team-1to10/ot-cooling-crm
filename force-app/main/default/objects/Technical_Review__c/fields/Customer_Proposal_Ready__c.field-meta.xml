@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Proposal_Ready__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>기술검토 결과의 고객 제안 가능 여부</description>
+    <inlineHelpText>추천 솔루션·전제·위험이 모두 정리되어 고객 제안이 가능한 상태일 때만 체크.</inlineHelpText>
+    <label>고객 제안 준비</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

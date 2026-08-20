@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <inlineHelpText>미착수=검토 요청만 접수 / 진행중=열부하·용량 산정 중 / 완료=추천 솔루션 확정</inlineHelpText>
+    <label>상태</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>미착수</fullName>
+                <default>false</default>
+                <label>미착수</label>
+            </value>
+            <value>
+                <fullName>진행중</fullName>
+                <default>false</default>
+                <label>진행중</label>
+            </value>
+            <value>
+                <fullName>완료</fullName>
+                <default>false</default>
+                <label>완료</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

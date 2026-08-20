@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Technical_Review_Status__c</fullName>
+    <description>Technical_Review__c.Status__c와 값 도메인 공유</description>
+    <inlineHelpText>연결된 기술검토의 진행 상태. 값은 기술검토 레코드의 &apos;상태&apos;와 일치시킨다</inlineHelpText>
+    <label>기술검토 상태</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>미착수</fullName>
+                <default>false</default>
+                <label>미착수</label>
+            </value>
+            <value>
+                <fullName>진행중</fullName>
+                <default>false</default>
+                <label>진행중</label>
+            </value>
+            <value>
+                <fullName>완료</fullName>
+                <default>false</default>
+                <label>완료</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
