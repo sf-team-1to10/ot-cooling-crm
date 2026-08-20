@@ -5,3 +5,5 @@ private class WorkflowCheckTest {
         System.assertEquals(1, 1);
     }
 }
+
+// GitHub Actions 재실행 확인용
