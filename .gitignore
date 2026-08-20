@@ -49,3 +49,4 @@ $RECYCLE.BIN/
 **/__pycache__/
 **/.venv/
 **/venv/
+CLAUDE.md

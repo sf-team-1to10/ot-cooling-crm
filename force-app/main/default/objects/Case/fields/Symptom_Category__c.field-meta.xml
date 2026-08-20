@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Symptom_Category__c</fullName>
+    <label>증상 분류</label>
+    <description>고객이 신고한 장애의 증상 유형을 표준 분류로 기록해 진단·유사 사례 검색·재발 판정의 기준으로 사용한다.</description>
+    <inlineHelpText>신고된 장애의 주된 증상을 가장 가까운 항목으로 선택하세요. 해당 항목이 없으면 기타를 선택합니다.</inlineHelpText>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>유량저하</fullName>
+                <default>false</default>
+                <label>유량저하</label>
+            </value>
+            <value>
+                <fullName>누수</fullName>
+                <default>false</default>
+                <label>누수</label>
+            </value>
+            <value>
+                <fullName>소음</fullName>
+                <default>false</default>
+                <label>소음</label>
+            </value>
+            <value>
+                <fullName>제어이상</fullName>
+                <default>false</default>
+                <label>제어이상</label>
+            </value>
+            <value>
+                <fullName>전원</fullName>
+                <default>false</default>
+                <label>전원</label>
+            </value>
+            <value>
+                <fullName>기타</fullName>
+                <default>false</default>
+                <label>기타</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
