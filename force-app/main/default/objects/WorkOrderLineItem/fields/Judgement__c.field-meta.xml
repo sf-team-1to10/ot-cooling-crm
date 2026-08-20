@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Line_Item_Role__c</fullName>
-    <label>항목 역할</label>
+    <fullName>Judgement__c</fullName>
+    <label>판정</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
@@ -11,24 +11,19 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>시험</fullName>
+                <fullName>합격</fullName>
                 <default>false</default>
-                <label>시험</label>
+                <label>합격</label>
             </value>
             <value>
-                <fullName>복구조치</fullName>
+                <fullName>불합격</fullName>
                 <default>false</default>
-                <label>복구조치</label>
+                <label>불합격</label>
             </value>
             <value>
-                <fullName>검증</fullName>
+                <fullName>측정불가</fullName>
                 <default>false</default>
-                <label>검증</label>
-            </value>
-            <value>
-                <fullName>점검</fullName>
-                <default>false</default>
-                <label>점검</label>
+                <label>측정불가</label>
             </value>
         </valueSetDefinition>
     </valueSet>
