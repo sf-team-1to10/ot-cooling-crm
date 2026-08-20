@@ -49,3 +49,6 @@ $RECYCLE.BIN/
 **/__pycache__/
 **/.venv/
 **/venv/
+
+## 작업 문서
+docs
