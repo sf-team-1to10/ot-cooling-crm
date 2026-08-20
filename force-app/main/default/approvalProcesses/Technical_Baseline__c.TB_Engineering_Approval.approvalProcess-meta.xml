@@ -20,7 +20,8 @@
         <allowDelegate>true</allowDelegate>
         <assignedApprover>
             <approver>
-                <type>owner</type>
+                <name>Owner</name>
+                <type>relatedUserField</type>
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
