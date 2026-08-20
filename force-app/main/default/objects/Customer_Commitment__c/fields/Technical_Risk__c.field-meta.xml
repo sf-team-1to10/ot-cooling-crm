@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Technical_Risk__c</fullName>
+    <description>고객 약속에 수반되는 기술적 위험. 실행 단계(D1~)에서 관리해야 할 잔여 리스크를 기록한다.</description>
+    <inlineHelpText>약속 이행에 걸리는 기술적 위험을 기술하세요.</inlineHelpText>
+    <label>기술 리스크</label>
+    <length>32000</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>5</visibleLines>
+</CustomField>

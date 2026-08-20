@@ -23,8 +23,7 @@
         <object>Technical_Baseline_Spec__c</object>
     </objectPermissions>
 
-    <!-- Technical_Baseline__c 필드 (required 제외: Contract__c, Customer_Commitment__c, Version__c) -->
-    <fieldPermissions>
+<fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
         <field>Technical_Baseline__c.Approval_Status__c</field>
@@ -110,8 +109,7 @@
         <field>Technical_Baseline__c.Technical_Risk__c</field>
     </fieldPermissions>
 
-    <!-- Technical_Baseline_Spec__c 필드 (Technical_Baseline__c는 Master-Detail=required, 제외) -->
-    <fieldPermissions>
+<fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
         <field>Technical_Baseline_Spec__c.Measurement_Item_Code__c</field>
@@ -137,8 +135,7 @@
         <field>Technical_Baseline_Spec__c.Unit__c</field>
     </fieldPermissions>
 
-    <!-- WorkOrder 커스텀 필드 (T3-02~T3-14) -->
-    <fieldPermissions>
+<fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
         <field>WorkOrder.Acceptance_Condition__c</field>
@@ -189,8 +186,7 @@
         <field>WorkOrder.Work_Subtype__c</field>
     </fieldPermissions>
 
-    <!-- WorkOrderLineItem 커스텀 필드 (T3-03~T3-13) -->
-    <fieldPermissions>
+<fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
         <field>WorkOrderLineItem.Corrective_Action__c</field>
