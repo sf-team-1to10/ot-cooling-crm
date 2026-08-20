@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <description>Sets Judgement__c to &apos;불합격&apos; when the Technical_Baseline_Spec__c record is not found OR Measured_Value__c is outside the threshold range (&lt; Threshold_Min__c OR &gt; Threshold_Max__c)</description>
+        <name>Set_Judgement_Fail</name>
+        <label>Set Judgement Fail</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Judgement__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>불합격</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <description>Sets Judgement__c to &apos;측정불가&apos; when Measured_Value__c is null</description>
+        <name>Set_Judgement_Not_Measurable</name>
+        <label>Set Judgement Not Measurable</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Judgement__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>측정불가</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <description>Sets Judgement__c to &apos;합격&apos; when the Technical_Baseline_Spec__c record is found and Measured_Value__c is within the threshold range (&gt;= Threshold_Min__c AND &lt;= Threshold_Max__c)</description>
+        <name>Set_Judgement_Pass</name>
+        <label>Set Judgement Pass</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Judgement__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>합격</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <description>Checks if Measured_Value__c is null to determine routing path</description>
+        <name>Check_Measured_Value_Null</name>
+        <label>Check Measured Value Null</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Get_Parent_WorkOrder</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Measured Value Not Null</defaultConnectorLabel>
+        <rules>
+            <description>Route when Measured_Value__c is null</description>
+            <name>Measured_Value_Is_Null</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Measured_Value__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Judgement_Not_Measurable</targetReference>
+            </connector>
+            <label>Measured Value Is Null</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Evaluates if the Technical_Baseline_Spec__c record was found and if Measured_Value__c is within the threshold range (&gt;= Threshold_Min__c AND &lt;= Threshold_Max__c)</description>
+        <name>Check_Spec_Found_And_Threshold</name>
+        <label>Check Spec Found And Threshold</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Set_Judgement_Fail</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Spec Not Found Or Out Of Range</defaultConnectorLabel>
+        <rules>
+            <description>Route when spec record is found and measured value is within threshold range</description>
+            <name>Spec_Found_And_Within_Range</name>
+            <conditionLogic>1 AND 2 AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Technical_Baseline_Spec</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Measured_Value__c</leftValueReference>
+                <operator>GreaterThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>Get_Technical_Baseline_Spec.Threshold_Min__c</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Measured_Value__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>Get_Technical_Baseline_Spec.Threshold_Max__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Judgement_Pass</targetReference>
+            </connector>
+            <label>Spec Found And Within Range</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>WOLI Trigger</interviewLabel>
+    <label>WOLI_Judgement_AutoSet</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Fetches the parent WorkOrder record to access its Technical_Baseline__c lookup field</description>
+        <name>Get_Parent_WorkOrder</name>
+        <label>Get Parent WorkOrder</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Technical_Baseline_Spec</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.WorkOrderId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Technical_Baseline__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Fetches the Technical_Baseline_Spec__c record matching the WorkOrder&apos;s Technical_Baseline__c and WorkOrderLineItem&apos;s Measurement_Item_Code__c</description>
+        <name>Get_Technical_Baseline_Spec</name>
+        <label>Get Technical Baseline Spec</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Spec_Found_And_Threshold</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Technical_Baseline__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Parent_WorkOrder.Technical_Baseline__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Measurement_Item_Code__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Measurement_Item_Code__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Technical_Baseline_Spec__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Technical_Baseline__c</queriedFields>
+        <queriedFields>Measurement_Item_Code__c</queriedFields>
+        <queriedFields>Threshold_Min__c</queriedFields>
+        <queriedFields>Threshold_Max__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Measured_Value_Null</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Measured_Value__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>WorkOrderLineItem</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

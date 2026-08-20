@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Proposal_Status__c</fullName>
+    <description>영업 담당자가 고객에게 제출한 제안의 진행 상태. S4 제안 단계에서 갱신하며 Handoff 판정의 입력이 된다.</description>
+    <inlineHelpText>고객에게 제안서를 제출/수정/수락받은 현재 상태를 선택하세요.</inlineHelpText>
+    <label>고객 제안 상태</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>미제출</fullName>
+                <default>true</default>
+                <label>미제출</label>
+            </value>
+            <value>
+                <fullName>제출</fullName>
+                <default>false</default>
+                <label>제출</label>
+            </value>
+            <value>
+                <fullName>수정요청</fullName>
+                <default>false</default>
+                <label>수정요청</label>
+            </value>
+            <value>
+                <fullName>수락</fullName>
+                <default>false</default>
+                <label>수락</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
