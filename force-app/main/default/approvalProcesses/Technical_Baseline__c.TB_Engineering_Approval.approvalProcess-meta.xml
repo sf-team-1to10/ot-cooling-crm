@@ -20,7 +20,7 @@
         <allowDelegate>true</allowDelegate>
         <assignedApprover>
             <approver>
-                <name>chorea0408+crm@gmail.com</name>
+                <name>odm@t3dlv.test</name>
                 <type>user</type>
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
