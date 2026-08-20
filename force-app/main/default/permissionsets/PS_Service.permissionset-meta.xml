@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>PS Service</label>
+    <description>T4 서비스 트랙 접근권한 - 장애 접수 관련 Case 커스텀 필드(증상 분류·고객 진술 원문·영향 등급) FLS</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <fieldPermissions>
+        <field>Case.Symptom_Category__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Reported_Symptom__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Impact_Level__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+</PermissionSet>
