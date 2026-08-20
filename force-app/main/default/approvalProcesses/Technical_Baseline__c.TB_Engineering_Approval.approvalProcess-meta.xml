@@ -20,8 +20,7 @@
         <allowDelegate>true</allowDelegate>
         <assignedApprover>
             <approver>
-                <name>odm@t3dlv.test</name>
-                <type>user</type>
+                <type>owner</type>
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
