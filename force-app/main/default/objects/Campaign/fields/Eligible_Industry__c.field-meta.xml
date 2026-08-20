@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Eligible_Industry__c</fullName>
+    <label>대상 산업</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>데이터센터</fullName>
+                <default>false</default>
+                <label>데이터센터</label>
+            </value>
+            <value>
+                <fullName>제조</fullName>
+                <default>false</default>
+                <label>제조</label>
+            </value>
+            <value>
+                <fullName>공공</fullName>
+                <default>false</default>
+                <label>공공</label>
+            </value>
+            <value>
+                <fullName>기타</fullName>
+                <default>false</default>
+                <label>기타</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
