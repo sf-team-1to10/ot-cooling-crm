@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Remaining_Margin_Pct__c</fullName>
+    <label>잔여 여유 임계치(%)</label>
+    <description>규칙 ③: 허용 하한(Threshold_Min__c)까지 잔여 여유가 이 값 미만이면 추세 이상. WOLI.Threshold_Min__c(T3-16) 전파 후 Flow에서 사용. 현재 Flow는 규칙 ①②만 적용.</description>
+    <inlineHelpText>허용 하한까지 잔여 여유 임계치를 양수 퍼센트로 입력합니다. 예: 5는 잔여 5% 미만을 의미합니다.</inlineHelpText>
+    <type>Number</type>
+    <precision>4</precision>
+    <scale>1</scale>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+</CustomField>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Trend_Flag__c</fullName>
+    <label>추세 플래그</label>
+    <description>절대 판정(Judgement__c)과 분리된 추세 이상 표시. 절대 기준으로는 합격이어도 기준선 대비 하락률·연속 하락 규칙에 걸리면 주의/이상으로 표시된다. T4-07 추세 판정 Flow가 자동 기입.</description>
+    <inlineHelpText>추세 판정 결과입니다. 자동 계산되며 직접 입력하지 않습니다. 정상=규칙 미해당, 주의=하락률 또는 연속 하락 규칙 1개 해당, 이상=규칙 다수 해당.</inlineHelpText>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>정상</fullName>
+                <default>false</default>
+                <label>정상</label>
+            </value>
+            <value>
+                <fullName>주의</fullName>
+                <default>false</default>
+                <label>주의</label>
+            </value>
+            <value>
+                <fullName>이상</fullName>
+                <default>false</default>
+                <label>이상</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

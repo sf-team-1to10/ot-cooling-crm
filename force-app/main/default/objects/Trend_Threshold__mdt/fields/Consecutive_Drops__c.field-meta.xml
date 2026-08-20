@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consecutive_Drops__c</fullName>
+    <label>연속 하락 횟수 임계치</label>
+    <description>규칙 ②: 직전 대비 하락이 이 횟수만큼 연속되면 추세 이상. 예) 3 = 3회 연속 하락 시 발동.</description>
+    <inlineHelpText>연속 하락 횟수 임계치를 입력합니다. 예: 3은 3회 연속 하락을 의미합니다.</inlineHelpText>
+    <type>Number</type>
+    <precision>3</precision>
+    <scale>0</scale>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+</CustomField>
