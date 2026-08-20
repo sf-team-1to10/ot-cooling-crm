@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Delivery_Date__c</fullName>
+    <description>고객에게 최종 약속한 납기일. D1 실행 기준의 출발점이 되는 날짜다.</description>
+    <inlineHelpText>고객에게 최종 확정한 납기일을 선택하세요.</inlineHelpText>
+    <label>최종 납기</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>
