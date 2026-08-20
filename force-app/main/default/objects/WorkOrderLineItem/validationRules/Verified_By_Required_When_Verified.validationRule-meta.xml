@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Verified_By_Required_When_Verified</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND( 
+   ISPICKVAL( Punch_Status__c , &quot;검증완료&quot;),
+   ISBLANK( Verified_By__c ) 
+)</errorConditionFormula>
+    <errorDisplayField>Verified_By__c</errorDisplayField>
+    <errorMessage>Punch 상태를 검증완료로 저장하려면 검증자를 반드시 지정해야 합니다.</errorMessage>
+</ValidationRule>
