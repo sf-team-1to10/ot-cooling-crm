@@ -109,6 +109,10 @@
                 <behavior>Edit</behavior>
                 <field>Qualification_Result__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Disqualification_Reason__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>

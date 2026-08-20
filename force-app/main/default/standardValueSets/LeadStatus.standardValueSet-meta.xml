@@ -67,4 +67,10 @@
         <label>요청받음</label>
         <converted>false</converted>
     </standardValue>
+    <standardValue>
+        <fullName>부적격</fullName>
+        <default>false</default>
+        <label>부적격</label>
+        <converted>false</converted>
+    </standardValue>
 </StandardValueSet>
