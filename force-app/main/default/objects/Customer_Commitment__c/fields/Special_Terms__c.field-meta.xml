@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Special_Terms__c</fullName>
+    <description>고객에게 약속한 특약 사항. 계약 특약 중 실행·인수 판별에 쓰이는 조건을 담는다.</description>
+    <inlineHelpText>고객에게 약속한 특약 조건을 입력하세요.</inlineHelpText>
+    <label>특수조건</label>
+    <length>32000</length>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>5</visibleLines>
+</CustomField>
