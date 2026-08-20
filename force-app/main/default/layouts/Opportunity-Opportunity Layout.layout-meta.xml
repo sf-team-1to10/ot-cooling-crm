@@ -49,10 +49,6 @@
                 <behavior>Edit</behavior>
                 <field>Amount</field>
             </layoutItems>
-            <layoutItems>
-                <behavior>Edit</behavior>
-                <field>Customer_Proposal_Status__c</field>
-            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
