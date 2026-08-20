@@ -8,3 +8,4 @@ private class WorkflowCheckTest {
 
 // GitHub Actions 재실행 확인용
 // SARIF 업로드 재실행 확인용
+// 핵심 PR 검증 재실행 확인용
