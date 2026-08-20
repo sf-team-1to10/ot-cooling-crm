@@ -49,4 +49,6 @@ $RECYCLE.BIN/
 **/__pycache__/
 **/.venv/
 **/venv/
-CLAUDE.md
+
+## 작업 문서
+docs
