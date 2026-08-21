@@ -153,6 +153,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>WorkOrder.Has_Evidence__c</field>
+    </fieldPermissions>
+    <fieldPermissions>
+        <readable>true</readable>
+        <editable>true</editable>
         <field>WorkOrder.Technical_Baseline__c</field>
         <readable>true</readable>
     </fieldPermissions>

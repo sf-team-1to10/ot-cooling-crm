@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Has_Evidence__c</fullName>
+    <description>이 WorkOrder에 연결된 증빙 파일(ContentDocumentLink)이 1건 이상 있는지. WorkOrder_Evidence_Check Flow가 저장 시마다 갱신한다. Validation Rule Block_Completion_Without_Evidence가 이 값을 참조해 완료 저장을 차단한다.</description>
+    <externalId>false</externalId>
+    <defaultValue>false</defaultValue>
+    <label>증빙 파일 존재</label>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>
