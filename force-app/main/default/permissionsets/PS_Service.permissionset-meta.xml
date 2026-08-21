@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>PS Service</label>
-    <description>T4 서비스 트랙 접근권한 - Case/WorkOrder/WorkOrderLineItem 커스텀 필드 FLS. T4-05/06/07/08이 org UI로만 부여했던 FLS가 T4-14 배포로 회수된 사고를 복구해 repo에 명시(2026-08-21).</description>
+    <description>T4 서비스 트랙 접근권한 - Case/WorkOrder/WorkOrderLineItem 커스텀 필드 FLS (장애 접수·보증 판정·추세 판정·복구 검증). 보증 판정 스냅샷 4개는 읽기전용. T4-05/06/07/08이 org UI로만 부여했던 FLS를 repo에 명시 (2026-08-21).</description>
     <hasActivationRequired>false</hasActivationRequired>
     <fieldPermissions>
         <field>Case.Source_Maintenance_Work_Order__c</field>
@@ -140,6 +140,31 @@
     </fieldPermissions>
     <fieldPermissions>
         <field>Case.Impact_Level__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Warranty_Decision__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Coverage_Type__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Warranty_End_Date_At_Request__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Warranty_Judged_At__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Billable__c</field>
         <readable>true</readable>
         <editable>true</editable>
     </fieldPermissions>

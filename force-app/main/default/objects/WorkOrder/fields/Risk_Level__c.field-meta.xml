@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Risk_Level__c</fullName>
+    <label>위험 수준</label>
+    <description>예방정비 점검 결과에 대한 Work Order 단위 위험 수준. 하위 WorkOrderLineItem의 추세 판정(Trend_Flag__c) 중 최고 등급을 상향 반영한다(정상&lt;보통&lt;높음). T4-07 추세 판정 Flow가 자동 기입.</description>
+    <inlineHelpText>이 점검 WO의 종합 위험 수준입니다. 하위 측정 항목의 추세 판정에서 자동 산정되며 상향만 반영됩니다.</inlineHelpText>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>높음</fullName>
+                <default>false</default>
+                <label>높음</label>
+            </value>
+            <value>
+                <fullName>보통</fullName>
+                <default>false</default>
+                <label>보통</label>
+            </value>
+            <value>
+                <fullName>낮음</fullName>
+                <default>false</default>
+                <label>낮음</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

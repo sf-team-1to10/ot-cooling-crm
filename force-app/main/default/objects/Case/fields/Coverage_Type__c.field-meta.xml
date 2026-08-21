@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Coverage_Type__c</fullName>
+    <label>보증 범위 유형</label>
+    <description>접수 시점에 판정된 Asset의 보증 유형 스냅샷. Asset.Warranty_Type__c에서 접수 시점 값을 복사해 고정한다.</description>
+    <inlineHelpText>접수 시점 장비의 보증 유형입니다. 기본보증/연장보증/AMC/무보증 중 하나로 자동 기록됩니다.</inlineHelpText>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>기본보증</fullName>
+                <default>false</default>
+                <label>기본보증</label>
+            </value>
+            <value>
+                <fullName>연장보증</fullName>
+                <default>false</default>
+                <label>연장보증</label>
+            </value>
+            <value>
+                <fullName>AMC</fullName>
+                <default>false</default>
+                <label>AMC</label>
+            </value>
+            <value>
+                <fullName>무보증</fullName>
+                <default>false</default>
+                <label>무보증</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

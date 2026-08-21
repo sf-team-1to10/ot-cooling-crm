@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Warranty_Decision__c</fullName>
+    <label>보증 판정</label>
+    <description>Case 접수 시점에 자동 판정된 보증 적용 여부. Asset 미지정 접수는 판정보류로 두고 Asset 연결 시 최초 1회 판정한다. 수식이 아닌 실필드로 접수 시점에 스탬프한다.</description>
+    <inlineHelpText>접수 시점 보증 범위 자동 판정 결과입니다. Asset이 없으면 판정보류로 표시됩니다.</inlineHelpText>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>적용</fullName>
+                <default>false</default>
+                <label>적용</label>
+            </value>
+            <value>
+                <fullName>미적용</fullName>
+                <default>false</default>
+                <label>미적용</label>
+            </value>
+            <value>
+                <fullName>판정보류</fullName>
+                <default>false</default>
+                <label>판정보류</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
