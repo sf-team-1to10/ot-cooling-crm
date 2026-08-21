@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Threshold_Min__c</fullName>
+    <description>적용 리비전의 Baseline Spec에서 자동 적재된 허용 하한. 누기처럼 하한이 없는 항목은 공란으로 둔다.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Baseline Spec에서 자동으로 채워집니다. 하한이 없는 측정 항목(예: 누기)은 비어 있을 수 있습니다.</inlineHelpText>
+    <label>허용 하한</label>
+    <precision>9</precision>
+    <required>false</required>
+    <scale>1</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

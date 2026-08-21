@@ -15,9 +15,9 @@
                 <label>유량</label>
             </value>
             <value>
-                <fullName>수은</fullName>
+                <fullName>수온</fullName>
                 <default>false</default>
-                <label>수은</label>
+                <label>수온</label>
             </value>
             <value>
                 <fullName>차압</fullName>
