@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Repair_Result__c</fullName>
+    <label>복구 결과</label>
+    <description>장애 복구 Work Order의 복구 조치 완료 후 최종 결과 요약. 복구 후 검증 측정과 함께 O3(Problem) 근본원인 규명의 입력이 된다.</description>
+    <inlineHelpText>복구 조치를 마친 뒤 확인된 최종 결과를 기록합니다. 예: 재조임 후 유량이 사양 범위로 복귀.</inlineHelpText>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
+    <length>32000</length>
+    <visibleLines>3</visibleLines>
+</CustomField>

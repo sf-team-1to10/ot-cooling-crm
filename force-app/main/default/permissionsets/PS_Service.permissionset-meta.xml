@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>PS Service</label>
-<description>T4 서비스 트랙 접근권한 - 장애 접수(증상 분류·고객 진술 원문·영향 등급) 및 보증 자동 판정(보증 판정·범위 유형·접수시점 만료일·판정 시각·유상 여부) Case 커스텀 필드 FLS + 추세 판정(WOLI 추세 플래그·측정값, WO 위험 수준·권고 조치). 판정 스냅샷 4개는 읽기전용.</description>    <hasActivationRequired>false</hasActivationRequired>
+    <description>T4 서비스 트랙 접근권한 - Case 장애 접수·보증 자동 판정, WOLI/WO 추세 판정, 복구 조치·검증 커스텀 필드 FLS. 보증 판정 스냅샷 4개는 읽기전용.</description>    <hasActivationRequired>false</hasActivationRequired>
     <fieldPermissions>
         <field>Case.Symptom_Category__c</field>
         <readable>true</readable>
@@ -51,6 +51,91 @@
         <field>WorkOrderLineItem.Delta_From_Previous__c</field>
         <readable>true</readable>
         <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrder.Repair_Result__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrder.Action_Taken__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrder.Root_Cause_Draft__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrder.Customer_Notification_Draft__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Line_Item_Role__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Measured_Value__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Measurement_Item_Code__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Unit__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Judgement__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Corrective_Action__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Verified_By__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Verified_Date__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Punch_Status__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Retest_Reason__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Retest_Round__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Parent_Line_Item__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>WorkOrderLineItem.Severity__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
     </fieldPermissions>
     <fieldPermissions>
         <field>Case.Warranty_Decision__c</field>

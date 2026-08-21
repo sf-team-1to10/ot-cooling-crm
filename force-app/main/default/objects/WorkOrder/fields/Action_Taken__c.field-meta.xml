@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Action_Taken__c</fullName>
+    <label>조치 내용</label>
+    <description>장애 복구 Work Order에서 수행한 복구 조치의 내용. O3(Problem) 재발방지 분석에서 재사용되므로 신설이 아니라 공용 필드다.</description>
+    <inlineHelpText>실제로 수행한 복구 조치를 기록합니다. 예: 배관 플랜지 재조임(M16 x 8개소).</inlineHelpText>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
+    <length>32000</length>
+    <visibleLines>3</visibleLines>
+</CustomField>
