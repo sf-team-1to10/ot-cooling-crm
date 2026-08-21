@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expansion_Timing__c</fullName>
+    <description>Hall B 증설이 예정된 시기. 고객 확장계획의 목표 시점으로, 제안·설계 일정의 기준이 된다.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>증설이 예정된 목표 시기를 입력하세요.</inlineHelpText>
+    <label>확장 시기</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Date</type>
+</CustomField>
