@@ -10,8 +10,6 @@
         <field>Owner</field>
         <field>Type</field>
         <field>StageName</field>
-        <field>Expansion_Capacity__c</field>
-        <field>Residual_Risk__c</field>
     </approvalPageFields>
     <approvalStep>
         <allowDelegate>true</allowDelegate>
