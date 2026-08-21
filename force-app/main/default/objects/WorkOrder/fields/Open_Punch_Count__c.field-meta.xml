@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Open_Punch_Count__c</fullName>
+    <description>이 WorkOrder에 연결된 미조치(Open+조치중) Punch 개수. Roll-Up Summary의 필터가 픽리스트 공란(Punch_Status__c 없는 일반 측정 레코드)을 제외하지 못하는 걸 실측으로 확인해 Flow 기반으로 전환 — WOLI_Asset_Open_Punch_Recalc Flow가 WOLI 생성·수정 시마다 재계산해 이 필드를 갱신한다.</description>
+    <externalId>false</externalId>
+    <label>미조치 Punch 수</label>
+    <precision>18</precision>
+    <scale>0</scale>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
