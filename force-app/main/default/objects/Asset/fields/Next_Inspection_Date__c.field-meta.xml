@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Next_Inspection_Date__c</fullName>
+    <description>Service_Ready_Date__c(=인수일)에 Frequency__c를 환산일수로 더한 값. O1의 예방정비 자동 생성이 이 날짜를 읽는다.</description>
+    <label>다음 점검일</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>
