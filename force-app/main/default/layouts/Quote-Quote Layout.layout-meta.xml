@@ -4,7 +4,6 @@
     <excludeButtons>CreateOrder</excludeButtons>
     <excludeButtons>DeepCloneAction</excludeButtons>
     <excludeButtons>OpenSlackRecordChannel</excludeButtons>
-    <excludeButtons>Submit</excludeButtons>
     <layoutSections>
         <customLabel>false</customLabel>
         <detailHeading>false</detailHeading>
@@ -34,6 +33,10 @@
             <layoutItems>
                 <behavior>Edit</behavior>
                 <field>Quote_Revision__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Delivery_Date__c</field>
             </layoutItems>
         </layoutColumns>
         <layoutColumns>
@@ -240,6 +243,9 @@
     </relatedLists>
     <relatedLists>
         <relatedList>RelatedNoteList</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <relatedList>RelatedProcessHistoryList</relatedList>
     </relatedLists>
     <showEmailCheckbox>false</showEmailCheckbox>
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
