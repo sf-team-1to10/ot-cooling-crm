@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>PS Service</label>
-    <description>T4 서비스 트랙 접근권한 - T4 커스텀 필드 FLS - Case(증상 분류·고객 진술 원문·영향 등급) + T4-07 추세 판정(WOLI 추세 플래그, WO 위험 수준·권고 조치) + T4-08 복구 조치·검증(WO 복구 결과·조치·잠정원인·고객통보 초안, WOLI 조치·검증 필드)</description>
-    <hasActivationRequired>false</hasActivationRequired>
+    <description>T4 서비스 트랙 접근권한 - Case 장애 접수·보증 자동 판정, WOLI/WO 추세 판정, 복구 조치·검증 커스텀 필드 FLS. 보증 판정 스냅샷 4개는 읽기전용.</description>    <hasActivationRequired>false</hasActivationRequired>
     <fieldPermissions>
         <field>Case.Symptom_Category__c</field>
         <readable>true</readable>
@@ -137,5 +136,30 @@
         <field>WorkOrderLineItem.Severity__c</field>
         <readable>true</readable>
         <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Warranty_Decision__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Coverage_Type__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Warranty_End_Date_At_Request__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Warranty_Judged_At__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Billable__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
     </fieldPermissions>
 </PermissionSet>
