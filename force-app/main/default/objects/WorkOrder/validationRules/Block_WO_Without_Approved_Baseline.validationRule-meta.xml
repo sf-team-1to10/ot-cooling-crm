@@ -8,5 +8,5 @@
     NOT(ISPICKVAL(Technical_Baseline__r.Approval_Status__c, &apos;승인&apos;))
 )</errorConditionFormula>
     <errorDisplayField>Technical_Baseline__c</errorDisplayField>
-    <errorMessage>연결된 Technical Baseline이 아직 승인되지 않았습니다. 오도면의 승인 완료 후 Work Order를 생성하십시오.</errorMessage>
+    <errorMessage>연결된 Technical Baseline이 아직 승인되지 않았습니다. Technical Baseline의 승인 완료 후 Work Order를 생성하십시오.</errorMessage>
 </ValidationRule>
