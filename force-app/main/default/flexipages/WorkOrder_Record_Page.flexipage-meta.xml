@@ -228,6 +228,36 @@
                 <identifier>RecordDescriptionColumn2Field4</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Site_Issue_Status__c</fieldItem>
+                <identifier>RecordSiteIssueStatusColumn2Field5</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Site_Issue__c</fieldItem>
+                <identifier>RecordSiteIssueColumn2Field6</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Issue_Impact__c</fieldItem>
+                <identifier>RecordIssueImpactColumn2Field7</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-FieldSection-Column2</name>
         <type>Facet</type>
     </flexiPageRegions>

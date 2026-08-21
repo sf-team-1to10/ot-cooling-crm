@@ -23,7 +23,7 @@
         <object>Technical_Baseline_Spec__c</object>
     </objectPermissions>
 
-    <fieldPermissions>
+<fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
         <field>Technical_Baseline__c.Approval_Status__c</field>
@@ -109,7 +109,7 @@
         <field>Technical_Baseline__c.Technical_Risk__c</field>
     </fieldPermissions>
 
-    <fieldPermissions>
+<fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
         <field>Technical_Baseline_Spec__c.Measurement_Item_Code__c</field>
@@ -135,7 +135,7 @@
         <field>Technical_Baseline_Spec__c.Unit__c</field>
     </fieldPermissions>
 
-    <fieldPermissions>
+<fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
         <field>WorkOrder.Acceptance_Condition__c</field>
@@ -163,6 +163,21 @@
     <fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
+        <field>WorkOrder.Issue_Impact__c</field>
+    </fieldPermissions>
+    <fieldPermissions>
+        <readable>true</readable>
+        <editable>true</editable>
+        <field>WorkOrder.Site_Issue__c</field>
+    </fieldPermissions>
+    <fieldPermissions>
+        <readable>true</readable>
+        <editable>true</editable>
+        <field>WorkOrder.Site_Issue_Status__c</field>
+    </fieldPermissions>
+    <fieldPermissions>
+        <readable>true</readable>
+        <editable>true</editable>
         <field>WorkOrder.Technical_Baseline__c</field>
     </fieldPermissions>
     <fieldPermissions>
@@ -171,7 +186,7 @@
         <field>WorkOrder.Work_Subtype__c</field>
     </fieldPermissions>
 
-    <fieldPermissions>
+<fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
         <field>WorkOrderLineItem.Corrective_Action__c</field>
@@ -204,27 +219,7 @@
     <fieldPermissions>
         <readable>true</readable>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Parent_Line_Item__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <readable>true</readable>
-        <editable>true</editable>
         <field>WorkOrderLineItem.Punch_Status__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <readable>true</readable>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Retest_Reason__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <readable>true</readable>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Retest_Round__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <readable>true</readable>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Root_Line_Item__c</field>
     </fieldPermissions>
     <fieldPermissions>
         <readable>true</readable>
