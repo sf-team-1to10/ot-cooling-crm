@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fieldUpdates>
+        <fullName>Opp_Internal_Approval_In_Review</fullName>
+        <field>Internal_Approval_Status__c</field>
+        <literalValue>검토중</literalValue>
+        <name>내부 승인 상태 검토중</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Opp_Internal_Approval_Approved</fullName>
+        <field>Internal_Approval_Status__c</field>
+        <literalValue>승인</literalValue>
+        <name>내부 승인 상태 승인</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+    <fieldUpdates>
+        <fullName>Opp_Internal_Approval_Rejected</fullName>
+        <field>Internal_Approval_Status__c</field>
+        <literalValue>반려</literalValue>
+        <name>내부 승인 상태 반려</name>
+        <notifyAssignee>false</notifyAssignee>
+        <operation>Literal</operation>
+        <protected>false</protected>
+        <reevaluateOnChange>false</reevaluateOnChange>
+    </fieldUpdates>
+</Workflow>
