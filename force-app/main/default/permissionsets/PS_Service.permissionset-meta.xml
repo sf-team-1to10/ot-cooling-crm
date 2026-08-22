@@ -8,6 +8,21 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>Case.Remote_Diagnosis__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Diagnosed_Cause__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Field_Visit_Required__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Case.Reported_Symptom__c</field>
         <readable>true</readable>
         <editable>true</editable>
