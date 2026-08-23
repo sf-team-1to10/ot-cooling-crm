@@ -285,6 +285,14 @@
         <fields>CORE.USERS.ALIAS</fields>
         <relatedList>RelatedSolutionList</relatedList>
     </relatedLists>
+        <relatedLists>
+        <fields>Name</fields>
+        <fields>Status</fields>
+        <fields>WorkType</fields>
+        <fields>Asset</fields>
+        <fields>CreatedDate</fields>
+        <relatedList>WorkOrders</relatedList>
+    </relatedLists>
     <relatedLists>
         <fields>TASK.SUBJECT</fields>
         <fields>TASK.WHO_NAME</fields>
