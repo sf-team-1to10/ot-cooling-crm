@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65</apiVersion>
+    <assignments>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Loop_WOs</targetReference>
+        </connector>
+        <locationX>554</locationX>
+        <assignmentItems>
+            <assignToReference>varWOIds</assignToReference>
+            <value>
+                <elementReference>Loop_WOs.Id</elementReference>
+            </value>
+            <operator>Add</operator>
+        </assignmentItems>
+        <name>Add_WO_Id</name>
+        <description>Adds each WorkOrder Id to the varWOIds collection</description>
+        <label>Add WO Id</label>
+    </assignments>
+    <assignments>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Loop_WOLIs</targetReference>
+        </connector>
+        <locationX>932</locationX>
+        <assignmentItems>
+            <assignToReference>varHistory</assignToReference>
+            <value>
+                <elementReference>History_Line</elementReference>
+            </value>
+            <operator>Add</operator>
+        </assignmentItems>
+        <name>Build_History</name>
+        <description>Builds formatted measurement history by concatenating WorkOrderLineItem fields</description>
+        <label>Build History</label>
+    </assignments>
+    <actionCalls>
+        <locationY>50</locationY>
+        <actionName>Dispatch_Briefing_Generator</actionName>
+        <actionType>generatePromptResponse</actionType>
+        <connector>
+            <targetReference>Save_Briefing</targetReference>
+        </connector>
+        <locationX>1058</locationX>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>Input:Measurement_History</name>
+            <value>
+                <elementReference>varHistory</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Input:Equipment_Name</name>
+            <value>
+                <elementReference>Get_This_WO.Subject</elementReference>
+            </value>
+        </inputParameters>
+        <name>Call_Prompt</name>
+        <description>Calls the Dispatch_Briefing_Generator prompt template with the assembled measurement history and equipment name</description>
+        <label>Call Prompt</label>
+        <nameSegment>Dispatch_Briefing_Generator</nameSegment>
+        <outputParameters>
+            <assignToReference>varBriefing</assignToReference>
+            <name>promptResponse</name>
+        </outputParameters>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </actionCalls>
+    <environments>Default</environments>
+    <formulas>
+        <name>History_Line</name>
+        <dataType>String</dataType>
+        <expression>TEXT({!Loop_WOLIs.Line_Item_Role__c}) &amp; ' | ' &amp; TEXT({!Loop_WOLIs.Measurement_Item_Code__c}) &amp; ' | 측정 ' &amp; TEXT({!Loop_WOLIs.Measured_Value__c}) &amp; ' | 기준선 ' &amp; TEXT({!Loop_WOLIs.Baseline_Value__c}) &amp; ' | 기준선대비 ' &amp; TEXT({!Loop_WOLIs.Drift_From_Baseline__c}) &amp; '% | 판정 ' &amp; TEXT({!Loop_WOLIs.Judgement__c}) &amp; ' | 추세 ' &amp; TEXT({!Loop_WOLIs.Trend_Flag__c}) &amp; ' | 회차 ' &amp; TEXT({!Loop_WOLIs.Retest_Round__c}) &amp; ' | 사유 ' &amp; TEXT({!Loop_WOLIs.Retest_Reason__c}) &amp; ' | 조치 ' &amp; {!Loop_WOLIs.Corrective_Action__c} &amp; '\n'</expression>
+    </formulas>
+    <interviewLabel>출동 브리핑 생성</interviewLabel>
+    <label>출동 브리핑 생성</label>
+    <loops>
+        <locationY>50</locationY>
+        <collectionReference>Get_Asset_WOs</collectionReference>
+        <locationX>428</locationX>
+        <noMoreValuesConnector>
+            <targetReference>Get_WOLIs</targetReference>
+        </noMoreValuesConnector>
+        <name>Loop_WOs</name>
+        <description>Iterates through WorkOrders to collect their Ids</description>
+        <label>Loop WOs</label>
+        <nextValueConnector>
+            <targetReference>Add_WO_Id</targetReference>
+        </nextValueConnector>
+        <iterationOrder>Asc</iterationOrder>
+    </loops>
+    <loops>
+        <locationY>50</locationY>
+        <collectionReference>Get_WOLIs</collectionReference>
+        <locationX>806</locationX>
+        <noMoreValuesConnector>
+            <targetReference>Call_Prompt</targetReference>
+        </noMoreValuesConnector>
+        <name>Loop_WOLIs</name>
+        <description>Iterates through WorkOrderLineItems to build formatted history text</description>
+        <label>Loop WOLIs</label>
+        <nextValueConnector>
+            <targetReference>Build_History</targetReference>
+        </nextValueConnector>
+        <iterationOrder>Asc</iterationOrder>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <locationY>50</locationY>
+        <filterLogic>and</filterLogic>
+        <connector>
+            <targetReference>Get_Asset_WOs</targetReference>
+        </connector>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <locationX>176</locationX>
+        <queriedFields>AssetId</queriedFields>
+        <queriedFields>Subject</queriedFields>
+        <name>Get_This_WO</name>
+        <description>Retrieves the current WorkOrder to access its AssetId</description>
+        <label>Get This WO</label>
+        <filters>
+            <field>Id</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+    </recordLookups>
+    <recordLookups>
+        <locationY>50</locationY>
+        <filterLogic>and</filterLogic>
+        <connector>
+            <targetReference>Loop_WOs</targetReference>
+        </connector>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <locationX>302</locationX>
+        <queriedFields>Id</queriedFields>
+        <name>Get_Asset_WOs</name>
+        <description>Retrieves all WorkOrders associated with the same Asset</description>
+        <label>Get Asset WOs</label>
+        <filters>
+            <field>AssetId</field>
+            <value>
+                <elementReference>Get_This_WO.AssetId</elementReference>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>WorkOrder</object>
+    </recordLookups>
+    <recordLookups>
+        <locationY>50</locationY>
+        <filterLogic>and</filterLogic>
+        <locationX>680</locationX>
+        <queriedFields>Measurement_Item_Code__c</queriedFields>
+        <queriedFields>Measured_Value__c</queriedFields>
+        <queriedFields>Baseline_Value__c</queriedFields>
+        <queriedFields>Drift_From_Baseline__c</queriedFields>
+        <queriedFields>Judgement__c</queriedFields>
+        <queriedFields>Line_Item_Role__c</queriedFields>
+        <queriedFields>Retest_Round__c</queriedFields>
+        <queriedFields>Retest_Reason__c</queriedFields>
+        <queriedFields>Corrective_Action__c</queriedFields>
+        <queriedFields>Trend_Flag__c</queriedFields>
+        <description>Retrieves WorkOrderLineItems with measurement data for all related WorkOrders</description>
+        <label>Get WOLIs</label>
+        <filters>
+            <field>WorkOrderId</field>
+            <value>
+                <elementReference>varWOIds</elementReference>
+            </value>
+            <operator>In</operator>
+        </filters>
+        <filters>
+            <field>Measured_Value__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+            <operator>IsNull</operator>
+        </filters>
+        <connector>
+            <targetReference>Loop_WOLIs</targetReference>
+        </connector>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <sortOrder>Asc</sortOrder>
+        <name>Get_WOLIs</name>
+        <sortField>Measurement_Item_Code__c</sortField>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>WorkOrderLineItem</object>
+    </recordLookups>
+    <recordUpdates>
+        <locationY>50</locationY>
+        <filterLogic>and</filterLogic>
+        <connector>
+            <targetReference>Show_History</targetReference>
+        </connector>
+        <locationX>1190</locationX>
+        <name>Save_Briefing</name>
+        <description>Writes the generated dispatch briefing to the current WorkOrder</description>
+        <label>Save Briefing</label>
+        <filters>
+            <field>Id</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <inputAssignments>
+            <field>Dispatch_Briefing__c</field>
+            <value>
+                <elementReference>varBriefing</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <screens>
+        <locationY>50</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <locationX>1322</locationX>
+        <name>Show_History</name>
+        <description>Displays the generated dispatch briefing to the user</description>
+        <label>Show History</label>
+        <fields>
+            <name>measurementHistoryDisplay</name>
+            <description>Display Text field that shows the generated dispatch briefing to the user</description>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>{!varBriefing}</fieldText>
+        </fields>
+    </screens>
+    <start>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Get_This_WO</targetReference>
+        </connector>
+        <locationX>50</locationX>
+        <triggerType>None</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <dataType>String</dataType>
+        <name>recordId</name>
+        <isCollection>false</isCollection>
+        <description>Input variable that receives the current WorkOrder Id when the flow is launched</description>
+    </variables>
+    <variables>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <dataType>String</dataType>
+        <name>varWOIds</name>
+        <isCollection>true</isCollection>
+        <description>Text collection variable that accumulates WorkOrder Ids from all WorkOrders sharing the same Asset</description>
+    </variables>
+    <variables>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <dataType>String</dataType>
+        <name>varHistory</name>
+        <isCollection>false</isCollection>
+        <description>Text variable that accumulates formatted measurement history lines for display</description>
+    </variables>
+    <variables>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <dataType>String</dataType>
+        <name>varBriefing</name>
+        <isCollection>false</isCollection>
+        <description>Text variable that holds the generated dispatch briefing returned by the prompt template</description>
+    </variables>
+</Flow>
