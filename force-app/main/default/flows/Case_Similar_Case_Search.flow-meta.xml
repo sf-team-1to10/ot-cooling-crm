@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65</apiVersion>
+    <assignments>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Get_Same_Model_Assets</targetReference>
+        </connector>
+        <locationX>428</locationX>
+        <assignmentItems>
+            <assignToReference>varAssetIds</assignToReference>
+            <value>
+                <elementReference>Loop_Assets.Id</elementReference>
+            </value>
+            <operator>Add</operator>
+        </assignmentItems>
+        <name>Add_Asset_Id</name>
+        <description>같은 모델 Asset의 Id를 컬렉션에 누적</description>
+        <label>Add Asset Id</label>
+    </assignments>
+    <assignments>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Loop_Cases</targetReference>
+        </connector>
+        <locationX>1058</locationX>
+        <assignmentItems>
+            <assignToReference>varSimilar</assignToReference>
+            <value>
+                <elementReference>Case_Line</elementReference>
+            </value>
+            <operator>Add</operator>
+        </assignmentItems>
+        <name>Build_Similar</name>
+        <description>같은 모델·같은 증상 과거 Case를 한 줄씩 텍스트로 조립</description>
+        <label>Build Similar</label>
+    </assignments>
+    <actionCalls>
+        <locationY>50</locationY>
+        <actionName>Similar_Case_Search</actionName>
+        <actionType>generatePromptResponse</actionType>
+        <connector>
+            <targetReference>Show_Analysis</targetReference>
+        </connector>
+        <locationX>1310</locationX>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>Input:Current_Case</name>
+            <value>
+                <elementReference>Current_Case_Line</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Input:Similar_Cases</name>
+            <value>
+                <elementReference>varSimilar</elementReference>
+            </value>
+        </inputParameters>
+        <name>Call_Prompt</name>
+        <description>유사 사례 검색 프롬프트 템플릿을 조립된 목록으로 호출</description>
+        <label>Call Prompt</label>
+        <nameSegment>Similar_Case_Search</nameSegment>
+        <outputParameters>
+            <assignToReference>varAnalysis</assignToReference>
+            <name>promptResponse</name>
+        </outputParameters>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </actionCalls>
+    <environments>Default</environments>
+    <formulas>
+        <name>Case_Line</name>
+        <dataType>String</dataType>
+        <expression>{!Loop_Cases.CaseNumber} &amp; ' | 접수 ' &amp; TEXT(DATEVALUE({!Loop_Cases.CreatedDate})) &amp; ' | 종료 ' &amp; IF(ISBLANK({!Loop_Cases.ClosedDate}), '(미종료)', TEXT(DATEVALUE({!Loop_Cases.ClosedDate}))) &amp; ' | 증상 ' &amp; TEXT({!Loop_Cases.Symptom_Category__c}) &amp; ' | 원인 ' &amp; IF(ISBLANK({!Loop_Cases.Diagnosed_Cause__c}), '(미규명)', {!Loop_Cases.Diagnosed_Cause__c}) &amp; ' | 복구시간 ' &amp; IF(ISBLANK({!Loop_Cases.ClosedDate}), '', TEXT(ROUND(({!Loop_Cases.ClosedDate} - {!Loop_Cases.CreatedDate}) * 24, 1))) &amp; '\n'</expression>
+    </formulas>
+    <formulas>
+        <name>Current_Case_Line</name>
+        <dataType>String</dataType>
+        <expression>{!Get_This_Case.CaseNumber} &amp; ' | 접수 ' &amp; TEXT(DATEVALUE({!Get_This_Case.CreatedDate})) &amp; ' | 증상 ' &amp; TEXT({!Get_This_Case.Symptom_Category__c}) &amp; ' | 원인 ' &amp; IF(ISBLANK({!Get_This_Case.Diagnosed_Cause__c}), '(진행중)', {!Get_This_Case.Diagnosed_Cause__c})</expression>
+    </formulas>
+    <interviewLabel>유사 사례 검색</interviewLabel>
+    <label>유사 사례 검색</label>
+    <loops>
+        <locationY>50</locationY>
+        <collectionReference>Get_Same_Model_Assets</collectionReference>
+        <locationX>302</locationX>
+        <noMoreValuesConnector>
+            <targetReference>Get_Similar_Cases</targetReference>
+        </noMoreValuesConnector>
+        <name>Loop_Assets</name>
+        <description>같은 모델(Product2Id) Asset을 순회하며 Id 수집</description>
+        <label>Loop Assets</label>
+        <nextValueConnector>
+            <targetReference>Add_Asset_Id</targetReference>
+        </nextValueConnector>
+        <iterationOrder>Asc</iterationOrder>
+    </loops>
+    <loops>
+        <locationY>50</locationY>
+        <collectionReference>Get_Similar_Cases</collectionReference>
+        <locationX>932</locationX>
+        <noMoreValuesConnector>
+            <targetReference>Call_Prompt</targetReference>
+        </noMoreValuesConnector>
+        <name>Loop_Cases</name>
+        <description>같은 모델·같은 증상 과거 Case를 순회하며 텍스트 조립</description>
+        <label>Loop Cases</label>
+        <nextValueConnector>
+            <targetReference>Build_Similar</targetReference>
+        </nextValueConnector>
+        <iterationOrder>Asc</iterationOrder>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <locationY>50</locationY>
+        <filterLogic>and</filterLogic>
+        <connector>
+            <targetReference>Get_This_Asset</targetReference>
+        </connector>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <locationX>50</locationX>
+        <queriedFields>CaseNumber</queriedFields>
+        <queriedFields>AssetId</queriedFields>
+        <queriedFields>Symptom_Category__c</queriedFields>
+        <queriedFields>Diagnosed_Cause__c</queriedFields>
+        <queriedFields>CreatedDate</queriedFields>
+        <name>Get_This_Case</name>
+        <description>현재 Case를 조회해 Asset·증상분류를 확보</description>
+        <label>Get This Case</label>
+        <filters>
+            <field>Id</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Case</object>
+    </recordLookups>
+    <recordLookups>
+        <locationY>170</locationY>
+        <filterLogic>and</filterLogic>
+        <connector>
+            <targetReference>Get_Same_Model_Assets</targetReference>
+        </connector>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <locationX>176</locationX>
+        <queriedFields>Product2Id</queriedFields>
+        <name>Get_This_Asset</name>
+        <description>현재 Case의 Asset을 조회해 모델(Product2Id)을 확보</description>
+        <label>Get This Asset</label>
+        <filters>
+            <field>Id</field>
+            <value>
+                <elementReference>Get_This_Case.AssetId</elementReference>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Asset</object>
+    </recordLookups>
+    <recordLookups>
+        <locationY>50</locationY>
+        <filterLogic>and</filterLogic>
+        <connector>
+            <targetReference>Loop_Assets</targetReference>
+        </connector>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <locationX>176</locationX>
+        <queriedFields>Id</queriedFields>
+        <name>Get_Same_Model_Assets</name>
+        <description>같은 모델(Product2Id)의 모든 Asset을 조회</description>
+        <label>Get Same Model Assets</label>
+        <filters>
+            <field>Product2Id</field>
+            <value>
+                <elementReference>Get_This_Asset.Product2Id</elementReference>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Asset</object>
+    </recordLookups>
+    <recordLookups>
+        <locationY>50</locationY>
+        <filterLogic>1 AND 2 AND 3</filterLogic>
+        <locationX>680</locationX>
+        <queriedFields>CaseNumber</queriedFields>
+        <queriedFields>Symptom_Category__c</queriedFields>
+        <queriedFields>Diagnosed_Cause__c</queriedFields>
+        <queriedFields>CreatedDate</queriedFields>
+        <queriedFields>ClosedDate</queriedFields>
+        <description>같은 모델 Asset에 걸린 같은 증상의 과거 Case 전수 조회. 현재 Case는 제외</description>
+        <label>Get Similar Cases</label>
+        <filters>
+            <field>AssetId</field>
+            <value>
+                <elementReference>varAssetIds</elementReference>
+            </value>
+            <operator>In</operator>
+        </filters>
+        <filters>
+            <field>Symptom_Category__c</field>
+            <value>
+                <elementReference>Get_This_Case.Symptom_Category__c</elementReference>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <filters>
+            <field>Id</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+            <operator>NotEqualTo</operator>
+        </filters>
+        <connector>
+            <targetReference>Loop_Cases</targetReference>
+        </connector>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+        <sortOrder>Asc</sortOrder>
+        <name>Get_Similar_Cases</name>
+        <sortField>CreatedDate</sortField>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Case</object>
+    </recordLookups>
+    <screens>
+        <locationY>50</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <locationX>1442</locationX>
+        <name>Show_Analysis</name>
+        <description>생성된 유사 사례 분석을 사용자에게 표시</description>
+        <label>Show Analysis</label>
+        <fields>
+            <name>similarCaseAnalysisDisplay</name>
+            <description>유사 사례 분석 결과를 표시하는 Display Text 필드</description>
+            <fieldType>DisplayText</fieldType>
+            <fieldText>{!varAnalysis}</fieldText>
+        </fields>
+    </screens>
+    <start>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Get_This_Case</targetReference>
+        </connector>
+        <locationX>50</locationX>
+        <triggerType>None</triggerType>
+    </start>
+    <status>Draft</status>
+    <variables>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <dataType>String</dataType>
+        <name>recordId</name>
+        <isCollection>false</isCollection>
+        <description>Flow 실행 시 현재 Case Id를 받는 입력 변수</description>
+    </variables>
+    <variables>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <dataType>String</dataType>
+        <name>varAssetIds</name>
+        <isCollection>true</isCollection>
+        <description>같은 모델 Asset Id를 누적하는 텍스트 컬렉션</description>
+    </variables>
+    <variables>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <dataType>String</dataType>
+        <name>varSimilar</name>
+        <isCollection>false</isCollection>
+        <description>같은 모델·같은 증상 과거 Case 목록을 조립하는 텍스트</description>
+    </variables>
+    <variables>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <dataType>String</dataType>
+        <name>varAnalysis</name>
+        <isCollection>false</isCollection>
+        <description>프롬프트 템플릿이 반환한 유사 사례 분석 텍스트</description>
+    </variables>
+</Flow>
