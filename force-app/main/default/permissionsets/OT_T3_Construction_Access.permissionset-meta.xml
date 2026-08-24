@@ -3,6 +3,36 @@
     <description>T3 구축·인수 트랙 커스텀 객체·필드 FLS. System Administrator에게 할당하여 배포로 생성된 필드의 접근 권한을 보장한다.</description>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Asset.Service_Ready_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Asset.Service_Ready_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Asset.Service_Ready_Acceptor__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Asset.Maintenance_Enabled__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Asset.Frequency__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Asset.Next_Inspection_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Technical_Baseline_Spec__c.Measurement_Item_Code__c</field>
         <readable>true</readable>
     </fieldPermissions>

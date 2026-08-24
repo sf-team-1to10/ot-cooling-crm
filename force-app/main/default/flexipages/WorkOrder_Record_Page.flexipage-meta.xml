@@ -278,6 +278,36 @@
                 <identifier>RecordHasEvidenceColumn2Field9</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Acceptance_Type__c</fieldItem>
+                <identifier>RecordAcceptanceTypeColumn2Field10</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Acceptance_Condition__c</fieldItem>
+                <identifier>RecordAcceptanceConditionColumn2Field11</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Acceptance_Date__c</fieldItem>
+                <identifier>RecordAcceptanceDateColumn2Field12</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-FieldSection-Column2</name>
         <type>Facet</type>
     </flexiPageRegions>
