@@ -68,6 +68,11 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>WorkOrder.Dispatch_Briefing__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>WorkOrder.Repair_Result__c</field>
         <readable>true</readable>
         <editable>true</editable>
@@ -176,5 +181,20 @@
         <field>Case.Billable__c</field>
         <readable>true</readable>
         <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.SlaStartDate</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.SlaExitDate</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.MilestoneStatus</field>
+        <readable>true</readable>
+        <editable>false</editable>
     </fieldPermissions>
 </PermissionSet>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
@@ -7,67 +8,54 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Subject</fieldItem>
-                <identifier>RecordSubjectPrimaryField</identifier>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNamePrimaryField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-PrimaryFields</name>
         <type>Facet</type>
     </flexiPageRegions>
+    
+    
     <flexiPageRegions>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Status</fieldItem>
-                <identifier>RecordStatusSecondaryField0</identifier>
+                <fieldItem>Record.Industry</fieldItem>
+                <identifier>RecordIndustrySecondaryField0</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.AssetId</fieldItem>
-                <identifier>RecordAssetIdSecondaryField1</identifier>
+                <fieldItem>Record.Phone</fieldItem>
+                <identifier>RecordPhoneSecondaryField1</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ServiceTerritoryId</fieldItem>
-                <identifier>RecordServiceTerritoryIdSecondaryField2</identifier>
+                <fieldItem>Record.Type</fieldItem>
+                <identifier>RecordTypeSecondaryField2</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.StartDate</fieldItem>
-                <identifier>RecordStartDateSecondaryField3</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Technical_Baseline__c</fieldItem>
-                <identifier>RecordTechnical_Baseline__cSecondaryField4</identifier>
-            </fieldInstance>
-        </itemInstances>
+        
         <name>Facet-SecondaryFields</name>
         <type>Facet</type>
     </flexiPageRegions>
+    
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -86,14 +74,18 @@
                     <name>numVisibleActions</name>
                     <value>3</value>
                 </componentInstanceProperties>
+                
                 <componentInstanceProperties>
                     <name>primaryField</name>
                     <value>Facet-PrimaryFields</value>
                 </componentInstanceProperties>
+                
+                
                 <componentInstanceProperties>
                     <name>secondaryFields</name>
                     <value>Facet-SecondaryFields</value>
                 </componentInstanceProperties>
+                
                 <componentName>record_flexipage:dynamicHighlights</componentName>
                 <identifier>record_flexipage_dynamicHighlights</identifier>
             </componentInstance>
@@ -123,204 +115,89 @@
         <name>relatedTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Field Section: Detail Fields -->
+    
+    <!-- Column 1 Fields -->
     <flexiPageRegions>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Dispatch_Briefing__c</fieldItem>
-                <identifier>RecordDispatch_Briefing__cColumn1Field0</identifier>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNameColumn1Field0</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Subject</fieldItem>
-                <identifier>RecordSubjectColumn1Field0</identifier>
+                <fieldItem>Record.AccountNumber</fieldItem>
+                <identifier>RecordAccountNumberColumn1Field1</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Status</fieldItem>
-                <identifier>RecordStatusColumn1Field1</identifier>
+                <fieldItem>Record.Industry</fieldItem>
+                <identifier>RecordIndustryColumn1Field2</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.AssetId</fieldItem>
-                <identifier>RecordAssetIdColumn1Field2</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Address</fieldItem>
-                <identifier>RecordAddressColumn1Field3</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.StartDate</fieldItem>
-                <identifier>RecordStartDateColumn1Field4</identifier>
-            </fieldInstance>
-        </itemInstances>
+        
         <name>Facet-FieldSection-Column1</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Column 2 Fields -->
+    
     <flexiPageRegions>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.EndDate</fieldItem>
-                <identifier>RecordEndDateColumn2Field0</identifier>
+                <fieldItem>Record.Phone</fieldItem>
+                <identifier>RecordPhoneColumn2Field0</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Technical_Baseline__c</fieldItem>
-                <identifier>RecordTechnical_Baseline__cColumn2Field1</identifier>
+                <fieldItem>Record.Website</fieldItem>
+                <identifier>RecordWebsiteColumn2Field1</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.WorkTypeId</fieldItem>
-                <identifier>RecordWorkTypeIdColumn2Field2</identifier>
+                <fieldItem>Record.Type</fieldItem>
+                <identifier>RecordTypeColumn2Field2</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Work_Subtype__c</fieldItem>
-                <identifier>RecordWork_Subtype__cColumn2Field3</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Description</fieldItem>
-                <identifier>RecordDescriptionColumn2Field4</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Site_Issue_Status__c</fieldItem>
-                <identifier>RecordSiteIssueStatusColumn2Field5</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Site_Issue__c</fieldItem>
-                <identifier>RecordSiteIssueColumn2Field6</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Issue_Impact__c</fieldItem>
-                <identifier>RecordIssueImpactColumn2Field7</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Open_Punch_Count__c</fieldItem>
-                <identifier>RecordOpenPunchCountColumn2Field8</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Has_Evidence__c</fieldItem>
-                <identifier>RecordHasEvidenceColumn2Field9</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Acceptance_Type__c</fieldItem>
-                <identifier>RecordAcceptanceTypeColumn2Field10</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Acceptance_Condition__c</fieldItem>
-                <identifier>RecordAcceptanceConditionColumn2Field11</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Acceptance_Date__c</fieldItem>
-                <identifier>RecordAcceptanceDateColumn2Field12</identifier>
-            </fieldInstance>
-        </itemInstances>
+        
         <name>Facet-FieldSection-Column2</name>
         <type>Facet</type>
     </flexiPageRegions>
+    
+    <!-- Field Section: Column Facets -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -332,6 +209,7 @@
                 <identifier>flexipage_column1</identifier>
             </componentInstance>
         </itemInstances>
+        
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -342,9 +220,11 @@
                 <identifier>flexipage_column2</identifier>
             </componentInstance>
         </itemInstances>
+        
         <name>Facet-FieldSection-Columns</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Field Section Component -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -407,10 +287,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>label</name>
-                    <value>Tabs</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>maintabs</value>
                 </componentInstanceProperties>
@@ -461,10 +337,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>label</name>
-                    <value>Tabs</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>sidebartabs</value>
                 </componentInstanceProperties>
@@ -475,8 +347,9 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>WorkOrder_Record_Page</masterLabel>
-    <sobjectType>WorkOrder</sobjectType>
+    <description>Hall A 라이프사이클 360 뷰 - Asset·Case·WorkOrder·Contract 관련목록 통합 조회 (T1-14)</description>
+    <masterLabel>Hall A 라이프사이클 360</masterLabel>
+    <sobjectType>Account</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
