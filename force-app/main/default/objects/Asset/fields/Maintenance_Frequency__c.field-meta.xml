@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Frequency__c</fullName>
+    <fullName>Maintenance_Frequency__c</fullName>
     <description>정비 주기. Asset_Next_Inspection_Date_Calc Flow가 이 값을 읽어 Next_Inspection_Date__c를 계산한다 — 이 필드는 인수 확정 전에 이미 세팅돼 있다는 전제(Flow가 기본값을 정하지 않음).</description>
     <label>정비 주기</label>
     <required>false</required>
