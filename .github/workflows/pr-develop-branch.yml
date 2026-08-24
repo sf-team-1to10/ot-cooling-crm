@@ -123,6 +123,8 @@ jobs:
       # This helps reducing deployment times
       - name: "Create delta packages for new, modified or deleted metadata"
         run: |
+          echo "--- 이번 PR의 delta 파일 목록 ---"
+          find changed-sources/force-app -type f | sort
           mkdir changed-sources
           sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output changed-sources/ --generate-delta --source force-app/
 
