@@ -130,6 +130,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
+                <fieldItem>Record.Dispatch_Briefing__c</fieldItem>
+                <identifier>RecordDispatch_Briefing__cColumn1Field0</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
                 <fieldItem>Record.Subject</fieldItem>
                 <identifier>RecordSubjectColumn1Field0</identifier>
             </fieldInstance>
@@ -256,6 +266,56 @@
                 </fieldInstanceProperties>
                 <fieldItem>Record.Issue_Impact__c</fieldItem>
                 <identifier>RecordIssueImpactColumn2Field7</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Open_Punch_Count__c</fieldItem>
+                <identifier>RecordOpenPunchCountColumn2Field8</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Has_Evidence__c</fieldItem>
+                <identifier>RecordHasEvidenceColumn2Field9</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Acceptance_Type__c</fieldItem>
+                <identifier>RecordAcceptanceTypeColumn2Field10</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Acceptance_Condition__c</fieldItem>
+                <identifier>RecordAcceptanceConditionColumn2Field11</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Acceptance_Date__c</fieldItem>
+                <identifier>RecordAcceptanceDateColumn2Field12</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-FieldSection-Column2</name>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65</apiVersion>
+    <description>추세 이상(Trend_Flag__c=주의/이상)이 감지된 WorkOrderLineItem에서 예방정비 발견 Case를 자동 생성한다. 측정항목에 따라 증상 분류를 분기하고, 같은 Asset+증상 분류에 열린 Case가 이미 있으면 생성하지 않는다. T4-05/07 XML을 템플릿으로 직접 작성(Flow 파이프라인 타임아웃 회피).</description>
+    <decisions>
+        <name>Route_By_Measurement</name>
+        <label>측정항목 분기</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <defaultConnectorLabel>해당 측정항목 없음(종료)</defaultConnectorLabel>
+        <rules>
+            <name>Flow_Rate</name>
+            <label>유량 → 유량저하</label>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Measurement_Item_Code__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>유량</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Open_Cases</targetReference>
+            </connector>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>No_Existing_Open_Case</name>
+        <label>열린 Case 없음 확인</label>
+        <locationX>176</locationX>
+        <locationY>398</locationY>
+        <defaultConnectorLabel>이미 열린 Case 있음(종료)</defaultConnectorLabel>
+        <rules>
+            <name>No_Open_Case</name>
+            <label>열린 Case 없음</label>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Open_Cases</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Anomaly_Case</targetReference>
+            </connector>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <name>Case_Description</name>
+        <dataType>String</dataType>
+        <expression>"원본 Work Order: " &amp; {!$Record.WorkOrder.WorkOrderNumber} &amp; " / WOLI: " &amp; {!$Record.LineItemNumber}
+&amp; " / 측정항목: " &amp; TEXT({!$Record.Measurement_Item_Code__c})
+&amp; " / 측정값: " &amp; TEXT({!$Record.Measured_Value__c})
+&amp; " / 추세판정: " &amp; TEXT({!$Record.Trend_Flag__c})</expression>
+    </formulas>
+    <formulas>
+        <name>Case_Subject</name>
+        <dataType>String</dataType>
+        <expression>"[예방정비 발견] " &amp; {!$Record.Asset.Name} &amp; " " &amp; TEXT({!$Record.Measurement_Item_Code__c}) &amp; " 추세이상"</expression>
+    </formulas>
+    <interviewLabel>이상 항목 → Case 자동 생성</interviewLabel>
+    <label>이상 항목 → Case 자동 생성</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_Anomaly_Case</name>
+        <label>예방정비 발견 Case 생성</label>
+        <locationX>176</locationX>
+        <locationY>518</locationY>
+        <inputAssignments>
+            <field>AssetId</field>
+            <value>
+                <elementReference>$Record.AssetId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>Case_Description</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Origin</field>
+            <value>
+                <stringValue>Web</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Source_Maintenance_Work_Order__c</field>
+            <value>
+                <elementReference>$Record.WorkOrderId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>New</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>Case_Subject</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Symptom_Category__c</field>
+            <value>
+                <stringValue>유량저하</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Case</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_Open_Cases</name>
+        <label>열린 Case 조회</label>
+        <locationX>176</locationX>
+        <locationY>278</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>No_Existing_Open_Case</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>AssetId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.AssetId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Symptom_Category__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>유량저하</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>IsClosed</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>Route_By_Measurement</targetReference>
+        </connector>
+        <filterFormula>AND(
+  NOT(ISBLANK(TEXT({!$Record.Trend_Flag__c}))),
+  TEXT({!$Record.Trend_Flag__c}) &lt;&gt; &quot;정상&quot;,
+  NOT(ISBLANK({!$Record.AssetId}))
+)</filterFormula>
+        <object>WorkOrderLineItem</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
