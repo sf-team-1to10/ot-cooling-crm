@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <name>Already_Has_Acceptance_Date</name>
+        <label>Already Has Acceptance Date?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>이미 기록됨 (종료)</defaultConnectorLabel>
+        <rules>
+            <name>Acceptance_Date_Blank</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Acceptance_Date__c</leftValueReference>
+                <operator>IsBlank</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Sla_Process</targetReference>
+            </connector>
+            <label>비어 있음 - 최초 기록</label>
+        </rules>
+    </decisions>
+    <formulas>
+        <name>EntitlementNameFormula</name>
+        <dataType>String</dataType>
+        <expression>{!$Record.Name} &amp; &quot; 보증&quot;</expression>
+    </formulas>
+    <formulas>
+        <name>ServiceContractNameFormula</name>
+        <dataType>String</dataType>
+        <expression>{!$Record.Name} &amp; &quot; 서비스계약&quot;</expression>
+    </formulas>
+    <formulas>
+        <name>WarrantyEndDateFormula</name>
+        <dataType>Date</dataType>
+        <expression>ADDMONTHS({!$Record.Service_Ready_Date__c}, {!WarrantyMonthsFormula})</expression>
+    </formulas>
+    <formulas>
+        <name>WarrantyMonthsFormula</name>
+        <dataType>Number</dataType>
+        <expression>CASE(TEXT({!$Record.Warranty_Type__c}),
+&quot;기본보증&quot;, 12,
+&quot;연장보증&quot;, 48,
+&quot;AMC&quot;, 12,
+&quot;무보증&quot;, 0,
+12)</expression>
+        <scale>0</scale>
+    </formulas>
+    <interviewLabel>Asset Warranty On Acceptance {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Asset Warranty On Acceptance</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>보증 기산일(Acceptance_Date__c 예정값)을 시작일로, 보증 유형에 따른 개월 수를 더한 값을 종료일로 하는 Entitlement 생성</description>
+        <name>Create_Entitlement</name>
+        <label>Create Entitlement</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Update_Asset_Acceptance_Date</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value>
+                <elementReference>$Record.AccountId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>AssetId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>EndDate</field>
+            <value>
+                <elementReference>WarrantyEndDateFormula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Name</field>
+            <value>
+                <elementReference>EntitlementNameFormula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ServiceContractId</field>
+            <value>
+                <elementReference>ServiceContractIdVar</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>SlaProcessId</field>
+            <value>
+                <elementReference>Get_Sla_Process.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>StartDate</field>
+            <value>
+                <elementReference>$Record.Service_Ready_Date__c</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Entitlement</object>
+    </recordCreates>
+    <recordCreates>
+        <description>인수 확정 시 보증 기간과 동일한 기간의 서비스계약을 생성</description>
+        <name>Create_Service_Contract</name>
+        <label>Create Service Contract</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignRecordIdToReference>ServiceContractIdVar</assignRecordIdToReference>
+        <connector>
+            <targetReference>Create_Entitlement</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value>
+                <elementReference>$Record.AccountId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>EndDate</field>
+            <value>
+                <elementReference>WarrantyEndDateFormula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Name</field>
+            <value>
+                <elementReference>ServiceContractNameFormula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>StartDate</field>
+            <value>
+                <elementReference>$Record.Service_Ready_Date__c</elementReference>
+            </value>
+        </inputAssignments>
+        <object>ServiceContract</object>
+    </recordCreates>
+    <recordLookups>
+        <description>OT 서비스 표준 Entitlement Process 조회</description>
+        <name>Get_Sla_Process</name>
+        <label>Get Sla Process</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Create_Service_Contract</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>표준 서비스 SLA</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>SlaProcess</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <description>보증 기산일을 기록. 이 필드가 채워진 뒤에는 Decision의 IsBlank 조건에 걸려 다시 실행되지 않음(최종인수 재실행에도 불변)</description>
+        <name>Update_Asset_Acceptance_Date</name>
+        <label>Update Asset Acceptance Date</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Acceptance_Date__c</field>
+            <value>
+                <elementReference>$Record.Service_Ready_Date__c</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Asset</object>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Already_Has_Acceptance_Date</targetReference>
+        </connector>
+        <filterLogic>1 OR 2</filterLogic>
+        <filters>
+            <field>Service_Ready_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>준비완료</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Service_Ready_Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>조건부</stringValue>
+            </value>
+        </filters>
+        <object>Asset</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Create_Service_Contract에서 생성된 Service Contract의 Id를 담아, 이어지는 Create_Entitlement의 ServiceContractId에 넘겨주기 위한 변수</description>
+        <name>ServiceContractIdVar</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>
