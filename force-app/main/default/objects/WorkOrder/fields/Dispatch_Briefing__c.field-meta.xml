@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Dispatch_Briefing__c</fullName>
+    <description>복구 Work Order 발행 시 진단 이력 요약을 담아 현장 모바일 상단에 노출하는 출동 지시서. 서비스 엔지니어가 현장에서 처음부터 재파악하지 않도록 원격 진단 소견·잠정 원인·권고 조치를 전달한다. Agentforce(T4-19) 출동 전 진단 브리핑의 출력 저장소로도 쓰인다.</description>
+    <inlineHelpText>복구 WO 발행 시 진단 요약·잠정 원인·권고 조치를 기록합니다. 현장 모바일 상단에 표시됩니다.</inlineHelpText>
+    <label>출동 브리핑</label>
+    <length>32000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
+    <visibleLines>5</visibleLines>
+</CustomField>

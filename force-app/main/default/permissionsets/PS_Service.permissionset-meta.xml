@@ -10,6 +10,22 @@
     </fieldPermissions>
     <fieldPermissions>
         <field>WorkOrderLineItem.Trend_Flag__c</field>
+        <field>Case.Remote_Diagnosis__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Diagnosed_Cause__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Field_Visit_Required__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Reported_Symptom__c</field>
         <readable>true</readable>
         <editable>true</editable>
     </fieldPermissions>
@@ -144,6 +160,11 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>WorkOrder.Dispatch_Briefing__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>WorkOrder.Repair_Result__c</field>
         <readable>true</readable>
         <editable>true</editable>
@@ -252,5 +273,20 @@
         <field>Case.Billable__c</field>
         <readable>true</readable>
         <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.SlaStartDate</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.SlaExitDate</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.MilestoneStatus</field>
+        <readable>true</readable>
+        <editable>false</editable>
     </fieldPermissions>
 </PermissionSet>

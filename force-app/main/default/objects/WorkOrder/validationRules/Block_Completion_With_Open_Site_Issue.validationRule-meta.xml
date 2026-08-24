@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Block_Completion_With_Open_Site_Issue</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+   ISPICKVAL( Status, &quot;Completed&quot;),
+   OR(
+      ISPICKVAL( Site_Issue_Status__c, &quot;등록&quot;),
+      ISPICKVAL( Site_Issue_Status__c, &quot;확인중&quot;)
+   )
+)</errorConditionFormula>
+    <errorDisplayField>Site_Issue_Status__c</errorDisplayField>
+    <errorMessage>미해결 현장 이슈가 남아있어 완료 처리할 수 없습니다. 이슈를 조치완료 또는 변경요청전환 처리한 뒤 다시 저장하세요.</errorMessage>
+</ValidationRule>
