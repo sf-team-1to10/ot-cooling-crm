@@ -156,7 +156,16 @@
         <field>WorkOrder.Has_Evidence__c</field>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
+        <field>WorkOrder.Open_Punch_Count__c</field>
         <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Asset.Open_Items_Summary__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>true</editable>
         <field>WorkOrder.Technical_Baseline__c</field>
         <readable>true</readable>

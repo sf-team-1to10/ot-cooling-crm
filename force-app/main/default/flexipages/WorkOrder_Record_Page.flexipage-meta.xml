@@ -258,6 +258,26 @@
                 <identifier>RecordIssueImpactColumn2Field7</identifier>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Open_Punch_Count__c</fieldItem>
+                <identifier>RecordOpenPunchCountColumn2Field8</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Has_Evidence__c</fieldItem>
+                <identifier>RecordHasEvidenceColumn2Field9</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-FieldSection-Column2</name>
         <type>Facet</type>
     </flexiPageRegions>
