@@ -164,6 +164,11 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>WorkOrder.Problem__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Case.Warranty_Decision__c</field>
         <readable>true</readable>
         <editable>false</editable>
