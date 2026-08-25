@@ -171,29 +171,6 @@
         </connector>
     </assignments>
     <decisions>
-        <description>WO 위험 수준은 상향만 허용. 새 등급이 현재 등급보다 높을 때만 갱신한다(낮음1&lt;보통2&lt;높음3).</description>
-        <name>Check_Risk_Upgrade</name>
-        <label>Check Risk Upgrade</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <defaultConnectorLabel>No Change</defaultConnectorLabel>
-        <rules>
-            <name>Upgrade</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>varNewRiskRank</leftValueReference>
-                <operator>GreaterThan</operator>
-                <rightValue>
-                    <elementReference>fCurrentRiskRank</elementReference>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Update_WorkOrder_Risk</targetReference>
-            </connector>
-            <label>Upgrade</label>
-        </rules>
-    </decisions>
-    <decisions>
         <description>정렬은 CreatedDate 기준이라 소급 입력 시 실제 점검 순서와 다르다. 후보의 WorkOrder.StartDate가 현재 레코드의 점검일보다 이후면 미래 회차이므로 streak 계산에서 제외하고 다음 후보로 넘어간다.</description>
         <name>Check_In_Range</name>
         <label>Check In Range</label>
@@ -217,6 +194,29 @@
                 <targetReference>Loop_Recent</targetReference>
             </connector>
             <label>After Current</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>WO 위험 수준은 상향만 허용. 새 등급이 현재 등급보다 높을 때만 갱신한다(낮음1&lt;보통2&lt;높음3).</description>
+        <name>Check_Risk_Upgrade</name>
+        <label>Check Risk Upgrade</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>No Change</defaultConnectorLabel>
+        <rules>
+            <name>Upgrade</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varNewRiskRank</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>fCurrentRiskRank</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_WorkOrder_Risk</targetReference>
+            </connector>
+            <label>Upgrade</label>
         </rules>
     </decisions>
     <decisions>
@@ -353,16 +353,16 @@
         <expression>NOT(ISBLANK({!$Record.Drift_From_Baseline__c})) &amp;&amp; {!$Record.Drift_From_Baseline__c} &lt;= (-1 * {!varDropRate})</expression>
     </formulas>
     <formulas>
-        <description>규칙 ③: 허용 하한까지 잔여 여유(%)가 임계치 미만이면서 기준선 대비 하락이 -6% 이하. Threshold_Min__c가 비어 있으면 건너뛴다(해당 안 됨).</description>
-        <name>fRule3_Margin</name>
-        <dataType>Boolean</dataType>
-        <expression>NOT(ISBLANK({!$Record.Threshold_Min__c})) &amp;&amp; ((({!$Record.Measured_Value__c} - {!$Record.Threshold_Min__c}) / {!$Record.Threshold_Min__c}) * 100 &lt; {!Get_Threshold.Remaining_Margin_Pct__c}) &amp;&amp; {!$Record.Drift_From_Baseline__c} &lt;= -6</expression>
-    </formulas>
-    <formulas>
         <description>규칙 ②: 최근 회차부터 이어진 하락 연속 횟수가 임계치 이상</description>
         <name>fRule2_Consecutive</name>
         <dataType>Boolean</dataType>
         <expression>{!varStreak} &gt;= {!varConsec}</expression>
+    </formulas>
+    <formulas>
+        <description>규칙 ③: 허용 하한까지 잔여 여유(%)가 임계치 미만이면서 기준선 대비 하락이 -6% 이하. Threshold_Min__c가 비어 있으면 건너뛴다(해당 안 됨).</description>
+        <name>fRule3_Margin</name>
+        <dataType>Boolean</dataType>
+        <expression>NOT(ISBLANK({!$Record.Threshold_Min__c})) &amp;&amp; ((({!$Record.Measured_Value__c} - {!$Record.Threshold_Min__c}) / {!$Record.Threshold_Min__c}) * 100 &lt; {!Get_Threshold.Remaining_Margin_Pct__c}) &amp;&amp; {!$Record.Drift_From_Baseline__c} &lt;= -6</expression>
     </formulas>
     <interviewLabel>WOLI 추세 이상 판정 {!$Flow.CurrentDateTime}</interviewLabel>
     <label>WOLI 추세 이상 판정 (Trend Flag)</label>
