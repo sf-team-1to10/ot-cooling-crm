@@ -19,9 +19,9 @@
             <actionType>stepInteractive</actionType>
             <assignees>
                 <assignee>
-                    <elementReference>$Record.OwnerId</elementReference>
+                    <stringValue>CR_Change_Management</stringValue>
                 </assignee>
-                <assigneeType>User</assigneeType>
+                <assigneeType>Queue</assigneeType>
             </assignees>
             <canAssigneeEdit>false</canAssigneeEdit>
             <entryConditionLogic>and</entryConditionLogic>
@@ -66,9 +66,9 @@
             <actionType>stepInteractive</actionType>
             <assignees>
                 <assignee>
-                    <elementReference>$Record.OwnerId</elementReference>
+                    <stringValue>CR_Change_Management</stringValue>
                 </assignee>
-                <assigneeType>User</assigneeType>
+                <assigneeType>Queue</assigneeType>
             </assignees>
             <canAssigneeEdit>false</canAssigneeEdit>
             <entryConditionLogic>and</entryConditionLogic>
@@ -113,9 +113,9 @@
             <actionType>stepInteractive</actionType>
             <assignees>
                 <assignee>
-                    <elementReference>$Record.OwnerId</elementReference>
+                    <stringValue>CR_Change_Management</stringValue>
                 </assignee>
-                <assigneeType>User</assigneeType>
+                <assigneeType>Queue</assigneeType>
             </assignees>
             <canAssigneeEdit>false</canAssigneeEdit>
             <entryConditionLogic>and</entryConditionLogic>
@@ -157,9 +157,9 @@
             <actionType>stepInteractive</actionType>
             <assignees>
                 <assignee>
-                    <elementReference>$Record.OwnerId</elementReference>
+                    <stringValue>CR_Change_Management</stringValue>
                 </assignee>
-                <assigneeType>User</assigneeType>
+                <assigneeType>Queue</assigneeType>
             </assignees>
             <canAssigneeEdit>false</canAssigneeEdit>
             <entryConditionLogic>and</entryConditionLogic>
