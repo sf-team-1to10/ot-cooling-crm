@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65</apiVersion>
+    <description>다음 점검일이 도래한 정비 대상 Asset마다 예방정비 Work Order를 자동 생성하고, 다음 점검일을 주기만큼 이월하며 최근 점검일을 오늘로 갱신한다. 이월을 함께 처리하므로 매일 실행돼도 같은 Asset에 중복 생성되지 않는다.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>MonthsToAdvance</name>
+        <dataType>Number</dataType>
+        <expression>CASE(TEXT({!$Record.Maintenance_Frequency__c}), &quot;월 1회&quot;, 1, &quot;분기 1회&quot;, 3, &quot;반기 1회&quot;, 6, &quot;연 1회&quot;, 12, 3)</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <name>NextInspectionDateFormula</name>
+        <dataType>Date</dataType>
+        <expression>ADDMONTHS({!$Record.Next_Inspection_Date__c}, {!MonthsToAdvance})</expression>
+    </formulas>
+    <formulas>
+        <name>WOSubjectFormula</name>
+        <dataType>String</dataType>
+        <expression>&quot;예방정비 - &quot; &amp; {!$Record.Name} &amp; &quot; (&quot; &amp; TEXT({!$Record.Next_Inspection_Date__c}) &amp; &quot;)&quot;</expression>
+    </formulas>
+    <decisions>
+        <locationY>0</locationY>
+        <locationX>176</locationX>
+        <name>Check_Inspection_Due</name>
+        <description>다음 점검일이 오늘 이하로 도래한 Asset만 예방정비 WO 생성 경로로 보낸다. Scheduled Flow start 필터는 리소스 참조를 못 쓰므로 도래 판정을 여기서 한다.</description>
+        <defaultConnectorLabel>도래 안 함</defaultConnectorLabel>
+        <label>Check Inspection Due</label>
+        <rules>
+            <name>Inspection_Due</name>
+            <conditionLogic>1</conditionLogic>
+            <label>Inspection Due</label>
+            <conditions>
+                <leftValueReference>$Record.Next_Inspection_Date__c</leftValueReference>
+                <operator>LessThanOrEqualTo</operator>
+                <rightValue>
+                    <elementReference>$Flow.CurrentDate</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Preventive_WorkType</targetReference>
+            </connector>
+        </rules>
+    </decisions>
+    <interviewLabel>Preventive Maintenance WO Scheduler {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Preventive Maintenance WO Scheduler</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <locationY>134</locationY>
+        <locationX>176</locationX>
+        <name>Create_Preventive_WO</name>
+        <description>도래한 Asset에 예방정비 Work Order 1건 생성. 예방정비 WorkType과 세부유형을 지정한다.</description>
+        <connector>
+            <targetReference>Update_Asset_Inspection_Dates</targetReference>
+        </connector>
+        <label>Create Preventive WO</label>
+        <inputAssignments>
+            <field>AssetId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>New</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>WOSubjectFormula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WorkTypeId</field>
+            <value>
+                <elementReference>Get_Preventive_WorkType.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Work_Subtype__c</field>
+            <value>
+                <stringValue>예방정비</stringValue>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordCreates>
+    <recordLookups>
+        <locationY>0</locationY>
+        <locationX>176</locationX>
+        <name>Get_Preventive_WorkType</name>
+        <description>예방정비 WorkType 레코드를 조회해 생성할 WO에 연결한다.</description>
+        <connector>
+            <targetReference>Create_Preventive_WO</targetReference>
+        </connector>
+        <label>Get Preventive WorkType</label>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Name</field>
+            <value>
+                <stringValue>예방정비</stringValue>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkType</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <locationY>242</locationY>
+        <locationX>176</locationX>
+        <name>Update_Asset_Inspection_Dates</name>
+        <description>다음 점검일을 주기만큼 이월하고 최근 점검일을 오늘로 갱신한다. 이 갱신이 없으면 매일 실행 시 같은 Asset에 WO가 중복 생성된다.</description>
+        <inputAssignments>
+            <field>Last_Inspection_Date__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Next_Inspection_Date__c</field>
+            <value>
+                <elementReference>NextInspectionDateFormula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+        <label>Update Asset Inspection Dates</label>
+    </recordUpdates>
+    <start>
+        <locationY>0</locationY>
+        <locationX>50</locationX>
+        <connector>
+            <targetReference>Check_Inspection_Due</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <object>Asset</object>
+        <filters>
+            <field>Maintenance_Enabled__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+            <operator>EqualTo</operator>
+        </filters>
+        <filters>
+            <field>Next_Inspection_Date__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+            <operator>IsNull</operator>
+        </filters>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2026-08-26</startDate>
+            <startTime>02:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
