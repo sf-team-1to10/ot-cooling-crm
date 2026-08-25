@@ -19,7 +19,7 @@
             <actionType>stepInteractive</actionType>
             <assignees>
                 <assignee>
-                    <stringValue>chorea0408+crm@gmail.com.t2chg</stringValue>
+                    <elementReference>$Record.OwnerId</elementReference>
                 </assignee>
                 <assigneeType>User</assigneeType>
             </assignees>
@@ -66,7 +66,7 @@
             <actionType>stepInteractive</actionType>
             <assignees>
                 <assignee>
-                    <stringValue>chorea0408+crm@gmail.com.t2chg</stringValue>
+                    <elementReference>$Record.OwnerId</elementReference>
                 </assignee>
                 <assigneeType>User</assigneeType>
             </assignees>
@@ -113,7 +113,7 @@
             <actionType>stepInteractive</actionType>
             <assignees>
                 <assignee>
-                    <stringValue>chorea0408+crm@gmail.com.t2chg</stringValue>
+                    <elementReference>$Record.OwnerId</elementReference>
                 </assignee>
                 <assigneeType>User</assigneeType>
             </assignees>
@@ -157,7 +157,7 @@
             <actionType>stepInteractive</actionType>
             <assignees>
                 <assignee>
-                    <stringValue>chorea0408+crm@gmail.com.t2chg</stringValue>
+                    <elementReference>$Record.OwnerId</elementReference>
                 </assignee>
                 <assigneeType>User</assigneeType>
             </assignees>
