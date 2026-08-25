@@ -190,6 +190,19 @@
     </quickActionList>
     <relatedLists>
         <fields>Name</fields>
+        <fields>Description</fields>
+        <fields>Measurement_Item_Code__c</fields>
+        <fields>Spec_Value__c</fields>
+        <fields>Threshold_Min__c</fields>
+        <fields>Threshold_Max__c</fields>
+        <fields>Measured_Value__c</fields>
+        <fields>Judgement__c</fields>
+        <fields>Retest_Round__c</fields>
+        <fields>Corrective_Action__c</fields>
+        <relatedList>WorkOrderLineItems</relatedList>
+    </relatedLists>
+    <relatedLists>
+        <fields>Name</fields>
         <fields>ExecutionOrder</fields>
         <relatedList>NewWorkPlans</relatedList>
     </relatedLists>
@@ -217,11 +230,6 @@
         <fields>CreatedDate</fields>
         <fields>Status</fields>
         <relatedList>ServiceReportRelatedList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>Name</fields>
-        <fields>Asset</fields>
-        <relatedList>WorkOrderLineItems</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>TASK.SUBJECT</fields>
