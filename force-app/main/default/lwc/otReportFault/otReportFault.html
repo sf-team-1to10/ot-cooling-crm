@@ -1,0 +1,177 @@
+<template>
+    <section class="ot-main">
+        <span class="back" role="button" tabindex="0" onclick={handleBack}
+            >&larr; 내 자산</span
+        >
+        <h1>장애 신고</h1>
+        <div class="sub">선택한 장비의 장애를 접수합니다</div>
+
+        <!-- Success: created Case number + automation readback -->
+        <template lwc:if={hasResult}>
+            <div class="card">
+                <div class="success">
+                    <div class="success-title">신고가 접수되었습니다.</div>
+                    <dl class="kv">
+                        <dt>신고 번호</dt>
+                        <dd>{result.caseNumber}</dd>
+                        <dt>회사</dt>
+                        <dd>{result.accountName}</dd>
+                        <dt>담당자</dt>
+                        <dd>{result.contactName}</dd>
+                        <dt>보증 판정</dt>
+                        <dd>{result.warrantyDecision}</dd>
+                        <dt>보증 범위 유형</dt>
+                        <dd>{result.coverageType}</dd>
+                        <dt>유상/무상</dt>
+                        <dd>{billableLabel}</dd>
+                        <dt>접수시점 보증만료일</dt>
+                        <dd>
+                            <lightning-formatted-date-time
+                                value={result.warrantyEndDateAtRequest}
+                                year="numeric"
+                                month="2-digit"
+                                day="2-digit"
+                            ></lightning-formatted-date-time>
+                        </dd>
+                    </dl>
+                    <div class="foot">
+                        <button class="btn g" onclick={handleBack}>
+                            목록으로 돌아가기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Intake form (hidden once a Case is filed) -->
+        <template lwc:else>
+            <div class="card">
+                <!-- ① 어느 장비입니까? -->
+                <div class="step">
+                    <div class="qn"><i>1</i>어느 장비입니까?</div>
+
+                    <!-- Selected: read-only card (same look for both paths) -->
+                    <template lwc:if={hasSelection}>
+                        <div class="ctx sel">
+                            <div class="sel-main">
+                                <b>{selectedName}</b>
+                                <template lwc:if={selectedSubline}>
+                                    <span class="sel-sub"
+                                        >{selectedSubline}</span
+                                    >
+                                </template>
+                            </div>
+                            <button
+                                class="link"
+                                type="button"
+                                onclick={handleChangeAsset}
+                            >
+                                바꾸기
+                            </button>
+                        </div>
+                    </template>
+
+                    <!-- No selection: pick one of the user's assets -->
+                    <template lwc:else>
+                        <template lwc:if={hasPickList}>
+                            <div class="picker">
+                                <template
+                                    for:each={pickList}
+                                    for:item="asset"
+                                >
+                                    <div
+                                        key={asset.assetId}
+                                        class="prow"
+                                        role="button"
+                                        tabindex="0"
+                                        data-id={asset.assetId}
+                                        onclick={handlePick}
+                                    >
+                                        <div class="rmain">
+                                            <div class="rt">{asset.name}</div>
+                                            <template lwc:if={asset.subline}>
+                                                <div class="rs">
+                                                    {asset.subline}
+                                                </div>
+                                            </template>
+                                        </div>
+                                        <div class="chev">&rsaquo;</div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <div class="ctx muted">
+                                선택 가능한 장비가 없습니다.
+                            </div>
+                        </template>
+                    </template>
+                </div>
+
+                <!-- ② 어떤 증상입니까? -->
+                <div class="step">
+                    <div class="qn"><i>2</i>어떤 증상입니까?</div>
+                    <lightning-combobox
+                        variant="label-hidden"
+                        placeholder="선택하세요"
+                        options={symptomOptions}
+                        value={symptomCategory}
+                        onchange={handleSymptomChange}
+                        required
+                    ></lightning-combobox>
+                </div>
+
+                <!-- ③ 운영에 미치는 영향은? -->
+                <div class="step">
+                    <div class="qn"><i>3</i>운영에 미치는 영향은?</div>
+                    <lightning-combobox
+                        variant="label-hidden"
+                        placeholder="선택하세요"
+                        options={impactOptions}
+                        value={impactLevel}
+                        onchange={handleImpactChange}
+                        required
+                    ></lightning-combobox>
+                </div>
+
+                <!-- ④ 상황을 적어주세요 -->
+                <div class="step">
+                    <div class="qn"><i>4</i>상황을 적어주세요</div>
+                    <lightning-textarea
+                        variant="label-hidden"
+                        value={reportedSymptom}
+                        onchange={handleStatementChange}
+                        max-length="32000"
+                        placeholder="예: 계통 유량 경보. 랙 입구 온도 상승 중"
+                        required
+                    ></lightning-textarea>
+                </div>
+
+                <template lwc:if={error}>
+                    <div class="step">
+                        <div class="error" role="alert">{error}</div>
+                    </div>
+                </template>
+
+                <div class="foot">
+                    <button
+                        class="btn"
+                        onclick={handleSubmit}
+                        disabled={isSubmitDisabled}
+                    >
+                        신고 접수
+                    </button>
+                </div>
+
+                <template lwc:if={isSaving}>
+                    <div class="step">
+                        <lightning-spinner
+                            alternative-text="저장 중"
+                            size="small"
+                        ></lightning-spinner>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </section>
+</template>
