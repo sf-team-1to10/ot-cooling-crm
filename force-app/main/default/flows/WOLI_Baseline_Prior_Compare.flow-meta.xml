@@ -1,1 +1,412 @@
-<?xml version="1.0"?><Flow xmlns="http://soap.sforce.com/2006/04/metadata"><apiVersion>65</apiVersion><assignments><locationY>218</locationY><connector><targetReference>Get_Previous_Record</targetReference></connector><locationX>302</locationX><assignmentItems><assignToReference>$Record.Baseline_Value__c</assignToReference><value><elementReference>Get_Baseline_Record.Measured_Value__c</elementReference></value><operator>Assign</operator></assignmentItems><name>Set_Baseline_Value</name><description>Sets Baseline_Value__c on the triggering record to the Measured_Value__c from the earliest D6 commissioning first passing record retrieved by Get_Baseline_Record</description><label>Set Baseline Value</label></assignments><assignments><locationY>386</locationY><connector><targetReference>Calculate_And_Set_Delta</targetReference></connector><locationX>554</locationX><assignmentItems><assignToReference>$Record.Previous_Measured_Value__c</assignToReference><value><elementReference>Get_Previous_Record.Measured_Value__c</elementReference></value><operator>Assign</operator></assignmentItems><name>Set_Previous_Value</name><description>Sets Previous_Measured_Value__c on the triggering record to the Measured_Value__c from the most recent prior record retrieved by Get_Previous_Record, enabling delta calculation</description><label>Set Previous Value</label></assignments><assignments><locationY>470</locationY><connector><targetReference>Check_Baseline_Valid_For_Drift</targetReference></connector><locationX>680</locationX><assignmentItems><assignToReference>$Record.Delta_From_Previous__c</assignToReference><value><elementReference>Calculate_Delta_From_Previous</elementReference></value><operator>Assign</operator></assignmentItems><name>Calculate_And_Set_Delta</name><description>Calculates and sets Delta_From_Previous__c on the triggering record by subtracting Previous_Measured_Value__c from Measured_Value__c using the Calculate_Delta_From_Previous formula resource</description><label>Calculate And Set Delta</label></assignments><assignments><locationY>638</locationY><locationX>932</locationX><assignmentItems><assignToReference>$Record.Drift_From_Baseline__c</assignToReference><value><elementReference>Calculate_Drift_From_Baseline</elementReference></value><operator>Assign</operator></assignmentItems><name>Calculate_And_Set_Drift</name><description>Calculates and sets Drift_From_Baseline__c on the triggering record by computing the percentage drift from baseline using the Calculate_Drift_From_Baseline formula resource, only when baseline is valid and non-zero</description><label>Calculate And Set Drift</label></assignments><decisions><locationY>554</locationY><locationX>806</locationX><name>Check_Baseline_Valid_For_Drift</name><description>Evaluates if Baseline_Value__c is not null and not equal to zero to ensure drift calculation can proceed safely without division by zero errors</description><defaultConnectorLabel>Baseline Invalid</defaultConnectorLabel><rules><connector><targetReference>Calculate_And_Set_Drift</targetReference></connector><name>Baseline_Valid</name><description>True when Baseline_Value__c is not null and not equal to zero, allowing safe drift calculation</description><conditionLogic>1 AND 2</conditionLogic><label>Baseline Valid</label><conditions><leftValueReference>$Record.Baseline_Value__c</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions><conditions><leftValueReference>$Record.Baseline_Value__c</leftValueReference><operator>NotEqualTo</operator><rightValue><numberValue>0.0</numberValue></rightValue></conditions></rules><label>Check Baseline Valid For Drift</label></decisions><environments>Default</environments><formulas><expression>{!$Record.Measured_Value__c} - {!$Record.Previous_Measured_Value__c}</expression><dataType>Number</dataType><name>Calculate_Delta_From_Previous</name><description>Calculates the delta (difference) between the current Measured_Value__c and the Previous_Measured_Value__c on the triggering WorkOrderLineItem record by subtracting the previous value from the current value</description></formulas><formulas><expression>(({!$Record.Measured_Value__c} - {!$Record.Baseline_Value__c}) / {!$Record.Baseline_Value__c}) * 100</expression><dataType>Number</dataType><name>Calculate_Drift_From_Baseline</name><description>Calculates the percentage drift from baseline by computing ((Measured_Value__c - Baseline_Value__c) / Baseline_Value__c) * 100 to determine how much the current measurement has drifted from the original commissioning baseline value</description><scale>2</scale></formulas><interviewLabel>WOLI 기준선·이전값 자동 대조</interviewLabel><label>WOLI 기준선·이전값 자동 대조</label><processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues><processMetadataValues><name>CanvasMode</name><value><stringValue>AUTO_LAYOUT_CANVAS</stringValue></value></processMetadataValues><processType>AutoLaunchedFlow</processType><recordLookups><locationY>134</locationY><filterLogic>1 AND 2 AND 3 AND 4</filterLogic><locationX>176</locationX><queriedFields>Id</queriedFields><queriedFields>Measured_Value__c</queriedFields><queriedFields>Measurement_Item_Code__c</queriedFields><queriedFields>Line_Item_Role__c</queriedFields><queriedFields>Judgement__c</queriedFields><queriedFields>CreatedDate</queriedFields><description>Retrieves the earliest D6 commissioning first passing record (Line_Item_Role__c = '시험' and Judgement__c = '합격') for the same Asset and Measurement_Item_Code__c to establish the baseline value, ordered by CreatedDate ascending</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Get Baseline Record</label><filters><field>Measurement_Item_Code__c</field><value><elementReference>$Record.Measurement_Item_Code__c</elementReference></value><operator>EqualTo</operator></filters><filters><field>Line_Item_Role__c</field><value><stringValue>시험</stringValue></value><operator>EqualTo</operator></filters><filters><field>Judgement__c</field><value><stringValue>합격</stringValue></value><operator>EqualTo</operator></filters><filters><field>AssetId</field><value><elementReference>$Record.AssetId</elementReference></value><operator>EqualTo</operator></filters><connector><targetReference>Set_Baseline_Value</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><sortOrder>Asc</sortOrder><name>Get_Baseline_Record</name><sortField>CreatedDate</sortField><getFirstRecordOnly>true</getFirstRecordOnly><object>WorkOrderLineItem</object></recordLookups><recordLookups><locationY>302</locationY><filterLogic>1 AND 2 AND 3 AND 4</filterLogic><locationX>428</locationX><queriedFields>Id</queriedFields><queriedFields>Measured_Value__c</queriedFields><queriedFields>Measurement_Item_Code__c</queriedFields><queriedFields>CreatedDate</queriedFields><description>Retrieves the most recent prior WorkOrderLineItem record for the same Asset and Measurement_Item_Code__c where Measured_Value__c is not null, excluding the triggering record, ordered by CreatedDate descending to find the last existing measured value</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Get Previous Record</label><filters><field>AssetId</field><value><elementReference>$Record.AssetId</elementReference></value><operator>EqualTo</operator></filters><filters><field>Measurement_Item_Code__c</field><value><elementReference>$Record.Measurement_Item_Code__c</elementReference></value><operator>EqualTo</operator></filters><filters><field>Measured_Value__c</field><value><booleanValue>false</booleanValue></value><operator>IsNull</operator></filters><filters><field>Id</field><value><elementReference>$Record.Id</elementReference></value><operator>NotEqualTo</operator></filters><connector><targetReference>Set_Previous_Value</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><sortOrder>Desc</sortOrder><name>Get_Previous_Record</name><sortField>CreatedDate</sortField><getFirstRecordOnly>true</getFirstRecordOnly><object>WorkOrderLineItem</object></recordLookups><start><locationY>50</locationY><filterLogic>1 AND 2 AND 3</filterLogic><connector><targetReference>Get_Baseline_Record</targetReference></connector><locationX>50</locationX><recordTriggerType>CreateAndUpdate</recordTriggerType><triggerType>RecordBeforeSave</triggerType><doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria><filters><field>Measured_Value__c</field><value><booleanValue>false</booleanValue></value><operator>IsNull</operator></filters><filters><field>Measurement_Item_Code__c</field><value><booleanValue>false</booleanValue></value><operator>IsNull</operator></filters><filters><field>AssetId</field><value><booleanValue>false</booleanValue></value><operator>IsNull</operator></filters><object>WorkOrderLineItem</object></start><status>Draft</status></Flow>
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <description>Copies the triggering record into an updatable sObject variable so field values can be set and persisted with Update Records, since after-save flows cannot write directly to $Record</description>
+        <name>Copy_Record</name>
+        <label>Copy Record</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varRecord</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Baseline_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Calculates and sets Delta_From_Previous__c on the triggering record by subtracting Previous_Measured_Value__c from Measured_Value__c using the Calculate_Delta_From_Previous formula resource</description>
+        <name>Calculate_And_Set_Delta</name>
+        <label>Calculate And Set Delta</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varRecord.Delta_From_Previous__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Calculate_Delta_From_Previous</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Check_Baseline_Valid_For_Drift</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Calculates and sets Drift_From_Baseline__c on the triggering record by computing the percentage drift from baseline using the Calculate_Drift_From_Baseline formula resource, only when baseline is valid and non-zero</description>
+        <name>Calculate_And_Set_Drift</name>
+        <label>Calculate And Set Drift</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varRecord.Drift_From_Baseline__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Calculate_Drift_From_Baseline</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Sets Baseline_Value__c on the triggering record to the Measured_Value__c from the earliest D6 commissioning first passing record retrieved by Get_Baseline_Record</description>
+        <name>Set_Baseline_Value</name>
+        <label>Set Baseline Value</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varRecord.Baseline_Value__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Baseline_Record.Measured_Value__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Previous_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Sets Previous_Measured_Value__c on the triggering record to the Measured_Value__c from the most recent prior record retrieved by Get_Previous_Record, enabling delta calculation</description>
+        <name>Set_Previous_Value</name>
+        <label>Set Previous Value</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varRecord.Previous_Measured_Value__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varPrevValue</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Calculate_And_Set_Delta</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Updates the running candidate for the previous measured value when the current loop record is a better match (later WO StartDate, or same StartDate with a later CreatedDate)</description>
+        <name>Update_Prev_Candidate</name>
+        <label>Update Prev Candidate</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varPrevValue</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Previous_Records.Measured_Value__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varPrevDate</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Previous_Records.WorkOrder.StartDate</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varPrevCreated</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Previous_Records.CreatedDate</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Previous_Records</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>Evaluates if Baseline_Value__c is not null and not equal to zero to ensure drift calculation can proceed safely without division by zero errors</description>
+        <name>Check_Baseline_Valid_For_Drift</name>
+        <label>Check Baseline Valid For Drift</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Update_Record</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Baseline Invalid</defaultConnectorLabel>
+        <rules>
+            <description>True when Baseline_Value__c is not null and not equal to zero, allowing safe drift calculation</description>
+            <name>Baseline_Valid</name>
+            <conditionLogic>1 AND 2</conditionLogic>
+            <conditions>
+                <leftValueReference>varRecord.Baseline_Value__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>varRecord.Baseline_Value__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Calculate_And_Set_Drift</targetReference>
+            </connector>
+            <label>Baseline Valid</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Determines whether the current loop record is a better previous-value candidate: its WorkOrder StartDate is before the triggering record, and it is either later than the running candidate or ties on StartDate with a later CreatedDate</description>
+        <name>Is_Better_Prev_Candidate</name>
+        <label>Is Better Prev Candidate</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <defaultConnector>
+            <targetReference>Loop_Previous_Records</targetReference>
+        </defaultConnector>
+        <rules>
+            <name>Better_Candidate</name>
+            <conditionLogic>1 AND (2 OR 3 OR (4 AND 5))</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Previous_Records.WorkOrder.StartDate</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <elementReference>$Record.WorkOrder.StartDate</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>varPrevDate</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Loop_Previous_Records.WorkOrder.StartDate</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>varPrevDate</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Loop_Previous_Records.WorkOrder.StartDate</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>varPrevDate</elementReference>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Loop_Previous_Records.CreatedDate</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>varPrevCreated</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Prev_Candidate</targetReference>
+            </connector>
+            <label>Better Candidate</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <description>Calculates the delta (difference) between the current Measured_Value__c and the Previous_Measured_Value__c on the triggering WorkOrderLineItem record by subtracting the previous value from the current value</description>
+        <name>Calculate_Delta_From_Previous</name>
+        <dataType>Number</dataType>
+        <expression>{!varRecord.Measured_Value__c} - {!varRecord.Previous_Measured_Value__c}</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <description>Calculates the percentage drift from baseline by computing ((Measured_Value__c - Baseline_Value__c) / Baseline_Value__c) * 100 to determine how much the current measurement has drifted from the original commissioning baseline value</description>
+        <name>Calculate_Drift_From_Baseline</name>
+        <dataType>Number</dataType>
+        <expression>(({!varRecord.Measured_Value__c} - {!varRecord.Baseline_Value__c}) / {!varRecord.Baseline_Value__c}) * 100</expression>
+        <scale>2</scale>
+    </formulas>
+    <interviewLabel>WOLI 기준선·이전값 자동 대조</interviewLabel>
+    <label>WOLI 기준선·이전값 자동 대조</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <loops>
+        <description>Iterates over the prior WorkOrderLineItem records retrieved by Get_Previous_Record to select the best previous measured value based on WorkOrder StartDate with CreatedDate as a tiebreaker</description>
+        <name>Loop_Previous_Records</name>
+        <label>Loop Previous Records</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <collectionReference>Get_Previous_Record</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Is_Better_Prev_Candidate</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Set_Previous_Value</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Retrieves the earliest D6 commissioning first passing record (Line_Item_Role__c = &apos;시험&apos; and Judgement__c = &apos;합격&apos;) for the same Asset and Measurement_Item_Code__c to establish the baseline value, ordered by CreatedDate ascending</description>
+        <name>Get_Baseline_Record</name>
+        <label>Get Baseline Record</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Set_Baseline_Value</targetReference>
+        </connector>
+        <filterLogic>1 AND 2 AND 3 AND 4</filterLogic>
+        <filters>
+            <field>Measurement_Item_Code__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Measurement_Item_Code__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Line_Item_Role__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>시험</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Judgement__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>합격</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>AssetId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.AssetId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrderLineItem</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Measured_Value__c</queriedFields>
+        <queriedFields>Measurement_Item_Code__c</queriedFields>
+        <queriedFields>Line_Item_Role__c</queriedFields>
+        <queriedFields>Judgement__c</queriedFields>
+        <queriedFields>CreatedDate</queriedFields>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Asc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Retrieves the most recent prior WorkOrderLineItem record for the same Asset and Measurement_Item_Code__c where Measured_Value__c is not null, excluding the triggering record, ordered by CreatedDate descending to find the last existing measured value</description>
+        <name>Get_Previous_Record</name>
+        <label>Get Previous Record</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Previous_Records</targetReference>
+        </connector>
+        <filterLogic>1 AND 2 AND 3 AND 4 AND 5</filterLogic>
+        <filters>
+            <field>AssetId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.AssetId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Measurement_Item_Code__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Measurement_Item_Code__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Measured_Value__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Id</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Line_Item_Role__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>점검</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>WorkOrderLineItem</object>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <description>Persists the calculated Baseline_Value__c, Previous_Measured_Value__c, Delta_From_Previous__c, and Drift_From_Baseline__c back to the triggering record; required because after-save flows cannot write directly to $Record</description>
+        <name>Update_Record</name>
+        <label>Update Record</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <inputReference>varRecord</inputReference>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Copy_Record</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>NOT(ISBLANK({!$Record.Measured_Value__c})) &amp;&amp; NOT(ISBLANK(TEXT({!$Record.Measurement_Item_Code__c}))) &amp;&amp; NOT(ISBLANK({!$Record.AssetId})) &amp;&amp; (ISNEW() || ISCHANGED({!$Record.Measured_Value__c}))</filterFormula>
+        <object>WorkOrderLineItem</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <description>Updatable copy of the triggering WorkOrderLineItem record used to set calculated fields and persist them via Update Records in this after-save flow</description>
+        <name>varRecord</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>WorkOrderLineItem</objectType>
+    </variables>
+    <variables>
+        <description>Running candidate for the previous measured value selected during the loop</description>
+        <name>varPrevValue</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>2</scale>
+    </variables>
+    <variables>
+        <description>WorkOrder StartDate of the current best previous-value candidate, used to pick the latest prior visit</description>
+        <name>varPrevDate</name>
+        <dataType>DateTime</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>CreatedDate of the current best previous-value candidate, used as a tiebreaker when StartDates are equal</description>
+        <name>varPrevCreated</name>
+        <dataType>DateTime</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>
