@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <name>SLA 준수율</name>
+    <reportType>Cases_with_Milestones__c</reportType>
+    <format>Summary</format>
+    <description>SLA 마일스톤의 완료·위반 여부로 준수율을 집계한다. 위반(IsViolated) 여부로 그룹핑해 준수/위반 건수를 제시.</description>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <columns>
+        <field>CaseMilestone$IsCompleted</field>
+    </columns>
+    <columns>
+        <field>CaseMilestone$TargetDate</field>
+    </columns>
+    <columns>
+        <field>CaseMilestone$CompletionDate</field>
+    </columns>
+    <groupingsDown>
+        <field>CaseMilestone$IsViolated</field>
+        <dateGranularity>None</dateGranularity>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <chart>
+        <chartType>Donut</chartType>
+        <groupingColumn>CaseMilestone$IsViolated</groupingColumn>
+        <chartSummaries>
+            <column>RowCount</column>
+        </chartSummaries>
+        <enableHoverLabels>true</enableHoverLabels>
+        <location>CHART_TOP</location>
+        <size>Medium</size>
+        <title>SLA 준수 대 위반</title>
+    </chart>
+</Report>

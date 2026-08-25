@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <name>추세 조기 감지 실적</name>
+    <reportType>WorkOrders_with_Line_Items__c</reportType>
+    <format>Summary</format>
+    <description>측정 라인의 추세 플래그(Trend_Flag__c)가 주의·이상으로 켜진 건수를 집계한다. 절대 판정은 합격이어도 기준선 대비 하락 추세를 미리 잡은 조기 감지 실적을 보여준다.</description>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <columns>
+        <field>WorkOrder.WorkOrderLineItems$Measured_Value__c</field>
+    </columns>
+    <columns>
+        <field>WorkOrder.WorkOrderLineItems$Baseline_Value__c</field>
+    </columns>
+    <columns>
+        <field>WorkOrder.WorkOrderLineItems$Drift_From_Baseline__c</field>
+    </columns>
+    <groupingsDown>
+        <field>WorkOrder.WorkOrderLineItems$Trend_Flag__c</field>
+        <dateGranularity>None</dateGranularity>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <chart>
+        <chartType>HorizontalBar</chartType>
+        <groupingColumn>WorkOrder.WorkOrderLineItems$Trend_Flag__c</groupingColumn>
+        <chartSummaries>
+            <column>RowCount</column>
+        </chartSummaries>
+        <enableHoverLabels>true</enableHoverLabels>
+        <location>CHART_TOP</location>
+        <size>Medium</size>
+        <title>추세 플래그별 감지 건수</title>
+    </chart>
+</Report>
