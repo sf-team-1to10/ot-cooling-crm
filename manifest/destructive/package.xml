@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Asset.Maintenance_Frequency__c</members>
+        <members>Asset.Next_Inspection_Date__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>WorkOrder_Service_Ready_On_Acceptance</members>
+        <name>Flow</name>
+    </types>
+    <types>
+        <members>OT_T3_Construction_Access</members>
+        <name>PermissionSet</name>
+    </types>
+    <version>67.0</version>
+</Package>

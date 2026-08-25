@@ -33,7 +33,7 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Frequency__c</field>
+        <field>Asset.Maintenance_Frequency__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
