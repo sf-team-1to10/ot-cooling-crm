@@ -4,11 +4,6 @@
     <doesSendEmailToMembers>true</doesSendEmailToMembers>
     <email>chorea0408+crm@gmail.com</email>
     <name>CR 변경관리 담당자</name>
-    <queueMembers>
-        <users>
-            <user>chorea0408+crm@gmail.com.t2chg</user>
-        </users>
-    </queueMembers>
     <queueSobject>
         <sobjectType>ChangeRequest</sobjectType>
     </queueSobject>
