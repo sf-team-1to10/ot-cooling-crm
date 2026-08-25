@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65</apiVersion>
+    <description>시정조치 WorkOrder 생성 시 설계·체크리스트 환류 Task를 오도면·서정비에게 각각 발행하고 WhatId로 해당 WorkOrder에 연결한다. User는 Name으로 조회해 org 간 하드코딩 Id를 피한다. Problem은 Activities 미지원이라 Task는 시정조치 WO에 건다.</description>
+    <interviewLabel>WO Corrective Design Feedback Tasks {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>WO Corrective Design Feedback Tasks</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Retrieves the User named 오도면(설계). Returns null if not found.</description>
+        <name>Get_User_Odomyeon</name>
+        <label>Get User Odomyeon</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_User_Seojeongbi</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>오도면</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Retrieves the User named 서정비(서비스). Returns null if not found.</description>
+        <name>Get_User_Seojeongbi</name>
+        <label>Get User Seojeongbi</label>
+        <locationX>176</locationX>
+        <locationY>242</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Create_Design_Feedback_Task</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Name</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>서정비</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordCreates>
+        <description>오도면(설계 반영) 담당 환류 Task. WhatId=시정조치 WorkOrder. Owner 조회 실패 시 running user로 폴백.</description>
+        <name>Create_Design_Feedback_Task</name>
+        <label>Create Design Feedback Task</label>
+        <locationX>176</locationX>
+        <locationY>350</locationY>
+        <connector>
+            <targetReference>Create_Service_Feedback_Task</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>Owner_Design_Formula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>Normal</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>설계 환류: {!$Record.WorkOrderNumber} 시정조치 설계 반영</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordCreates>
+    <recordCreates>
+        <description>서정비(체크리스트 반영) 담당 환류 Task. WhatId=시정조치 WorkOrder. Owner 조회 실패 시 running user로 폴백.</description>
+        <name>Create_Service_Feedback_Task</name>
+        <label>Create Service Feedback Task</label>
+        <locationX>176</locationX>
+        <locationY>458</locationY>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>Owner_Service_Formula</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>Normal</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>체크리스트 환류: {!$Record.WorkOrderNumber} 점검 항목 반영</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordCreates>
+    <formulas>
+        <description>오도면 조회 성공 시 그 Id, 실패 시 running user.</description>
+        <name>Owner_Design_Formula</name>
+        <dataType>String</dataType>
+        <expression>IF(ISBLANK({!Get_User_Odomyeon.Id}), {!$User.Id}, {!Get_User_Odomyeon.Id})</expression>
+    </formulas>
+    <formulas>
+        <description>서정비 조회 성공 시 그 Id, 실패 시 running user.</description>
+        <name>Owner_Service_Formula</name>
+        <dataType>String</dataType>
+        <expression>IF(ISBLANK({!Get_User_Seojeongbi.Id}), {!$User.Id}, {!Get_User_Seojeongbi.Id})</expression>
+    </formulas>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_User_Odomyeon</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Work_Subtype__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>시정조치</stringValue>
+            </value>
+        </filters>
+        <object>WorkOrder</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
