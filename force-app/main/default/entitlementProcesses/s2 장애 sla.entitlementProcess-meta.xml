@@ -2,8 +2,7 @@
 <EntitlementProcess xmlns="http://soap.sforce.com/2006/04/metadata">
     <SObjectType>Case</SObjectType>
     <active>true</active>
-    <businessHours>OT전자 SLA 업무시간</businessHours>
-    <description>S2 장애: 응답 4시간, 복구 24시간 (백로그 QA 기준)</description>
+    <description>S2 장애: 응답 30분, 복구 8시간 (백로그 v2.2 확정안)</description>
     <entryStartDateField>Case.CreatedDate</entryStartDateField>
     <exitCriteriaFilterItems>
         <field>Case.IsClosed</field>
@@ -11,7 +10,6 @@
         <value>true</value>
     </exitCriteriaFilterItems>
     <milestones>
-        <businessHours>OT전자 SLA 업무시간</businessHours>
         <isDisplayedOnLinkedEntity>false</isDisplayedOnLinkedEntity>
         <milestoneCriteriaFilterItems>
             <field>Case.Status</field>
@@ -19,11 +17,10 @@
             <value>New</value>
         </milestoneCriteriaFilterItems>
         <milestoneName>응답</milestoneName>
-        <minutesToComplete>240</minutesToComplete>
+        <minutesToComplete>30</minutesToComplete>
         <useCriteriaStartTime>false</useCriteriaStartTime>
     </milestones>
     <milestones>
-        <businessHours>OT전자 SLA 업무시간</businessHours>
         <isDisplayedOnLinkedEntity>false</isDisplayedOnLinkedEntity>
         <milestoneCriteriaFilterItems>
             <field>Case.Status</field>
@@ -31,7 +28,7 @@
             <value>New</value>
         </milestoneCriteriaFilterItems>
         <milestoneName>복구</milestoneName>
-        <minutesToComplete>1440</minutesToComplete>
+        <minutesToComplete>480</minutesToComplete>
         <useCriteriaStartTime>false</useCriteriaStartTime>
     </milestones>
 </EntitlementProcess>

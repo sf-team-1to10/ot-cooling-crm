@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>CaseMilestone</baseObject>
+    <category>cases</category>
+    <deployed>true</deployed>
+    <description>SLA 마일스톤(CaseMilestone)을 기준으로 완료·위반 여부와 목표·완료 시각을 노출한다. 마일스톤 준수율을 집계하기 위한 데이터 프레임. CaseMilestone은 표준 리포트 유형·lookup 확장이 없어 직접 필드만 커스텀 리포트 유형으로 노출한다.</description>
+    <label>SLA 마일스톤</label>
+    <sections>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>IsCompleted</field>
+            <table>CaseMilestone</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>IsViolated</field>
+            <table>CaseMilestone</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>TargetDate</field>
+            <table>CaseMilestone</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>CompletionDate</field>
+            <table>CaseMilestone</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>ElapsedTimeInDays</field>
+            <table>CaseMilestone</table>
+        </columns>
+        <masterLabel>SLA 마일스톤</masterLabel>
+    </sections>
+</ReportType>
