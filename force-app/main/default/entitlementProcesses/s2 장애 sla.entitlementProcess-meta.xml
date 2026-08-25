@@ -3,7 +3,7 @@
     <SObjectType>Case</SObjectType>
     <active>true</active>
     <businessHours>OT전자 SLA 업무시간</businessHours>
-    <description>S2 장애: 응답 30분, 복구 8 업무시간</description>
+    <description>S2 장애: 응답 4시간, 복구 24시간 (백로그 QA 기준)</description>
     <entryStartDateField>Case.CreatedDate</entryStartDateField>
     <exitCriteriaFilterItems>
         <field>Case.IsClosed</field>
@@ -19,7 +19,7 @@
             <value>New</value>
         </milestoneCriteriaFilterItems>
         <milestoneName>응답</milestoneName>
-        <minutesToComplete>30</minutesToComplete>
+        <minutesToComplete>240</minutesToComplete>
         <useCriteriaStartTime>false</useCriteriaStartTime>
     </milestones>
     <milestones>
@@ -31,7 +31,7 @@
             <value>New</value>
         </milestoneCriteriaFilterItems>
         <milestoneName>복구</milestoneName>
-        <minutesToComplete>480</minutesToComplete>
+        <minutesToComplete>1440</minutesToComplete>
         <useCriteriaStartTime>false</useCriteriaStartTime>
     </milestones>
 </EntitlementProcess>

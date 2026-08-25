@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source_Maintenance_Work_Order__c</fullName>
+    <label>원본 점검 WO</label>
+    <description>추세 이상(Trend Flag)이 감지된 예방정비 점검에서 이 Case가 자동 생성되었음을 나타내며, 어느 Work Order의 어느 점검 라인에서 이상이 나왔는지 맥락을 유지한다. 이 값이 채워진 Case는 예방정비 발견 Case로 식별한다.</description>
+    <inlineHelpText>이 Case가 발생한 원본 예방정비 Work Order입니다. 자동 생성 시 이상 항목이 속한 Work Order로 설정됩니다.</inlineHelpText>
+    <type>Lookup</type>
+    <referenceTo>WorkOrder</referenceTo>
+    <relationshipLabel>예방정비 발견 Case</relationshipLabel>
+    <relationshipName>Source_Maintenance_Cases</relationshipName>
+    <required>false</required>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+</CustomField>
