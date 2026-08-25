@@ -1,0 +1,17 @@
+<template>
+    <c-ot-portal-header
+        active-page={activePage}
+        onnavigate={handleNavigate}
+    ></c-ot-portal-header>
+
+    <template lwc:if={showList}>
+        <c-ot-my-assets oncontact={handleContact}></c-ot-my-assets>
+    </template>
+    <template lwc:else>
+        <c-ot-report-fault
+            asset-id={selectedAssetId}
+            asset-name={selectedAssetName}
+            onback={handleBack}
+        ></c-ot-report-fault>
+    </template>
+</template>

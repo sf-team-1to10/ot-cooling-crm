@@ -1,305 +1,250 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>T3 구축·인수 트랙 커스텀 객체·필드 FLS. System Administrator에게 할당하여 배포로 생성된 필드의 접근 권한을 보장한다.</description>
+    <description>T1 영업 트랙 커스텀 객체·필드 FLS. System Administrator에게 할당하여 배포로 생성된 필드의 접근 권한을 보장한다.</description>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Acceptance_Date__c</field>
+        <field>Contract.Contract_Version__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Service_Ready_Status__c</field>
+        <field>Contract.Source_Opportunity__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Warranty_Type__c</field>
+        <field>Customer_Commitment__c.Approval_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Service_Ready_Date__c</field>
+        <field>Customer_Commitment__c.Commitment_Version__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Service_Ready_Acceptor__c</field>
+        <field>Customer_Commitment__c.Delivery_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Maintenance_Enabled__c</field>
+        <field>Customer_Commitment__c.Opportunity__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Maintenance_Frequency__c</field>
+        <field>Customer_Commitment__c.Price__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Next_Inspection_Date__c</field>
+        <field>Customer_Commitment__c.Special_Terms__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline_Spec__c.Measurement_Item_Code__c</field>
+        <field>Customer_Commitment__c.Technical_Risk__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline_Spec__c.Spec_Value__c</field>
+        <field>Lead.Collection_Method__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline_Spec__c.Threshold_Max__c</field>
+        <field>Lead.Competition__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline_Spec__c.Threshold_Min__c</field>
+        <field>Lead.Consent_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline_Spec__c.Unit__c</field>
+        <field>Lead.Consent_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Approval_Status__c</field>
+        <field>Lead.Decision_Structure__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Delivery_Date__c</field>
+        <field>Lead.Disqualification_Reason__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Drawing_URL__c</field>
+        <field>Lead.Expected_Amount__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.ERP_Order_No__c</field>
+        <field>Lead.Qualification_Result__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.ERP_Status__c</field>
+        <field>Lead.Requirement_Summary__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.ERP_Updated_At__c</field>
+        <field>Lead.Source_Detail__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Open_Issue__c</field>
+        <field>Lead.Urgency__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Opportunity__c</field>
+        <field>Opportunity.Capacity__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.PLM_Revision__c</field>
+        <field>Opportunity.Competition__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Product__c</field>
+        <field>Opportunity.Customer_Proposal_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Quantity__c</field>
+        <field>Opportunity.Decision_Structure__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Quote__c</field>
+        <field>Opportunity.Evidence_Link__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Risk_Mitigation__c</field>
+        <field>Opportunity.Expansion_Capacity__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Special_Terms__c</field>
+        <field>Opportunity.Expansion_Timing__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Specification__c</field>
+        <field>Opportunity.Handoff_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Technical_Review__c</field>
+        <field>Opportunity.Internal_Approval_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Technical_Baseline__c.Technical_Risk__c</field>
+        <field>Opportunity.Project_Type__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Acceptance_Condition__c</field>
+        <field>Opportunity.Residual_Risk__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Acceptance_Date__c</field>
+        <field>Opportunity.Technical_Review_Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Acceptance_Type__c</field>
+        <field>Quote.Delivery_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Accepted_By_Contact__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>WorkOrder.Critical_Punch_Count__c</field>
+        <field>Quote.Quote_Revision__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Has_Evidence__c</field>
+        <field>Technical_Review__c.Assumption_Constraint__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Issue_Impact__c</field>
+        <field>Technical_Review__c.Cooling_Capacity__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Site_Issue_Status__c</field>
+        <field>Technical_Review__c.Customer_Proposal_Ready__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Site_Issue__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>false</editable>
-        <field>WorkOrder.Open_Punch_Count__c</field>
+        <field>Technical_Review__c.Due_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>Asset.Open_Items_Summary__c</field>
+        <field>Technical_Review__c.Heat_Load__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrder.Technical_Baseline__c</field>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrder.Work_Subtype__c</field>
+        <field>Technical_Review__c.Interface__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Corrective_Action__c</field>
+        <field>Technical_Review__c.Opportunity__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Due_Date__c</field>
+        <field>Technical_Review__c.Owner__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Judgement__c</field>
+        <field>Technical_Review__c.Recommended_Solution__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Line_Item_Role__c</field>
+        <field>Technical_Review__c.Requirement_Snapshot__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Measured_Value__c</field>
+        <field>Technical_Review__c.Risk__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Measurement_Item_Code__c</field>
+        <field>Technical_Review__c.Solution_Version__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
-        <field>WorkOrderLineItem.Punch_Status__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Severity__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Spec_Load_Warning__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Spec_Value__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Threshold_Max__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Threshold_Min__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Unit__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Verified_By__c</field>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <editable>true</editable>
-        <field>WorkOrderLineItem.Verified_Date__c</field>
+        <field>Technical_Review__c.Status__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
-    <label>OT T3 구축·인수 접근 권한</label>
+    <label>OT T1 영업 접근 권한</label>
     <objectPermissions>
         <allowCreate>true</allowCreate>
         <allowDelete>true</allowDelete>
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>
-        <object>Technical_Baseline_Spec__c</object>
-        <viewAllFields>false</viewAllFields>
+        <object>Customer_Commitment__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <objectPermissions>
@@ -308,16 +253,15 @@
         <allowEdit>true</allowEdit>
         <allowRead>true</allowRead>
         <modifyAllRecords>false</modifyAllRecords>
-        <object>Technical_Baseline__c</object>
-        <viewAllFields>false</viewAllFields>
+        <object>Technical_Review__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <tabSettings>
-        <tab>Technical_Baseline_Spec__c</tab>
+        <tab>Customer_Commitment__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
-        <tab>Technical_Baseline__c</tab>
+        <tab>Technical_Review__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
 </PermissionSet>
