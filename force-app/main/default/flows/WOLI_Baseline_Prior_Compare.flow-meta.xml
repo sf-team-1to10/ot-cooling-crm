@@ -3,23 +3,6 @@
     <apiVersion>65.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
-        <description>Copies the triggering record into an updatable sObject variable so field values can be set and persisted with Update Records, since after-save flows cannot write directly to $Record</description>
-        <name>Copy_Record</name>
-        <label>Copy Record</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <assignmentItems>
-            <assignToReference>varRecord</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>$Record</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Get_Baseline_Record</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
         <description>Calculates and sets Delta_From_Previous__c on the triggering record by subtracting Previous_Measured_Value__c from Measured_Value__c using the Calculate_Delta_From_Previous formula resource</description>
         <name>Calculate_And_Set_Delta</name>
         <label>Calculate And Set Delta</label>
@@ -51,6 +34,23 @@
         </assignmentItems>
         <connector>
             <targetReference>Update_Record</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Copies the triggering record into an updatable sObject variable so field values can be set and persisted with Update Records, since after-save flows cannot write directly to $Record</description>
+        <name>Copy_Record</name>
+        <label>Copy Record</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varRecord</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Record</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Baseline_Record</targetReference>
         </connector>
     </assignments>
     <assignments>
@@ -158,10 +158,10 @@
         <label>Is Better Prev Candidate</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <defaultConnectorLabel>No</defaultConnectorLabel>
         <defaultConnector>
             <targetReference>Loop_Previous_Records</targetReference>
         </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
         <rules>
             <name>Better_Candidate</name>
             <conditionLogic>1 AND (2 OR 3 OR (4 AND 5))</conditionLogic>
@@ -223,18 +223,6 @@
     </formulas>
     <interviewLabel>WOLI 기준선·이전값 자동 대조</interviewLabel>
     <label>WOLI 기준선·이전값 자동 대조</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processMetadataValues>
-        <name>CanvasMode</name>
-        <value>
-            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
-        </value>
-    </processMetadataValues>
     <loops>
         <description>Iterates over the prior WorkOrderLineItem records retrieved by Get_Previous_Record to select the best previous measured value based on WorkOrder StartDate with CreatedDate as a tiebreaker</description>
         <name>Loop_Previous_Records</name>
@@ -250,6 +238,18 @@
             <targetReference>Set_Previous_Value</targetReference>
         </noMoreValuesConnector>
     </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordLookups>
         <description>Retrieves the earliest D6 commissioning first passing record (Line_Item_Role__c = &apos;시험&apos; and Judgement__c = &apos;합격&apos;) for the same Asset and Measurement_Item_Code__c to establish the baseline value, ordered by CreatedDate ascending</description>
@@ -368,7 +368,6 @@
         <connector>
             <targetReference>Copy_Record</targetReference>
         </connector>
-        <doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria>
         <filterFormula>NOT(ISBLANK({!$Record.Measured_Value__c})) &amp;&amp; NOT(ISBLANK(TEXT({!$Record.Measurement_Item_Code__c}))) &amp;&amp; NOT(ISBLANK({!$Record.AssetId})) &amp;&amp; (ISNEW() || ISCHANGED({!$Record.Measured_Value__c}))</filterFormula>
         <object>WorkOrderLineItem</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
@@ -376,13 +375,20 @@
     </start>
     <status>Active</status>
     <variables>
-        <description>Updatable copy of the triggering WorkOrderLineItem record used to set calculated fields and persist them via Update Records in this after-save flow</description>
-        <name>varRecord</name>
-        <dataType>SObject</dataType>
+        <description>CreatedDate of the current best previous-value candidate, used as a tiebreaker when StartDates are equal</description>
+        <name>varPrevCreated</name>
+        <dataType>DateTime</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
-        <objectType>WorkOrderLineItem</objectType>
+    </variables>
+    <variables>
+        <description>WorkOrder StartDate of the current best previous-value candidate, used to pick the latest prior visit</description>
+        <name>varPrevDate</name>
+        <dataType>DateTime</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
     </variables>
     <variables>
         <description>Running candidate for the previous measured value selected during the loop</description>
@@ -394,19 +400,12 @@
         <scale>2</scale>
     </variables>
     <variables>
-        <description>WorkOrder StartDate of the current best previous-value candidate, used to pick the latest prior visit</description>
-        <name>varPrevDate</name>
-        <dataType>DateTime</dataType>
+        <description>Updatable copy of the triggering WorkOrderLineItem record used to set calculated fields and persist them via Update Records in this after-save flow</description>
+        <name>varRecord</name>
+        <dataType>SObject</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <description>CreatedDate of the current best previous-value candidate, used as a tiebreaker when StartDates are equal</description>
-        <name>varPrevCreated</name>
-        <dataType>DateTime</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>false</isOutput>
+        <objectType>WorkOrderLineItem</objectType>
     </variables>
 </Flow>
