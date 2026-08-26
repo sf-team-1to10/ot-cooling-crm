@@ -53,7 +53,7 @@
         <inputParameters>
             <name>Input:Equipment_Name</name>
             <value>
-                <elementReference>Get_This_WO.Subject</elementReference>
+                <elementReference>Get_This_Case.Subject</elementReference>
             </value>
         </inputParameters>
         <name>Call_Prompt</name>
@@ -72,8 +72,8 @@
         <dataType>String</dataType>
         <expression>TEXT({!Loop_WOLIs.Line_Item_Role__c}) &amp; ' | ' &amp; TEXT({!Loop_WOLIs.Measurement_Item_Code__c}) &amp; ' | 측정 ' &amp; TEXT({!Loop_WOLIs.Measured_Value__c}) &amp; ' | 기준선 ' &amp; TEXT({!Loop_WOLIs.Baseline_Value__c}) &amp; ' | 기준선대비 ' &amp; TEXT({!Loop_WOLIs.Drift_From_Baseline__c}) &amp; '% | 판정 ' &amp; TEXT({!Loop_WOLIs.Judgement__c}) &amp; ' | 추세 ' &amp; TEXT({!Loop_WOLIs.Trend_Flag__c}) &amp; ' | 회차 ' &amp; TEXT({!Loop_WOLIs.Retest_Round__c}) &amp; ' | 사유 ' &amp; TEXT({!Loop_WOLIs.Retest_Reason__c}) &amp; ' | 조치 ' &amp; {!Loop_WOLIs.Corrective_Action__c} &amp; '\n'</expression>
     </formulas>
-    <interviewLabel>출동 브리핑 생성</interviewLabel>
-    <label>출동 브리핑 생성</label>
+    <interviewLabel>Case_Dispatch_Briefing_Generate</interviewLabel>
+    <label>Case_Dispatch_Briefing_Generate</label>
     <loops>
         <locationY>50</locationY>
         <collectionReference>Get_Asset_WOs</collectionReference>
@@ -127,9 +127,9 @@
         <locationX>176</locationX>
         <queriedFields>AssetId</queriedFields>
         <queriedFields>Subject</queriedFields>
-        <name>Get_This_WO</name>
-        <description>Retrieves the current WorkOrder to access its AssetId</description>
-        <label>Get This WO</label>
+        <name>Get_This_Case</name>
+        <description>Retrieves the current Case to access its AssetId</description>
+        <label>Get This Case</label>
         <filters>
             <field>Id</field>
             <value>
@@ -138,7 +138,7 @@
             <operator>EqualTo</operator>
         </filters>
         <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>WorkOrder</object>
+        <object>Case</object>
     </recordLookups>
     <recordLookups>
         <locationY>50</locationY>
@@ -155,7 +155,7 @@
         <filters>
             <field>AssetId</field>
             <value>
-                <elementReference>Get_This_WO.AssetId</elementReference>
+                <elementReference>Get_This_Case.AssetId</elementReference>
             </value>
             <operator>EqualTo</operator>
         </filters>
@@ -210,7 +210,7 @@
         </connector>
         <locationX>1190</locationX>
         <name>Save_Briefing</name>
-        <description>Writes the generated dispatch briefing to the current WorkOrder</description>
+        <description>Writes the generated dispatch briefing to the current Case</description>
         <label>Save Briefing</label>
         <filters>
             <field>Id</field>
@@ -225,7 +225,7 @@
                 <elementReference>varBriefing</elementReference>
             </value>
         </inputAssignments>
-        <object>WorkOrder</object>
+        <object>Case</object>
     </recordUpdates>
     <screens>
         <locationY>50</locationY>
@@ -245,7 +245,7 @@
     <start>
         <locationY>50</locationY>
         <connector>
-            <targetReference>Get_This_WO</targetReference>
+            <targetReference>Get_This_Case</targetReference>
         </connector>
         <locationX>50</locationX>
         <triggerType>None</triggerType>
