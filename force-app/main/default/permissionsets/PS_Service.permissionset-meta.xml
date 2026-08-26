@@ -159,6 +159,11 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>Case.Dispatch_Briefing__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>WorkOrder.Dispatch_Briefing__c</field>
         <readable>true</readable>
         <editable>true</editable>
