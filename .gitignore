@@ -58,3 +58,6 @@ force-app/main/default/objects/WorkOrder/WorkOrder.object-meta.xml
 
 ## 작업 문서
 docs
+
+## 백업 파일
+.flow-backups/
