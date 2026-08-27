@@ -27,3 +27,6 @@ node_modules/
 
 # 관리 패키지가 넣은 것 (Field Service 등)
 **/installedPackages/**
+
+# org에 이미 존재해 배포 시 중복 충돌 나는 EntitlementProcess (org가 source of truth)
+force-app/main/default/entitlementProcesses/s2 장애 sla.entitlementProcess-meta.xml
