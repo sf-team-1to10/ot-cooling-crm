@@ -132,6 +132,10 @@
             </layoutItems>
             <layoutItems>
                 <behavior>Edit</behavior>
+                <field>Dispatch_Briefing__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
                 <field>Field_Visit_Required__c</field>
             </layoutItems>
         </layoutColumns>
