@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SLA_Summary__c</fullName>
+    <label>서비스 실적 요약</label>
+    <description>갱신·확장 브리핑 Flow가 고객사 Case/Milestone에서 SLA 준수율·조기 감지 실적을 집계해 자동 기입하는 필드. 사람이 직접 입력하지 않는다.</description>
+    <inlineHelpText>브리핑 Flow가 자동으로 채웁니다. 직접 수정하지 마세요 — 다음 실행 때 덮어써집니다.</inlineHelpText>
+    <type>LongTextArea</type>
+    <length>32768</length>
+    <visibleLines>5</visibleLines>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+</CustomField>
