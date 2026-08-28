@@ -10,7 +10,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>richTextValue</name>
-                    <value>&lt;p&gt;&lt;strong style=&quot;font-size: 22px;&quot;&gt;서비스 담당자 홈&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;오늘 처리할 케이스와 작업 오더, 대기 중인 변경요청을 한눈에 확인하세요.&lt;/p&gt;</value>
+                    <value>&lt;div style=&quot;background:#0B1F33;border-left:4px solid #16B8C8;padding:14px 20px;border-radius:4px;&quot;&gt;&lt;p style=&quot;margin:0 0 4px 0;&quot;&gt;&lt;span style=&quot;color:#FFFFFF;font-size:18px;font-weight:700;&quot;&gt;OT전자 서비스 담당자 홈&lt;/span&gt;&lt;span style=&quot;color:#16B8C8;font-size:12px;font-weight:600;margin-left:10px;&quot;&gt;● SERVICE&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0;color:#B0BEC5;font-size:13px;&quot;&gt;오늘 처리할 케이스 · 워크오더 · 대기 중인 변경요청을 한눈에 확인하세요.&lt;/p&gt;&lt;/div&gt;</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:richText</componentName>
                 <identifier>flexipage_richText</identifier>

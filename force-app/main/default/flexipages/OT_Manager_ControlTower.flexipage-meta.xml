@@ -9,7 +9,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>richTextValue</name>
-                    <value>&lt;p&gt;&lt;strong style=&quot;font-size: 20px;&quot;&gt;관리자 Control Tower&lt;/strong&gt;&lt;/p&gt;&lt;p style=&quot;color: #526273;&quot;&gt;어느 병목과 위험에 개입해야 하는가?&lt;/p&gt;</value>
+                    <value>&lt;div style=&quot;background:#0B1F33;border-left:4px solid #C87913;padding:14px 20px;border-radius:4px;&quot;&gt;&lt;p style=&quot;margin:0 0 4px 0;&quot;&gt;&lt;span style=&quot;color:#FFFFFF;font-size:18px;font-weight:700;&quot;&gt;OT전자 관리자 Control Tower&lt;/span&gt;&lt;span style=&quot;color:#C87913;font-size:12px;font-weight:600;margin-left:10px;&quot;&gt;● MANAGER&lt;/span&gt;&lt;/p&gt;&lt;p style=&quot;margin:0;color:#B0BEC5;font-size:13px;&quot;&gt;어느 병목과 위험에 개입해야 하는가? — Report · Dashboard · KPI&lt;/p&gt;&lt;/div&gt;</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:richText</componentName>
                 <identifier>flexipage_richText_header_manager</identifier>
