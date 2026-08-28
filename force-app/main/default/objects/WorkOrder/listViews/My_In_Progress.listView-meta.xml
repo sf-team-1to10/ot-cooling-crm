@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_In_Progress</fullName>
+    <filterScope>Mine</filterScope>
+    <filters>
+        <field>Status</field>
+        <operation>equals</operation>
+        <value>In Progress</value>
+    </filters>
+    <label>내 진행 중 작업지시</label>
+</ListView>
