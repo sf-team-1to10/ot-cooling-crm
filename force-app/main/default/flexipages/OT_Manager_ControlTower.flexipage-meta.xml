@@ -15,6 +15,12 @@
                 <identifier>flexipage_richText_header_manager</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:otKpiCard</componentName>
+                <identifier>c_otKpiCard_manager</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>top</name>
         <type>Region</type>
     </flexiPageRegions>
@@ -113,7 +119,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <description>관리자 Control Tower — 전체 오픈 케이스, 배정 미완료 SA, 전체 Work Order</description>
     <masterLabel>OT 관리자 Control Tower</masterLabel>
     <template>
         <name>home:desktopTemplate</name>
