@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Virtual_IoT_Enabled__c</fullName>
+    <defaultValue>false</defaultValue>
+    <fieldManageability>SubscriberControlled</fieldManageability>
+    <label>가상 IoT 활성화</label>
+    <type>Checkbox</type>
+</CustomField>
