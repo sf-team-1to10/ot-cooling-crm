@@ -16,6 +16,12 @@
                 <identifier>flexipage_richText</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:otKpiCard</componentName>
+                <identifier>c_otKpiCard_service</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>top</name>
         <type>Region</type>
     </flexiPageRegions>
