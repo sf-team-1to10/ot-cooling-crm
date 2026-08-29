@@ -21,24 +21,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Account__c</fieldItem>
-                <identifier>AccountField</identifier>
-            </fieldInstance>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Status__c</fieldItem>
-                <identifier>StatusField</identifier>
-            </fieldInstance>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.OwnerId</fieldItem>
-                <identifier>OwnerField</identifier>
+                <identifier>RecordOwnerSecondaryField0</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-SecondaryFields</name>
@@ -47,170 +31,30 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>flexipage:tabset</componentName>
                 <componentInstanceProperties>
-                    <name>tabs</name>
-                    <value>mainTabs</value>
+                    <name>primaryField</name>
+                    <value>Facet-PrimaryFields</value>
                 </componentInstanceProperties>
-                <identifier>mainTabset</identifier>
+                <componentInstanceProperties>
+                    <name>secondaryFields</name>
+                    <value>Facet-SecondaryFields</value>
+                </componentInstanceProperties>
+                <componentName>record_flexipage:dynamicHighlights</componentName>
+                <identifier>record_flexipage_dynamicHighlights</identifier>
             </componentInstance>
         </itemInstances>
-        <name>main</name>
+        <name>header</name>
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>active</name>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>detailTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>프로젝트 정보</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>detailTab</identifier>
-            </componentInstance>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>active</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>changeTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>변경요청·Revision</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>changeTab</identifier>
-            </componentInstance>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>active</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>baselineTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Baseline·인수</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>baselineTab</identifier>
-            </componentInstance>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>active</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>relatedTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>관련 항목</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>relatedTab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>mainTabs</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>recordId</name>
-                    <value>{!recordId}</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:fieldSection</componentName>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>프로젝트 기본 정보</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>collapsible</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <identifier>projectDetailSection</identifier>
-            </componentInstance>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>recordId</name>
-                    <value>{!recordId}</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:fieldSection</componentName>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>일정·설치 준비도</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>collapsible</name>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <identifier>scheduleSection</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>detailTabContent</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>recordId</name>
-                    <value>{!recordId}</value>
-                </componentInstanceProperties>
-                <componentName>force:relatedListSingleContainer</componentName>
-                <componentInstanceProperties>
-                    <name>relatedListId</name>
-                    <value>ChangeRequests__r</value>
-                </componentInstanceProperties>
-                <identifier>changeRequestRelated</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>changeTabContent</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>recordId</name>
-                    <value>{!recordId}</value>
-                </componentInstanceProperties>
-                <componentName>force:relatedListSingleContainer</componentName>
-                <componentInstanceProperties>
-                    <name>relatedListId</name>
-                    <value>Technical_Baselines__r</value>
-                </componentInstanceProperties>
-                <identifier>baselineRelated</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>baselineTabContent</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>recordId</name>
-                    <value>{!recordId}</value>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
                 </componentInstanceProperties>
                 <componentName>force:relatedListContainer</componentName>
-                <identifier>allRelatedLists</identifier>
+                <identifier>relatedLists</identifier>
             </componentInstance>
         </itemInstances>
         <name>relatedTabContent</name>
@@ -220,15 +64,79 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>tabs</name>
-                    <value>sidebarTabs</value>
+                    <name>label</name>
+                    <value>프로젝트 기본 정보</value>
                 </componentInstanceProperties>
-                <componentName>flexipage:tabset</componentName>
-                <identifier>sidebarTabset</identifier>
+                <componentName>flexipage:fieldSection</componentName>
+                <identifier>projectDetailSection</identifier>
             </componentInstance>
         </itemInstances>
-        <name>sidebar</name>
+        <name>detailTabContent</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>detailTabContent</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Standard.Tab.detail</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>active</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>detailTab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>relatedTabContent</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Standard.Tab.relatedLists</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>relatedListsTab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>maintabs</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>tabs</name>
+                    <value>maintabs</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tabset</componentName>
+                <identifier>flexipage_tabset</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>main</name>
         <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>showLegacyActivityComposer</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentName>runtime_sales_activities:activityPanel</componentName>
+                <identifier>activityPanel</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>activityTabContent</name>
+        <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
@@ -249,22 +157,22 @@
                 <identifier>activityTab</identifier>
             </componentInstance>
         </itemInstances>
-        <name>sidebarTabs</name>
+        <name>sidebartabs</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>recordId</name>
-                    <value>{!recordId}</value>
+                    <name>tabs</name>
+                    <value>sidebartabs</value>
                 </componentInstanceProperties>
-                <componentName>forceChatter:feed</componentName>
-                <identifier>activityFeed</identifier>
+                <componentName>flexipage:tabset</componentName>
+                <identifier>flexipage_tabset2</identifier>
             </componentInstance>
         </itemInstances>
-        <name>activityTabContent</name>
-        <type>Facet</type>
+        <name>sidebar</name>
+        <type>Region</type>
     </flexiPageRegions>
     <masterLabel>기술검토·프로젝트 레코드 페이지</masterLabel>
     <sobjectType>Technical_Review__c</sobjectType>
