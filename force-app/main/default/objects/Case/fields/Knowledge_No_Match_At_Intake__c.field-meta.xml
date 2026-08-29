@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Knowledge_No_Match_At_Intake__c</fullName>
+    <label>Knowledge No Match At Intake</label>
+    <description>케이스 접수 시점에 Knowledge 검색 결과가 0건이었음을 기록하는 플래그. T5-22 Flow가 "신규 사례" 감지 배너를 표시하는 트리거로 사용된다.</description>
+    <inlineHelpText>접수 시 유사 Knowledge Article이 없으면 자동으로 체크됩니다. 배너 표시 조건입니다.</inlineHelpText>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+</CustomField>
