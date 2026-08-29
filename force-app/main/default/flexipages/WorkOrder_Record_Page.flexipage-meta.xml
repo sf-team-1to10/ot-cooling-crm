@@ -294,6 +294,20 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>label</name>
+                    <value>워크오더 상태</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>variant</name>
+                    <value>success</value>
+                </componentInstanceProperties>
+                <componentName>c:otStatusBadge</componentName>
+                <identifier>c_otStatusBadge_wo</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>label</name>
                     <value>Tabs</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

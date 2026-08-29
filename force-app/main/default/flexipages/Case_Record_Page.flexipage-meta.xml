@@ -370,6 +370,20 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>label</name>
+                    <value>케이스 상태</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>variant</name>
+                    <value>info</value>
+                </componentInstanceProperties>
+                <componentName>c:otStatusBadge</componentName>
+                <identifier>c_otStatusBadge_case</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>label</name>
                     <value>Tabs</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -420,6 +434,12 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>t5Customer360</componentName>
+                <identifier>c_t5Customer360</identifier>
+            </componentInstance>
+        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
