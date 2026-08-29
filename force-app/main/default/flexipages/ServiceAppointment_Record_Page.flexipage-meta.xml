@@ -258,7 +258,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Information</value>
+                    <value>예약 정보</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
@@ -375,7 +375,7 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>ServiceAppointment_Record_Page</masterLabel>
+    <masterLabel>서비스 예약</masterLabel>
     <sobjectType>ServiceAppointment</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>

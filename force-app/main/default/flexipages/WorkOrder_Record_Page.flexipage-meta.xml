@@ -55,16 +55,6 @@
                 <identifier>RecordStartDateSecondaryField3</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Technical_Baseline__c</fieldItem>
-                <identifier>RecordTechnical_Baseline__cSecondaryField4</identifier>
-            </fieldInstance>
-        </itemInstances>
         <name>Facet-SecondaryFields</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -124,16 +114,6 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Dispatch_Briefing__c</fieldItem>
-                <identifier>RecordDispatch_Briefing__cColumn1Field0</identifier>
-            </fieldInstance>
-        </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -204,16 +184,6 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Technical_Baseline__c</fieldItem>
-                <identifier>RecordTechnical_Baseline__cColumn2Field1</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.WorkTypeId</fieldItem>
                 <identifier>RecordWorkTypeIdColumn2Field2</identifier>
             </fieldInstance>
@@ -224,98 +194,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Work_Subtype__c</fieldItem>
-                <identifier>RecordWork_Subtype__cColumn2Field3</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
                 <fieldItem>Record.Description</fieldItem>
                 <identifier>RecordDescriptionColumn2Field4</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Site_Issue_Status__c</fieldItem>
-                <identifier>RecordSiteIssueStatusColumn2Field5</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Site_Issue__c</fieldItem>
-                <identifier>RecordSiteIssueColumn2Field6</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Issue_Impact__c</fieldItem>
-                <identifier>RecordIssueImpactColumn2Field7</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Open_Punch_Count__c</fieldItem>
-                <identifier>RecordOpenPunchCountColumn2Field8</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Has_Evidence__c</fieldItem>
-                <identifier>RecordHasEvidenceColumn2Field9</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Acceptance_Type__c</fieldItem>
-                <identifier>RecordAcceptanceTypeColumn2Field10</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Acceptance_Condition__c</fieldItem>
-                <identifier>RecordAcceptanceConditionColumn2Field11</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Acceptance_Date__c</fieldItem>
-                <identifier>RecordAcceptanceDateColumn2Field12</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-FieldSection-Column2</name>
@@ -358,7 +238,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Information</value>
+                    <value>작업 정보</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
@@ -404,6 +284,12 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:otRecordBanner</componentName>
+                <identifier>c_otRecordBanner_wo</identifier>
+            </componentInstance>
+        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -475,7 +361,7 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>WorkOrder_Record_Page</masterLabel>
+    <masterLabel>워크오더 현장 처리</masterLabel>
     <sobjectType>WorkOrder</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>

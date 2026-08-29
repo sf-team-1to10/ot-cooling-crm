@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentAsset xmlns="http://soap.sforce.com/2006/04/metadata">
+    <masterLabel>OT_Logo_KR</masterLabel>
+    <originNetwork>Salesforce</originNetwork>
+    <language>ko</language>
+    <versions>
+        <version>
+            <number>1</number>
+            <pathOnClient>OT_Logo_KR.png</pathOnClient>
+        </version>
+    </versions>
+</ContentAsset>

@@ -130,7 +130,6 @@
                 <identifier>RecordNameColumn1Field0</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -141,7 +140,6 @@
                 <identifier>RecordAccountNumberColumn1Field1</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -152,7 +150,27 @@
                 <identifier>RecordIndustryColumn1Field2</identifier>
             </fieldInstance>
         </itemInstances>
-        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.OwnerId</fieldItem>
+                <identifier>RecordOwnerIdColumn1Field3</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.AnnualRevenue</fieldItem>
+                <identifier>RecordAnnualRevenueColumn1Field4</identifier>
+            </fieldInstance>
+        </itemInstances>
+
         <name>Facet-FieldSection-Column1</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -170,7 +188,6 @@
                 <identifier>RecordPhoneColumn2Field0</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -181,7 +198,6 @@
                 <identifier>RecordWebsiteColumn2Field1</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -192,7 +208,27 @@
                 <identifier>RecordTypeColumn2Field2</identifier>
             </fieldInstance>
         </itemInstances>
-        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.BillingAddress</fieldItem>
+                <identifier>RecordBillingAddressColumn2Field3</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.NumberOfEmployees</fieldItem>
+                <identifier>RecordNumberOfEmployeesColumn2Field4</identifier>
+            </fieldInstance>
+        </itemInstances>
+
         <name>Facet-FieldSection-Column2</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -238,7 +274,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Information</value>
+                    <value>거래처 기본 정보</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
@@ -347,7 +383,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <description>Hall A 라이프사이클 360 뷰 - Asset·Case·WorkOrder·Contract 관련목록 통합 조회 (T1-14)</description>
     <masterLabel>Hall A 라이프사이클 360</masterLabel>
     <sobjectType>Account</sobjectType>
     <template>
