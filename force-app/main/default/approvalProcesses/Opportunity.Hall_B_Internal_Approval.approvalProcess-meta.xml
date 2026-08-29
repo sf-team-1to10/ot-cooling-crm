@@ -16,7 +16,7 @@
         <assignedApprover>
             <approver>
                 <name>Owner</name>
-                <type>relatedUser</type>
+                <type>userHierarchyField</type>
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
