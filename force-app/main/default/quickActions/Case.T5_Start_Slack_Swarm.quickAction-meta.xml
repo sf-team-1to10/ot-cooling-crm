@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Case에서 Slack Swarm을 시작하는 액션(표준 Begin Swarming for Slack Flow 호출). T5-15 Swarming 동작 검증용.</description>
-    <flowDefinition>swarming__Begin_Enhanced_Slack_Swarm</flowDefinition>
-    <label>Start Slack Swarm</label>
-    <optionsCreateFeedItem>false</optionsCreateFeedItem>
-    <type>Flow</type>
-</QuickAction>
