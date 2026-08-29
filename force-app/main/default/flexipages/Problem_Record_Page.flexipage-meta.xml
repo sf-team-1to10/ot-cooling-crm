@@ -240,7 +240,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Information</value>
+                    <value>문제 기본 정보</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
@@ -349,7 +349,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <description>RCA 근본원인 규명 — D6 시운전 실측값 대조 (T4-10)</description>
     <masterLabel>Problem 근본원인 규명</masterLabel>
     <sobjectType>Problem</sobjectType>
     <template>

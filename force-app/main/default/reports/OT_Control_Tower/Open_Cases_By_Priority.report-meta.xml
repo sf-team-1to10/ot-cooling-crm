@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <name>우선순위별 미결 케이스</name>
+    <reportType>CaseList</reportType>
+    <format>Summary</format>
+    <scope>organization</scope>
+    <description>미결 케이스를 우선순위·담당자 기준으로 집계한다. 관리자가 병목 자원을 즉시 파악할 수 있도록 한다.</description>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <columns>
+        <field>CASE_NUMBER</field>
+    </columns>
+    <columns>
+        <field>SUBJECT</field>
+    </columns>
+    <columns>
+        <field>OWNER</field>
+    </columns>
+    <columns>
+        <field>CREATED_DATE</field>
+    </columns>
+    <groupingsDown>
+        <field>PRIORITY</field>
+        <dateGranularity>None</dateGranularity>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <field>STATUS</field>
+        <dateGranularity>None</dateGranularity>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <filter>
+        <criteriaItems>
+            <column>STATUS</column>
+            <operator>notEqual</operator>
+            <value>Closed</value>
+        </criteriaItems>
+    </filter>
+    <chart>
+        <chartType>VerticalColumn</chartType>
+        <groupingColumn>PRIORITY</groupingColumn>
+        <chartSummaries>
+            <column>RowCount</column>
+        </chartSummaries>
+        <enableHoverLabels>true</enableHoverLabels>
+        <location>CHART_TOP</location>
+        <size>Medium</size>
+        <title>우선순위별 미결 케이스 수</title>
+    </chart>
+</Report>

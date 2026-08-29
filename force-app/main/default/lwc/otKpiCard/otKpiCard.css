@@ -1,0 +1,72 @@
+.ot-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 4px 0 8px;
+}
+
+.ot-kpi-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 16px 8px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    text-align: center;
+}
+
+.ot-kpi-tile__icon { font-size: 22px; line-height: 1; }
+
+.ot-kpi-tile__value {
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.ot-kpi-tile__label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+/* info — Flow Cyan */
+.ot-kpi-tile--info {
+    background: rgba(22, 184, 200, 0.08);
+    border-color: rgba(22, 184, 200, 0.3);
+}
+.ot-kpi-tile--info .ot-kpi-tile__value { color: #16B8C8; }
+.ot-kpi-tile--info .ot-kpi-tile__label { color: #0e8a96; }
+
+/* critical — Critical Red */
+.ot-kpi-tile--critical {
+    background: rgba(196, 61, 75, 0.08);
+    border-color: rgba(196, 61, 75, 0.3);
+}
+.ot-kpi-tile--critical .ot-kpi-tile__value { color: #C43D4B; }
+.ot-kpi-tile--critical .ot-kpi-tile__label { color: #952d37; }
+
+/* success — Lifecycle Green */
+.ot-kpi-tile--success {
+    background: rgba(46, 139, 87, 0.08);
+    border-color: rgba(46, 139, 87, 0.3);
+}
+.ot-kpi-tile--success .ot-kpi-tile__value { color: #2E8B57; }
+.ot-kpi-tile--success .ot-kpi-tile__label { color: #1f6040; }
+
+/* warning — Warning Orange */
+.ot-kpi-tile--warning {
+    background: rgba(200, 121, 19, 0.08);
+    border-color: rgba(200, 121, 19, 0.3);
+}
+.ot-kpi-tile--warning .ot-kpi-tile__value { color: #C87913; }
+.ot-kpi-tile--warning .ot-kpi-tile__label { color: #96590e; }
+
+.ot-kpi-error {
+    color: #C43D4B;
+    font-size: 12px;
+    text-align: center;
+    padding: 8px;
+}

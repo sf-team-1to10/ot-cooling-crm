@@ -1,63 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  RecordPage FlexiPage Template
+  
+  Template Variables Available:
+  - flexipagename: The name of the FlexiPage
+  - masterlabel: The display label
+  - description: The page description
+  - apiVersion: The Salesforce API version
+  - entityName: The SObject API name (e.g., 'Account', 'Rental_Property__c')
+  - primaryField: Single primary field API name for dynamic highlights (e.g., 'Name')
+  - secondaryFields: Array of secondary field API names for dynamic highlights
+  - detailFields: Array of field API names for the Details tab field section
+-->
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>required</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.AppointmentNumber</fieldItem>
-                <identifier>RecordAppointmentNumberPrimaryField</identifier>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNamePrimaryField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-PrimaryFields</name>
         <type>Facet</type>
     </flexiPageRegions>
+    
+    
     <flexiPageRegions>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>required</value>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.SerialNumber</fieldItem>
+                <identifier>RecordSerialNumberSecondaryField0</identifier>
+            </fieldInstance>
+        </itemInstances>
+        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Status</fieldItem>
-                <identifier>RecordStatusSecondaryField0</identifier>
+                <identifier>RecordStatusSecondaryField1</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.SchedStartTime</fieldItem>
-                <identifier>RecordSchedStartTimeSecondaryField1</identifier>
+                <fieldItem>Record.InstallDate</fieldItem>
+                <identifier>RecordInstallDateSecondaryField2</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.SchedEndTime</fieldItem>
-                <identifier>RecordSchedEndTimeSecondaryField2</identifier>
+                <fieldItem>Record.Acceptance_Date__c</fieldItem>
+                <identifier>RecordAcceptance_Date__cSecondaryField3</identifier>
             </fieldInstance>
         </itemInstances>
+
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ServiceTerritoryId</fieldItem>
-                <identifier>RecordServiceTerritoryIdSecondaryField3</identifier>
+                <fieldItem>Record.Warranty_Type__c</fieldItem>
+                <identifier>RecordWarranty_Type__cSecondaryField4</identifier>
             </fieldInstance>
         </itemInstances>
+
         <name>Facet-SecondaryFields</name>
         <type>Facet</type>
     </flexiPageRegions>
+    
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -76,14 +109,18 @@
                     <name>numVisibleActions</name>
                     <value>3</value>
                 </componentInstanceProperties>
+                
                 <componentInstanceProperties>
                     <name>primaryField</name>
                     <value>Facet-PrimaryFields</value>
                 </componentInstanceProperties>
+                
+                
                 <componentInstanceProperties>
                     <name>secondaryFields</name>
                     <value>Facet-SecondaryFields</value>
                 </componentInstanceProperties>
+                
                 <componentName>record_flexipage:dynamicHighlights</componentName>
                 <identifier>record_flexipage_dynamicHighlights</identifier>
             </componentInstance>
@@ -113,114 +150,166 @@
         <name>relatedTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Field Section: Detail Fields -->
+    
+    <!-- Column 1 Fields -->
     <flexiPageRegions>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>required</value>
+                    <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.AppointmentNumber</fieldItem>
-                <identifier>RecordAppointmentNumberColumn1Field0</identifier>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNameColumn1Field0</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>required</value>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.SerialNumber</fieldItem>
+                <identifier>RecordSerialNumberColumn1Field1</identifier>
+            </fieldInstance>
+        </itemInstances>
+        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Status</fieldItem>
-                <identifier>RecordStatusColumn1Field1</identifier>
+                <identifier>RecordStatusColumn1Field2</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.SchedStartTime</fieldItem>
-                <identifier>RecordSchedStartTimeColumn1Field2</identifier>
+                <fieldItem>Record.AccountId</fieldItem>
+                <identifier>RecordAccountIdColumn1Field3</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.SchedEndTime</fieldItem>
-                <identifier>RecordSchedEndTimeColumn1Field3</identifier>
+                <fieldItem>Record.ContactId</fieldItem>
+                <identifier>RecordContactIdColumn1Field4</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ActualStartTime</fieldItem>
-                <identifier>RecordActualStartTimeColumn1Field4</identifier>
+                <fieldItem>Record.InstallDate</fieldItem>
+                <identifier>RecordInstallDateColumn1Field5</identifier>
             </fieldInstance>
         </itemInstances>
+        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Acceptance_Date__c</fieldItem>
+                <identifier>RecordAcceptance_Date__cColumn1Field6</identifier>
+            </fieldInstance>
+        </itemInstances>
+
         <name>Facet-FieldSection-Column1</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Column 2 Fields -->
+    
     <flexiPageRegions>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ActualEndTime</fieldItem>
-                <identifier>RecordActualEndTimeColumn2Field0</identifier>
+                <fieldItem>Record.Warranty_Type__c</fieldItem>
+                <identifier>RecordWarranty_Type__cColumn2Field0</identifier>
             </fieldInstance>
         </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>required</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ParentRecordId</fieldItem>
-                <identifier>RecordParentRecordIdColumn2Field1</identifier>
-            </fieldInstance>
-        </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ServiceTerritoryId</fieldItem>
-                <identifier>RecordServiceTerritoryIdColumn2Field2</identifier>
+                <fieldItem>Record.Service_Ready_Status__c</fieldItem>
+                <identifier>RecordService_Ready_Status__cColumn2Field1</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Duration</fieldItem>
-                <identifier>RecordDurationColumn2Field3</identifier>
+                <fieldItem>Record.Service_Ready_Date__c</fieldItem>
+                <identifier>RecordService_Ready_Date__cColumn2Field2</identifier>
             </fieldInstance>
         </itemInstances>
+        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Description</fieldItem>
-                <identifier>RecordDescriptionColumn2Field4</identifier>
+                <fieldItem>Record.Next_Inspection_Date__c</fieldItem>
+                <identifier>RecordNext_Inspection_Date__cColumn2Field3</identifier>
             </fieldInstance>
         </itemInstances>
+        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Open_Items_Summary__c</fieldItem>
+                <identifier>RecordOpen_Items_Summary__cColumn2Field4</identifier>
+            </fieldInstance>
+        </itemInstances>
+        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Applied_Revision__c</fieldItem>
+                <identifier>RecordApplied_Revision__cColumn2Field5</identifier>
+            </fieldInstance>
+        </itemInstances>
+        
         <name>Facet-FieldSection-Column2</name>
         <type>Facet</type>
     </flexiPageRegions>
+    
+    <!-- Field Section: Column Facets -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -232,6 +321,7 @@
                 <identifier>flexipage_column1</identifier>
             </componentInstance>
         </itemInstances>
+        
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -242,9 +332,11 @@
                 <identifier>flexipage_column2</identifier>
             </componentInstance>
         </itemInstances>
+        
         <name>Facet-FieldSection-Columns</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Field Section Component -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -258,7 +350,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>예약 정보</value>
+                    <value>자산 기본 정보</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
@@ -306,10 +398,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>label</name>
-                    <value>Tabs</value>
-                </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>tabs</name>
                     <value>maintabs</value>
@@ -361,10 +449,6 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>label</name>
-                    <value>Tabs</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>sidebartabs</value>
                 </componentInstanceProperties>
@@ -375,8 +459,8 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>서비스 예약</masterLabel>
-    <sobjectType>ServiceAppointment</sobjectType>
+    <masterLabel>자산 360</masterLabel>
+    <sobjectType>Asset</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
