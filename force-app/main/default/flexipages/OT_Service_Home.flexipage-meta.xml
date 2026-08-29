@@ -22,6 +22,12 @@
                 <identifier>c_otKpiCard_service</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>t5HallDashboard</componentName>
+                <identifier>c_t5HallDashboard</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>top</name>
         <type>Region</type>
     </flexiPageRegions>
