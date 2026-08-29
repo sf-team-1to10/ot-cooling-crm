@@ -3,7 +3,7 @@
     <backgroundEndColor>#FFFFFF</backgroundEndColor>
     <backgroundFadeDirection>Diagonal</backgroundFadeDirection>
     <backgroundStartColor>#F8F9FA</backgroundStartColor>
-    <dashboardType>SpecifiedUser</dashboardType>
+    <dashboardType>LoggedInUser</dashboardType>
     <isGridLayout>false</isGridLayout>
     <leftSection>
         <columnSize>Medium</columnSize>
@@ -68,7 +68,6 @@
         </components>
     </rightSection>
     <description>관리자 컨트롤 타워 — 케이스·변경요청·워크오더 핵심 현황 4종</description>
-    <runningUser>chorea0408+crm@gmail.com.t2chg</runningUser>
     <textColor>#0B1F33</textColor>
     <title>OT전자 관리자 Control Tower</title>
     <titleColor>#0B1F33</titleColor>

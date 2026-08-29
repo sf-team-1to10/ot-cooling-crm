@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Queue xmlns="http://soap.sforce.com/2006/04/metadata">
     <doesIncludeBosses>false</doesIncludeBosses>
-    <doesSendEmailToMembers>true</doesSendEmailToMembers>
-    <email>chorea0408+crm@gmail.com</email>
+    <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>CR 변경관리 담당자</name>
     <queueSobject>
         <sobjectType>ChangeRequest</sobjectType>

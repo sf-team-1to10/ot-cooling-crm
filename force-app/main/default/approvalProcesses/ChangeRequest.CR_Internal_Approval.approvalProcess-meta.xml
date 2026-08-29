@@ -19,8 +19,8 @@
         <allowDelegate>true</allowDelegate>
         <assignedApprover>
             <approver>
-                <name>chorea0408+crm@gmail.com</name>
-                <type>user</type>
+                <name>Owner</name>
+                <type>relatedUser</type>
             </approver>
             <whenMultipleApprovers>FirstResponse</whenMultipleApprovers>
         </assignedApprover>
