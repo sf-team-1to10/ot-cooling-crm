@@ -61,3 +61,8 @@ docs
 
 ## 백업 파일
 .flow-backups/
+
+## 일회성 데이터 조작 스크립트 (org별 레코드 ID 하드코딩, 배포 대상 아님)
+scripts/share_cdu_a07_to_sjeongbi.apex
+scripts/verify_sjeongbi_access.apex
+scripts/check_woli_layout.apex

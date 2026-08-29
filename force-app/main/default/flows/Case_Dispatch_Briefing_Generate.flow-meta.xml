@@ -1,6 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
+        <description>Invokes OTSimilarCaseSearch Apex to find past closed cases of the same asset model and same symptom, returned as a pipe-delimited list</description>
+        <name>Search_Similar_Cases</name>
+        <label>Search Similar Cases</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>OTSimilarCaseSearch</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Check_Similar</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>caseId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>OTSimilarCaseSearch</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <description>Calls the Similar_Case_Search prompt template with the current case summary and the assembled list of past closed cases</description>
+        <name>Call_Similar_Prompt</name>
+        <label>Call Similar Prompt</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>Similar_Case_Search</actionName>
+        <actionType>generatePromptResponse</actionType>
+        <connector>
+            <targetReference>Save_Similar_Summary</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>Input:Current_Case</name>
+            <value>
+                <elementReference>Current_Case_Line</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Input:Similar_Cases</name>
+            <value>
+                <elementReference>Search_Similar_Cases.similarCases</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>Similar_Case_Search</nameSegment>
+        <offset>0</offset>
+        <outputParameters>
+            <assignToReference>varSimilarSummary</assignToReference>
+            <name>promptResponse</name>
+        </outputParameters>
+    </actionCalls>
+    <actionCalls>
         <description>Calls the Dispatch_Briefing_Generator prompt template with the assembled measurement history, equipment name, and the current reading</description>
         <name>Call_Prompt</name>
         <label>Call Prompt</label>
@@ -22,6 +75,24 @@
             <name>Input:Equipment_Name</name>
             <value>
                 <elementReference>Get_This_Case.Subject</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Input:Current_Reading</name>
+            <value>
+                <elementReference>varCurrentReading</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Input:Peer_Comparison</name>
+            <value>
+                <elementReference>varPeerComparison</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>Input:Similar_Cases_Summary</name>
+            <value>
+                <elementReference>varSimilarSummary</elementReference>
             </value>
         </inputParameters>
         <nameSegment>Dispatch_Briefing_Generator</nameSegment>
@@ -92,6 +163,39 @@
         </connector>
     </assignments>
     <decisions>
+        <description>Routes to the similar-case prompt only when past closed cases were found; otherwise skips straight to the briefing so cases with no history still generate normally</description>
+        <name>Check_Similar</name>
+        <label>Check Similar</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Call_Prompt</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No Similar Cases</defaultConnectorLabel>
+        <rules>
+            <name>Has_Similar_Cases</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Search_Similar_Cases.similarCases</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Search_Similar_Cases.similarCases</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue></stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Call_Similar_Prompt</targetReference>
+            </connector>
+            <label>Has Similar Cases</label>
+        </rules>
+    </decisions>
+    <decisions>
         <description>Captures the current value only from the latest inspection flow reading, once</description>
         <name>Check_Current</name>
         <label>Check Current</label>
@@ -133,6 +237,11 @@
     </decisions>
     <environments>Default</environments>
     <formulas>
+        <name>Current_Case_Line</name>
+        <dataType>String</dataType>
+        <expression>&apos;현재 Case | 증상분류 &apos; &amp; TEXT({!Get_This_Case.Symptom_Category__c}) &amp; &apos; | 장비 &apos; &amp; {!Get_This_Case.Subject}</expression>
+    </formulas>
+    <formulas>
         <name>Current_Reading_Line</name>
         <dataType>String</dataType>
         <expression>TEXT(YEAR(DATEVALUE({!Loop_WOs.StartDate}))) &amp; &apos;-&apos; &amp; TEXT(MONTH(DATEVALUE({!Loop_WOs.StartDate}))) &amp; &apos;-&apos; &amp; TEXT(DAY(DATEVALUE({!Loop_WOs.StartDate}))) &amp; &apos; 측정 &apos; &amp; TEXT({!Loop_WOLIs.Measurement_Item_Code__c}) &amp; &apos; &apos; &amp; TEXT({!Loop_WOLIs.Measured_Value__c}) &amp; &apos; | 기준선 &apos; &amp; TEXT({!Loop_WOLIs.Baseline_Value__c}) &amp; &apos; | 기준선대비 &apos; &amp; TEXT({!Loop_WOLIs.Drift_From_Baseline__c}) &amp; &apos;% | 판정 &apos; &amp; TEXT({!Loop_WOLIs.Judgement__c}) &amp; &apos; | 추세 &apos; &amp; TEXT({!Loop_WOLIs.Trend_Flag__c})</expression>
@@ -161,7 +270,7 @@
             <targetReference>Build_Peer</targetReference>
         </nextValueConnector>
         <noMoreValuesConnector>
-            <targetReference>Call_Prompt</targetReference>
+            <targetReference>Search_Similar_Cases</targetReference>
         </noMoreValuesConnector>
     </loops>
     <loops>
@@ -301,6 +410,7 @@
         <object>Case</object>
         <queriedFields>AssetId</queriedFields>
         <queriedFields>Subject</queriedFields>
+        <queriedFields>Symptom_Category__c</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
@@ -344,6 +454,31 @@
         <sortOrder>Asc</sortOrder>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <recordUpdates>
+        <description>Writes the generated similar-case summary to the current Case, then continues to the dispatch briefing</description>
+        <name>Save_Similar_Summary</name>
+        <label>Save Similar Summary</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Call_Prompt</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Similar_Cases_Summary__c</field>
+            <value>
+                <elementReference>varSimilarSummary</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Case</object>
+    </recordUpdates>
     <recordUpdates>
         <description>Writes the generated dispatch briefing to the current Case</description>
         <name>Save_Briefing</name>
@@ -408,6 +543,14 @@
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Text variable that holds the similar-case summary returned by the Similar_Case_Search prompt template</description>
+        <name>varSimilarSummary</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>
     <variables>
