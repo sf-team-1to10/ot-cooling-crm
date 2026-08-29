@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Long_Open_RCA</fullName>
+    <columns>PROBLEM.NUMBER</columns>
+    <columns>PROBLEM.SUBJECT</columns>
+    <columns>PROBLEM.STATUS</columns>
+    <columns>PROBLEM.PRIORITY</columns>
+    <columns>PROBLEM.CREATED_DATE</columns>
+    <columns>PROBLEM.OWNER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>PROBLEM.STATUS</field>
+        <operation>notEqual</operation>
+        <value>Closed</value>
+    </filters>
+    <label>장기 미완료 RCA</label>
+    <sharedTo>
+        <allInternalUsers/>
+    </sharedTo>
+</ListView>
