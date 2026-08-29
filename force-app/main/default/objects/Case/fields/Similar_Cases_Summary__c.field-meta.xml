@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Similar_Cases_Summary__c</fullName>
+    <description>같은 장비 모델·같은 증상으로 접수된 과거 종결 Case를 훑어 원인 분포와 평균 복구시간을 집계한 유사 사례 요약. Similar_Case_Search 프롬프트가 생성해 출동 브리핑의 재발 판정 근거로 활용된다.</description>
+    <inlineHelpText>같은 모델·같은 증상 과거 종결 Case의 원인 분포와 평균 복구시간 요약입니다. 출동 판단 시 재발 여부 참고용입니다.</inlineHelpText>
+    <label>유사 사례 요약</label>
+    <length>32000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
+    <visibleLines>5</visibleLines>
+</CustomField>

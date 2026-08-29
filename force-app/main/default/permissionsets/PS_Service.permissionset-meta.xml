@@ -169,6 +169,16 @@
         <editable>true</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>Case.Similar_Cases_Summary__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Resolution_Hours__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>WorkOrder.Dispatch_Briefing__c</field>
         <readable>true</readable>
         <editable>true</editable>

@@ -73,6 +73,95 @@ public class TestDataFactory {
     }
 
     /**
+     * @param name Product name.
+     * @param doInsert Whether to insert the record.
+     * @return The built (and optionally inserted) Product2.
+     */
+    public static Product2 createProduct(String name, Boolean doInsert) {
+        Product2 product = new Product2(Name = name, IsActive = true);
+        if (doInsert) {
+            insert product;
+        }
+        return product;
+    }
+
+    /**
+     * @param accountId Owning Account Id.
+     * @param productId Product (model) the Asset represents.
+     * @param name Asset name/serial prefix.
+     * @param doInsert Whether to insert the record.
+     * @return The built (and optionally inserted) Asset.
+     */
+    public static Asset createAssetForProduct(
+        Id accountId,
+        Id productId,
+        String name,
+        Boolean doInsert
+    ) {
+        Asset asset = new Asset(
+            Name = name,
+            AccountId = accountId,
+            Product2Id = productId,
+            SerialNumber = name + '-SN',
+            Status = 'Installed',
+            InstallDate = Date.newInstance(2027, 2, 18)
+        );
+        if (doInsert) {
+            insert asset;
+        }
+        return asset;
+    }
+
+    /**
+     * @param assetId Related Asset Id.
+     * @param symptom Symptom_Category__c value.
+     * @param status Case status ('New', 'Closed', ...).
+     * @param cause Diagnosed_Cause__c value (nullable).
+     * @param doInsert Whether to insert the record.
+     * @return The built (and optionally inserted) Case.
+     */
+    public static Case createCase(
+        Id assetId,
+        String symptom,
+        String status,
+        String cause,
+        Boolean doInsert
+    ) {
+        return createCase(assetId, symptom, status, cause, null, doInsert);
+    }
+
+    /**
+     * @param assetId Related Asset Id.
+     * @param symptom Symptom_Category__c value.
+     * @param status Case status ('New', 'Closed', ...).
+     * @param cause Diagnosed_Cause__c value (nullable).
+     * @param resolutionHours Resolution_Hours__c value (nullable).
+     * @param doInsert Whether to insert the record.
+     * @return The built (and optionally inserted) Case.
+     */
+    public static Case createCase(
+        Id assetId,
+        String symptom,
+        String status,
+        String cause,
+        Decimal resolutionHours,
+        Boolean doInsert
+    ) {
+        Case caseRecord = new Case(
+            Subject = 'Test ' + symptom + ' ' + status,
+            Status = status,
+            AssetId = assetId,
+            Symptom_Category__c = symptom,
+            Diagnosed_Cause__c = cause,
+            Resolution_Hours__c = resolutionHours
+        );
+        if (doInsert) {
+            insert caseRecord;
+        }
+        return caseRecord;
+    }
+
+    /**
      * Creates a Customer Community portal user linked to the given Contact.
      * Returns null if no Customer Community profile is available in the org.
      *

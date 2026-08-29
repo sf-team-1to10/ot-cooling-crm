@@ -3,7 +3,7 @@
     <baseObject>WorkOrder</baseObject>
     <category>busop</category>
     <deployed>true</deployed>
-    <description>예방정비 점검 WorkOrder와 그 측정 라인(WorkOrderLineItem)을 함께 노출한다. 추세 플래그·기준선 대비 변화율로 조기 감지 실적을, 권고 조치로 조치율을 집계하기 위한 데이터 프레임.</description>
+    <description>점검 WorkOrder와 그 측정 라인(WorkOrderLineItem)을 함께 노출한다.</description>
     <join>
         <outerJoin>false</outerJoin>
         <relationship>WorkOrderLineItems</relationship>
@@ -16,23 +16,13 @@
             <table>WorkOrder</table>
         </columns>
         <columns>
-            <checkedByDefault>true</checkedByDefault>
-            <field>Risk_Level__c</field>
-            <table>WorkOrder</table>
-        </columns>
-        <columns>
-            <checkedByDefault>true</checkedByDefault>
-            <field>Recommended_Action__c</field>
-            <table>WorkOrder</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Technical_Baseline__c</field>
-            <table>WorkOrder</table>
-        </columns>
-        <columns>
             <checkedByDefault>false</checkedByDefault>
             <field>CreatedDate</field>
+            <table>WorkOrder</table>
+        </columns>
+        <columns>
+            <checkedByDefault>false</checkedByDefault>
+            <field>Status</field>
             <table>WorkOrder</table>
         </columns>
         <masterLabel>점검 WO</masterLabel>
@@ -40,32 +30,7 @@
     <sections>
         <columns>
             <checkedByDefault>true</checkedByDefault>
-            <field>Measured_Value__c</field>
-            <table>WorkOrder.WorkOrderLineItems</table>
-        </columns>
-        <columns>
-            <checkedByDefault>true</checkedByDefault>
-            <field>Baseline_Value__c</field>
-            <table>WorkOrder.WorkOrderLineItems</table>
-        </columns>
-        <columns>
-            <checkedByDefault>true</checkedByDefault>
-            <field>Drift_From_Baseline__c</field>
-            <table>WorkOrder.WorkOrderLineItems</table>
-        </columns>
-        <columns>
-            <checkedByDefault>true</checkedByDefault>
-            <field>Trend_Flag__c</field>
-            <table>WorkOrder.WorkOrderLineItems</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Judgement__c</field>
-            <table>WorkOrder.WorkOrderLineItems</table>
-        </columns>
-        <columns>
-            <checkedByDefault>false</checkedByDefault>
-            <field>Unit__c</field>
+            <field>Description</field>
             <table>WorkOrder.WorkOrderLineItems</table>
         </columns>
         <masterLabel>측정 라인</masterLabel>

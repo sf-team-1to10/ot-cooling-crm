@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <name>변경요청 상태별 집계</name>
+    <reportType>CR_Impact_Analysis__c</reportType>
+    <format>Summary</format>
+    <scope>organization</scope>
+    <description>변경요청을 상태·범위 유형별로 집계해 승인 병목과 긴급 처리 현황을 파악한다.</description>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <columns>
+        <field>ChangeRequest$Subject</field>
+    </columns>
+    <columns>
+        <field>ChangeRequest$Cost_Impact__c</field>
+    </columns>
+    <columns>
+        <field>ChangeRequest$Schedule_Impact_Days__c</field>
+    </columns>
+    <groupingsDown>
+        <field>ChangeRequest$Status</field>
+        <dateGranularity>None</dateGranularity>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <groupingsDown>
+        <field>ChangeRequest$Scope_Type__c</field>
+        <dateGranularity>None</dateGranularity>
+        <sortOrder>Asc</sortOrder>
+    </groupingsDown>
+    <chart>
+        <chartType>Donut</chartType>
+        <groupingColumn>ChangeRequest$Status</groupingColumn>
+        <chartSummaries>
+            <column>RowCount</column>
+        </chartSummaries>
+        <enableHoverLabels>true</enableHoverLabels>
+        <location>CHART_TOP</location>
+        <size>Medium</size>
+        <title>상태별 변경요청 비율</title>
+    </chart>
+</Report>

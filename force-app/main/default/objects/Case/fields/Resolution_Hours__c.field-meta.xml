@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resolution_Hours__c</fullName>
+    <description>접수부터 종결까지 걸린 복구 소요시간(시간). 감사필드(CreatedDate/ClosedDate)로는 과거 시점 산정이 불가능하므로, 종결 Case의 실제 복구시간을 명시 저장해 유사 사례 검색의 평균 복구시간 집계 근거로 사용한다.</description>
+    <inlineHelpText>이 Case의 접수부터 종결까지 실제 복구에 걸린 시간을 시간 단위로 입력하세요.</inlineHelpText>
+    <label>복구 소요시간(시간)</label>
+    <precision>6</precision>
+    <scale>1</scale>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+</CustomField>
