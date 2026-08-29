@@ -13,18 +13,24 @@ const OBJECT_FIELDS = {
 };
 
 const STATUS_CONFIG = {
-    // Case
+    // Case Priority
     'Critical': { variant: 'critical', icon: '🚨', msg: '이 케이스는 Critical 우선순위입니다. 즉시 처리가 필요합니다.' },
     'High':     { variant: 'warning',  icon: '⚠️',  msg: '높은 우선순위 케이스입니다. 오늘 내 처리를 권고합니다.' },
-    // WorkOrder status
-    'Completed':  { variant: 'success', icon: '✅', msg: '워크오더가 완료되었습니다.' },
-    'Cancelled':  { variant: 'neutral', icon: 'ℹ️', msg: '취소된 워크오더입니다.' },
-    'In Progress':{ variant: 'info',    icon: '🔧', msg: '현재 진행 중인 워크오더입니다.' },
-    // CR status
-    '요청받음':      { variant: 'info',    icon: '📋', msg: '변경요청이 접수되었습니다. 검토를 시작하세요.' },
-    '고객승인대기':    { variant: 'warning', icon: '⏳', msg: '고객 승인을 기다리고 있습니다.' },
-    '승인완료':      { variant: 'success', icon: '✅', msg: '고객이 변경을 승인했습니다.' },
-    '반려':         { variant: 'critical', icon: '❌', msg: '변경요청이 반려되었습니다. 사유를 확인하세요.' }
+    // WorkOrder Status (실제 org 픽리스트 기준)
+    'New':            { variant: 'neutral', icon: '📋', msg: '신규 워크오더입니다. 담당자를 지정하세요.' },
+    'In Progress':    { variant: 'info',    icon: '🔧', msg: '현재 진행 중인 워크오더입니다.' },
+    'On Hold':        { variant: 'warning', icon: '⏸️', msg: '워크오더가 보류 중입니다. 사유를 확인하세요.' },
+    'Completed':      { variant: 'success', icon: '✅', msg: '워크오더가 완료되었습니다.' },
+    'Closed':         { variant: 'neutral', icon: '🔒', msg: '종결된 워크오더입니다.' },
+    'Cannot Complete':{ variant: 'critical', icon: '🚫', msg: '완료 불가 상태입니다. 원인을 확인하세요.' },
+    'Canceled':       { variant: 'neutral', icon: 'ℹ️', msg: '취소된 워크오더입니다.' },
+    // ChangeRequest Status (실제 org 픽리스트 기준)
+    '요청받음':   { variant: 'info',    icon: '📋', msg: '변경요청이 접수되었습니다. 검토를 시작하세요.' },
+    '고객승인대기':{ variant: 'warning', icon: '⏳', msg: '고객 승인을 기다리고 있습니다.' },
+    '보류':      { variant: 'warning', icon: '⏸️', msg: '변경요청이 보류 중입니다. 사유를 확인하세요.' },
+    '반영완료':   { variant: 'success', icon: '✅', msg: '변경이 반영 완료되었습니다.' },
+    '승인완료':   { variant: 'success', icon: '✅', msg: '고객이 변경을 승인했습니다.' },
+    '반려':      { variant: 'critical', icon: '❌', msg: '변경요청이 반려되었습니다. 사유를 확인하세요.' }
 };
 
 export default class OtRecordBanner extends LightningElement {
