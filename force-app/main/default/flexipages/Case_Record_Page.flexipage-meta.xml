@@ -286,6 +286,12 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>c:t5CaseIntakePanel</componentName>
+                <identifier>c_t5CaseIntakePanel</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>columns</name>
                     <value>Facet-FieldSection-Columns</value>

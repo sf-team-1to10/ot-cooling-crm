@@ -1,0 +1,36 @@
+.kv {
+    row-gap: var(--slds-g-spacing-x-small, 0.5rem);
+}
+
+.kv .slds-item_label {
+    width: 40%;
+    color: var(--slds-g-color-neutral-base-30, #5c5c5c);
+}
+
+.kv .slds-item_detail {
+    width: 60%;
+    font-weight: 500;
+}
+
+/* 출처 배지 — 프로토타입 01 브랜딩 토큰 */
+.source-agent {
+    background-color: #e8f2fc;
+    color: #0877d1;
+    box-shadow: inset 0 0 0 1px #0877d1;
+}
+
+.source-rule {
+    background-color: #e2f6f8;
+    color: #0f8a97;
+    box-shadow: inset 0 0 0 1px #16b8c8;
+}
+
+/* 시각 분리 블록 */
+.handoff {
+    border-top: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+    padding-top: var(--slds-g-spacing-x-small, 0.5rem);
+}
+
+.time-block {
+    flex: 1 1 auto;
+}
