@@ -1,0 +1,41 @@
+.kv {
+    margin-top: 0.25rem;
+}
+
+.kv .slds-item_label {
+    width: 40%;
+    color: #5c5c5c;
+}
+
+.kv .slds-item_detail {
+    width: 60%;
+}
+
+/* 출처 배지 — S-01 t5CaseIntakePanel과 색 일치 */
+.source-agent {
+    background-color: #0877d1;
+    color: #ffffff;
+}
+
+.source-rule {
+    background-color: #16b8c8;
+    color: #ffffff;
+}
+
+/* Priority 제안 배지 */
+.priority-badge {
+    background-color: #ba0517;
+    color: #ffffff;
+}
+
+/* 12대 비교에서 대상 장비(A-07) 행 강조 */
+.target-row {
+    background-color: #fef1ee;
+    font-weight: 700;
+}
+
+.target-row th,
+.target-row td {
+    border-top: 2px solid #ba0517;
+    border-bottom: 2px solid #ba0517;
+}
