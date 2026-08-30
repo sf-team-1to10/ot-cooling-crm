@@ -1,13 +1,29 @@
 import { LightningElement, api, wire } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
 
 export default class OtDispatchBriefingWorkbench extends LightningElement {
+    // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
     @api recordId;
+    _stateRecordId;
+
+    @wire(CurrentPageReference)
+    setPageRef(pageRef) {
+        const stateId = pageRef?.state?.c__recordId || pageRef?.attributes?.recordId;
+        if (stateId) {
+            this._stateRecordId = stateId;
+        }
+    }
+
+    get effectiveRecordId() {
+        // undefined를 반환해야 wire가 실행되지 않는다(null이면 Apex가 예외를 던짐).
+        return this.recordId || this._stateRecordId || undefined;
+    }
 
     briefing;
     error;
 
-    @wire(getBriefing, { caseId: '$recordId' })
+    @wire(getBriefing, { caseId: '$effectiveRecordId' })
     wiredBriefing({ data, error }) {
         if (data) {
             this.briefing = data;
@@ -79,11 +95,24 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
     }
 
     get similarCasesSummary() {
-        return this.briefing?.similarCasesSummary;
+        return this.toSections(this.briefing?.similarCasesSummary);
     }
 
     get briefingBody() {
-        return this.briefing?.briefingBody;
+        return this.toSections(this.briefing?.briefingBody);
+    }
+
+    // '■' 섹션 마커 단위로 문단을 나눠 가독성 확보
+    toSections(raw) {
+        if (!raw) {
+            return raw;
+        }
+        return raw
+            .split('■')
+            .map((seg) => seg.trim())
+            .filter((seg) => seg.length > 0)
+            .map((seg) => `<p class="briefing-section">■ ${seg}</p>`)
+            .join('');
     }
 
     get hasPastFailure() {

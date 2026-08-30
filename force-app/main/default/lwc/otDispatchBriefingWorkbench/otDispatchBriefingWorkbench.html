@@ -1,5 +1,5 @@
 <template>
-    <div class="slds-p-around_x-small">
+    <div class="slds-p-around_x-small workbench-shell">
         <template lwc:if={isLoading}>
             <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
         </template>
@@ -13,10 +13,8 @@
         <template lwc:if={briefing}>
             <!-- ── Highlights: A-07과 나머지 11대는 무엇이 달랐는가 ── -->
             <lightning-card>
-                <span slot="title" class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-                    <span class="slds-text-heading_small">A-07과 나머지 11대는 무엇이 달랐는가</span>
-                    <span class="slds-badge priority-badge">Priority · {priority} 제안</span>
-                </span>
+                <span slot="title" class="slds-text-heading_small">A-07과 나머지 11대는 무엇이 달랐는가</span>
+                <span slot="actions" class="slds-badge priority-badge">Priority · {priority} 제안</span>
                 <div class="slds-p-horizontal_small slds-p-bottom_x-small">
                     <p class="slds-text-body_small slds-text-color_weak">
                         <lightning-icon icon-name="utility:trending" size="xx-small"
@@ -34,10 +32,8 @@
                 <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
                     <!-- Priority 산정 근거 -->
                     <lightning-card>
-                        <span slot="title" class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-                            <span class="slds-text-heading_small">Priority 산정 근거</span>
-                            <span class="slds-badge source-rule">규칙 산정</span>
-                        </span>
+                        <span slot="title" class="slds-text-heading_small">Priority 산정 근거</span>
+                        <span slot="actions" class="slds-badge source-rule">규칙 산정</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <dl class="slds-list_horizontal slds-wrap kv">
                                 <dt class="slds-item_label">산정 결과</dt>
@@ -66,10 +62,8 @@
 
                     <!-- Hall A CDU 12대 비교 -->
                     <lightning-card class="slds-m-top_small">
-                        <span slot="title" class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-                            <span class="slds-text-heading_small">Hall A CDU 12대 비교</span>
-                            <span class="slds-badge source-agent">Agent 제안</span>
-                        </span>
+                        <span slot="title" class="slds-text-heading_small">Hall A CDU 12대 비교</span>
+                        <span slot="actions" class="slds-badge source-agent">Agent 제안</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <template lwc:if={hasComparisons}>
                                 <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
@@ -117,10 +111,8 @@
                 <!-- ── 우측 레일: 우선 점검 후보 + 유사사례 ── -->
                 <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
                     <lightning-card>
-                        <span slot="title" class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-                            <span class="slds-text-heading_small">우선 점검 후보</span>
-                            <span class="slds-badge source-agent">Agent</span>
-                        </span>
+                        <span slot="title" class="slds-text-heading_small">우선 점검 후보</span>
+                        <span slot="actions" class="slds-badge source-agent">Agent</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <template lwc:if={briefingBody}>
                                 <lightning-formatted-rich-text value={briefingBody}></lightning-formatted-rich-text>
@@ -132,10 +124,8 @@
                     </lightning-card>
 
                     <lightning-card class="slds-m-top_small">
-                        <span slot="title" class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
-                            <span class="slds-text-heading_small">전사 유사사례</span>
-                            <span class="slds-badge source-agent">Agent</span>
-                        </span>
+                        <span slot="title" class="slds-text-heading_small">전사 유사사례</span>
+                        <span slot="actions" class="slds-badge source-agent">Agent</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <template lwc:if={similarCasesSummary}>
                                 <lightning-formatted-rich-text value={similarCasesSummary}></lightning-formatted-rich-text>

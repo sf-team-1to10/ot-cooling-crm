@@ -1,14 +1,37 @@
+/* 보통 org 화면과 동일한 좌우 여백 — 과한 중앙 여백 제거 */
+.workbench-shell {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
 .kv {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    row-gap: 0.5rem;
+    column-gap: 0.75rem;
     margin-top: 0.25rem;
 }
 
-.kv .slds-item_label {
-    width: 40%;
+dl.kv dt.slds-item_label {
     color: #5c5c5c;
+    text-align: right;
+    padding: 0;
+    width: auto;
 }
 
-.kv .slds-item_detail {
-    width: 60%;
+dl.kv dd.slds-item_detail {
+    margin: 0;
+    width: auto;
+}
+
+/* 우선 점검 후보·전사 유사사례 — '■' 섹션 문단 구분 (문단 간 한 줄 추가) */
+.briefing-section {
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.briefing-section:last-child {
+    margin-bottom: 0;
 }
 
 /* 출처 배지 — S-01 t5CaseIntakePanel과 색 일치 */
