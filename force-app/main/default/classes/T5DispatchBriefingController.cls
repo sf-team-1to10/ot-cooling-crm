@@ -35,8 +35,12 @@ public with sharing class T5DispatchBriefingController {
         result.similarCasesSummary = current.Similar_Cases_Summary__c;
         result.targetAssetName = current.Asset?.Name;
 
+        RecoverySla sla = getRecoverySla(current.Id);
+        result.slaRemaining = (sla != null) ? sla.display : null;
+        result.calculatedAt = current.Warranty_Judged_At__c;
+
         result.comparisons = buildComparisons();
-        result.priorityRationale = buildPriorityRationale(result.comparisons, current);
+        result.priorityRationale = buildPriorityRationale(result.comparisons, current, sla);
         return result;
     }
 
@@ -46,7 +50,7 @@ public with sharing class T5DispatchBriefingController {
         List<Case> cases = [
             SELECT Id, CaseNumber, Subject, Priority, Impact_Level__c,
                    Dispatch_Briefing__c, Similar_Cases_Summary__c,
-                   AssetId, Asset.Name
+                   Warranty_Judged_At__c, AssetId, Asset.Name
             FROM Case
             WHERE Id = :caseId
             WITH USER_MODE
@@ -142,9 +146,9 @@ public with sharing class T5DispatchBriefingController {
 
     /**
      * 12대 비교 결과에서 대상 장비(가장 큰 하락폭)를 찾아 Priority 근거 5개 인자를 요약한다.
-     * 값 자체는 규칙/Flow가 이미 산정했고, 여기서는 근거를 화면용으로 조립만 한다.
+     * 각 인자의 값과 기여도(높음/보통/낮음)는 org의 실제 데이터에서 규칙으로 산정한다.
      */
-    private static PriorityRationale buildPriorityRationale(List<AssetComparison> comparisons, Case current) {
+    private static PriorityRationale buildPriorityRationale(List<AssetComparison> comparisons, Case current, RecoverySla sla) {
         PriorityRationale r = new PriorityRationale();
         r.priority = current.Priority;
 
@@ -164,7 +168,156 @@ public with sharing class T5DispatchBriefingController {
         }
         r.comparedCount = comparisons.size();
         r.impactLevel = current.Impact_Level__c;
+
+        r.factors = buildFactors(worst, current, sla);
         return r;
+    }
+
+    /**
+     * 프로토타입 5행 산정 인자 테이블을 실제 데이터로 조립한다.
+     * 데이터가 없는 인자(캐시 미반영·미시딩)는 available=false로 두어 화면에서 degrade.
+     */
+    private static List<RationaleFactor> buildFactors(AssetComparison worst, Case current, RecoverySla sla) {
+        List<RationaleFactor> factors = new List<RationaleFactor>();
+        Id targetAssetId = (worst != null) ? worst.assetId : null;
+
+        // 1) 유량 하락 폭
+        RationaleFactor f1 = new RationaleFactor();
+        f1.key = 'flowDrop';
+        f1.label = '유량 하락 폭';
+        if (worst != null && worst.driftFromBaseline != null) {
+            Decimal drift = worst.driftFromBaseline;
+            f1.value = drift.setScale(2) + '% · 12대 중 최대';
+            Decimal absDrift = drift.abs();
+            f1.contribution = absDrift >= 5 ? '높음' : (absDrift >= 2 ? '보통' : '낮음');
+            f1.available = true;
+        }
+        factors.add(f1);
+
+        // 2) 동일 위치 과거 실패
+        RationaleFactor f2 = new RationaleFactor();
+        f2.key = 'pastFailure';
+        f2.label = '동일 위치 과거 실패';
+        if (targetAssetId != null) {
+            String failPoint = null;
+            Boolean pastFail = false;
+            for (WorkOrderLineItem w : [
+                SELECT Measurement_Point__c
+                FROM WorkOrderLineItem
+                WHERE WorkOrder.AssetId = :targetAssetId
+                  AND Judgement__c = :JUDGE_FAIL
+                WITH USER_MODE
+                ORDER BY CreatedDate ASC
+            ]) {
+                pastFail = true;
+                if (failPoint == null && w.Measurement_Point__c != null) {
+                    failPoint = w.Measurement_Point__c;
+                }
+            }
+            f2.available = true;
+            if (pastFail) {
+                f2.value = (failPoint != null ? failPoint + ' · ' : '') + '과거 기준 미달 이력';
+                f2.contribution = '높음';
+            } else {
+                f2.value = '이력 없음';
+                f2.contribution = '낮음';
+            }
+        }
+        factors.add(f2);
+
+        // 3) SLA 잔여시간 (CaseMilestone 복구)
+        RationaleFactor f3 = new RationaleFactor();
+        f3.key = 'slaRemaining';
+        f3.label = 'SLA 잔여시간';
+        if (sla != null) {
+            f3.value = sla.display;
+            f3.contribution = sla.contribution;
+            f3.available = true;
+        }
+        factors.add(f3);
+
+        // 4) Asset 중요도 (신규 필드 — 캐시 미반영 시 동적 SOQL이 예외 → degrade)
+        RationaleFactor f4 = new RationaleFactor();
+        f4.key = 'assetCriticality';
+        f4.label = 'Asset 중요도';
+        String crit = getAssetCriticality(targetAssetId);
+        if (crit != null) {
+            f4.value = crit;
+            f4.contribution = crit == '핵심' ? '높음' : (crit == '중요' ? '보통' : '낮음');
+            f4.available = true;
+        }
+        factors.add(f4);
+
+        // 5) 전체 냉각 상실 (Impact_Level에서 도출)
+        RationaleFactor f5 = new RationaleFactor();
+        f5.key = 'totalCoolingLoss';
+        f5.label = '전체 냉각 상실';
+        f5.available = true;
+        if (current.Impact_Level__c != null && current.Impact_Level__c.startsWith('S1')) {
+            f5.value = '전체 냉각 상실';
+            f5.contribution = '높음';
+        } else {
+            f5.value = '해당 없음';
+            f5.contribution = '낮음';
+        }
+        factors.add(f5);
+
+        return factors;
+    }
+
+    /**
+     * Case의 복구 SLA(CaseMilestone) 잔여시간을 계산한다.
+     * @return 잔여 표시·기여도. Milestone이 없으면 null.
+     */
+    private static RecoverySla getRecoverySla(Id caseId) {
+        List<CaseMilestone> ms = [
+            SELECT TargetDate, CompletionDate, IsCompleted
+            FROM CaseMilestone
+            WHERE CaseId = :caseId
+              AND MilestoneType.Name = '복구'
+            WITH USER_MODE
+            ORDER BY TargetDate DESC
+            LIMIT 1
+        ];
+        if (ms.isEmpty() || ms[0].TargetDate == null) {
+            return null;
+        }
+        RecoverySla sla = new RecoverySla();
+        Long remainMin = (ms[0].TargetDate.getTime() - Datetime.now().getTime()) / 60000;
+        if (remainMin <= 0) {
+            sla.display = 'SLA 초과';
+            sla.contribution = '높음';
+        } else {
+            Long h = remainMin / 60;
+            Long m = Math.mod(remainMin, 60);
+            sla.display = h + '시간 ' + m + '분 남음';
+            // 기본 복구 목표 8시간(480분) 기준 잔여 비율로 기여도 산정
+            sla.contribution = remainMin <= 120 ? '높음' : (remainMin <= 288 ? '보통' : '낮음');
+        }
+        return sla;
+    }
+
+    /**
+     * 대상 Asset의 중요도(신규 필드)를 동적 SOQL로 조회한다.
+     * 배포 직후 스키마 캐시가 필드를 못 보면 QueryException → null 반환(화면 degrade).
+     */
+    private static String getAssetCriticality(Id assetId) {
+        if (assetId == null) {
+            return null;
+        }
+        try {
+            List<SObject> rows = Database.queryWithBinds(
+                'SELECT Criticality__c FROM Asset WHERE Id = :assetId LIMIT 1',
+                new Map<String, Object>{ 'assetId' => assetId },
+                AccessLevel.USER_MODE
+            );
+            if (!rows.isEmpty()) {
+                return (String) rows[0].get('Criticality__c');
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
     }
 
     // ─── DTOs ────────────────────────────────────────────────────────────
@@ -178,6 +331,8 @@ public with sharing class T5DispatchBriefingController {
         @AuraEnabled public String briefingBody;
         @AuraEnabled public String similarCasesSummary;
         @AuraEnabled public String targetAssetName;
+        @AuraEnabled public String slaRemaining;
+        @AuraEnabled public Datetime calculatedAt;
         @AuraEnabled public List<AssetComparison> comparisons = new List<AssetComparison>();
         @AuraEnabled public PriorityRationale priorityRationale;
     }
@@ -223,5 +378,19 @@ public with sharing class T5DispatchBriefingController {
         @AuraEnabled public Decimal maxDriftValue;
         @AuraEnabled public Boolean hasPastFailure;
         @AuraEnabled public Integer comparedCount;
+        @AuraEnabled public List<RationaleFactor> factors = new List<RationaleFactor>();
+    }
+
+    public class RationaleFactor {
+        @AuraEnabled public String key;
+        @AuraEnabled public String label;
+        @AuraEnabled public String value;
+        @AuraEnabled public String contribution;
+        @AuraEnabled public Boolean available = false;
+    }
+
+    private class RecoverySla {
+        String display;
+        String contribution;
     }
 }

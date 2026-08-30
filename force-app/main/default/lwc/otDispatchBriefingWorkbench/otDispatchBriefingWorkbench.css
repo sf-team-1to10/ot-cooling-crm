@@ -4,24 +4,91 @@
     padding-right: 0.75rem;
 }
 
-.kv {
-    display: grid;
-    grid-template-columns: 8rem 1fr;
-    row-gap: 0.5rem;
-    column-gap: 0.75rem;
-    margin-top: 0.25rem;
+/* ── Highlights 헤더 ── */
+.briefing-hl {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
 }
 
-dl.kv dt.slds-item_label {
-    color: #5c5c5c;
-    text-align: right;
-    padding: 0;
-    width: auto;
+.briefing-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
 }
 
-dl.kv dd.slds-item_detail {
+.briefing-hl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    background-color: #0877d1;
+    flex: 0 0 auto;
+}
+
+.briefing-hl-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.briefing-hl-eyebrow {
     margin: 0;
-    width: auto;
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.briefing-hl-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.briefing-hl-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+}
+
+.briefing-hl-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.briefing-hl-f dt {
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.briefing-hl-f dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.briefing-hl-f dd.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Priority 산정 근거 — 프로토타입 3열 인자 테이블 */
+.rationale-table th[scope='row'] {
+    color: #5c5c5c;
+    font-weight: 600;
+}
+
+.rationale-callout {
+    background-color: #f3f9fd;
+    border-left: 3px solid #16b8c8;
 }
 
 /* 우선 점검 후보·전사 유사사례 — '■' 섹션 문단 구분 (문단 간 한 줄 추가) */

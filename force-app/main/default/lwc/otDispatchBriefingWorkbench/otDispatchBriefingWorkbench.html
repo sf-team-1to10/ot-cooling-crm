@@ -11,21 +11,42 @@
         </template>
 
         <template lwc:if={briefing}>
-            <!-- ── Highlights: A-07과 나머지 11대는 무엇이 달랐는가 ── -->
-            <lightning-card>
-                <span slot="title" class="slds-text-heading_small">A-07과 나머지 11대는 무엇이 달랐는가</span>
-                <span slot="actions" class="slds-badge priority-badge">Priority · {priority} 제안</span>
-                <div class="slds-p-horizontal_small slds-p-bottom_x-small">
-                    <p class="slds-text-body_small slds-text-color_weak">
-                        <lightning-icon icon-name="utility:trending" size="xx-small"
-                            class="slds-m-right_xx-small"></lightning-icon>
-                        최대 유량 하락 {maxDriftText}
-                        <template lwc:if={hasPastFailure}>
-                            · 동일 위치 과거 실패 이력 있음
-                        </template>
-                    </p>
+            <!-- ── Highlights 헤더 ── -->
+            <div class="briefing-hl">
+                <div class="briefing-hl-head">
+                    <span class="briefing-hl-icon">
+                        <lightning-icon icon-name="utility:trending" size="small"
+                            variant="inverse"></lightning-icon>
+                    </span>
+                    <div class="briefing-hl-title">
+                        <p class="briefing-hl-eyebrow">출동 브리핑 · Case {caseNumber}</p>
+                        <h1 class="briefing-hl-name">{headerTitle}</h1>
+                    </div>
+                    <div class="briefing-hl-actions">
+                        <span class="slds-badge priority-badge">Priority · {priority} 제안</span>
+                        <lightning-button label="2022년 원기록 확인" onclick={handleEvidence}
+                            class="slds-m-left_xx-small"></lightning-button>
+                        <lightning-button label="Slack 인계" onclick={handleSlack}
+                            class="slds-m-left_xx-small"></lightning-button>
+                        <lightning-button label="Priority 승인 · 출동 확정" variant="brand"
+                            onclick={handleApprove} class="slds-m-left_xx-small"></lightning-button>
+                    </div>
                 </div>
-            </lightning-card>
+                <dl class="briefing-hl-fields">
+                    <div class="briefing-hl-f">
+                        <dt>SLA 잔여</dt>
+                        <dd class="num">{slaRemaining}</dd>
+                    </div>
+                    <div class="briefing-hl-f">
+                        <dt>산정 시각</dt>
+                        <dd class="num">{calculatedAtText}</dd>
+                    </div>
+                    <div class="briefing-hl-f">
+                        <dt>비교 대상</dt>
+                        <dd>Hall A CDU {rationale.comparedCount}대</dd>
+                    </div>
+                </dl>
+            </div>
 
             <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
                 <!-- ── 중앙: Priority 근거 + 12대 비교 ── -->
@@ -35,28 +56,35 @@
                         <span slot="title" class="slds-text-heading_small">Priority 산정 근거</span>
                         <span slot="actions" class="slds-badge source-rule">규칙 산정</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <dl class="slds-list_horizontal slds-wrap kv">
-                                <dt class="slds-item_label">산정 결과</dt>
-                                <dd class="slds-item_detail">
-                                    <span class="slds-badge priority-badge">{priority}</span>
-                                </dd>
-                                <dt class="slds-item_label">최대 하락 장비</dt>
-                                <dd class="slds-item_detail">{rationale.maxDriftAssetName} ({rationale.maxDriftValue}%)</dd>
-                                <dt class="slds-item_label">영향 등급</dt>
-                                <dd class="slds-item_detail">{rationale.impactLevel}</dd>
-                                <dt class="slds-item_label">동일 위치 과거 실패</dt>
-                                <dd class="slds-item_detail">
-                                    <template lwc:if={hasPastFailure}>
-                                        <span class="slds-badge slds-theme_error">있음</span>
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered rationale-table">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">산정 인자</div></th>
+                                        <th scope="col"><div class="slds-truncate">{rationale.maxDriftAssetName} 값</div></th>
+                                        <th scope="col"><div class="slds-truncate">기여</div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={rationaleFactors} for:item="f">
+                                        <tr key={f.key} class="slds-hint-parent">
+                                            <th scope="row"><div class="slds-truncate">{f.label}</div></th>
+                                            <td><div>{f.valueText}</div></td>
+                                            <td><span class={f.contributionClass}>{f.contributionText}</span></td>
+                                        </tr>
                                     </template>
-                                    <template lwc:else>—</template>
-                                </dd>
-                                <dt class="slds-item_label">비교 대수</dt>
-                                <dd class="slds-item_detail">{rationale.comparedCount}대</dd>
-                            </dl>
-                            <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
-                                Impact·Trend·SLA·Asset 중요도·과거 실패를 규칙이 산정했습니다. 담당자가 승인 또는 변경합니다.
-                            </p>
+                                </tbody>
+                            </table>
+                            <div class="rationale-callout slds-box slds-box_x-small slds-m-top_small">
+                                <p class="slds-text-body_small">
+                                    <strong>Priority {priority}</strong> — 유량 하락 폭이 12대 중 최대이고 동일 위치 과거 실패 이력이 있어
+                                    상향했습니다. 전체 냉각 상실은 아니므로 <strong>Critical은 아닙니다.</strong>
+                                </p>
+                                <div class="slds-m-top_xx-small">
+                                    <span class="slds-badge source-rule">규칙 산정</span>
+                                    <span class="slds-badge source-agent slds-m-left_xx-small">Agent 설명</span>
+                                    <span class="slds-badge slds-m-left_xx-small">담당자 승인 대기</span>
+                                </div>
+                            </div>
                         </div>
                     </lightning-card>
 

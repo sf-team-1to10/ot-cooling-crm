@@ -1,5 +1,6 @@
 import { LightningElement, api, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
 
 export default class OtDispatchBriefingWorkbench extends LightningElement {
@@ -46,6 +47,53 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         return this.briefing?.priority;
     }
 
+    get caseNumber() {
+        return this.briefing?.caseNumber;
+    }
+
+    get headerTitle() {
+        const asset = this.briefing?.targetAssetName;
+        return asset ? `${asset} 출동 브리핑` : '출동 브리핑';
+    }
+
+    get slaRemaining() {
+        return this.briefing?.slaRemaining || '—';
+    }
+
+    // 산정 시각 — 규칙 엔진이 Impact·보증·Priority를 판정한 시각(시:분)
+    get calculatedAtText() {
+        const raw = this.briefing?.calculatedAt;
+        if (!raw) {
+            return '—';
+        }
+        return new Date(raw).toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    handleEvidence() {
+        this.notReady('2022년 원기록');
+    }
+
+    handleSlack() {
+        this.notReady('Slack 인계');
+    }
+
+    handleApprove() {
+        this.notReady('Priority 승인 · 출동 확정');
+    }
+
+    notReady(feature) {
+        this.dispatchEvent(
+            new ShowToastEvent({
+                title: `${feature} — 준비 중`,
+                message: '해당 기능은 후속 작업에서 연결됩니다.',
+                variant: 'info'
+            })
+        );
+    }
+
     get rationale() {
         return this.briefing?.priorityRationale;
     }
@@ -56,6 +104,29 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
             return '';
         }
         return `${r.maxDriftValue}% · ${r.comparedCount}대 중 최대`;
+    }
+
+    // 프로토타입 5행 산정 인자 테이블 — 각 인자에 기여도 배지 클래스 부여
+    get rationaleFactors() {
+        const factors = this.rationale?.factors || [];
+        return factors.map((f) => ({
+            ...f,
+            valueText: f.available ? f.value : '—',
+            contributionText: f.available ? f.contribution : '준비중',
+            contributionClass: f.available
+                ? this.contributionBadgeClass(f.contribution)
+                : 'slds-badge'
+        }));
+    }
+
+    contributionBadgeClass(contribution) {
+        if (contribution === '높음') {
+            return 'slds-badge slds-theme_error';
+        }
+        if (contribution === '보통') {
+            return 'slds-badge slds-theme_warning';
+        }
+        return 'slds-badge';
     }
 
     // 12대 비교 행 — 대표값을 표시용으로 가공(A-07 강조 플래그 포함)
