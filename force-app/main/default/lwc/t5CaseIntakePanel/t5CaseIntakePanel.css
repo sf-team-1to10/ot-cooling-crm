@@ -1,14 +1,19 @@
+/* label/value 2열 그리드 — 값 시작 위치를 일정하게 정렬 */
 .kv {
+    display: grid;
+    grid-template-columns: 8rem 1fr;
+    column-gap: var(--slds-g-spacing-medium, 1rem);
     row-gap: var(--slds-g-spacing-x-small, 0.5rem);
+    align-items: start;
 }
 
 .kv .slds-item_label {
-    width: 40%;
+    width: auto;
     color: var(--slds-g-color-neutral-base-30, #5c5c5c);
 }
 
 .kv .slds-item_detail {
-    width: 60%;
+    width: auto;
     font-weight: 500;
 }
 

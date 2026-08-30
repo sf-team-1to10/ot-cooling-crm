@@ -526,6 +526,19 @@
                 </width>
             </styleProperties>
         </fields>
+        <fields>
+            <name>briefingNavigator</name>
+            <extensionName>c:otBriefingNavigator</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>recordId</name>
+                <value>
+                    <elementReference>recordId</elementReference>
+                </value>
+            </inputParameters>
+            <isRequired>false</isRequired>
+            <storeOutputAutomatically>true</storeOutputAutomatically>
+        </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
     </screens>
