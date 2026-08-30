@@ -3,14 +3,12 @@
     <apiVersion>66.0</apiVersion>
     <isExposed>true</isExposed>
     <targets>
-        <target>lightning__RecordPage</target>
-        <target>lightning__AppPage</target>
+        <target>lightning__FlowScreen</target>
     </targets>
     <targetConfigs>
-        <targetConfig targets="lightning__RecordPage">
-            <objects>
-                <object>Case</object>
-            </objects>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="recordId" type="String" label="Case Id"
+                description="브리핑을 열 대상 Case Id"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

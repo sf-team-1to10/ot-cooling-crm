@@ -138,4 +138,5 @@
     <tabSettings><tab>standard-Asset</tab><visibility>Visible</visibility></tabSettings>
     <tabSettings><tab>standard-Problem</tab><visibility>Visible</visibility></tabSettings>
     <tabSettings><tab>standard-Knowledge</tab><visibility>Visible</visibility></tabSettings>
+    <tabSettings><tab>Dispatch_Briefing_Workbench</tab><visibility>Visible</visibility></tabSettings>
 </PermissionSet>
