@@ -1,0 +1,112 @@
+<template>
+    <div class="slds-p-around_x-small">
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
+
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template lwc:if={record}>
+            <!-- ── Agent가 수집한 내용 ── -->
+            <lightning-card>
+                <span slot="title" class="slds-text-heading_small">Agent가 수집한 내용</span>
+                <span slot="actions" class="slds-badge source-agent">Agent 제안</span>
+
+                <div class="slds-p-horizontal_small slds-p-bottom_small">
+                    <dl class="kv">
+                        <dt class="slds-item_label">증상 분류</dt>
+                        <dd class="slds-item_detail">{symptomCategory}</dd>
+
+                        <dt class="slds-item_label">보고된 증상</dt>
+                        <dd class="slds-item_detail">{reportedSymptom}</dd>
+
+                        <dt class="slds-item_label">영향 등급</dt>
+                        <dd class="slds-item_detail">{impactLevel}</dd>
+
+                        <dt class="slds-item_label">자가조치 결과</dt>
+                        <dd class="slds-item_detail">
+                            <lightning-formatted-text value={remoteDiagnosis}></lightning-formatted-text>
+                            <template lwc:if={selfDiagnosisUnresolved}>
+                                <span class="slds-badge slds-theme_error slds-m-left_x-small">해결되지 않음</span>
+                            </template>
+                        </dd>
+
+                        <dt class="slds-item_label">현장 방문 필요</dt>
+                        <dd class="slds-item_detail">
+                            <lightning-input type="checkbox" checked={fieldVisitRequired} disabled
+                                variant="label-hidden" label="현장 방문 필요"></lightning-input>
+                        </dd>
+                    </dl>
+
+                    <template lwc:if={handoffTimesAvailable}>
+                        <div class="slds-grid slds-grid_align-spread slds-m-top_x-small handoff">
+                            <div class="slds-text-align_center time-block">
+                                <div class="slds-text-title_caps slds-text-color_weak">Agent 최초 응답</div>
+                                <div class="slds-text-heading_small">
+                                    <lightning-formatted-date-time value={agentFirstResponse}
+                                        hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                                </div>
+                            </div>
+                            <lightning-icon icon-name="utility:forward" size="x-small"
+                                class="slds-align-middle"></lightning-icon>
+                            <div class="slds-text-align_center time-block">
+                                <div class="slds-text-title_caps slds-text-color_weak">상담사 인수</div>
+                                <div class="slds-text-heading_small">
+                                    <lightning-formatted-date-time value={agentHandoff}
+                                        hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                            상담사 인수 시각은 최초 응답 시각이 아닙니다. Agent 응답과 사람 인수를 분리해 기록합니다.
+                        </p>
+                    </template>
+                    <template lwc:else>
+                        <div class="slds-text-body_small slds-text-color_weak slds-m-top_x-small handoff-pending">
+                            Agent 응답·상담사 인수 시각 데이터 준비중
+                        </div>
+                    </template>
+                </div>
+            </lightning-card>
+
+            <!-- ── 보증·SLA 판정 ── -->
+            <lightning-card class="slds-m-top_small">
+                <span slot="title" class="slds-text-heading_small">보증·SLA 판정</span>
+                <span slot="actions" class="slds-badge source-rule">규칙 산정</span>
+
+                <div class="slds-p-horizontal_small slds-p-bottom_small">
+                    <dl class="kv">
+                        <dt class="slds-item_label">보증 판정</dt>
+                        <dd class="slds-item_detail">
+                            <span class="slds-badge slds-theme_success">{warrantyDecision}</span>
+                        </dd>
+
+                        <dt class="slds-item_label">보증 범위</dt>
+                        <dd class="slds-item_detail">{coverageType}</dd>
+
+                        <dt class="slds-item_label">청구 대상</dt>
+                        <dd class="slds-item_detail">{billableLabel}</dd>
+
+                        <dt class="slds-item_label">접수시점 보증만료</dt>
+                        <dd class="slds-item_detail">
+                            <lightning-formatted-date-time value={warrantyEndDate}></lightning-formatted-date-time>
+                        </dd>
+
+                        <dt class="slds-item_label">판정 시각</dt>
+                        <dd class="slds-item_detail">
+                            <lightning-formatted-date-time value={warrantyJudgedAt}
+                                hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                        </dd>
+                    </dl>
+                    <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                        Impact Level과 계약을 규칙이 대조해 자동 판정했습니다. 상담사가 계약서를 따로 찾지 않았습니다.
+                    </p>
+                </div>
+            </lightning-card>
+        </template>
+    </div>
+</template>

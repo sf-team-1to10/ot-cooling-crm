@@ -1,0 +1,131 @@
+/* 보통 org 화면과 동일한 좌우 여백 — 과한 중앙 여백 제거 */
+.workbench-shell {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+
+/* ── Highlights 헤더 ── */
+.briefing-hl {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+}
+
+.briefing-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.briefing-hl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    background-color: #0877d1;
+    flex: 0 0 auto;
+}
+
+.briefing-hl-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.briefing-hl-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.briefing-hl-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.briefing-hl-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+}
+
+.briefing-hl-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.briefing-hl-f dt {
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.briefing-hl-f dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.briefing-hl-f dd.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Priority 산정 근거 — 프로토타입 3열 인자 테이블 */
+.rationale-table th[scope='row'] {
+    color: #5c5c5c;
+    font-weight: 600;
+}
+
+.rationale-callout {
+    background-color: #f3f9fd;
+    border-left: 3px solid #16b8c8;
+}
+
+/* 우선 점검 후보·전사 유사사례 — '■' 섹션 문단 구분 (문단 간 한 줄 추가) */
+.briefing-section {
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.briefing-section:last-child {
+    margin-bottom: 0;
+}
+
+/* 출처 배지 — S-01 t5CaseIntakePanel과 색 일치 */
+.source-agent {
+    background-color: #0877d1;
+    color: #ffffff;
+}
+
+.source-rule {
+    background-color: #16b8c8;
+    color: #ffffff;
+}
+
+/* Priority 제안 배지 */
+.priority-badge {
+    background-color: #ba0517;
+    color: #ffffff;
+}
+
+/* 12대 비교에서 대상 장비(A-07) 행 강조 */
+.target-row {
+    background-color: #fef1ee;
+    font-weight: 700;
+}
+
+.target-row th,
+.target-row td {
+    border-top: 2px solid #ba0517;
+    border-bottom: 2px solid #ba0517;
+}
