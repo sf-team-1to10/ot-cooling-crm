@@ -54,7 +54,7 @@ public without sharing class T5AgentCaseIntakeAction {
                 Origin = 'Agent',
                 Subject = inp.symptomCategory,
                 Symptom_Category__c = inp.symptomCategory,
-                Impact_Level__c = inp.impactLevel,
+                Impact_Level__c = normalizeImpactLevel(inp.impactLevel),
                 Reported_Symptom__c = inp.reportedSymptom,
                 // T5-22: Agent Script에서 "매치 없음"을 표현식으로 반전시키면
                 // 검증 안 된 문법 위험이 생겨서, 반전 계산을 여기 Apex로 옮김 —
@@ -130,6 +130,37 @@ public without sharing class T5AgentCaseIntakeAction {
             }
         }
         return bestMatch;
+    }
+
+    /**
+     * Impact_Level__c은 제한된(restricted) 피클리스트라 "S3 일반"처럼 코드+
+     * 한글 라벨 전체가 정확히 일치해야 값이 들어간다(2026-08-30 실측:
+     * Tooling API로 valueSet 직접 확인). Agent는 대화 흐름에 따라 "S3"만
+     * 보내기도 하고 "S3 일반"을 그대로 보내기도 해서 일관되지 않았고, 이
+     * 불일치 때문에 실제 Live Test에서 INVALID_FIELD_FOR_INSERT_UPDATE 성격의
+     * 피클리스트 오류로 접수가 조용히 실패한 적이 있었다(Trace로 확인). LLM
+     * 출력 표기를 신뢰하지 않고 여기서 정규화한다.
+     */
+    private static final Map<String, String> IMPACT_LEVEL_CANONICAL = new Map<String, String>{
+        'S1' => 'S1 긴급',
+        'S2' => 'S2 중요',
+        'S3' => 'S3 일반',
+        'S4' => 'S4 요청'
+    };
+
+    private static String normalizeImpactLevel(String raw) {
+        if (String.isBlank(raw)) {
+            return raw;
+        }
+        String upper = raw.toUpperCase();
+        for (String prefix : IMPACT_LEVEL_CANONICAL.keySet()) {
+            if (upper.contains(prefix)) {
+                return IMPACT_LEVEL_CANONICAL.get(prefix);
+            }
+        }
+        // S1~S4 어디에도 안 걸리면 원본 그대로 넘겨서, 실제 피클리스트 오류로
+        // 정직하게 실패하게 둔다(임의로 기본값을 넣지 않음 — 등급 오분류 방지).
+        return raw;
     }
 
     private static Id resolveAccountFromContact(String contactIdStr) {

@@ -82,6 +82,7 @@ subagent symptom_consultation:
               - Summarize the collected information and ask for confirmation before creating the case.
               - After confirmation, call create_case with all four fields. Set knowledgeFound to true only if search_knowledge actually returned a relevant article for this symptom, otherwise false.
               - If the customer says this is not an equipment issue or changes their mind, do NOT create a case. Politely end.
+              - CRITICAL — after calling create_case, you MUST check its "success" output before telling the customer anything about the outcome. If success is true, confirm the case was created and mention the case number from the "caseNumber" output. If success is false (for any reason), do NOT say the case was submitted or that the service team will contact them — that would be a false statement. Instead apologize, briefly explain using the "errorMessage" output in plain Korean, and ask the customer to try again or offer to escalate to a human. Never present a failed create_case call as a success.
 
               Rules:
               - Never provide engineering diagnosis or repair instructions beyond what the matched Knowledge Article itself says.
