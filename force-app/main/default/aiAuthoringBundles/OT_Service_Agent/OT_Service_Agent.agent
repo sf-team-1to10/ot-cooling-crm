@@ -88,30 +88,20 @@ subagent symptom_consultation:
               - Always use Korean in your responses.
         actions:
             search_knowledge: @actions.search_knowledge
-                with inputUtterance = ...
-                with displaySummary = True
-                with displaySearchResults = True
-                with displayActions = False
-                with searchConfig = ...
+                with queryText = ...
             create_case: @actions.create_case_from_agent
                 description: "고객 증상 상담 결과를 Case로 접수한다."
                 with knowledgeFound = ...
 
     actions:
         search_knowledge:
-            description: "고객이 설명한 증상으로 게시된 Knowledge Article 등 관련 자료를 검색한다(네이티브 Actionable Smart Search, T5-22)."
-            target: "standardInvocableAction://agenticSearch"
-            source: "SSAgenticSearch__ActionableSmartSearch"
+            description: "고객이 설명한 증상으로 게시된 Knowledge Article을 검색한다(직접 apex:// 타겟, T5-22 재검증)."
+            target: "apex://T5AgentKnowledgeSearchAction"
             require_user_confirmation: False
             inputs:
-                inputUtterance: string
-                displaySummary: boolean
-                displaySearchResults: boolean
-                displayActions: boolean
-                searchConfig: string
+                queryText: string
             outputs:
-                searchOutput: object
-                    complex_data_type_name: "@apexClassType/ssagenticsearch__SearchSummaryItemsApex"
+                found: boolean
                 articleTitle: string
                 articleSummary: string
                 articleUrlName: string
