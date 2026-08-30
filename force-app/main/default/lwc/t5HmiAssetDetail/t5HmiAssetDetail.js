@@ -9,20 +9,16 @@ import userId from '@salesforce/user/Id';
 
 const USER_FIELDS = ['User.Name', 'User.Contact.Account.Name'];
 
-// T5-23: MIAW(Embedded Messaging for Web) 연결 정보 — Setup > Messaging
-// Settings > OT_Service_Chat 채널의 Code Snippet 화면에서 그대로 복사(2026-08-30).
-// 이 값들은 org별로 다르므로 Production 이관 시 재확인 필요
-// (T5_Production_이관_체크리스트.md B-7 참고).
-const MIAW_ORG_ID = '00Dh800000046bV';
-const MIAW_ES_DEVELOPER_NAME = 'OT_Service_Chat';
-const MIAW_SITE_URL = 'https://trailsignup-8617b18a6871a9--t3dlv.sandbox.my.site.com/ESWOTServiceCha1788104812895';
-const MIAW_SCRT2_URL = 'https://trailsignup-8617b18a6871a9--t3dlv.sandbox.my.salesforce-scrt.com';
-const MIAW_BOOTSTRAP_SRC = `${MIAW_SITE_URL}/assets/js/bootstrap.min.js`;
-
-// 모듈 스코프에 둬서 컴포넌트가 여러 번 렌더링돼도 SDK를 중복 로드/초기화하지
-// 않도록 한다(embeddedservice_bootstrap은 전역 객체라 두 번 init하면 안 됨).
-let miawScriptLoading = null;
-let miawReady = false;
+// T5-23: MIAW(Embedded Messaging for Web) 스크립트는 여기서 주입하지 않는다.
+// LWC(Shadow DOM) 안에서 document.createElement('script')로 넣으면 Lightning
+// Web Security 샌드박스가 실행 컨텍스트를 격리해서 window.embeddedservice_
+// bootstrap이 실제 페이지 window에 안 붙는 문제를 2026-08-30에 실측으로
+// 확인했다(콘솔에서 typeof window.embeddedservice_bootstrap === 'undefined').
+// 그래서 스크립트 자체는 Experience Builder 사이트의 Head Markup(Setup UI
+// 전용, 사람이 직접 등록)에 넣고, 여기서는 이미 로드·초기화된 SDK를 호출만
+// 한다. Head Markup 등록 여부는 T5_Production_이관_체크리스트.md B-7 참고.
+const MIAW_READY_POLL_INTERVAL_MS = 200;
+const MIAW_READY_POLL_TIMEOUT_MS = 5000;
 
 export default class T5HmiAssetDetail extends NavigationMixin(LightningElement) {
     @api assetId;
@@ -128,58 +124,33 @@ export default class T5HmiAssetDetail extends NavigationMixin(LightningElement) 
     // 포털 화면이 곧 재설계될 예정이라 커스텀 UI 통합(Custom UI Components)에
     // 투자하지 않고, 지금은 실제 기능 연결만 검증한다.
     openChat() {
-        this.loadMiawSdk()
+        // Head Markup 스크립트가 페이지 로드 시 이미 init까지 끝내둔 상태를
+        // 전제로 한다. 페이지 진입 직후처럼 init이 아직 끝나기 전에 버튼을
+        // 누르는 경우를 대비해 짧게 폴링한다(최대 5초).
+        this.waitForMiawReady()
             .then(() => this.launchMiawChat())
             .catch((e) => {
                 // eslint-disable-next-line no-console
-                console.error('MIAW 로드 실패', e);
+                console.error('MIAW SDK 준비 실패 — Head Markup에 스크립트가 등록됐는지 확인 필요', e);
             });
     }
 
-    loadMiawSdk() {
-        if (miawReady) {
+    waitForMiawReady() {
+        if (window.embeddedservice_bootstrap) {
             return Promise.resolve();
         }
-        if (miawScriptLoading) {
-            return miawScriptLoading;
-        }
-        miawScriptLoading = new Promise((resolve, reject) => {
-            window.addEventListener('onEmbeddedMessagingReady', () => {
-                miawReady = true;
-                resolve();
-            }, { once: true });
-
-            if (window.embeddedservice_bootstrap) {
-                // 이미 다른 컴포넌트/이전 렌더에서 스크립트가 로드된 경우.
-                this.initMiaw();
-                return;
-            }
-
-            const script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = MIAW_BOOTSTRAP_SRC;
-            script.onload = () => this.initMiaw();
-            script.onerror = (e) => reject(e);
-            document.body.appendChild(script);
+        return new Promise((resolve, reject) => {
+            const start = Date.now();
+            const poll = window.setInterval(() => {
+                if (window.embeddedservice_bootstrap) {
+                    window.clearInterval(poll);
+                    resolve();
+                } else if (Date.now() - start > MIAW_READY_POLL_TIMEOUT_MS) {
+                    window.clearInterval(poll);
+                    reject(new Error('window.embeddedservice_bootstrap가 시간 내에 나타나지 않음'));
+                }
+            }, MIAW_READY_POLL_INTERVAL_MS);
         });
-        return miawScriptLoading;
-    }
-
-    initMiaw() {
-        try {
-            window.embeddedservice_bootstrap.settings.language = 'ko';
-            // 기본 플로팅 버튼은 숨기고, 우리 "상담 시작" 버튼으로만 연다.
-            window.embeddedservice_bootstrap.settings.hideChatButtonOnLoad = true;
-            window.embeddedservice_bootstrap.init(
-                MIAW_ORG_ID,
-                MIAW_ES_DEVELOPER_NAME,
-                MIAW_SITE_URL,
-                { scrt2URL: MIAW_SCRT2_URL }
-            );
-        } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('Error loading Embedded Messaging: ', e);
-        }
     }
 
     launchMiawChat() {
