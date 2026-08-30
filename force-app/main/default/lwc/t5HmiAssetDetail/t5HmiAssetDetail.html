@@ -1,0 +1,338 @@
+<template>
+    <div class="hmi-root" onkeydown={handleKeydown}>
+
+        <!-- ═══════════ HEADER ═══════════ -->
+        <header class="app-header">
+            <div class="brand">OT전자 <span>고객 포털</span></div>
+            <nav class="header-tabs">
+                <button class="active">내 자산</button>
+                <button>장애 신고</button>
+                <button>변경요청</button>
+                <button>인수 현황</button>
+                <button>정비 현황</button>
+            </nav>
+            <div class="header-right">
+                <template lwc:if={hasAlert}>
+                    <button class="icon-btn" aria-label="알림 1건">
+                        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+                            <path d="M8 2a4 4 0 0 0-4 4v3l-1.2 2h10.4L12 9V6a4 4 0 0 0-4-4Z"></path>
+                            <path d="M6.5 13a1.5 1.5 0 0 0 3 0"></path>
+                        </svg>
+                        <span class="badge mono">1</span>
+                    </button>
+                </template>
+                <div class="user-chip">
+                    <span class="avatar">{userInitial}</span>
+                    <span>{userChipText}</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ═══════════ LOADING ═══════════ -->
+        <template lwc:if={isLoading}>
+            <div class="loading-wrap">불러오는 중…</div>
+        </template>
+
+        <!-- ═══════════ ERROR ═══════════ -->
+        <template lwc:if={hasError}>
+            <div class="error-wrap" role="alert">{error}</div>
+        </template>
+
+        <!-- ═══════════ NO ASSET ID ═══════════ -->
+        <template lwc:if={hasNoAssetId}>
+            <div class="empty-wrap">표시할 자산이 선택되지 않았습니다.</div>
+        </template>
+
+        <!-- ═══════════ MAIN CONTENT ═══════════ -->
+        <template lwc:if={hasDetail}>
+
+            <!-- ── Advisory Signal Bar ── -->
+            <template lwc:if={hasAlert}>
+                <div class="signal-wrap">
+                    <div class="signal-bar" role="status">
+                        <span class="sig-ico">!</span>
+                        <div class="sig-body">
+                            <div class="sig-title">{alertSignalTitle}</div>
+                            <div class="sig-sub">{alertSignalSub}</div>
+                        </div>
+                        <!-- T5-11: 게이팅만 적용, 버튼 자체 위치·라벨은 UI 작업 중이라 손대지 않음.
+                             이 요소가 새 버튼으로 교체되면 lwc:if={agentEnabled}만 그대로 옮기면 됨. -->
+                        <template lwc:if={agentEnabled}>
+                            <div class="sig-acts">
+                                <button class="btn consult" onclick={openChat}>상담 시작</button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <div class="wrap">
+
+                <!-- ── Asset Title ── -->
+                <div class="asset-title">
+                    <h1 class="mono">{detail.asset.name}</h1>
+                    <div class="sub">{assetSubline}</div>
+                </div>
+
+                <!-- ── Tabbed Panel ── -->
+                <section class="panel">
+                    <div class="tabs" role="tablist">
+                        <button class={infoTabClass} data-tab="info" role="tab" onclick={switchTab}>장비 정보</button>
+                        <button class={histTabClass} data-tab="hist" role="tab" onclick={switchTab}>최근 이력</button>
+                    </div>
+
+                    <!-- 장비 정보 -->
+                    <template lwc:if={isInfoTab}>
+                        <div class="info-split">
+                            <div class="info-photo">
+                                <div class="ph-box">
+                                    <c-t5-hmi-asset-thumb image-url={detail.asset.imageUrl} alt={detail.asset.productName}></c-t5-hmi-asset-thumb>
+                                </div>
+                            </div>
+                            <dl class="id-grid">
+                                <div class="row"><span class="k">장비명</span><span class="v">{detail.asset.assetTypeLabel}</span></div>
+                                <div class="row"><span class="k">Serial No.</span><span class="v mono">{detail.asset.serialNumber}</span></div>
+                                <div class="row"><span class="k">설치 위치</span><span class="v">{detail.asset.siteLocation}</span></div>
+                                <div class="row"><span class="k">설치일</span><span class="v mono">{detail.asset.installDate}</span></div>
+                                <div class="row"><span class="k">적용 Revision</span><span class="v mono">{detail.asset.appliedRevision}</span></div>
+                                <div class="row"><span class="k">보증 / 서비스</span><span class="v">{entitlementText}</span></div>
+                                <template lwc:if={hasEntitlement}>
+                                    <div class="row"><span class="k">SLA / 보증 상태</span><span class="v"><span class="pill ok">유효</span> <span class="mono">{entitlementEndText}</span></span></div>
+                                </template>
+                                <div class="row"><span class="k">최근 점검</span><span class="v mono">{detail.asset.lastMaintenanceDate}</span></div>
+                                <div class="row">
+                                    <span class="k">다음 점검</span>
+                                    <span class="v">
+                                        <span class="mono">{detail.asset.nextInspectionDate}</span>
+                                        <template lwc:if={inspectionDday}>
+                                            <span class="pill neu">{inspectionDday}</span>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="row">
+                                    <span class="k">현재 상태</span>
+                                    <span class="v">
+                                        <template for:each={statusPills} for:item="p">
+                                            <span class={p.cls} key={p.key}>{p.label}</span>
+                                        </template>
+                                    </span>
+                                </div>
+                                <div class="row"><span class="k">미조치 건수</span><span class="v mono">{openItemsText}</span></div>
+                            </dl>
+                        </div>
+                    </template>
+
+                    <!-- 최근 이력 -->
+                    <template lwc:if={isHistTab}>
+                        <div class="hist">
+                            <template for:each={decoratedHistory} for:item="entry">
+                                <div class="hist-row" key={entry.key}>
+                                    <span class={entry.chipClass}>{entry.chipText}</span>
+                                    <div class="hist-main">
+                                        <div class="h-t">{entry.title}</div>
+                                        <div class="h-d mono">{entry.entryDate}</div>
+                                    </div>
+                                    <span class="hist-type">{entry.entryType}</span>
+                                </div>
+                            </template>
+                            <template lwc:if={noHistory}>
+                                <div class="hist-empty">이력이 없습니다.</div>
+                            </template>
+                        </div>
+                    </template>
+                </section>
+
+                <!-- ── 현재 운전 상태 ── -->
+                <section class="panel">
+                    <div class="p-title">
+                        <h2>현재 운전 상태</h2>
+                        <span class="en">LIVE CONDITION MONITORING</span>
+                        <span class="right">데모 데이터</span>
+                    </div>
+                    <div class="gauge-row">
+                        <!-- Arc gauges -->
+                        <template for:each={gaugeConfigs} for:item="g">
+                            <c-t5-hmi-scale-gauge
+                                key={g.key}
+                                gauge-title={g.title}
+                                badge={g.badge}
+                                alert-level={g.alertLevel}
+                                value={g.value}
+                                unit={g.unit}
+                                gauge-min={g.gaugeMin}
+                                gauge-max={g.gaugeMax}
+                                zones={g.zones}
+                                ticks={g.ticks}
+                                spark-data={g.sparkData}
+                                spark-color={g.sparkColor}
+                                spark-label={g.sparkLabel}
+                                spark-ref={g.sparkRef}
+                                explain={g.explain}
+                            ></c-t5-hmi-scale-gauge>
+                        </template>
+
+                        <!-- Temperature (inline, different layout) -->
+                        <div class="gcard ok">
+                            <div class="gc-head">
+                                <span class="gc-title">2차측 공급 / 환수 온도 게이지</span>
+                                <span class="gc-badge ok-badge">&#916;T 5.6 &#176;C 관찰</span>
+                            </div>
+                            <div class="temp-body">
+                                <div class="tbars">
+                                    <div class="tbar supply">
+                                        <div class="tb-lab">
+                                            <span class="ic">쿨런트 공급온도 (T_supply)</span>
+                                            <b>6.80 &#176;C</b>
+                                        </div>
+                                        <div class="tb-track"><div class="tb-fill" style="width:40%"></div></div>
+                                    </div>
+                                    <div class="tbar ret">
+                                        <div class="tb-lab">
+                                            <span class="ic">쿨런트 환수온도 (T_return)</span>
+                                            <b>12.40 &#176;C</b>
+                                        </div>
+                                        <div class="tb-track"><div class="tb-fill" style="width:62%"></div></div>
+                                    </div>
+                                </div>
+                                <div class="gc-explain">공급수 온도는 현재 정상 범위에 있습니다.</div>
+                                <div class="trend-box">
+                                    <div class="tb-cap">
+                                        <span>공급온도 20초 트렌드</span>
+                                        <span>정상 6.5–7.5 &#176;C</span>
+                                    </div>
+                                    <div class="temp-spark" lwc:dom="manual"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── Bottom Actions ── -->
+                <div class="bottom-actions">
+                    <button class="btn sm" onclick={openModal}>직접 접수하기</button>
+                    <button class="btn sm" data-type="pdf" onclick={handleExport}>리포트 내보내기 (PDF)</button>
+                    <button class="btn sm" data-type="csv" onclick={handleExport}>데이터 내보내기 (CSV)</button>
+                    <template lwc:if={showExportMsg}>
+                        <span class="export-msg mono">{exportMsg}</span>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- ═══════════ SCRIM ═══════════ -->
+        <div class={scrimClass} onclick={closeAll}></div>
+
+        <!-- ═══════════ CHAT WIDGET (T5-11, 2026-08-30 재작업) ═══════════
+             기존엔 화면 오른쪽 전체 높이를 덮는 사이드바 서랍이었는데,
+             요즘 서비스봇처럼 우하단에 뜨는 카드형 플로팅 위젯으로 교체.
+             내용(하드코딩 데모 응답)은 그대로 — T5-23에서 실제 MIAW로 교체될
+             자리 표시자다. -->
+        <aside class={drawerClass} role="dialog" aria-label="OT전자 서비스 상담">
+            <div class="chat-head">
+                <div class="chat-head-id">
+                    <span class="chat-head-icon">OT</span>
+                    <div class="chat-head-txt">
+                        <div class="chat-head-title">OT전자 서비스</div>
+                        <div class="chat-head-sub">Service Agent · 24시간 응대</div>
+                    </div>
+                </div>
+                <div class="chat-head-right">
+                    <template lwc:if={hasAlert}>
+                        <span class="chat-asset-badge mono">{detail.asset.name}</span>
+                    </template>
+                    <button class="chat-close" onclick={closeAll} aria-label="닫기">&#10005;</button>
+                </div>
+            </div>
+
+            <template lwc:if={hasAlert}>
+                <div class="chat-context-banner mono">{detail.asset.name} 이상 감지에서 대화를 시작합니다</div>
+            </template>
+
+            <div class="chat-body">
+                <div class="chat-msg bot">
+                    <div class="chat-msg-meta">
+                        <span class="chat-msg-role">AI</span>
+                        <span class="chat-msg-name">Service Agent</span>
+                    </div>
+                    <div class="chat-bubble">안녕하세요, 유신님. {assetNameForGreeting}의 유량 저하를 확인했습니다.</div>
+                </div>
+                <template for:each={chatMessages} for:item="m">
+                    <template lwc:if={m.isBot}>
+                        <div key={m.id} class="chat-msg bot">
+                            <div class="chat-msg-meta">
+                                <span class="chat-msg-role">AI</span>
+                                <span class="chat-msg-name">Service Agent</span>
+                            </div>
+                            <div class="chat-bubble">{m.text}</div>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <div key={m.id} class="chat-msg me">
+                            <div class="chat-bubble">{m.text}</div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+
+            <div class="chat-foot">
+                <input
+                    class="chat-msg-input"
+                    type="text"
+                    placeholder="메시지를 입력하세요"
+                    onkeydown={handleChatKey}
+                />
+                <button class="chat-send" onclick={sendChat} aria-label="전송">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                </button>
+            </div>
+            <div class="chat-foot-links">
+                <button class="link-btn" onclick={switchToModal}>장애 신고로 전환</button>
+            </div>
+        </aside>
+
+        <!-- ═══════════ SERVICE REQUEST MODAL ═══════════ -->
+        <div class={modalClass} role="dialog">
+            <div class="sheet-head">
+                <h3>서비스 요청 / 장애 신고</h3>
+                <button class="x" onclick={closeAll}>&#10005;</button>
+            </div>
+            <div class="sheet-body">
+                <template lwc:if={showToast}>
+                    <div class="toast show">{toastMessage}</div>
+                </template>
+                <template lwc:if={hasAlert}>
+                    <div class="prefill">
+                        <div class="ph mono">자산 정보 자동 포함 · 데모 데이터</div>
+                        <dl>
+                            <dt>Asset</dt><dd class="mono">{detail.asset.name} · {detail.asset.siteLocation}</dd>
+                            <dt>문제 분류</dt><dd>{detail.alert.categoryLabel}</dd>
+                            <dt>현재 상태</dt><dd class="mono">{detail.alert.currentValueText}</dd>
+                        </dl>
+                    </div>
+                </template>
+                <div class="field">
+                    <label>고객 영향</label>
+                    <select>
+                        <option>운영 영향 없음</option>
+                        <option>운영 영향 확인 중</option>
+                        <option>냉각 성능 저하 의심</option>
+                        <option>기타</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>상세 내용</label>
+                    <textarea placeholder="확인된 증상이나 상황을 입력해 주세요."></textarea>
+                </div>
+                <div class="field">
+                    <label>연락 가능 시간</label>
+                    <input type="text" placeholder="예: 평일 09:00–18:00" />
+                </div>
+            </div>
+            <div class="sheet-foot">
+                <button class="btn primary" onclick={submitModal}>서비스 요청 제출</button>
+                <button class="btn" onclick={closeAll}>취소</button>
+            </div>
+        </div>
+
+    </div>
+</template>

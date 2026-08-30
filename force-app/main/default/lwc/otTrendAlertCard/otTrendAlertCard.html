@@ -1,0 +1,101 @@
+<template>
+    <div class="ot-trend-card">
+        <!-- No assetId supplied yet (e.g. App Builder property not set) -->
+        <template lwc:if={hasNoAssetId}>
+            <div class="card">
+                <div class="empty">표시할 자산이 선택되지 않았습니다.</div>
+            </div>
+        </template>
+
+        <!-- Loading -->
+        <template lwc:if={isLoading}>
+            <div class="card">
+                <div class="loading">불러오는 중…</div>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template lwc:if={hasError}>
+            <div class="card">
+                <div class="error" role="alert">{error}</div>
+            </div>
+        </template>
+
+        <!-- 정상 응답, 다만 이 사용자 계정 스코프에 걸리는 자산 정보가 없음 -->
+        <template lwc:if={hasNoAccess}>
+            <div class="card">
+                <div class="empty">표시할 자산 정보가 없습니다.</div>
+            </div>
+        </template>
+
+        <!-- Trend card -->
+        <template lwc:if={hasTrend}>
+            <div class="card">
+                <!-- Critical 능동 배너 — 새로고침 없이 empApi 구독으로 표시됨 -->
+                <template lwc:if={shouldShowBanner}>
+                    <div class="critical-banner" role="alert">
+                        <span class="banner-text">⚠ {bannerText}</span>
+                        <button class="banner-dismiss" onclick={dismissBanner}>닫기</button>
+                    </div>
+                </template>
+
+                <template lwc:if={hasImage}>
+                    <img class="asset-image" src={imageUrl} alt={trend.name} />
+                </template>
+
+                <div class="body">
+                    <div class="head">
+                        <div class="name">{trend.name}</div>
+                        <div class={statusClass}>{statusText}</div>
+                    </div>
+                    <div class="sub">{subline}</div>
+
+                    <!-- 게이지 패널 — 현재 비정상인 측정 항목마다 하나씩, 다크 HMI 톤 -->
+                    <template lwc:if={hasGauges}>
+                        <div class="gauge-panel">
+                            <div class="gauge-panel-label">
+                                <span class="gauge-panel-live-dot"></span>
+                                <span>실시간 계기판</span>
+                            </div>
+                            <div class="gauge-grid">
+                                <template for:each={gauges} for:item="gauge">
+                                    <c-t5-gauge-svg
+                                        key={gauge.measurementItemCode}
+                                        label={gauge.measurementItemCode}
+                                        value={gauge.currentValue}
+                                        status={gauge.trendFlag}
+                                        previous-value={gauge.previousValue}
+                                        sparkline-values={gauge.sparklineValues}
+                                    ></c-t5-gauge-svg>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                    <template lwc:if={hasNoGauges}>
+                        <div class="gauge-empty">현재 이상 감지된 항목이 없습니다.</div>
+                    </template>
+
+                    <dl class="facts">
+                        <dt>설치일</dt>
+                        <dd>{trend.installDate}</dd>
+                        <dt>다음 점검일</dt>
+                        <dd>{trend.nextInspectionDate}</dd>
+                        <dt>미조치 건수</dt>
+                        <dd>{trend.openItemsSummary}</dd>
+                    </dl>
+
+                    <!-- Agent 상담 진입점 (T5-11) — Feature Flag Off면 렌더링 자체를
+                         안 하므로(RG-10), 항상 남아있는 "장애 신고" 폼이 유일한
+                         경로가 된다. -->
+                    <template lwc:if={showAgentButton}>
+                        <div class="agent-entry">
+                            <button class="agent-btn" type="button" onclick={handleAgentConsult}>
+                                Agent 상담
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

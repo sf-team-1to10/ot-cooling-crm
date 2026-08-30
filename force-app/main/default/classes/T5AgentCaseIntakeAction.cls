@@ -59,7 +59,13 @@ public without sharing class T5AgentCaseIntakeAction {
                 Subject = inp.symptomCategory,
                 Symptom_Category__c = inp.symptomCategory,
                 Impact_Level__c = inp.impactLevel,
-                Reported_Symptom__c = inp.reportedSymptom
+                Reported_Symptom__c = inp.reportedSymptom,
+                // T5-22: Agent Script에서 "매치 없음"을 표현식으로 반전시키면
+                // 검증 안 된 문법 위험이 생겨서, 반전 계산을 여기 Apex로 옮김 —
+                // Agent는 검색 결과(found) 그대로만 넘긴다. found가 true가
+                // 아니면(false 또는 애초에 안 넘어옴) "매치 없음"으로 간주해
+                // Case Closed 시 Article 등록 제안 배너의 트리거 조건이 된다.
+                Knowledge_No_Match_At_Intake__c = inp.knowledgeFound != true
             );
             insert newCase;
 
@@ -112,6 +118,9 @@ public without sharing class T5AgentCaseIntakeAction {
 
         @InvocableVariable(label='Contact Id' description='고객 담당자 Id (선택, 없으면 Account의 첫 Contact 사용)')
         public String contactId;
+
+        @InvocableVariable(label='Knowledge Found' description='Case 생성 전 Knowledge 검색에서 매치되는 Article을 찾았으면 true (T5-22, search_knowledge Action의 found 값을 그대로 전달)')
+        public Boolean knowledgeFound;
     }
 
     public class CaseOutput {

@@ -6,10 +6,11 @@ system:
 
 config:
     developer_name: "OT_Service_Agent"
-    default_agent_user: "trailsignup.8617b18a6871a9@salesforce.com.t3dlv"
     agent_label: "OT Service Agent"
     description: "OT전자 고객 포털 서비스 에이전트 — 증상 상담을 통한 Case 접수"
 
+access:
+    default_agent_user: "ot_service_agent@00dh800000046bv110961787.ext"
 variables:
     EndUserId: linked string
         source: @MessagingSession.MessagingEndUserId
@@ -68,23 +69,52 @@ subagent symptom_consultation:
               4. Reported Symptom — The customer's own description in their words.
 
               Conversation flow:
-              - First ask what equipment and what symptom they are experiencing.
+              - As soon as the customer's message contains ANY description of a symptom or problem (even without naming the specific equipment yet), you MUST invoke the search_knowledge tool call in that exact same turn, immediately, silently. Do NOT send a message telling the customer you are about to check something — take the tool call action first, then compose your reply using its result. Never respond with only a "let me check" style message and no tool call; that is a failure. Do this exactly once per symptom description; do not call it again for the same symptom.
+              - Look at what search_knowledge returns. If it contains a relevant published article or guidance for this symptom, summarize that guidance to the customer in Korean and ask whether it resolves their issue.
+                - If they say it is resolved, thank them and end the conversation. Do NOT create a case.
+                - If they say it is not resolved or they still want help, continue to the case creation flow below.
+              - If search_knowledge returns nothing relevant, continue directly to the case creation flow below.
+              - Now ask what equipment is affected (if not already known) and gather the remaining details.
               - Based on their description, select the best Symptom Category. You may confirm with the customer.
               - Assess the Impact Level from context. If the customer mentions emergency, safety risk, or complete stop, use S1. Otherwise default to S3 and confirm.
               - Summarize the collected information and ask for confirmation before creating the case.
-              - After confirmation, call create_case with all four fields.
+              - After confirmation, call create_case with all four fields. Set knowledgeFound to true only if search_knowledge actually returned a relevant article for this symptom, otherwise false.
               - If the customer says this is not an equipment issue or changes their mind, do NOT create a case. Politely end.
 
               Rules:
-              - Never provide engineering diagnosis or repair instructions.
+              - Never provide engineering diagnosis or repair instructions beyond what the matched Knowledge Article itself says.
               - Never make warranty or billing decisions.
               - If the customer describes a safety emergency, immediately escalate to a human.
               - Always use Korean in your responses.
         actions:
+            search_knowledge: @actions.search_knowledge
+                with inputUtterance = ...
+                with displaySummary = True
+                with displaySearchResults = True
+                with displayActions = False
+                with searchConfig = ...
             create_case: @actions.create_case_from_agent
                 description: "고객 증상 상담 결과를 Case로 접수한다."
+                with knowledgeFound = ...
 
     actions:
+        search_knowledge:
+            description: "고객이 설명한 증상으로 게시된 Knowledge Article 등 관련 자료를 검색한다(네이티브 Actionable Smart Search, T5-22)."
+            target: "standardInvocableAction://agenticSearch"
+            source: "SSAgenticSearch__ActionableSmartSearch"
+            require_user_confirmation: False
+            inputs:
+                inputUtterance: string
+                displaySummary: boolean
+                displaySearchResults: boolean
+                displayActions: boolean
+                searchConfig: string
+            outputs:
+                searchOutput: object
+                    complex_data_type_name: "@apexClassType/ssagenticsearch__SearchSummaryItemsApex"
+                articleTitle: string
+                articleSummary: string
+                articleUrlName: string
         create_case_from_agent:
             description: "Agent가 고객 대화에서 파악한 증상·영향을 기존 Case 생성 로직으로 접수한다."
             target: "apex://T5AgentCaseIntakeAction"
@@ -94,6 +124,7 @@ subagent symptom_consultation:
                 impactLevel: string
                 reportedSymptom: string
                 contactId: string
+                knowledgeFound: boolean
             outputs:
                 success: boolean
                 caseId: string
