@@ -1,0 +1,235 @@
+public with sharing class OTEquipDashboardController {
+
+    @AuraEnabled(cacheable=true)
+    public static DashboardData getEquipmentDashboard() {
+        try {
+            Id accountId = resolveRunningUserAccountId();
+            if (accountId == null) {
+                return new DashboardData();
+            }
+
+            List<Asset> assets = [
+                SELECT Id, Name, SerialNumber, Status, InstallDate,
+                       Product2.Name, Product2.Family,
+                       Site_Location__c, Latest_Trend_Flag__c,
+                       Next_Inspection_Date__c
+                FROM Asset
+                WHERE AccountId = :accountId
+                WITH USER_MODE
+                ORDER BY Latest_Trend_Flag__c DESC, Name ASC
+            ];
+
+            SObjectAccessDecision decision = Security.stripInaccessible(
+                AccessType.READABLE, assets
+            );
+            List<Asset> safe = (List<Asset>) decision.getRecords();
+
+            DashboardData result = new DashboardData();
+            Integer normalCount = 0;
+            Integer advisoryCount = 0;
+            Integer maintCount = 0;
+
+            for (Asset a : safe) {
+                EquipmentView v = new EquipmentView();
+                v.assetId = a.Id;
+                v.name = a.Name;
+                v.serialNumber = a.SerialNumber;
+                v.assetType = a.Product2 != null ? a.Product2.Name : '';
+                v.family = a.Product2 != null ? a.Product2.Family : '';
+                v.location = a.Site_Location__c;
+                v.status = a.Status;
+                v.installDate = a.InstallDate;
+
+                Boolean isAdv = a.Latest_Trend_Flag__c == '주의' ||
+                                a.Latest_Trend_Flag__c == '이상';
+                v.stateCode = isAdv ? 'adv' : 'ok';
+                v.stateLabel = isAdv ? 'P3 Advisory / 주의' : '정상';
+
+                if (isAdv) { advisoryCount++; } else { normalCount++; }
+                if (a.Next_Inspection_Date__c != null &&
+                    a.Next_Inspection_Date__c <= Date.today().addDays(90)) {
+                    maintCount++;
+                }
+
+                result.assets.add(v);
+            }
+
+            result.kpis = new KpiSummary();
+            result.kpis.totalAssets = safe.size();
+            result.kpis.normalCount = normalCount;
+            result.kpis.advisoryCount = advisoryCount;
+            result.kpis.maintenanceScheduledCount = maintCount;
+
+            return result;
+        } catch (Exception e) {
+            throw new AuraHandledException('대시보드 데이터를 불러오는 중 오류가 발생했습니다.');
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static EquipmentDetailData getEquipmentDetail(Id assetId) {
+        try {
+            validateAssetAccess(assetId);
+
+            List<Asset> assets = [
+                SELECT Id, Name, SerialNumber, Status, InstallDate,
+                       Product2.Name, Product2.Family,
+                       Site_Location__c, Latest_Trend_Flag__c,
+                       Next_Inspection_Date__c, Latest_Gauges_JSON__c
+                FROM Asset
+                WHERE Id = :assetId
+                WITH USER_MODE
+                LIMIT 1
+            ];
+
+            if (assets.isEmpty()) {
+                throw new AuraHandledException('자산을 찾을 수 없습니다.');
+            }
+
+            SObjectAccessDecision decision = Security.stripInaccessible(
+                AccessType.READABLE, assets
+            );
+            Asset a = (Asset) decision.getRecords()[0];
+
+            EquipmentDetailData result = new EquipmentDetailData();
+            result.assetId = a.Id;
+            result.name = a.Name;
+            result.serialNumber = a.SerialNumber;
+            result.assetType = a.Product2 != null ? a.Product2.Name : '';
+            result.family = a.Product2 != null ? a.Product2.Family : '';
+            result.location = a.Site_Location__c;
+            result.installDate = a.InstallDate;
+            result.nextMaintenance = a.Next_Inspection_Date__c;
+
+            Boolean isAdv = a.Latest_Trend_Flag__c == '주의' ||
+                            a.Latest_Trend_Flag__c == '이상';
+            result.stateCode = isAdv ? 'adv' : 'ok';
+            result.stateLabel = isAdv ? 'P3 Advisory / 주의' : '정상';
+            result.meta = (result.assetType != null ? result.assetType : '') +
+                ' · ' + (result.family != null ? result.family : '') +
+                ' · ' + (result.location != null ? result.location : '');
+
+            return result;
+        } catch (AuraHandledException ae) {
+            throw ae;
+        } catch (Exception e) {
+            throw new AuraHandledException('장비 상세 데이터를 불러오는 중 오류가 발생했습니다.');
+        }
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static LocationView getLocationInfo(Id assetId) {
+        try {
+            validateAssetAccess(assetId);
+            Id accountId = resolveRunningUserAccountId();
+
+            List<Account> accounts = [
+                SELECT Name FROM Account WHERE Id = :accountId WITH USER_MODE LIMIT 1
+            ];
+            List<Asset> assets = [
+                SELECT Site_Location__c FROM Asset WHERE Id = :assetId WITH USER_MODE LIMIT 1
+            ];
+
+            LocationView loc = new LocationView();
+            loc.customerName = accounts.isEmpty() ? '' : accounts[0].Name;
+            loc.siteName = '마이클라우드 데이터센터';
+            loc.hall = 'Hall A';
+            loc.assetRow = '';
+            if (!assets.isEmpty() && assets[0].Site_Location__c != null) {
+                loc.assetRow = assets[0].Site_Location__c;
+            }
+            return loc;
+        } catch (AuraHandledException ae) {
+            throw ae;
+        } catch (Exception e) {
+            throw new AuraHandledException('위치 정보를 불러오는 중 오류가 발생했습니다.');
+        }
+    }
+
+    private static Id resolveRunningUserAccountId() {
+        List<User> users = [
+            SELECT Contact.AccountId
+            FROM User
+            WHERE Id = :UserInfo.getUserId()
+            WITH USER_MODE
+            LIMIT 1
+        ];
+        if (users.isEmpty() || users[0].Contact == null) {
+            return null;
+        }
+        return users[0].Contact.AccountId;
+    }
+
+    private static void validateAssetAccess(Id assetId) {
+        if (assetId == null) {
+            throw new AuraHandledException('자산 ID가 필요합니다.');
+        }
+        Id accountId = resolveRunningUserAccountId();
+        if (accountId == null) {
+            throw new AuraHandledException('접근 권한이 없습니다.');
+        }
+        Integer cnt = [
+            SELECT COUNT() FROM Asset
+            WHERE Id = :assetId AND AccountId = :accountId
+            WITH USER_MODE
+        ];
+        if (cnt == 0) {
+            throw new AuraHandledException('접근 권한이 없습니다.');
+        }
+    }
+
+    public class DashboardData {
+        @AuraEnabled public KpiSummary kpis { get; set; }
+        @AuraEnabled public List<EquipmentView> assets { get; set; }
+        public DashboardData() {
+            this.kpis = new KpiSummary();
+            this.assets = new List<EquipmentView>();
+        }
+    }
+
+    public class KpiSummary {
+        @AuraEnabled public Integer totalAssets { get; set; }
+        @AuraEnabled public Integer normalCount { get; set; }
+        @AuraEnabled public Integer advisoryCount { get; set; }
+        @AuraEnabled public Integer maintenanceScheduledCount { get; set; }
+        public KpiSummary() {
+            totalAssets = 0; normalCount = 0; advisoryCount = 0; maintenanceScheduledCount = 0;
+        }
+    }
+
+    public class EquipmentView {
+        @AuraEnabled public Id assetId { get; set; }
+        @AuraEnabled public String name { get; set; }
+        @AuraEnabled public String serialNumber { get; set; }
+        @AuraEnabled public String assetType { get; set; }
+        @AuraEnabled public String family { get; set; }
+        @AuraEnabled public String location { get; set; }
+        @AuraEnabled public String status { get; set; }
+        @AuraEnabled public Date installDate { get; set; }
+        @AuraEnabled public String stateCode { get; set; }
+        @AuraEnabled public String stateLabel { get; set; }
+        @AuraEnabled public String imageUrl { get; set; }
+        @AuraEnabled public String imageNote { get; set; }
+    }
+
+    public class EquipmentDetailData {
+        @AuraEnabled public Id assetId { get; set; }
+        @AuraEnabled public String name { get; set; }
+        @AuraEnabled public String serialNumber { get; set; }
+        @AuraEnabled public String assetType { get; set; }
+        @AuraEnabled public String family { get; set; }
+        @AuraEnabled public String location { get; set; }
+        @AuraEnabled public Date installDate { get; set; }
+        @AuraEnabled public Date nextMaintenance { get; set; }
+        @AuraEnabled public String stateCode { get; set; }
+        @AuraEnabled public String stateLabel { get; set; }
+        @AuraEnabled public String meta { get; set; }
+    }
+
+    public class LocationView {
+        @AuraEnabled public String customerName { get; set; }
+        @AuraEnabled public String siteName { get; set; }
+        @AuraEnabled public String hall { get; set; }
+        @AuraEnabled public String assetRow { get; set; }
+    }
+}
