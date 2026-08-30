@@ -3,6 +3,6 @@
     <fullName>Agent_Handoff_At__c</fullName>
     <label>Agent Handoff At</label>
     <description>AI/봇 채널에서 실제 상담사(사람)로 케이스가 인계된 시각. SLA 계산 및 응답 시간 분석의 기준점.</description>
-    <inlineHelpText>봇에서 상담사에게 케이스가 넘어간 시각입니다. Flow에서 자동 기록됩니다.</inlineHelpText>
+    <inlineHelpText>봇에서 상담사에게 케이스가 넘어간 시각입니다. Flow에서 자동으로 기록됩니다.</inlineHelpText>
     <type>DateTime</type>
 </CustomField>
