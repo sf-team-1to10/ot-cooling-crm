@@ -1,0 +1,310 @@
+<template>
+    <div class="app">
+        <c-ot-equip-sidebar active-nav="assets" customer-name="아이언데이터센터" contact-name="유신" contact-role="고객 운영 담당자"></c-ot-equip-sidebar>
+
+        <div class="main">
+            <c-ot-equip-util-bar breadcrumb-prefix="내 자산 / Hall A" breadcrumb-current="CDU-A-07"></c-ot-equip-util-bar>
+
+            <div class="scrollarea">
+                <div class="wrap">
+                    <!-- Back link -->
+                    <a class="backlink" onclick={handleBack}>
+                        <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="currentColor"/></svg>
+                        내 자산으로 돌아가기
+                    </a>
+
+                    <!-- Detail Header -->
+                    <div class="dhead">
+                        <div class="ht">
+                            <div class="r1">
+                                <h1>{assetName}</h1>
+                                <c-ot-equip-status-chip label="P3 Advisory / 주의" variant="adv"></c-ot-equip-status-chip>
+                                <c-ot-equip-status-chip label="정상 운전" variant="ok"></c-ot-equip-status-chip>
+                            </div>
+                            <div class="r2">{assetMeta}</div>
+                        </div>
+                        <div class="ha">
+                            <button class="btn" onclick={handleOpenDrawer}>
+                                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor"/></svg>
+                                서비스 에이전트와 상담
+                            </button>
+                            <button class="btn ghost">
+                                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor"/></svg>
+                                서비스 요청
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Advisory Strip -->
+                    <div class="advstrip">
+                        <span class="tagP">P3 · ADVISORY / 주의</span>
+                        <span class="code">CHW FLOW LOW VS BASELINE</span>
+                        <span class="msg">냉수 유량이 기준선보다 낮은 상태가 45분간 지속되고 있습니다.</span>
+                        <span class="vals">현재값 71 L/min · 기준선 95–115 L/min</span>
+                        <span class="demo">데모 데이터</span>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <template for:each={tabs} for:item="t">
+                            <button key={t.key} class={t.cls} data-tab={t.key} onclick={handleTab}>{t.label}</button>
+                        </template>
+                    </div>
+
+                    <!-- TAB 1: 상태 개요 -->
+                    <template lwc:if={isOverview}>
+                        <div class="t1top">
+                            <!-- Gallery -->
+                            <div class="panel gal">
+                                <div class="panel-h"><h3>장비 이미지</h3><span class="en">EQUIPMENT GALLERY</span></div>
+                                <div class="bd">
+                                    <div class="gal-main">
+                                        <template lwc:if={hasBadge}>
+                                            <span class="gal-badge">{currentImage.badge}</span>
+                                        </template>
+                                        <div class="gal-ph">
+                                            <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor"/><path d="M8 3v18M8 8h13M8 14h13" stroke="currentColor"/></svg>
+                                            <span>{currentImage.cap}</span>
+                                        </div>
+                                        <button class="nav-btn prev" onclick={handleGalPrev}><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="currentColor"/></svg></button>
+                                        <button class="nav-btn next" onclick={handleGalNext}><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="currentColor"/></svg></button>
+                                        <button class="zoom-btn" onclick={handleZoom}><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M11 8v6M8 11h6" stroke="currentColor"/><circle cx="11" cy="11" r="7" stroke="currentColor"/><path d="M21 21l-4.3-4.3" stroke="currentColor"/></svg></button>
+                                        <span class="gal-count">{galCounter}</span>
+                                    </div>
+                                    <div class="thumbs">
+                                        <template for:each={thumbItems} for:item="th">
+                                            <button key={th.idx} class={th.cls} data-idx={th.idx} onclick={handleThumb}>
+                                                <span class="thumb-ph">{th.cap}</span>
+                                            </button>
+                                        </template>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Current Condition -->
+                            <div class="panel cc">
+                                <div class="panel-h"><h3>현재 상태</h3><span class="en">CURRENT CONDITION</span><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                                <div class="bd">
+                                    <template for:each={conditionRows} for:item="row">
+                                        <div key={row.label} class="cc-row">
+                                            <span>{row.label}</span>
+                                            <b class={row.cls}>{row.value}</b>
+                                        </div>
+                                    </template>
+                                    <div class="cc-interp">현재 상태는 조기 확인이 필요한 Advisory 수준입니다.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Metric Delta Card -->
+                        <div class="panel">
+                            <div class="panel-h"><h3>주요 운전 상태</h3><span class="en">KEY OPERATING CONDITION</span></div>
+                            <div class="bd">
+                                <div class="delta">
+                                    <div class="delta-h"><span class="delta-title">냉수 유량 / CHW FLOW</span><span class="demo">데모 데이터</span></div>
+                                    <div class="delta-cols">
+                                        <div class="dc"><div class="big">71<small> L/min</small></div><div class="lab">현재 측정값</div></div>
+                                        <div class="dc"><div class="lab">정상 기준선</div><div class="ref">95–115 L/min</div></div>
+                                        <div class="dc">
+                                            <div class="dev">
+                                                <svg fill="none" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6" stroke="currentColor"/></svg>
+                                                −24 L/min
+                                            </div>
+                                            <div class="stt">P3 Advisory</div>
+                                            <div class="dur">45분 지속</div>
+                                        </div>
+                                    </div>
+                                    <div class="delta-row">
+                                        <span>현재 유량이 정상 기준선 하한보다 낮습니다.</span>
+                                        <a onclick={handleGoTrend}>추세 분석 보기 →</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Events -->
+                        <div class="panel events">
+                            <div class="panel-h"><h3>최근 이력</h3></div>
+                            <div class="bd">
+                                <template for:each={recentEvents} for:item="ev">
+                                    <div key={ev.date} class="ev-row">
+                                        <span class="ev-date">{ev.date}</span>
+                                        <span class="ev-text">{ev.text}</span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- TAB 2: 추세 분석 -->
+                    <template lwc:if={isTrend}>
+                        <div class="panel">
+                            <div class="panel-h"><h3>운전 추이 분석</h3><span class="en">PERFORMANCE TREND</span><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                            <div class="bd">
+                                <div class="trendctl">
+                                    <div class="seg">
+                                        <template for:each={metricButtons} for:item="mb">
+                                            <button key={mb.key} class={mb.cls} data-key={mb.key} onclick={handleMetric}>{mb.label}</button>
+                                        </template>
+                                    </div>
+                                    <div class="seg">
+                                        <template for:each={rangeButtons} for:item="rb">
+                                            <button key={rb.key} class={rb.cls} data-key={rb.key} onclick={handleRange}>{rb.label}</button>
+                                        </template>
+                                    </div>
+                                    <button class="rf-btn" onclick={handleRefresh}>
+                                        <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-3-6.7L21 8M21 3v5h-5" stroke="currentColor"/></svg>
+                                    </button>
+                                </div>
+                                <div class="lg">{trendLegendText}</div>
+                                <div class="trend-chart" lwc:dom="manual"></div>
+                                <div class="interp">{trendInterp}</div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- TAB 3: 서비스·보증 -->
+                    <template lwc:if={isService}>
+                        <div class="covgrid">
+                            <div class="panel">
+                                <div class="panel-h"><h3>서비스 보장 요약</h3></div>
+                                <div class="bd cov">
+                                    <div class="cov-row"><span>서비스 계약</span><b>프리미엄 유지보수 계약</b></div>
+                                    <div class="cov-row"><span>계약 상태</span><b class="ok">활성</b></div>
+                                    <div class="cov-row"><span>적용 기간</span><b class="mono">2025-06-19 ~ 2026-06-18</b></div>
+                                    <div class="cov-row"><span>지원 자격</span><b class="ok">서비스 지원 가능</b></div>
+                                    <div class="cov-row"><span>보증</span><b class="ok">보증 적용</b></div>
+                                    <div class="cov-row"><span>보증 종료일</span><b class="mono">2027-06-18</b></div>
+                                    <div class="cov-row"><span>P3 초기 응답 목표</span><b>영업일 기준 4시간 이내</b></div>
+                                    <div class="cov-row"><span>현재 Case</span><b>열린 서비스 요청 없음</b></div>
+                                    <div class="covered">
+                                        <span>정기점검</span><span>원격 상담</span><span>현장 출동 지원</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-h"><h3>서비스 상담 및 요청</h3></div>
+                                <div class="bd">
+                                    <div class="svc-acts">
+                                        <button onclick={handleOpenDrawer}>
+                                            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor"/></svg>
+                                            서비스 에이전트와 상담
+                                        </button>
+                                        <button>
+                                            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor"/></svg>
+                                            서비스 요청
+                                        </button>
+                                        <button>
+                                            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor"/><path d="M3 10h18M8 2v4M16 2v4" stroke="currentColor"/></svg>
+                                            정비 일정 문의
+                                        </button>
+                                        <button onclick={handleGoService}>
+                                            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M14 3v5h5M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8l-5-5z" stroke="currentColor"/></svg>
+                                            계약 상세 보기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- TAB 4: 이력·문서 -->
+                    <template lwc:if={isHistory}>
+                        <div class="panel">
+                            <div class="panel-h"><h3>장비 이력</h3><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                            <div class="bd">
+                                <div class="tl">
+                                    <template for:each={timelineItems} for:item="item">
+                                        <div key={item.d} class="tl-item">
+                                            <div class="tl-h">
+                                                <span class="tl-date">{item.d}</span>
+                                                <span class="tl-cat">{item.cat}</span>
+                                            </div>
+                                            <div class="tl-desc">{item.desc}</div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel" style="margin-top:16px">
+                            <div class="panel-h"><h3>문서</h3></div>
+                            <div class="bd">
+                                <template for:each={docGroups} for:item="dg">
+                                    <div key={dg.group} class="doc-group">
+                                        <div class="doc-group-h">{dg.group}</div>
+                                        <template for:each={dg.items} for:item="doc">
+                                            <div key={doc.name} class="doccard">
+                                                <div class="doc-icon">
+                                                    <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M14 3v5h5M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8l-5-5z" stroke="currentColor"/></svg>
+                                                </div>
+                                                <div class="doc-info">
+                                                    <b>{doc.name}</b>
+                                                    <span>{doc.meta}</span>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div class="demo-foot">
+                        ※ 프로토타입 · 모든 운영 수치·상태·추세·알림·이력은 데모 데이터입니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Agent Drawer -->
+    <div class={scrimClass} onclick={handleScrimClick}></div>
+    <aside class={drawerClass}>
+        <div class="dw-h">
+            <span class="dw-av">
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#fff"/></svg>
+            </span>
+            <span class="dw-nm"><b>OT전자 서비스 에이전트</b><span>CDU-A-07 · Hall A · 3열</span></span>
+            <span class="dw-advb">P3 Advisory</span>
+            <button class="dw-cbtn" onclick={handleMinDrawer}>
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor"/></svg>
+            </button>
+            <button class="dw-cbtn" onclick={handleCloseDrawer}>
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor"/></svg>
+            </button>
+        </div>
+
+        <div class="dw-ctx">
+            <div class="ctx-label">상담 컨텍스트 (자동 첨부)</div>
+            <div class="ctx-row"><span>관찰 항목</span><b>CHW Flow 기준선 대비 낮음</b></div>
+            <div class="ctx-row"><span>현재값</span><b class="amber">71 L/min</b></div>
+            <div class="ctx-row"><span>기준선</span><b>95–115 L/min</b></div>
+            <div class="ctx-row"><span>현재 상태</span><b class="amber">P3 Advisory</b></div>
+            <span class="demo">데모 데이터</span>
+        </div>
+
+        <!-- T5-23: LWR 사이트에 MIAW를 직접 임베드하면 실패해서(2026-08-30/31
+             실측, T5_서비스에이전트_작업기록.md 참고) Visualforce 페이지를
+             iframe으로 감싸는 우회 방식을 쓴다. 목업 chatMessages/입력창은
+             제거 — 실제 대화는 iframe 안의 Salesforce 위젯이 전부 처리한다. -->
+        <div class="dw-body dw-body-iframe">
+            <template lwc:if={drawerOpen}>
+                <iframe src={chatEmbedUrl} title="OT전자 서비스 에이전트 채팅" class="chat-iframe"></iframe>
+            </template>
+        </div>
+    </aside>
+
+    <!-- Lightbox -->
+    <template lwc:if={lightboxOpen}>
+        <div class="lightbox" onclick={handleLightboxClose}>
+            <button class="lx-close">
+                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff"/></svg>
+            </button>
+            <div class="lx-ph">
+                <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#fff"/></svg>
+                <span>{currentImage.cap}</span>
+            </div>
+        </div>
+    </template>
+</template>

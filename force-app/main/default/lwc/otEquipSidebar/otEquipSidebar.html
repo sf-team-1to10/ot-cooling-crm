@@ -1,0 +1,40 @@
+<template>
+    <aside class="rail">
+        <div class="brand">
+            <div class="logo">OT</div>
+            <div class="bt">
+                <b>OT전자</b>
+                <span>고객 포털</span>
+            </div>
+        </div>
+        <nav>
+            <template for:each={navItems} for:item="item">
+                <button key={item.key} class={item.cssClass} data-key={item.key} onclick={handleNav}>
+                    <!-- home -->
+                    <template lwc:if={item.icon}>
+                        <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24">
+                            <template lwc:if={isHome}><!-- fallback: all icons inline in CSS --></template>
+                        </svg>
+                    </template>
+                    <span class="lbl">{item.label}</span>
+                </button>
+            </template>
+        </nav>
+        <div class="spacer"></div>
+        <div class="assist">
+            <button class="box" onclick={handleAssistant}>
+                <span class="assist-lbl">
+                    <svg viewBox="0 0 24 24" stroke-width="2" fill="none" stroke="#7FB3FF">
+                        <path d="M12 3l2.1 4.9L19 10l-4.9 2.1L12 17l-2.1-4.9L5 10l4.9-2.1z"/>
+                    </svg>
+                    AI Assistant <span class="beta">BETA</span>
+                </span>
+            </button>
+        </div>
+        <div class="cust">
+            <span class="lb">고객사</span>
+            <b>{customerName}</b>
+            <span>{contactLine}</span>
+        </div>
+    </aside>
+</template>
