@@ -37,22 +37,18 @@ public without sharing class T5AgentCaseIntakeAction {
         }
 
         try {
-            Id assetId = Id.valueOf(inp.assetId);
-            List<Asset> assets = [
-                SELECT Id, AccountId FROM Asset
-                WHERE Id = :assetId LIMIT 1
-            ];
-            if (assets.isEmpty()) {
+            Id accountHint = resolveAccountFromContact(inp.contactId);
+            Asset asset = resolveAsset(inp.assetId, accountHint);
+            if (asset == null) {
                 out.success = false;
-                out.errorMessage = '자산을 찾을 수 없습니다: ' + inp.assetId;
+                out.errorMessage = '입력하신 장비 정보로 등록된 자산을 찾지 못했습니다: ' + inp.assetId;
                 return out;
             }
-            Asset asset = assets[0];
 
             Id contactId = resolveContact(inp.contactId, asset.AccountId);
 
             Case newCase = new Case(
-                AssetId = assetId,
+                AssetId = asset.Id,
                 AccountId = asset.AccountId,
                 ContactId = contactId,
                 Origin = 'Agent',
@@ -89,6 +85,66 @@ public without sharing class T5AgentCaseIntakeAction {
         return out;
     }
 
+    /**
+     * assetId 입력은 두 가지 형태로 들어올 수 있다:
+     * 1) 실제 Salesforce Id — 포털 컨텍스트가 이미 알고 있는 자산을 넘겨주는
+     *    미래 시나리오(T5-23 실시간 채널 연결 후 예정). 이 경우 바로 조회.
+     * 2) 고객이 대화 중 말한 장비명/위치 자유 텍스트(예: "CDU-A-07 홀 A 3번") —
+     *    현재 Builder/CLI 대화에서 실제로 발생하는 형태. Id.valueOf가 실패하면
+     *    Asset.Name이 입력 텍스트 안에 부분 문자열로 포함되는지로 찾는다
+     *    (T5AgentKnowledgeSearchAction의 키워드 방향과 동일한 패턴 — 후보를
+     *    원문에서 찾는 대신, 원문 안에 후보가 포함되는지를 본다).
+     */
+    private static Asset resolveAsset(String assetIdOrText, Id accountHint) {
+        if (String.isBlank(assetIdOrText)) {
+            return null;
+        }
+
+        try {
+            Id maybeId = Id.valueOf(assetIdOrText);
+            if (maybeId.getSObjectType() == Asset.SObjectType) {
+                List<Asset> byId = [
+                    SELECT Id, Name, AccountId FROM Asset
+                    WHERE Id = :maybeId LIMIT 1
+                ];
+                if (!byId.isEmpty()) {
+                    return byId[0];
+                }
+            }
+        } catch (Exception e) {
+            // 유효한 Id 형식이 아님 — 자유 텍스트로 간주하고 아래에서 이름 매칭 시도
+        }
+
+        String textUpper = assetIdOrText.toUpperCase();
+        List<Asset> candidates = accountHint != null
+            ? [SELECT Id, Name, AccountId FROM Asset WHERE AccountId = :accountHint LIMIT 200]
+            : [SELECT Id, Name, AccountId FROM Asset LIMIT 200];
+
+        Asset bestMatch = null;
+        for (Asset a : candidates) {
+            if (String.isNotBlank(a.Name) && textUpper.contains(a.Name.toUpperCase())) {
+                // 여러 후보가 부분일치하면 이름이 더 긴(더 구체적인) 쪽을 우선한다.
+                if (bestMatch == null || a.Name.length() > bestMatch.Name.length()) {
+                    bestMatch = a;
+                }
+            }
+        }
+        return bestMatch;
+    }
+
+    private static Id resolveAccountFromContact(String contactIdStr) {
+        if (String.isBlank(contactIdStr)) {
+            return null;
+        }
+        try {
+            Id cid = Id.valueOf(contactIdStr);
+            List<Contact> cs = [SELECT AccountId FROM Contact WHERE Id = :cid LIMIT 1];
+            return cs.isEmpty() ? null : cs[0].AccountId;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     private static Id resolveContact(String contactIdStr, Id accountId) {
         if (String.isNotBlank(contactIdStr)) {
             try {
@@ -104,7 +160,7 @@ public without sharing class T5AgentCaseIntakeAction {
     }
 
     public class CaseInput {
-        @InvocableVariable(label='Asset Id' description='장애 대상 자산의 Salesforce Id' required=true)
+        @InvocableVariable(label='Asset Id' description='장애 대상 자산의 Salesforce Id 또는 고객이 말한 장비명/위치(예: CDU-A-07)' required=true)
         public String assetId;
 
         @InvocableVariable(label='Symptom Category' description='증상 분류 (유량저하/누수/소음/제어이상/전원/기타)' required=true)

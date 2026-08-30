@@ -51,6 +51,38 @@
         <modifyAllRecords>false</modifyAllRecords>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
+    <!-- T5-22 재검증(2026-08-30): create_case_from_agent 실행 시
+         "Operation failed due to fields being inaccessible on Sobject Case"
+         에러 발생 — 커스텀 필드는 FLS가 있었는데 표준 필드(AssetId 등)엔
+         하나도 없었던 게 원인. Agent Action 실행 컨텍스트는 표준 필드도
+         명시적 FLS를 요구하는 것으로 보임(Knowledge__kav 표준 필드도 같은
+         패턴이었던 것과 동일). Origin/Subject/AccountId/ContactId/AssetId는
+         required 필드가 아니라 배포 가능. -->
+    <fieldPermissions>
+        <field>Case.AssetId</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.AccountId</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.ContactId</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Origin</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Subject</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <field>Case.Symptom_Category__c</field>
         <editable>true</editable>

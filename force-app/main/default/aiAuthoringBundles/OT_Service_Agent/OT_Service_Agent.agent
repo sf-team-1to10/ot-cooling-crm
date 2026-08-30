@@ -42,6 +42,8 @@ start_agent agent_router:
               If the user describes equipment symptoms, problems, or wants to report a fault, route to symptom_consultation.
               If the user asks to speak with a human, route to escalation.
               If the request is off-topic or unclear, route to off_topic or ambiguous_question respectively.
+
+              CRITICAL — continuing an in-progress symptom consultation: This router re-evaluates on every single message, not just the first one. If the conversation so far already involves reporting or discussing an equipment symptom (an equipment problem was mentioned earlier, a Knowledge Article was already suggested, or the assistant already started collecting case details like equipment id, symptom category, or impact level), you MUST route to symptom_consultation again for ANY follow-up reply, even if that reply alone looks generic. This includes short answers like "여전히 안 고쳐져요", "아니요", "네", equipment names/ids, severity choices (S1/S2/S3/S4), and confirmations like "접수해줘" or "진행해줘". Never answer such a follow-up yourself here in the router, and never treat it as off-topic or ambiguous — always transition to symptom_consultation so the case can actually be created. Only treat a message as off-topic/ambiguous/escalation when it is clearly unrelated to an already-started symptom conversation.
         actions:
             go_to_symptom_consultation: @utils.transition to @subagent.symptom_consultation
             go_to_escalation: @utils.transition to @subagent.escalation
