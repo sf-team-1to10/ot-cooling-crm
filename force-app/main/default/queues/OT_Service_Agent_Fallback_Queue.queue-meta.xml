@@ -3,6 +3,7 @@
     <doesIncludeBosses>true</doesIncludeBosses>
     <doesSendEmailToMembers>false</doesSendEmailToMembers>
     <name>OT Service Agent Fallback Queue</name>
+    <queueRoutingConfig>Default_Routing_Configuration_Agentforce_Contact_Center</queueRoutingConfig>
     <queueSobject>
         <sobjectType>Case</sobjectType>
     </queueSobject>
