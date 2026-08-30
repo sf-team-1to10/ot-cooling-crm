@@ -9,6 +9,21 @@ import userId from '@salesforce/user/Id';
 
 const USER_FIELDS = ['User.Name', 'User.Contact.Account.Name'];
 
+// T5-23: MIAW(Embedded Messaging for Web) 연결 정보 — Setup > Messaging
+// Settings > OT_Service_Chat 채널의 Code Snippet 화면에서 그대로 복사(2026-08-30).
+// 이 값들은 org별로 다르므로 Production 이관 시 재확인 필요
+// (T5_Production_이관_체크리스트.md B-7 참고).
+const MIAW_ORG_ID = '00Dh800000046bV';
+const MIAW_ES_DEVELOPER_NAME = 'OT_Service_Chat';
+const MIAW_SITE_URL = 'https://trailsignup-8617b18a6871a9--t3dlv.sandbox.my.site.com/ESWOTServiceCha1788104812895';
+const MIAW_SCRT2_URL = 'https://trailsignup-8617b18a6871a9--t3dlv.sandbox.my.salesforce-scrt.com';
+const MIAW_BOOTSTRAP_SRC = `${MIAW_SITE_URL}/assets/js/bootstrap.min.js`;
+
+// 모듈 스코프에 둬서 컴포넌트가 여러 번 렌더링돼도 SDK를 중복 로드/초기화하지
+// 않도록 한다(embeddedservice_bootstrap은 전역 객체라 두 번 init하면 안 됨).
+let miawScriptLoading = null;
+let miawReady = false;
+
 export default class T5HmiAssetDetail extends NavigationMixin(LightningElement) {
     @api assetId;
 
@@ -108,7 +123,81 @@ export default class T5HmiAssetDetail extends NavigationMixin(LightningElement) 
     }
 
     // ── Overlay handlers ────────────────────────────────────────────────
-    openChat() { this.showDrawer = true; }
+    // T5-23: 목업 드로어 대신 실제 MIAW(Embedded Messaging) 위젯을 띄운다.
+    // 채팅 UI 자체는 Salesforce 기본 위젯을 그대로 쓰기로 결정(2026-08-30) —
+    // 포털 화면이 곧 재설계될 예정이라 커스텀 UI 통합(Custom UI Components)에
+    // 투자하지 않고, 지금은 실제 기능 연결만 검증한다.
+    openChat() {
+        this.loadMiawSdk()
+            .then(() => this.launchMiawChat())
+            .catch((e) => {
+                // eslint-disable-next-line no-console
+                console.error('MIAW 로드 실패', e);
+            });
+    }
+
+    loadMiawSdk() {
+        if (miawReady) {
+            return Promise.resolve();
+        }
+        if (miawScriptLoading) {
+            return miawScriptLoading;
+        }
+        miawScriptLoading = new Promise((resolve, reject) => {
+            window.addEventListener('onEmbeddedMessagingReady', () => {
+                miawReady = true;
+                resolve();
+            }, { once: true });
+
+            if (window.embeddedservice_bootstrap) {
+                // 이미 다른 컴포넌트/이전 렌더에서 스크립트가 로드된 경우.
+                this.initMiaw();
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = MIAW_BOOTSTRAP_SRC;
+            script.onload = () => this.initMiaw();
+            script.onerror = (e) => reject(e);
+            document.body.appendChild(script);
+        });
+        return miawScriptLoading;
+    }
+
+    initMiaw() {
+        try {
+            window.embeddedservice_bootstrap.settings.language = 'ko';
+            // 기본 플로팅 버튼은 숨기고, 우리 "상담 시작" 버튼으로만 연다.
+            window.embeddedservice_bootstrap.settings.hideChatButtonOnLoad = true;
+            window.embeddedservice_bootstrap.init(
+                MIAW_ORG_ID,
+                MIAW_ES_DEVELOPER_NAME,
+                MIAW_SITE_URL,
+                { scrt2URL: MIAW_SCRT2_URL }
+            );
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('Error loading Embedded Messaging: ', e);
+        }
+    }
+
+    launchMiawChat() {
+        const bootstrap = window.embeddedservice_bootstrap;
+        if (!bootstrap) return;
+        // API 표기가 SDK 버전에 따라 다르게 문서화돼 있어(utilAPI.launchChat vs
+        // launchChat) 둘 다 방어적으로 시도한다(2026-08-30, 공식 문서 확인 시
+        // 두 표기가 혼재돼 있었음).
+        if (bootstrap.utilAPI && typeof bootstrap.utilAPI.launchChat === 'function') {
+            bootstrap.utilAPI.launchChat();
+        } else if (typeof bootstrap.launchChat === 'function') {
+            bootstrap.launchChat();
+        } else {
+            // eslint-disable-next-line no-console
+            console.error('launchChat API를 찾을 수 없음 — SDK 버전 확인 필요');
+        }
+    }
+
     openModal() { this.showModal = true; this.showDrawer = false; }
     closeAll() { this.showDrawer = false; this.showModal = false; }
     switchToModal() { this.showDrawer = false; this.showModal = true; }
