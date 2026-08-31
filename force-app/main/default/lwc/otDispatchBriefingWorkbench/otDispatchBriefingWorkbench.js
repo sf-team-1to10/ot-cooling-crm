@@ -21,6 +21,23 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
     _tabId;
     _tabLabeled = false;
 
+    // Slack 전문가 소집 Flow 모달 상태
+    showSwarmFlow = false;
+    swarmFlowLoaded = false;
+
+    get swarmFlowLoading() {
+        return !this.swarmFlowLoaded;
+    }
+
+    get swarmCardClass() {
+        return this.swarmFlowLoaded ? 'swarm-card' : 'swarm-card swarm-card_hidden';
+    }
+
+    // Flow input: 전문가 소집 Flow는 recordId(Case Id)를 받는다.
+    get swarmFlowInputVariables() {
+        return [{ name: 'recordId', type: 'String', value: this.effectiveRecordId }];
+    }
+
     @wire(CurrentPageReference)
     setPageRef(pageRef) {
         const stateId = pageRef?.state?.c__recordId || pageRef?.attributes?.recordId;
@@ -180,8 +197,45 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
         }
     }
 
+    // Slack 인계 → 전문가 소집 Flow(채널 생성·전문가 초대·Case 요약 발신)를 모달로 실행.
     handleSlack() {
-        this.notReady('Slack 인계');
+        if (!this.effectiveRecordId) {
+            return;
+        }
+        this.swarmFlowLoaded = false;
+        this.showSwarmFlow = true;
+    }
+
+    closeSwarmFlow() {
+        this.showSwarmFlow = false;
+        this.swarmFlowLoaded = false;
+    }
+
+    handleSwarmOverlayClick() {
+        this.closeSwarmFlow();
+    }
+
+    stopPropagation(event) {
+        event.stopPropagation();
+    }
+
+    handleSwarmStatusChange(event) {
+        const status = event.detail.status;
+        // Flow 첫 화면 렌더 시 로딩 종료로 간주(스피너→카드).
+        if (status !== 'ERROR') {
+            this.swarmFlowLoaded = true;
+        }
+        if (status === 'FINISHED' || status === 'FINISHED_SCREEN') {
+            this.showSwarmFlow = false;
+            this.swarmFlowLoaded = false;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Slack 전문가 소집 완료',
+                    message: 'Slack 채널이 생성되고 전문가에게 Case 요약이 발신됐습니다.',
+                    variant: 'success'
+                })
+            );
+        }
     }
 
     async handleApprove() {
