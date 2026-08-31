@@ -84,7 +84,7 @@ public with sharing class T5AssetEvidenceController {
             SELECT Id, ChangeRequestNumber, Subject, Revision_No__c, Scope_Type__c,
                    Status, Received_Date__c, Revision_Approved_Date__c,
                    Customer_Approved__c, Cost_Impact__c, Schedule_Impact_Days__c,
-                   Technical_Impact__c
+                   Technical_Impact__c, Requester__r.Name, Revision_Approver__r.Name
             FROM ChangeRequest
             WHERE Id = :changeRequestId
             WITH USER_MODE
@@ -104,6 +104,7 @@ public with sharing class T5AssetEvidenceController {
             SELECT Id, Measurement_Item_Code__c, Measurement_Point__c,
                    Measured_Value__c, Baseline_Value__c, Spec_Value__c,
                    Judgement__c, Retest_Round__c, Line_Item_Role__c,
+                   Verified_By__r.Name,
                    WorkOrder.StartDate, WorkOrder.WorkOrderNumber
             FROM WorkOrderLineItem
             WHERE WorkOrder.AssetId = :assetId
@@ -135,7 +136,9 @@ public with sharing class T5AssetEvidenceController {
             n.whenText = formatDate(cr.Received_Date__c) + ' · Change Request';
             n.what = cr.Subject;
             n.detail = '설치 진행 중 접수된 변경 요청입니다.';
-            n.source = cr.ChangeRequestNumber;
+            String requester = cr.Requester__r != null ? cr.Requester__r.Name : null;
+            n.source = cr.ChangeRequestNumber
+                + (String.isNotBlank(requester) ? ' · 요청자 ' + requester : '');
             nodes.add(n);
 
             // 2) 계약·기술 검토 (CR의 Scope/Impact 필드에서 도출)
@@ -164,7 +167,9 @@ public with sharing class T5AssetEvidenceController {
                 n3.detail = '설계 검토와 고객 승인을 거쳐 ' + cr.Revision_No__c + '가 발행됐습니다.'
                     + (cr.Customer_Approved__c == true ? ' 고객 승인 완료.' : '')
                     + (point != null ? ' ' + point : '');
+                String approver = cr.Revision_Approver__r != null ? cr.Revision_Approver__r.Name : null;
                 n3.source = cr.Revision_No__c
+                    + (String.isNotBlank(approver) ? ' · 승인자 ' + approver : '')
                     + (link != null && link.Applied_Date__c != null
                         ? ' · 적용 ' + formatDate(link.Applied_Date__c) : '');
                 nodes.add(n3);
@@ -222,7 +227,7 @@ public with sharing class T5AssetEvidenceController {
                 + (flowFail != null
                     ? ' 같은 시점 유량은 ' + formatNum(flowFail.Measured_Value__c) + ' L/min이었습니다.'
                     : '');
-            n.source = '시운전 WO · 측정';
+            n.source = '시운전 WO · 측정' + verifierSuffix(torqueFail);
             nodes.add(n);
         }
 
@@ -240,7 +245,7 @@ public with sharing class T5AssetEvidenceController {
                         + formatNum(flowPass.Measured_Value__c) + '으로 회복됐습니다.'
                     : '')
                 + ' 당시에는 해결된 문제였습니다.';
-            n.source = '재시험 WOLI · 판정 합격';
+            n.source = '재시험 WOLI · 판정 합격' + verifierSuffix(torquePass);
             nodes.add(n);
         }
 
@@ -275,6 +280,16 @@ public with sharing class T5AssetEvidenceController {
         }
         String base = '계약 특약과 기술 전제를 확인해 별도 검토가 필요한 변경으로 판단했습니다.';
         return parts.isEmpty() ? base : base + ' (' + String.join(parts, ' · ') + ')';
+    }
+
+    /**
+     * 측정 라인의 검증자(검사자) 이름을 " · 검사자 {이름}" 접미사로 만든다. 없으면 빈 문자열.
+     */
+    private static String verifierSuffix(WorkOrderLineItem line) {
+        if (line != null && line.Verified_By__r != null && String.isNotBlank(line.Verified_By__r.Name)) {
+            return ' · 검사자 ' + line.Verified_By__r.Name;
+        }
+        return '';
     }
 
     // ─── 헤더 요약 ─────────────────────────────────────────────────────────

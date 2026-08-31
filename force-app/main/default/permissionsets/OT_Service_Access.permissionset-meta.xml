@@ -42,6 +42,24 @@
         <modifyAllRecords>false</modifyAllRecords>
     </objectPermissions>
     <objectPermissions>
+        <object>ChangeRequest</object>
+        <allowRead>true</allowRead>
+        <allowCreate>false</allowCreate>
+        <allowEdit>false</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <object>ChangeRequestRelatedItem</object>
+        <allowRead>true</allowRead>
+        <allowCreate>false</allowCreate>
+        <allowEdit>false</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
+    <objectPermissions>
         <object>WorkOrder</object>
         <allowRead>true</allowRead>
         <allowCreate>true</allowCreate>
@@ -136,6 +154,19 @@
     <fieldPermissions><field>WorkOrderLineItem.Unit__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>WorkOrderLineItem.Verified_By__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>WorkOrderLineItem.Verified_Date__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+
+    <!-- ChangeRequest 원기록(2022) — 서비스 담당은 evidence 화면에서 읽기 전용으로 참조 -->
+    <fieldPermissions><field>ChangeRequest.Requester__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Revision_Approver__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Revision_No__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Scope_Type__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Received_Date__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Revision_Approved_Date__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Customer_Approved__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Cost_Impact__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Schedule_Impact_Days__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequest.Technical_Impact__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
+    <fieldPermissions><field>ChangeRequestRelatedItem.Applied_Date__c</field><readable>true</readable><editable>false</editable></fieldPermissions>
 
     <!-- ═══ 탭 가시성 ═══ -->
     <tabSettings><tab>standard-Case</tab><visibility>Visible</visibility></tabSettings>
