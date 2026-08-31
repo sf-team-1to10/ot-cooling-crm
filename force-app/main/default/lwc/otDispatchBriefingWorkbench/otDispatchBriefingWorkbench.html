@@ -23,13 +23,21 @@
                         <h1 class="briefing-hl-name">{headerTitle}</h1>
                     </div>
                     <div class="briefing-hl-actions">
-                        <span class="slds-badge priority-badge">Priority · {priority} 제안</span>
+                        <span class={priorityBadgeClass}>{priorityBadgeText}</span>
                         <lightning-button label="2022년 원기록 확인" onclick={handleEvidence}
                             class="slds-m-left_xx-small"></lightning-button>
                         <lightning-button label="Slack 인계" onclick={handleSlack}
                             class="slds-m-left_xx-small"></lightning-button>
-                        <lightning-button label="Priority 승인 · 출동 확정" variant="brand"
-                            onclick={handleApprove} class="slds-m-left_xx-small"></lightning-button>
+                        <template lwc:if={isApproved}>
+                            <button type="button" class="approve-done slds-m-left_xx-small" disabled>
+                                {approveButtonLabel}
+                            </button>
+                        </template>
+                        <template lwc:else>
+                            <lightning-button label={approveButtonLabel} variant="brand"
+                                onclick={handleApprove}
+                                class="slds-m-left_xx-small"></lightning-button>
+                        </template>
                     </div>
                 </div>
                 <dl class="briefing-hl-fields">
@@ -45,6 +53,12 @@
                         <dt>비교 대상</dt>
                         <dd>Hall A CDU {rationale.comparedCount}대</dd>
                     </div>
+                    <template lwc:if={isApproved}>
+                        <div class="briefing-hl-f">
+                            <dt>승인</dt>
+                            <dd>{approvedByText}</dd>
+                        </div>
+                    </template>
                 </dl>
             </div>
 

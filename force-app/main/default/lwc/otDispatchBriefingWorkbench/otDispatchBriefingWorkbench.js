@@ -10,7 +10,9 @@ import {
     focusTab
 } from 'lightning/platformWorkspaceApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { refreshApex } from '@salesforce/apex';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
+import approveDispatch from '@salesforce/apex/T5DispatchBriefingController.approveDispatch';
 
 export default class OtDispatchBriefingWorkbench extends NavigationMixin(LightningElement) {
     // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
@@ -60,9 +62,12 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
 
     briefing;
     error;
+    _wiredBriefing;
 
     @wire(getBriefing, { caseId: '$effectiveRecordId' })
-    wiredBriefing({ data, error }) {
+    wiredBriefing(response) {
+        this._wiredBriefing = response;
+        const { data, error } = response;
         if (data) {
             this.briefing = data;
             this.error = undefined;
@@ -101,7 +106,45 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
 
     // 산정 시각 — 규칙 엔진이 Impact·보증·Priority를 판정한 시각(시:분)
     get calculatedAtText() {
-        const raw = this.briefing?.calculatedAt;
+        return this.formatTime(this.briefing?.calculatedAt);
+    }
+
+    // ── Priority 승인 상태 (step9) ──
+    get isApproved() {
+        return this.briefing?.isApproved === true;
+    }
+
+    // 승인 전: "Priority · {High} 제안" / 승인 후: "Priority {High} · 담당자 승인"
+    get priorityBadgeText() {
+        return this.isApproved
+            ? `Priority ${this.priority} · 담당자 승인`
+            : `Priority · ${this.priority} 제안`;
+    }
+
+    get priorityBadgeClass() {
+        return this.isApproved
+            ? 'slds-badge priority-badge-approved'
+            : 'slds-badge priority-badge';
+    }
+
+    // 승인 전: "Priority 승인 · 출동 확정" / 승인 후: "출동 확정됨 · {02:45}"
+    get approveButtonLabel() {
+        return this.isApproved
+            ? `출동 확정됨 · ${this.approvedAtText}`
+            : 'Priority 승인 · 출동 확정';
+    }
+
+
+    get approvedByText() {
+        const name = this.briefing?.approvedByName || '담당자';
+        return `${name} · ${this.approvedAtText}`;
+    }
+
+    get approvedAtText() {
+        return this.formatTime(this.briefing?.approvedAt);
+    }
+
+    formatTime(raw) {
         if (!raw) {
             return '—';
         }
@@ -141,8 +184,30 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
         this.notReady('Slack 인계');
     }
 
-    handleApprove() {
-        this.notReady('Priority 승인 · 출동 확정');
+    async handleApprove() {
+        const caseId = this.effectiveRecordId;
+        if (!caseId || this.isApproved) {
+            return;
+        }
+        try {
+            await approveDispatch({ caseId });
+            await refreshApex(this._wiredBriefing);
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: '출동 확정',
+                    message: `Priority ${this.priority} 승인 및 출동이 확정됐습니다.`,
+                    variant: 'success'
+                })
+            );
+        } catch (e) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: '출동 확정 실패',
+                    message: e?.body?.message || '승인을 저장하지 못했습니다.',
+                    variant: 'error'
+                })
+            );
+        }
     }
 
     notReady(feature) {
