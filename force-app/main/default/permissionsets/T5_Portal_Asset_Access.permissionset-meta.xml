@@ -22,6 +22,14 @@
         <apexClass>T5HmiAssetDetailController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <!-- T5-07 재검증(2026-08-31): otEquipDashboard/otEquipDetail을 이
+         컨트롤러에 연결했는데 classAccesses 등록을 빠뜨려서 "The Apex
+         request is invalid"(500) 에러가 났음 — 필드 FLS만으론 부족, 클래스
+         자체 실행 권한이 필요하다. -->
+    <classAccesses>
+        <apexClass>OTEquipDashboardController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <!-- T5-23: MIAW를 LWR 사이트에 직접 임베드하면 "No targetElement specified"
          에러로 실패(2026-08-30/31 실측, 원인 불명확한 LWR 특유 문제로 추정) —
          Visualforce 페이지를 iframe으로 감싸는 우회책. 포털 사용자가 그 VF
