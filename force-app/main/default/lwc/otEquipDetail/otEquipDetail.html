@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <c-ot-equip-sidebar active-nav="assets" customer-name="아이언데이터센터" contact-name="유신" contact-role="고객 운영 담당자"></c-ot-equip-sidebar>
+        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이언데이터센터"></c-ot-equip-sidebar>
 
         <div class="main">
             <c-ot-equip-util-bar breadcrumb-prefix="내 자산 / Hall A" breadcrumb-current="CDU-A-07"></c-ot-equip-util-bar>
@@ -284,14 +284,14 @@
             <span class="demo">데모 데이터</span>
         </div>
 
-        <!-- T5-23: LWR 사이트에 MIAW를 직접 임베드하면 실패해서(2026-08-30/31
-             실측, T5_서비스에이전트_작업기록.md 참고) Visualforce 페이지를
-             iframe으로 감싸는 우회 방식을 쓴다. 목업 chatMessages/입력창은
-             제거 — 실제 대화는 iframe 안의 Salesforce 위젯이 전부 처리한다. -->
-        <div class="dw-body dw-body-iframe">
-            <template lwc:if={drawerOpen}>
-                <iframe src={chatEmbedUrl} title="OT전자 서비스 에이전트 채팅" class="chat-iframe"></iframe>
-            </template>
+        <!-- T5-23: MIAW SDK가 iframe 중첩 안에서 로드되면 "No targetElement
+             specified"로 실패하는 걸 실측 확인(LWR 직접 임베드·VF iframe
+             우회 둘 다 동일 재현, T5_서비스에이전트_작업기록.md 참고) — 이
+             SDK 자체가 최상위 페이지로 로드되길 기대하는 것으로 보여, iframe
+             대신 새 창으로 여는 방식으로 전환. -->
+        <div class="dw-body">
+            <p class="chat-launch-desc">위 상담 컨텍스트를 바탕으로 서비스 에이전트와 새 창에서 대화를 시작합니다.</p>
+            <button class="btn chat-launch-btn" onclick={handleLaunchChat}>새 창에서 상담 시작</button>
         </div>
     </aside>
 
