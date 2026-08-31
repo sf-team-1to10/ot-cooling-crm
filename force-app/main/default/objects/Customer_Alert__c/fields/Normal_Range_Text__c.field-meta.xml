@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Normal_Range_Text__c</fullName>
+    <label>Normal Range (Display)</label>
+    <description>드로어의 "Normal operating envelope" 표시용 텍스트. 예: "95–115 L/min".</description>
+    <type>Text</type>
+    <length>40</length>
+</CustomField>

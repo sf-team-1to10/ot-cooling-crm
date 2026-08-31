@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Customer Alert</label>
+    <pluralLabel>Customer Alerts</pluralLabel>
+    <nameField>
+        <label>Alert Number</label>
+        <type>AutoNumber</type>
+        <displayFormat>CA-{0000}</displayFormat>
+        <startingNumber>0</startingNumber>
+    </nameField>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>Private</sharingModel>
+    <description>고객 포털(T5-07 "고객 운영 콘솔")에 표시할 목적으로 발행하는 고객 노출용 경보 레코드. 실제 SCADA/BMS 알람 라이프사이클을 흉내낸 데모 단계 오브젝트 — Case/Work Order와 자동 연동하지 않는다(고객이 "알람 확인"을 눌러도 Status__c만 바뀐다). 조기 확인 신호(advisory)이며 장애 확정·자동 출동·자동 진단·예지보전을 의미하지 않는다.</description>
+</CustomObject>
