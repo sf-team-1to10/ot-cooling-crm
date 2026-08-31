@@ -30,14 +30,6 @@
         <apexClass>OTEquipDashboardController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <!-- T5-23: MIAW를 LWR 사이트에 직접 임베드하면 "No targetElement specified"
-         에러로 실패(2026-08-30/31 실측, 원인 불명확한 LWR 특유 문제로 추정) —
-         Visualforce 페이지를 iframe으로 감싸는 우회책. 포털 사용자가 그 VF
-         페이지에 접근하려면 이 권한이 필요하다. -->
-    <pageAccesses>
-        <apexPage>T5AgentChatEmbed</apexPage>
-        <enabled>true</enabled>
-    </pageAccesses>
     <objectPermissions>
         <object>Contact</object>
         <allowRead>true</allowRead>

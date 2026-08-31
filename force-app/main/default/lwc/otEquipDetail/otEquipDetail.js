@@ -289,15 +289,6 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     handleMinDrawer() { this.drawerMinimized = !this.drawerMinimized; }
     handleScrimClick() { this.handleCloseDrawer(); }
 
-    // T5-23: MIAW를 LWR 사이트에 직접 임베드하면 "No targetElement specified"
-    // 에러로 실패(2026-08-30/31 실측 — CSP/CORS/v1↔v2/Lightning Web Security
-    // on-off/Deployment 재생성까지 다 시도해도 재현, T5_서비스에이전트_작업기록.md
-    // 참고). Visualforce는 이 문제가 없어(공식 Test Enhanced Web Chat에서 실측
-    // 확인) VF 페이지를 iframe으로 감싸는 우회책을 쓴다.
-    get chatEmbedUrl() {
-        return '/otcustomer/apex/T5AgentChatEmbed';
-    }
-
     // Navigation
     handleBack() {
         this[NavigationMixin.Navigate]({

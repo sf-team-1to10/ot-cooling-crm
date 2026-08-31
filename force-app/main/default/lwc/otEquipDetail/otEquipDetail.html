@@ -284,14 +284,10 @@
             <span class="demo">데모 데이터</span>
         </div>
 
-        <!-- T5-23: LWR 사이트에 MIAW를 직접 임베드하면 실패해서(2026-08-30/31
-             실측, T5_서비스에이전트_작업기록.md 참고) Visualforce 페이지를
-             iframe으로 감싸는 우회 방식을 쓴다. 목업 chatMessages/입력창은
-             제거 — 실제 대화는 iframe 안의 Salesforce 위젯이 전부 처리한다. -->
-        <div class="dw-body dw-body-iframe">
-            <template lwc:if={drawerOpen}>
-                <iframe src={chatEmbedUrl} title="OT전자 서비스 에이전트 채팅" class="chat-iframe"></iframe>
-            </template>
+        <!-- T5-23(MIAW 실시간 채널 연결)은 별도 티켓·PR에서 처리 — 여기서는
+             자리만 남겨둔다. -->
+        <div class="dw-body">
+            <div class="empty">서비스 에이전트 채팅은 준비 중입니다.</div>
         </div>
     </aside>
 
