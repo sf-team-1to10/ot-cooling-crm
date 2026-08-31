@@ -1,5 +1,6 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
+import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
 
 const METRICS = {
     flow: { label:'CHW Flow', unit:'L/min', from:105, to:71, band:[95,115], vmin:60, vmax:125, interp:'냉수 유량은 기준선 하한보다 낮은 상태로 관찰되고 있으며, 상세 이력과 함께 확인이 필요합니다.' },
@@ -42,6 +43,16 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     @track chatMessages = [];
     @track chatInput = '';
 
+    // T5-07 — 2026-08-31: OTEquipDashboardController.getEquipmentDetail()에
+    // 연결(사용자 요청 — 이 컴포넌트가 Apex를 전혀 호출 안 하고 있던 걸
+    // 발견, T5_서비스에이전트_작업기록.md 참고). 자산 핵심 필드(이름·위치·
+    // 상태·보증·미조치건수)와 게이지 스냅샷(gaugesJson)은 실데이터로
+    // 교체됨. 다중 지표(ΔP/온도 등)·1h~7일 범위별 시계열 추세 그래프는
+    // Apex에 그 데이터 모델이 아직 없어 이번 범위에서는 손대지 않고
+    // METRICS/RANGES 시뮬레이션을 유지 — 후속 작업으로 트래커에 기록.
+    @track detail = null;
+    @track gauges = [];
+
     @wire(CurrentPageReference)
     handlePageRef(ref) {
         if (ref && ref.state && ref.state.assetId) {
@@ -49,8 +60,42 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
         }
     }
 
-    get assetName() { return 'CDU-A-07'; }
-    get assetMeta() { return '냉각수 분배 장치 · Liquid Cooling CDU · Hall A · 3열 · Serial No. OTC-CW-120-A07 · 설치일 2022-06-18'; }
+    @wire(getEquipmentDetail, { assetId: '$assetId' })
+    wiredDetail({ data, error }) {
+        if (error) {
+            // eslint-disable-next-line no-console
+            console.error('장비 상세 로드 실패', error);
+            return;
+        }
+        if (!data) return;
+        this.detail = data;
+        this.gauges = this.parseGauges(data.gaugesJson);
+    }
+
+    parseGauges(gaugesJson) {
+        if (!gaugesJson) return [];
+        try {
+            return JSON.parse(gaugesJson) || [];
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('gaugesJson 파싱 실패', e);
+            return [];
+        }
+    }
+
+    get primaryGauge() {
+        if (!this.gauges || this.gauges.length === 0) return null;
+        return this.gauges.find(g => /flow/i.test(g.measurementItemCode || '')) || this.gauges[0];
+    }
+
+    get assetName() { return this.detail ? this.detail.name : ''; }
+    get assetMeta() {
+        if (!this.detail) return '';
+        const d = this.detail;
+        const parts = [d.assetType, d.family, d.location, d.serialNumber ? `Serial No. ${d.serialNumber}` : null,
+            d.installDate ? `설치일 ${d.installDate}` : null];
+        return parts.filter(Boolean).join(' · ');
+    }
 
     // Tabs
     get tabs() {
@@ -99,16 +144,20 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     handleZoom() { this.lightboxOpen = true; }
     handleLightboxClose() { this.lightboxOpen = false; }
 
-    // Condition rows
+    // Condition rows — 실데이터(자산 상태·게이지) + 아직 백엔드 데이터
+    // 모델이 없는 항목("운전 상태"·"Advisory 지속")은 정직하게 "—"로 표시.
     get conditionRows() {
+        const d = this.detail;
+        const g = this.primaryGauge;
+        const isAdv = d && d.stateCode === 'adv';
         return [
-            { label:'운전 상태', value:'정상 운전', cls:'val teal' },
-            { label:'자산 상태', value:'P3 Advisory / 주의', cls:'val amber' },
-            { label:'관찰 항목', value:'CHW Flow 기준선 대비 낮음', cls:'val' },
-            { label:'현재값', value:'71 L/min', cls:'val amber mono' },
-            { label:'운전 기준선', value:'95–115 L/min', cls:'val mono' },
-            { label:'Advisory 지속', value:'45분', cls:'val mono' },
-            { label:'마지막 데이터 수신', value:'02:59 · 데모', cls:'val mono' }
+            { label:'자산 상태', value: d ? d.stateLabel : '—', cls: isAdv ? 'val amber' : 'val teal' },
+            { label:'관찰 항목', value: g ? g.measurementItemCode : '이상 감지된 항목 없음', cls:'val' },
+            { label:'현재값', value: g ? `${g.currentValue}` : '—', cls: isAdv ? 'val amber mono' : 'val mono' },
+            { label:'직전 측정값', value: g ? `${g.previousValue}` : '—', cls:'val mono' },
+            { label:'보증', value: d ? (d.warrantyType || '정보 없음') : '—', cls:'val' },
+            { label:'미조치 건수', value: d && d.openItemsSummary != null ? `${d.openItemsSummary}건` : '0건', cls:'val mono' },
+            { label:'다음 정비', value: d && d.nextMaintenance ? d.nextMaintenance : '—', cls:'val mono' }
         ];
     }
 
@@ -185,11 +234,27 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
         });
         const bandY1=Y(M.band[1]), bandY0=Y(M.band[0]);
         const last=X(n-1), lastY=Y(pts[n-1]);
+
+        let evtMarkers = '';
+        if ((this.curRange === '8' || this.curRange === '1') && this.curMetric === 'flow') {
+            const events = [
+                { frac: this.curRange === '1' ? 0.66 : 0.905, color: '#B4740F', time: '02:14', label: 'P3 Advisory 발생' },
+                { frac: this.curRange === '1' ? 0.92 : 0.955, color: '#2E6BE6', time: '02:37', label: '고객 알림 확인' }
+            ];
+            events.forEach(e => {
+                const ex = pL + e.frac * iw;
+                evtMarkers +=
+                    `<line x1="${ex.toFixed(1)}" y1="${pT}" x2="${ex.toFixed(1)}" y2="${(pT+ih)}" stroke="${e.color}" stroke-width="1.4" stroke-dasharray="4 3"/>` +
+                    `<circle cx="${ex.toFixed(1)}" cy="${pT}" r="4" fill="${e.color}"/>` +
+                    `<text x="${ex.toFixed(1)}" y="${(pT-6)}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${e.color}" font-family="ui-monospace,Consolas,monospace">${e.time}</text>`;
+            });
+        }
+
         el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="width:100%">`+
             `<rect x="${pL}" y="${bandY1.toFixed(1)}" width="${iw}" height="${(bandY0-bandY1).toFixed(1)}" fill="#E6F3EF"/>`+
             `<line x1="${pL}" y1="${bandY0.toFixed(1)}" x2="${W-pR}" y2="${bandY0.toFixed(1)}" stroke="#63B79A" stroke-dasharray="5 3"/>`+
             `<line x1="${pL}" y1="${bandY1.toFixed(1)}" x2="${W-pR}" y2="${bandY1.toFixed(1)}" stroke="#9FCFBD" stroke-dasharray="4 4"/>`+
-            g+
+            g + evtMarkers +
             `<path d="${area}" fill="rgba(46,107,230,.07)"/>`+
             `<path d="${d}" fill="none" stroke="#2E6BE6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`+
             `<circle cx="${last.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4" fill="#2E6BE6" stroke="#fff" stroke-width="1.6"/>`+

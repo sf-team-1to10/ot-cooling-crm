@@ -139,6 +139,11 @@
         <editable>false</editable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>Asset.Warranty_Type__c</field>
+        <readable>true</readable>
+        <editable>false</editable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Asset.Site_Location__c</field>
         <readable>true</readable>
         <editable>false</editable>
