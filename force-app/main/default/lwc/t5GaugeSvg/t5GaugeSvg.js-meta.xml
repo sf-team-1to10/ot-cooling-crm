@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <isExposed>false</isExposed>
+    <description>재사용 가능한 단일 측정 항목 게이지(원호 진행률 + 스파크라인 + 직전 대비). otTrendAlertCard(T5-07)·향후 Asset 레코드 페이지(T5-21)가 공용으로 씀. App Builder에 직접 배치하는 컴포넌트가 아니라 다른 LWC 안에서만 씀.</description>
+</LightningComponentBundle>
