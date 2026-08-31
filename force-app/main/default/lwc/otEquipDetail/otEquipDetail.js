@@ -289,25 +289,23 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     handleMinDrawer() { this.drawerMinimized = !this.drawerMinimized; }
     handleScrimClick() { this.handleCloseDrawer(); }
 
-    // T5-23: MIAW SDK가 iframe 안에 중첩돼서 로드되면 "No targetElement
-    // specified"로 실패하는 걸 실측 확인 — LWR 사이트에 직접 임베드했을 때도,
-    // Visualforce 페이지를 iframe으로 감싸는 우회책을 썼을 때도 동일하게
-    // 재현됨(2026-08-30/31, T5_서비스에이전트_작업기록.md 참고). 공식 Test
-    // Enhanced Web Chat이 성공했던 건 iframe이 아니라 최상위 페이지로 직접
-    // 열렸기 때문으로 보임 — 그래서 iframe 대신 새 창으로 연다.
-    //
-    // 경로 주의(2026-08-31): "/otcustomer/apex/..."(사이트 친화적 별칭)로
-    // 접근하면 "Invalid Page" 에러가 남 — VF 페이지는 그 별칭 라우팅을
-    // 안 타고 사이트 원래 prefix(Network.UrlPathPrefix, 여기선
-    // "otcustomervforcesite") 밑의 "/apex/..."로 가야 한다. curl로
-    // 확인: "/otcustomervforcesite/apex/T5AgentChatEmbed"는 정상
-    // 로그인 리다이렉트가 뜨지만 "/otcustomer/apex/..."는 Invalid Page.
-    get chatEmbedUrl() {
-        return '/otcustomervforcesite/apex/T5AgentChatEmbed';
-    }
-
+    // T5-23 (2026-08-31 최종): MIAW를 LWR 사이트 Head Markup에 직접
+    // 임베드하는 공식 경로로 붙는 데 성공(VF/iframe/새 창 우회책은 전부
+    // 불필요해져서 제거 — 경위는 T5_서비스에이전트_작업기록.md 참고).
+    // 남은 문제는 LWC가 Lightning Web Security로 격리돼 있어
+    // `window.embeddedservice_bootstrap`을 직접 호출할 수 없다는 것 —
+    // 실측 확인(같은 페이지에서도 LWC 쪽 window와 최상위 window가
+    // 다르게 보임). 그래서 표준 DOM 이벤트로 최상위 페이지(Head Markup
+    // 스크립트, LWS 밖에 있음)에 "채팅 열어줘"만 알리고, 실제 API 호출은
+    // 그쪽에서 하도록 다리를 놓는다.
     handleLaunchChat() {
-        window.open(this.chatEmbedUrl, '_blank', 'width=420,height=680,noopener,noreferrer');
+        try {
+            const evt = new CustomEvent('ot_launch_chat', { bubbles: true, composed: true });
+            document.dispatchEvent(evt);
+        } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('채팅 시작 이벤트 전달 실패', e);
+        }
     }
 
     // Navigation
