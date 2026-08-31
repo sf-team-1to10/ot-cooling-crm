@@ -75,7 +75,8 @@ public with sharing class OTEquipDashboardController {
                 SELECT Id, Name, SerialNumber, Status, InstallDate,
                        Product2.Name, Product2.Family,
                        Site_Location__c, Latest_Trend_Flag__c,
-                       Next_Inspection_Date__c, Latest_Gauges_JSON__c
+                       Next_Inspection_Date__c, Latest_Gauges_JSON__c,
+                       Warranty_Type__c, Open_Items_Summary__c
                 FROM Asset
                 WHERE Id = :assetId
                 WITH USER_MODE
@@ -100,6 +101,16 @@ public with sharing class OTEquipDashboardController {
             result.location = a.Site_Location__c;
             result.installDate = a.InstallDate;
             result.nextMaintenance = a.Next_Inspection_Date__c;
+            // T5-07 완료조건 "공개 필드 전부 표시" 중 보증/미조치건수가
+            // 빠져있던 걸 여기서 채운다(2026-08-31, 사용자 요청으로 발견).
+            result.warrantyType = a.Warranty_Type__c;
+            result.openItemsSummary = a.Open_Items_Summary__c;
+            // T5_Sync_Asset_Trend_Summary Flow가 WOLI 변경마다 갱신해두는
+            // 게이지 스냅샷(OtTrendAlertCardController.GaugeView 목록을
+            // 그대로 직렬화한 것) — LWC가 파싱해서 게이지·스파크라인·델타를
+            // 그린다. 원본(WorkOrderLineItem)은 포털 라이선스로 직접 조회
+            // 불가라 이 경로로 우회한다(T5SyncAssetTrendSummary 클래스 참고).
+            result.gaugesJson = a.Latest_Gauges_JSON__c;
 
             Boolean isAdv = a.Latest_Trend_Flag__c == '주의' ||
                             a.Latest_Trend_Flag__c == '이상';
@@ -224,6 +235,9 @@ public with sharing class OTEquipDashboardController {
         @AuraEnabled public String stateCode { get; set; }
         @AuraEnabled public String stateLabel { get; set; }
         @AuraEnabled public String meta { get; set; }
+        @AuraEnabled public String warrantyType { get; set; }
+        @AuraEnabled public Decimal openItemsSummary { get; set; }
+        @AuraEnabled public String gaugesJson { get; set; }
     }
 
     public class LocationView {
