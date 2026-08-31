@@ -37,6 +37,38 @@ private class T5ProblemRcaControllerTest {
         }
         insert wos;
 
+        // 신규사례 Article 근거값용 — 시운전(68→112)·장애복구(71→111) F-07 체결토크
+        WorkOrder commissionWo = new WorkOrder(
+            AssetId = target.Id, Work_Subtype__c = '시운전', Status = 'New', Subject = '시운전 검사'
+        );
+        WorkOrder recoveryWo = new WorkOrder(
+            AssetId = target.Id, Work_Subtype__c = '장애복구', Status = 'New', Subject = '유량저하 복구'
+        );
+        insert new List<WorkOrder>{ commissionWo, recoveryWo };
+
+        insert new List<WorkOrderLineItem>{
+            new WorkOrderLineItem(
+                WorkOrderId = commissionWo.Id, AssetId = target.Id, Line_Item_Role__c = '시험',
+                Measurement_Item_Code__c = '체결토크', Measurement_Point__c = 'F-07',
+                Measured_Value__c = 68, Judgement__c = '불합격', Retest_Round__c = 1
+            ),
+            new WorkOrderLineItem(
+                WorkOrderId = commissionWo.Id, AssetId = target.Id, Line_Item_Role__c = '시험',
+                Measurement_Item_Code__c = '체결토크', Measurement_Point__c = 'F-07',
+                Measured_Value__c = 112, Judgement__c = '합격', Retest_Round__c = 2
+            ),
+            new WorkOrderLineItem(
+                WorkOrderId = recoveryWo.Id, AssetId = target.Id, Line_Item_Role__c = '시험',
+                Measurement_Item_Code__c = '체결토크', Measurement_Point__c = 'F-07',
+                Measured_Value__c = 71, Judgement__c = '불합격', Retest_Round__c = 1
+            ),
+            new WorkOrderLineItem(
+                WorkOrderId = recoveryWo.Id, AssetId = target.Id, Line_Item_Role__c = '시험',
+                Measurement_Item_Code__c = '체결토크', Measurement_Point__c = 'F-07',
+                Measured_Value__c = 111, Judgement__c = '합격', Retest_Round__c = 2
+            )
+        };
+
         insert new Case(
             Subject = 'CDU-A-07 유량 저하', Status = 'New', Priority = 'High',
             AccountId = acct.Id, AssetId = target.Id, Problem__c = prob.Id
@@ -106,6 +138,62 @@ private class T5ProblemRcaControllerTest {
         System.Test.startTest();
         try {
             T5ProblemRcaController.getRca(null);
+            Assert.fail('null Case Id는 예외를 던져야 함');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true, '예외 발생 확인');
+        }
+        System.Test.stopTest();
+    }
+
+    @isTest
+    static void shouldReturnActions_WithWorkOrdersAndCounts() {
+        // Given
+        Id caseId = caseIdBySubject('CDU-A-07 유량 저하');
+
+        // When
+        System.Test.startTest();
+        T5ProblemRcaController.ActionResults result = T5ProblemRcaController.getActions(caseId);
+        System.Test.stopTest();
+
+        // Then — 집계 12건 + WO 목록 12건, 시정 1건 플래그
+        Assert.areEqual(1, result.correctiveCount, '시정 1건');
+        Assert.areEqual(11, result.preventiveCount, '예방 11건');
+        Assert.areEqual(12, result.totalCount, '합계 12건');
+        Assert.areEqual(12, result.workOrders.size(), 'WO 목록 12건');
+        Integer correctiveRows = 0;
+        for (T5ProblemRcaController.ActionWorkOrder wo : result.workOrders) {
+            if (wo.isCorrective) {
+                correctiveRows++;
+            }
+        }
+        Assert.areEqual(1, correctiveRows, '시정 플래그 1건');
+    }
+
+    @isTest
+    static void shouldBuildArticleEvidence_FromRealMeasurements() {
+        // Given
+        Id caseId = caseIdBySubject('CDU-A-07 유량 저하');
+
+        // When
+        System.Test.startTest();
+        T5ProblemRcaController.ActionResults result = T5ProblemRcaController.getActions(caseId);
+        System.Test.stopTest();
+
+        // Then — 시운전 68→112, 복구 71→111 실측값이 근거로 조립됨
+        T5ProblemRcaController.ArticleEvidence ev = result.articleEvidence;
+        Assert.isNotNull(ev, 'Article 근거 존재');
+        Assert.areEqual(68, ev.commissionFail, '2022 최초 68');
+        Assert.areEqual(112, ev.commissionPass, '2022 재시험 112');
+        Assert.areEqual(71, ev.recoveryFail, '2026 최초 71');
+        Assert.areEqual(111, ev.recoveryPass, '2026 재시험 111');
+    }
+
+    @isTest
+    static void shouldThrowException_WhenActionsNullCaseId() {
+        // When / Then
+        System.Test.startTest();
+        try {
+            T5ProblemRcaController.getActions(null);
             Assert.fail('null Case Id는 예외를 던져야 함');
         } catch (AuraHandledException e) {
             Assert.isTrue(true, '예외 발생 확인');

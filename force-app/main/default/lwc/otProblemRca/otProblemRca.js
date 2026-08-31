@@ -1,14 +1,17 @@
 import { LightningElement, api, wire } from 'lwc';
-import { CurrentPageReference } from 'lightning/navigation';
+import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon
+    setTabIcon,
+    IsConsoleNavigation,
+    getFocusedTabInfo,
+    openSubtab,
+    focusTab
 } from 'lightning/platformWorkspaceApi';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getRca from '@salesforce/apex/T5ProblemRcaController.getRca';
 
-export default class OtProblemRca extends LightningElement {
+export default class OtProblemRca extends NavigationMixin(LightningElement) {
     // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
     @api recordId;
     _stateRecordId;
@@ -21,6 +24,12 @@ export default class OtProblemRca extends LightningElement {
         if (stateId) {
             this._stateRecordId = stateId;
         }
+    }
+
+    @wire(IsConsoleNavigation) isConsoleNavigation;
+
+    get isConsole() {
+        return this.isConsoleNavigation?.data === true;
     }
 
     rca;
@@ -94,14 +103,29 @@ export default class OtProblemRca extends LightningElement {
         return `예방확인 ${this.rca?.preventiveCount ?? 0}건`;
     }
 
-    // step19(v-actions 조치 생성 결과)는 이번 범위 밖 — 후속 작업에서 연결한다.
-    handleApproveScope() {
-        this.dispatchEvent(
-            new ShowToastEvent({
-                title: '영향 범위 승인 — 준비 중',
-                message: '조치 생성(시정·예방 Work Order) 화면은 후속 작업에서 연결됩니다.',
-                variant: 'info'
-            })
-        );
+    // 영향 범위 승인 → step19(조치 생성 결과) 화면을 서브탭으로 연다.
+    // evidence·브리핑과 동일하게 UrlAddressable 컴포넌트로 열어 App Page 껍데기 없이 화면만 띄운다.
+    async handleApproveScope() {
+        const caseId = this.effectiveRecordId;
+        if (!caseId) {
+            return;
+        }
+        const pageReference = {
+            type: 'standard__component',
+            attributes: { componentName: 'c__otActionResults' },
+            state: { c__recordId: caseId }
+        };
+
+        if (this.isConsole) {
+            const focused = await getFocusedTabInfo();
+            const subtabId = await openSubtab({
+                parentTabId: focused.parentTabId || focused.tabId,
+                pageReference,
+                focus: true
+            });
+            await focusTab(subtabId);
+        } else {
+            this[NavigationMixin.Navigate](pageReference);
+        }
     }
 }
