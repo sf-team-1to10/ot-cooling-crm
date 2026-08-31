@@ -2,10 +2,10 @@
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>66.0</apiVersion>
     <isExposed>true</isExposed>
+    <masterLabel>Case Header</masterLabel>
+    <description>Case 360 상단 헤더 하이라이트 — Case번호·Asset·Agent 최초응답·상담사 인수·응답/복구 SLA 스탯과 출동 브리핑 생성 액션 (S-01)</description>
     <targets>
         <target>lightning__RecordPage</target>
-        <target>lightning__AppPage</target>
-        <target>lightning__UrlAddressable</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">

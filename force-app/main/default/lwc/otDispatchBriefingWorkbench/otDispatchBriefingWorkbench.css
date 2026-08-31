@@ -1,9 +1,3 @@
-/* 보통 org 화면과 동일한 좌우 여백 — 과한 중앙 여백 제거 */
-.workbench-shell {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
-}
-
 /* ── Highlights 헤더 ── */
 .briefing-hl {
     background-color: #ffffff;

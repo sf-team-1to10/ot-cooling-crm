@@ -1,5 +1,10 @@
 import { LightningElement, api, wire } from 'lwc';
 import { CurrentPageReference } from 'lightning/navigation';
+import {
+    EnclosingTabId,
+    setTabLabel,
+    setTabIcon
+} from 'lightning/platformWorkspaceApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
 
@@ -7,6 +12,8 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
     // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
     @api recordId;
     _stateRecordId;
+    _tabId;
+    _tabLabeled = false;
 
     @wire(CurrentPageReference)
     setPageRef(pageRef) {
@@ -14,6 +21,26 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         if (stateId) {
             this._stateRecordId = stateId;
         }
+    }
+
+    // EnclosingTabId wire는 탭 컨텍스트가 준비된 후에 tabId를 반응형으로 준다.
+    // standard__component 서브탭은 컴포넌트 로드 완료 시 라벨을 'Loading...'으로 덮으므로,
+    // 이 wire(=로드 후)로 tabId를 받아 라벨을 다시 설정해야 최종적으로 고정된다.
+    @wire(EnclosingTabId)
+    setTabId(tabId) {
+        this._tabId = tabId;
+        this.labelEnclosingTab();
+    }
+
+    async labelEnclosingTab() {
+        if (this._tabLabeled || !this._tabId || !this.caseNumber) {
+            return;
+        }
+        this._tabLabeled = true;
+        await setTabLabel(this._tabId, `${this.caseNumber} 출동 브리핑`);
+        // standard: 계열 아이콘은 콘솔 탭에서 다른 탭(Case 등)과 동일한 크기로 렌더된다.
+        // utility: 계열은 크게 나와 옆 탭 아이콘과 크기가 안 맞는다.
+        await setTabIcon(this._tabId, 'standard:announcement');
     }
 
     get effectiveRecordId() {
@@ -29,6 +56,8 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         if (data) {
             this.briefing = data;
             this.error = undefined;
+            // caseNumber 확보 — tabId가 이미 왔다면 이 시점에 라벨을 설정한다.
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.briefing = undefined;

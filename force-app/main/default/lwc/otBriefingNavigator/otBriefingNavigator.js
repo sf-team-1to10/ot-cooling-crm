@@ -4,9 +4,7 @@ import {
     IsConsoleNavigation,
     getFocusedTabInfo,
     openSubtab,
-    focusTab,
-    setTabLabel,
-    setTabIcon
+    focusTab
 } from 'lightning/platformWorkspaceApi';
 import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 import CASE_NUMBER from '@salesforce/schema/Case.CaseNumber';
@@ -36,23 +34,24 @@ export default class OtBriefingNavigator extends NavigationMixin(LightningElemen
         if (!this.recordId) {
             return;
         }
-        // navItemPage(App Page 탭) 대신 pageReference를 서브탭에 직접 전달해
-        // CustomTab 가시성에 의존하지 않고 연다.
+        // 워크벤치 LWC를 URL-addressable(lightning__UrlAddressable) 컴포넌트로 직접 연다.
+        // App Page(navItemPage)로 열면 Lightning이 탭 라벨을 페이지 상단 헤더로 렌더해
+        // 워크벤치 자체 헤더와 중복되므로, App Page 껍데기 없이 워크벤치 헤더만 남긴다.
         const pageReference = {
-            type: 'standard__navItemPage',
-            attributes: { apiName: 'Dispatch_Briefing_Workbench' },
+            type: 'standard__component',
+            attributes: { componentName: 'c__otDispatchBriefingWorkbench' },
             state: { c__recordId: this.recordId }
         };
 
         if (this.isConsole) {
             const focused = await getFocusedTabInfo();
+            // 탭 라벨/아이콘은 워크벤치 컴포넌트가 EnclosingTabId wire(로드 후)로 설정한다.
+            // 여기서 설정하면 컴포넌트 로드 완료 시 'Loading...'으로 덮여 레이스가 난다.
             const subtabId = await openSubtab({
                 parentTabId: focused.tabId,
                 pageReference,
                 focus: true
             });
-            await setTabLabel(subtabId, '출동 브리핑');
-            await setTabIcon(subtabId, 'utility:trending');
             await focusTab(subtabId);
         } else {
             this[NavigationMixin.Navigate](pageReference);

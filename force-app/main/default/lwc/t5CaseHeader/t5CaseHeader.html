@@ -1,0 +1,80 @@
+<template>
+    <div class="slds-p-vertical_x-small">
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
+
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template lwc:if={header}>
+            <div class="case-hl">
+                <div class="case-hl-head">
+                    <span class="case-hl-icon">C</span>
+                    <div class="case-hl-title">
+                        <p class="case-hl-eyebrow">Case · {accountName}</p>
+                        <h1 class="case-hl-name">{headerTitle}</h1>
+                    </div>
+                    <div class="case-hl-actions">
+                        <span class="slds-badge status-badge">{status}</span>
+                        <lightning-button label="출동 브리핑 생성" variant="brand"
+                            onclick={handleBriefing} class="slds-m-left_xx-small"></lightning-button>
+                    </div>
+                </div>
+                <dl class="case-hl-fields">
+                    <div class="case-hl-f">
+                        <dt>Case 번호</dt>
+                        <dd class="num">{caseNumber}</dd>
+                    </div>
+                    <div class="case-hl-f">
+                        <dt>Asset</dt>
+                        <dd>{assetName}</dd>
+                    </div>
+                    <div class="case-hl-f">
+                        <dt>Agent 최초 응답</dt>
+                        <dd class="num">{agentFirstResponseText}</dd>
+                    </div>
+                    <div class="case-hl-f">
+                        <dt>상담사 인수</dt>
+                        <dd class="num">{agentHandoffText}</dd>
+                    </div>
+                    <div class="case-hl-f">
+                        <dt>응답 SLA</dt>
+                        <dd class="num">{responseSla}</dd>
+                    </div>
+                    <div class="case-hl-f">
+                        <dt>복구 SLA</dt>
+                        <dd class="num">{recoverySla}</dd>
+                    </div>
+                </dl>
+            </div>
+        </template>
+
+        <!-- 출동 브리핑 생성 Flow 모달 — 회색 backdrop 없이, 밖을 클릭하면 닫힘 -->
+        <template lwc:if={showBriefingFlow}>
+            <div class="briefing-overlay" onclick={handleOverlayClick}>
+                <!-- 로딩 중엔 배경 박스 없이 스피너만 보여준다 -->
+                <template lwc:if={flowLoading}>
+                    <div class="briefing-spinner">
+                        <lightning-spinner alternative-text="로딩 중" size="medium"
+                            variant="brand"></lightning-spinner>
+                    </div>
+                </template>
+
+                <!-- Flow는 statuschange를 위해 항상 DOM에 유지. 로딩 중엔 카드를 숨긴다.
+                     카드 안 클릭은 전파를 막아, 밖(overlay) 클릭 시에만 닫힌다. -->
+                <div class={cardClass} onclick={stopPropagation}
+                    role="dialog" aria-modal="true" aria-label="출동 브리핑 생성">
+                    <div class="slds-p-around_medium briefing-card-content">
+                        <lightning-flow flow-api-name="Case_Dispatch_Briefing_Generate"
+                            flow-input-variables={flowInputVariables}
+                            onstatuschange={handleFlowStatusChange}></lightning-flow>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>
