@@ -294,8 +294,15 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     // on-off/Deployment 재생성까지 다 시도해도 재현, T5_서비스에이전트_작업기록.md
     // 참고). Visualforce는 이 문제가 없어(공식 Test Enhanced Web Chat에서 실측
     // 확인) VF 페이지를 iframe으로 감싸는 우회책을 쓴다.
+    //
+    // 경로 주의(2026-08-31): "/otcustomer/apex/..."(사이트 친화적 별칭)로
+    // 접근하면 "Invalid Page" 에러가 남 — VF 페이지는 그 별칭 라우팅을
+    // 안 타고 사이트 원래 prefix(Network.UrlPathPrefix, 여기선
+    // "otcustomervforcesite") 밑의 "/apex/..."로 가야 한다. curl로
+    // 확인: "/otcustomervforcesite/apex/T5AgentChatEmbed"는 정상
+    // 로그인 리다이렉트가 뜨지만 "/otcustomer/apex/..."는 Invalid Page.
     get chatEmbedUrl() {
-        return '/otcustomer/apex/T5AgentChatEmbed';
+        return '/otcustomervforcesite/apex/T5AgentChatEmbed';
     }
 
     // Navigation
