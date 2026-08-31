@@ -1,0 +1,122 @@
+/* ── Case 360 헤더 하이라이트 — 프로토타입 4번 장면 hl 스트립 ── */
+.case-hl {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+}
+
+.case-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.case-hl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    background-color: #dd7a01;
+    color: #ffffff;
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+
+.case-hl-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.case-hl-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.case-hl-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.case-hl-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+}
+
+.status-badge {
+    background-color: #fef1e6;
+    color: #a86403;
+    box-shadow: inset 0 0 0 1px #dd7a01;
+}
+
+.case-hl-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.case-hl-f dt {
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.case-hl-f dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.case-hl-f dd.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 출동 브리핑 Flow 모달 — 회색 backdrop 없이 화면 중앙에 배치, 밖 클릭 시 닫힘 */
+.briefing-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 로딩 중: 배경 박스 없이 스피너만 (spinner 컴포넌트 자체 높이 확보용 최소 크기) */
+.briefing-spinner {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+}
+
+/* 로드 후 카드: 흰 배경 + 그림자로 배경과 구분 */
+.briefing-card {
+    width: 40rem;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* 로딩 중엔 카드를 화면에서 숨기되 Flow는 DOM에 유지(statuschange 수신) */
+.briefing-card_hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    opacity: 0;
+    pointer-events: none;
+}
