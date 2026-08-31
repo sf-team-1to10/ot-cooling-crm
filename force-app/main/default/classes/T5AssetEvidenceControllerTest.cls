@@ -21,6 +21,11 @@ private class T5AssetEvidenceControllerTest {
         );
         insert new List<Asset>{ target, noHistory };
 
+        // 인물: 요청자(Contact) + Rev 승인자/검사자(User는 실행 유저로 대체)
+        Contact requester = new Contact(LastName = '유신', AccountId = acct.Id);
+        insert requester;
+        Id approverUserId = UserInfo.getUserId();
+
         // 변경 원기록: ChangeRequest + Asset 연결 정션(적용 위치 F-07)
         // 검증 규칙: 범위 판별 후 고객 회신일·채널·요약이 있어야 진행 가능
         ChangeRequest cr = new ChangeRequest(
@@ -36,7 +41,9 @@ private class T5AssetEvidenceControllerTest {
             Customer_Reply_Summary__c = 'GPU 랙 배치 변경에 따른 배관 경로 재설계 및 비용 수락',
             Internal_Approved__c = true,
             Cost_Impact__c = 8500000,
-            Schedule_Impact_Days__c = 5
+            Schedule_Impact_Days__c = 5,
+            Requester__c = requester.Id,
+            Revision_Approver__c = approverUserId
         );
         insert cr;
 
@@ -61,12 +68,14 @@ private class T5AssetEvidenceControllerTest {
             new WorkOrderLineItem(
                 WorkOrderId = commissionWo.Id, AssetId = target.Id, Line_Item_Role__c = '시험',
                 Measurement_Item_Code__c = '체결토크', Measurement_Point__c = 'F-07',
-                Measured_Value__c = 68, Spec_Value__c = 110, Judgement__c = '불합격', Retest_Round__c = 1
+                Measured_Value__c = 68, Spec_Value__c = 110, Judgement__c = '불합격', Retest_Round__c = 1,
+                Verified_By__c = UserInfo.getUserId()
             ),
             new WorkOrderLineItem(
                 WorkOrderId = commissionWo.Id, AssetId = target.Id, Line_Item_Role__c = '시험',
                 Measurement_Item_Code__c = '체결토크', Measurement_Point__c = 'F-07',
-                Measured_Value__c = 112, Spec_Value__c = 110, Judgement__c = '합격', Retest_Round__c = 2
+                Measured_Value__c = 112, Spec_Value__c = 110, Judgement__c = '합격', Retest_Round__c = 2,
+                Verified_By__c = UserInfo.getUserId()
             ),
             new WorkOrderLineItem(
                 WorkOrderId = commissionWo.Id, AssetId = target.Id, Line_Item_Role__c = '시험',
@@ -121,6 +130,30 @@ private class T5AssetEvidenceControllerTest {
         Assert.areEqual('hit', byKey.get('commission-fail').state, '최초 실패 노드 state=hit');
         Assert.areEqual('ok', byKey.get('retest').state, '재시험 노드 state=ok');
         Assert.isTrue(byKey.containsKey('preserved'), '이력 보존 결론 노드 존재');
+    }
+
+    @isTest
+    static void shouldExposePeople_InNodeSources() {
+        // Given
+        Id caseId = caseIdBySubject('CDU-A-07 유량 저하');
+        String approverName = [SELECT Name FROM User WHERE Id = :UserInfo.getUserId()].Name;
+
+        // When
+        System.Test.startTest();
+        T5AssetEvidenceController.AssetEvidence result =
+            T5AssetEvidenceController.getEvidence(caseId);
+        System.Test.stopTest();
+
+        // Then — 요청자(유신)·승인자·검사자가 노드 source에 노출
+        Map<String, T5AssetEvidenceController.EvidenceNode> byKey =
+            new Map<String, T5AssetEvidenceController.EvidenceNode>();
+        for (T5AssetEvidenceController.EvidenceNode n : result.timeline) {
+            byKey.put(n.key, n);
+        }
+        Assert.isTrue(byKey.get('chg').source.contains('요청자 유신'), 'Change Request에 요청자 유신');
+        Assert.isTrue(byKey.get('rev').source.contains('승인자 ' + approverName), 'Revision에 승인자');
+        Assert.isTrue(byKey.get('commission-fail').source.contains('검사자 ' + approverName), '최초 검사에 검사자');
+        Assert.isTrue(byKey.get('retest').source.contains('검사자 ' + approverName), '재시험에 검사자');
     }
 
     @isTest
