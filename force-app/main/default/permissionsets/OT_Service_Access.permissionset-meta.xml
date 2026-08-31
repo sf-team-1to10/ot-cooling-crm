@@ -90,6 +90,8 @@
 
     <!-- ═══ 필드 권한 (PS_Service 계승) ═══ -->
     <fieldPermissions><field>Activity.Applied__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Case.Agent_First_Response_At__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Case.Agent_Handoff_At__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>Case.Billable__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>Case.Coverage_Type__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>Case.Diagnosed_Cause__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
