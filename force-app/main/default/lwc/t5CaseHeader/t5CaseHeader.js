@@ -1,10 +1,23 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import {
+    IsConsoleNavigation,
+    getFocusedTabInfo,
+    openSubtab,
+    focusTab
+} from 'lightning/platformWorkspaceApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getRecordNotifyChange } from 'lightning/uiRecordApi';
 import getHeader from '@salesforce/apex/T5CaseHeaderController.getHeader';
 
-export default class T5CaseHeader extends LightningElement {
+export default class T5CaseHeader extends NavigationMixin(LightningElement) {
     @api recordId;
+
+    @wire(IsConsoleNavigation) isConsoleNavigation;
+
+    get isConsole() {
+        return this.isConsoleNavigation?.data === true;
+    }
 
     header;
     error;
@@ -98,6 +111,31 @@ export default class T5CaseHeader extends LightningElement {
     handleBriefing() {
         this.flowLoaded = false;
         this.showBriefingFlow = true;
+    }
+
+    // 장면 4 — Case에서 연결된 Problem/RCA 검토 화면(step18)을 서브탭으로 연다.
+    // evidence·브리핑과 동일하게 UrlAddressable 컴포넌트로 열어 App Page 껍데기 없이 화면만 띄운다.
+    async handleProblemRca() {
+        if (!this.recordId) {
+            return;
+        }
+        const pageReference = {
+            type: 'standard__component',
+            attributes: { componentName: 'c__otProblemRca' },
+            state: { c__recordId: this.recordId }
+        };
+
+        if (this.isConsole) {
+            const focused = await getFocusedTabInfo();
+            const subtabId = await openSubtab({
+                parentTabId: focused.parentTabId || focused.tabId,
+                pageReference,
+                focus: true
+            });
+            await focusTab(subtabId);
+        } else {
+            this[NavigationMixin.Navigate](pageReference);
+        }
     }
 
     closeBriefingFlow() {

@@ -1,0 +1,97 @@
+/* ── Highlights 헤더 — 브리핑/원기록과 동일 골격(prefix만 problem) ── */
+.problem-hl {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+}
+
+.problem-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.problem-hl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    background-color: #ba0517;
+    flex: 0 0 auto;
+}
+
+.problem-hl-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.problem-hl-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.problem-hl-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.problem-hl-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+}
+
+/* ── 원인 구분 콜아웃 — 프로토타입 co-crit(직접)·co-warn(근본) ── */
+.cause-callout {
+    border-radius: 0.25rem;
+    padding: 0.625rem 0.75rem;
+}
+
+.cause-direct {
+    background-color: #fdecea;
+    border-left: 3px solid #ba0517;
+}
+
+.cause-root {
+    background-color: #fef8e8;
+    border-left: 3px solid #dd7a01;
+}
+
+.cause-label {
+    margin: 0 0 0.125rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #3e3e3c;
+}
+
+.cause-text {
+    margin: 0;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: #444444;
+}
+
+/* ── 배지 ── */
+.source-human {
+    background-color: #747474;
+    color: #ffffff;
+}
+
+.scope-corrective {
+    background-color: #ba0517;
+    color: #ffffff;
+}
+
+.scope-preventive {
+    background-color: #dd7a01;
+    color: #ffffff;
+}
