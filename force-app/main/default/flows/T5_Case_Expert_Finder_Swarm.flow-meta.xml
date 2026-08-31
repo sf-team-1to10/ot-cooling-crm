@@ -1,12 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Join_Channel</name>
+        <label>봇 채널 참여</label>
+        <locationX>182</locationX>
+        <locationY>1436</locationY>
+        <actionName>slackJoinChannel</actionName>
+        <actionType>slackJoinChannel</actionType>
+        <connector>
+            <targetReference>UniqueName</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>slackAppIdForToken</name>
+            <value>
+                <stringValue>A01RDL2NJAH</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>slackWorkspaceIdForToken</name>
+            <value>
+                <stringValue>T0BH9PW51CZ</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>slackConversationId</name>
+            <value>
+                <elementReference>ChannelIdFromUrl</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackJoinChannel</nameSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Post_Summary</name>
+        <label>Case 요약 발신</label>
+        <locationX>182</locationX>
+        <locationY>1544</locationY>
+        <actionName>SendMessageToSlackChannel</actionName>
+        <actionType>slackFlow</actionType>
+        <connector>
+            <targetReference>Done_Screen</targetReference>
+        </connector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>channelId</name>
+            <value>
+                <elementReference>ChannelIdFromUrl</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Swarm_Message</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendMessageToSlackChannel</nameSegment>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
+    <actionCalls>
+        <name>UniqueName</name>
+        <label>매칭 전문가 채널 초대</label>
+        <locationX>182</locationX>
+        <locationY>1490</locationY>
+        <actionName>slackInviteUsersToChannel</actionName>
+        <actionType>slackInviteUsersToChannel</actionType>
+        <connector>
+            <targetReference>Post_Summary</targetReference>
+        </connector>
+        <flowTransactionModel>Automatic</flowTransactionModel>
+        <inputParameters>
+            <name>slackAppIdForToken</name>
+            <value>
+                <stringValue>A01RDL2NJAH</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>slackWorkspaceIdForToken</name>
+            <value>
+                <stringValue>T0BH9PW51CZ</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>userIdForToken</name>
+        </inputParameters>
+        <inputParameters>
+            <name>slackChannelId</name>
+            <value>
+                <elementReference>ChannelIdFromUrl</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>slackWorkspaceIdForChannel</name>
+            <value>
+                <stringValue>T0BH9PW51CZ</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>userIdsToInvite</name>
+            <value>
+                <elementReference>expertUserIds</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>slackInviteUsersToChannel</nameSegment>
+        <offset>0</offset>
+    </actionCalls>
     <apiVersion>62.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
+        <name>Add_Expert_UserId</name>
+        <label>초대 대상 User Id 누적</label>
+        <locationX>176</locationX>
+        <locationY>1080</locationY>
+        <assignmentItems>
+            <assignToReference>expertUserIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_Experts.ServiceResource.RelatedRecordId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Experts</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
         <name>Append_Expert</name>
         <label>이름 누적</label>
-        <locationX>176</locationX>
-        <locationY>960</locationY>
+        <locationX>270</locationX>
+        <locationY>974</locationY>
         <assignmentItems>
             <assignToReference>expertNames</assignToReference>
             <operator>Add</operator>
@@ -22,14 +142,14 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Loop_Experts</targetReference>
+            <targetReference>Check_Not_Self</targetReference>
         </connector>
     </assignments>
     <assignments>
         <name>Set_Skill_CDU</name>
         <label>필요 스킬 = CDU계열</label>
         <locationX>50</locationX>
-        <locationY>480</locationY>
+        <locationY>458</locationY>
         <assignmentItems>
             <assignToReference>requiredSkillLabel</assignToReference>
             <operator>Assign</operator>
@@ -44,8 +164,8 @@
     <assignments>
         <name>Set_Skill_CX</name>
         <label>필요 스킬 = CX계열</label>
-        <locationX>300</locationX>
-        <locationY>480</locationY>
+        <locationX>314</locationX>
+        <locationY>458</locationY>
         <assignmentItems>
             <assignToReference>requiredSkillLabel</assignToReference>
             <operator>Assign</operator>
@@ -58,10 +178,35 @@
         </connector>
     </assignments>
     <decisions>
+        <name>Check_Not_Self</name>
+        <label>실행자 본인 제외</label>
+        <locationX>176</locationX>
+        <locationY>1020</locationY>
+        <defaultConnector>
+            <targetReference>Loop_Experts</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>본인 (초대 생략)</defaultConnectorLabel>
+        <rules>
+            <name>Not_Self</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>IsCurrentUser</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Add_Expert_UserId</targetReference>
+            </connector>
+            <label>타인 (초대 대상)</label>
+        </rules>
+    </decisions>
+    <decisions>
         <name>Decide_Skill</name>
         <label>Asset 계열 판정</label>
-        <locationX>176</locationX>
-        <locationY>360</locationY>
+        <locationX>182</locationX>
+        <locationY>350</locationY>
         <defaultConnector>
             <targetReference>Set_Skill_CX</targetReference>
         </defaultConnector>
@@ -84,13 +229,23 @@
     </decisions>
     <description>Case에서 &quot;전문가 소집&quot; 버튼으로 트리거하는 Screen Flow. Case의 Asset 계열(CDU/CX)로 필요 스킬을 판정하고, 해당 스킬을 보유한 Service Resource만 조회해 화면에 표시한 뒤 Slack 채널로 소집 메시지를 발신한다. 발신은 T5_Send_Slack_Channel_Message subflow 재사용(T5-10). 표준 Swarming이 org 엔타이틀먼트로 사용 불가할 때의 대체 경로. T5-24.</description>
     <environments>Default</environments>
+    <formulas>
+        <name>ChannelIdFromUrl</name>
+        <dataType>String</dataType>
+        <expression>MID({!swarmChannelUrl}, FIND(&quot;archives/&quot;, {!swarmChannelUrl}) + 9, FIND(&quot;/&quot;, {!swarmChannelUrl}, FIND(&quot;archives/&quot;, {!swarmChannelUrl}) + 9) - (FIND(&quot;archives/&quot;, {!swarmChannelUrl}) + 9))</expression>
+    </formulas>
+    <formulas>
+        <name>IsCurrentUser</name>
+        <dataType>Boolean</dataType>
+        <expression>LEFT({!Loop_Experts.ServiceResource.RelatedRecordId}, 15) = LEFT({!$User.Id}, 15)</expression>
+    </formulas>
     <interviewLabel>T5 Case Expert Finder Swarm {!$Flow.CurrentDateTime}</interviewLabel>
     <label>T5 Case Expert Finder Swarm</label>
     <loops>
         <name>Loop_Experts</name>
         <label>보유자 순회</label>
-        <locationX>176</locationX>
-        <locationY>840</locationY>
+        <locationX>182</locationX>
+        <locationY>866</locationY>
         <collectionReference>Get_Resource_Skills</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
@@ -116,8 +271,8 @@
     <recordLookups>
         <name>Get_Asset</name>
         <label>Asset 조회</label>
-        <locationX>176</locationX>
-        <locationY>240</locationY>
+        <locationX>182</locationX>
+        <locationY>242</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Decide_Skill</targetReference>
@@ -139,8 +294,8 @@
     <recordLookups>
         <name>Get_Case</name>
         <label>Case 조회</label>
-        <locationX>176</locationX>
-        <locationY>120</locationY>
+        <locationX>182</locationX>
+        <locationY>134</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Asset</targetReference>
@@ -159,13 +314,17 @@
         <queriedFields>CaseNumber</queriedFields>
         <queriedFields>Subject</queriedFields>
         <queriedFields>AssetId</queriedFields>
+        <queriedFields>AccountId</queriedFields>
+        <queriedFields>Status</queriedFields>
+        <queriedFields>Priority</queriedFields>
+        <queriedFields>Description</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
         <name>Get_Resource_Skills</name>
         <label>스킬 보유자 조회</label>
-        <locationX>176</locationX>
-        <locationY>720</locationY>
+        <locationX>182</locationX>
+        <locationY>758</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Loop_Experts</targetReference>
@@ -187,8 +346,8 @@
     <recordLookups>
         <name>Get_Skill</name>
         <label>스킬 조회</label>
-        <locationX>176</locationX>
-        <locationY>600</locationY>
+        <locationX>182</locationX>
+        <locationY>650</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Resource_Skills</targetReference>
@@ -210,14 +369,14 @@
     <screens>
         <name>Done_Screen</name>
         <label>소집 완료</label>
-        <locationX>176</locationX>
-        <locationY>1320</locationY>
+        <locationX>182</locationX>
+        <locationY>1598</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
         <fields>
             <name>Done_Text</name>
-            <fieldText>&lt;p&gt;Slack 채널로 소집 메시지를 발신했습니다.&lt;/p&gt;&lt;p&gt;소집 대상: &lt;b&gt;{!expertNames}&lt;/b&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;Slack Swarm 채널을 생성하고 스킬 보유자를 자동 초대했습니다.&lt;/p&gt;&lt;p&gt;소집 대상: &lt;b&gt;{!expertNames}&lt;/b&gt;&lt;/p&gt;&lt;p&gt;채널 바로가기: {!swarmChannelUrl}&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
             <styleProperties>
                 <verticalAlignment>
@@ -234,13 +393,13 @@
     <screens>
         <name>Show_Experts</name>
         <label>매칭된 전문가 확인</label>
-        <locationX>176</locationX>
-        <locationY>1080</locationY>
+        <locationX>182</locationX>
+        <locationY>1166</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
         <connector>
-            <targetReference>Send_Swarm_Message</targetReference>
+            <targetReference>Init_Swarm</targetReference>
         </connector>
         <fields>
             <name>Experts_Text</name>
@@ -259,7 +418,7 @@
         <showHeader>true</showHeader>
     </screens>
     <start>
-        <locationX>176</locationX>
+        <locationX>56</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Get_Case</targetReference>
@@ -267,43 +426,75 @@
     </start>
     <status>Active</status>
     <subflows>
-        <name>Send_Swarm_Message</name>
-        <label>Slack 소집 메시지 발신</label>
-        <locationX>176</locationX>
-        <locationY>1200</locationY>
+        <name>Init_Swarm</name>
+        <label>Swarm 시작 (Slack 채널 생성)</label>
+        <locationX>182</locationX>
+        <locationY>1274</locationY>
         <connector>
-            <targetReference>Done_Screen</targetReference>
+            <targetReference>Join_Channel</targetReference>
         </connector>
-        <flowName>T5_Send_Slack_Channel_Message</flowName>
+        <flowName>swarming__Init_Enhanced_Slack_Swarm</flowName>
         <inputAssignments>
-            <name>channelId</name>
+            <name>recordId</name>
             <value>
-                <stringValue>C0BT7R84N9M</stringValue>
+                <elementReference>recordId</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
-            <name>messageText</name>
+            <name>swarmName</name>
             <value>
-                <elementReference>Swarm_Message</elementReference>
+                <elementReference>Get_Case.CaseNumber</elementReference>
             </value>
         </inputAssignments>
+        <inputAssignments>
+            <name>swarmDescription</name>
+            <value>
+                <elementReference>Get_Case.Subject</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>source</name>
+            <value>
+                <stringValue>Flow</stringValue>
+            </value>
+        </inputAssignments>
+        <outputAssignments>
+            <assignToReference>swarmId</assignToReference>
+            <name>SwarmId</name>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>swarmChannelUrl</assignToReference>
+            <name>swarmCollaborationUrl</name>
+        </outputAssignments>
     </subflows>
     <textTemplates>
         <name>Swarm_Message</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>:rotating_light: [전문가 소집] Case {!Get_Case.CaseNumber}
+        <text>:clipboard: *[Case 요약] {!Get_Case.CaseNumber}*
 {!Get_Case.Subject}
 
-대상 자산: {!Get_Asset.Name}
-필요 스킬: {!requiredSkillLabel}
-소집 대상: {!expertNames}
+• 고객사: {!Get_Case.Account.Name}
+• 대상 자산: {!Get_Asset.Name}
+• 상태: {!Get_Case.Status} · 우선순위: {!Get_Case.Priority}
+• 필요 스킬: {!requiredSkillLabel}
+• 소집 전문가: {!expertNames}
 
-해당 스킬 보유자만 선별해 소집했습니다. Case 채널에서 협업해 주세요.</text>
+*상세 내용*
+{!Get_Case.Description}
+
+해당 스킬 보유자만 선별해 소집했습니다. 이 채널에서 협업해 주세요.</text>
     </textTemplates>
     <variables>
         <name>expertNames</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>expertUserIds</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
     </variables>
@@ -316,6 +507,20 @@
     </variables>
     <variables>
         <name>requiredSkillLabel</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>swarmChannelUrl</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>swarmId</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
