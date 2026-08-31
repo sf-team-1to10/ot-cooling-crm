@@ -15,14 +15,8 @@
         <apexClass>OTCaseIntakeController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
-    <classAccesses>
-        <apexClass>T5HmiAssetHomeController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>T5HmiAssetDetailController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
+    <!-- T5HmiAssetHomeController/T5HmiAssetDetailController classAccesses도
+         같은 이유로 제외(2026-08-31) — 이 PR엔 없는 다른 트랙 클래스. -->
     <!-- T5-07 재검증(2026-08-31): otEquipDashboard/otEquipDetail을 이
          컨트롤러에 연결했는데 classAccesses 등록을 빠뜨려서 "The Apex
          request is invalid"(500) 에러가 났음 — 필드 FLS만으론 부족, 클래스
