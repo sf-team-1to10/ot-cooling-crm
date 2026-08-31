@@ -39,9 +39,69 @@ public with sharing class T5DispatchBriefingController {
         result.slaRemaining = (sla != null) ? sla.display : null;
         result.calculatedAt = current.Warranty_Judged_At__c;
 
+        applyApprovalState(result, current.Id);
+
         result.comparisons = buildComparisons();
         result.priorityRationale = buildPriorityRationale(result.comparisons, current, sla);
         return result;
+    }
+
+    /**
+     * Priority 승인 상태(승인 시각·승인자)를 DTO에 채운다.
+     * 승인 필드는 신규 배포 직후 스키마 캐시 미반영 가능성이 있어 동적 SOQL로 접근하고,
+     * 실패하면 미승인 상태로 degrade한다.
+     * @param result 채울 대상 DTO
+     * @param caseId 대상 Case Id
+     */
+    private static void applyApprovalState(DispatchBriefing result, Id caseId) {
+        // 승인 스탬프는 시스템이 기록하는 감사 필드다. 읽기도 SYSTEM_MODE로 접근해
+        // approveDispatch(시스템 모드 write)와 일관성을 맞춘다. 레코드 접근은 with sharing이 통제.
+        // 신규 배포 직후 스키마 캐시 미반영 가능성이 있어 동적 SOQL + try/catch로 degrade한다.
+        try {
+            List<SObject> rows = Database.queryWithBinds(
+                'SELECT Priority_Approved_At__c, Priority_Approved_By__r.Name '
+                    + 'FROM Case WHERE Id = :caseId LIMIT 1',
+                new Map<String, Object>{ 'caseId' => caseId },
+                AccessLevel.SYSTEM_MODE
+            );
+            if (!rows.isEmpty()) {
+                SObject row = rows[0];
+                result.approvedAt = (Datetime) row.get('Priority_Approved_At__c');
+                Object approver = row.getSObject('Priority_Approved_By__r') == null
+                    ? null
+                    : row.getSObject('Priority_Approved_By__r').get('Name');
+                result.approvedByName = (String) approver;
+                result.isApproved = result.approvedAt != null;
+            }
+        } catch (Exception e) {
+            result.isApproved = false;
+        }
+    }
+
+    /**
+     * 서정비가 브리핑에서 Priority를 승인하고 출동을 확정한다.
+     * 승인자와 승인 시각을 기록해 "규칙 산정 → 담당자 승인" 통제를 증명한다.
+     * 데모 KPI 시각(02:45)은 별도 시딩으로 덮어쓴다.
+     * @param caseId 승인할 Case Id
+     * @throws AuraHandledException Case Id가 없거나 승인 저장에 실패할 때
+     */
+    @AuraEnabled
+    public static void approveDispatch(Id caseId) {
+        if (caseId == null) {
+            throw new AuraHandledException('Case Id가 필요합니다.');
+        }
+        try {
+            Case toUpdate = new Case(
+                Id = caseId,
+                Priority_Approved_At__c = Datetime.now(),
+                Priority_Approved_By__c = UserInfo.getUserId()
+            );
+            // 승인자·승인시각은 시스템이 찍는 감사 스탬프라 SYSTEM_MODE로 기록한다(FLS 비종속).
+            // 레코드 수정 권한 자체는 with sharing 클래스가 통제한다.
+            Database.update(toUpdate, AccessLevel.SYSTEM_MODE);
+        } catch (Exception e) {
+            throw new AuraHandledException('출동 확정 저장에 실패했습니다: ' + e.getMessage());
+        }
     }
 
     // ─── Current Case ────────────────────────────────────────────────────
@@ -333,6 +393,9 @@ public with sharing class T5DispatchBriefingController {
         @AuraEnabled public String targetAssetName;
         @AuraEnabled public String slaRemaining;
         @AuraEnabled public Datetime calculatedAt;
+        @AuraEnabled public Boolean isApproved = false;
+        @AuraEnabled public Datetime approvedAt;
+        @AuraEnabled public String approvedByName;
         @AuraEnabled public List<AssetComparison> comparisons = new List<AssetComparison>();
         @AuraEnabled public PriorityRationale priorityRationale;
     }

@@ -112,6 +112,36 @@
     color: #ffffff;
 }
 
+/* Priority 승인 완료 배지 — 담당자 승인(사람 통제) 색 */
+.priority-badge-approved {
+    background-color: #2e844a;
+    color: #ffffff;
+}
+
+/* 출동 확정됨 버튼 — 프로토타입 btn-done 색(연초록 배경·초록 테두리/글자).
+   승인 후엔 클릭 불가한 완료 표시라 lightning-button 대신 light DOM button으로 렌더해
+   shadow DOM 제약 없이 색을 직접 통제한다. */
+.approve-done {
+    background-color: #e6f2eb;
+    border: 1px solid #4fb47c;
+    color: #4fb47c;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    border-radius: 0.25rem;
+    padding: 0 1rem;
+    height: 2rem;
+    line-height: 1.875rem;
+    cursor: default;
+}
+
+/* disabled여도 완료 표시 색을 흐리지 않게 유지 */
+.approve-done[disabled] {
+    background-color: #e6f2eb;
+    border-color: #4fb47c;
+    color: #4fb47c;
+    opacity: 1;
+}
+
 /* 12대 비교에서 대상 장비(A-07) 행 강조 */
 .target-row {
     background-color: #fef1ee;

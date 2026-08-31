@@ -176,4 +176,50 @@ private class T5DispatchBriefingControllerTest {
         }
         System.Test.stopTest();
     }
+
+    @isTest
+    static void shouldStartUnapproved_WhenNotYetApproved() {
+        // Given
+        Id caseId = targetCaseId();
+
+        // When
+        System.Test.startTest();
+        T5DispatchBriefingController.DispatchBriefing b = T5DispatchBriefingController.getBriefing(caseId);
+        System.Test.stopTest();
+
+        // Then — 승인 전엔 isApproved=false, 시각/승인자 비어있음
+        Assert.isFalse(b.isApproved, '초기 상태는 미승인');
+        Assert.isNull(b.approvedAt, '승인 시각 없음');
+        Assert.isNull(b.approvedByName, '승인자 없음');
+    }
+
+    @isTest
+    static void shouldRecordApproval_WhenApproveDispatch() {
+        // Given
+        Id caseId = targetCaseId();
+
+        // When
+        System.Test.startTest();
+        T5DispatchBriefingController.approveDispatch(caseId);
+        System.Test.stopTest();
+
+        // Then — 승인 후 조회 시 승인자·시각이 기록되고 isApproved=true
+        T5DispatchBriefingController.DispatchBriefing b = T5DispatchBriefingController.getBriefing(caseId);
+        Assert.isTrue(b.isApproved, '승인 후 isApproved=true');
+        Assert.isNotNull(b.approvedAt, '승인 시각 기록됨');
+        Assert.isNotNull(b.approvedByName, '승인자 이름 기록됨');
+    }
+
+    @isTest
+    static void shouldThrowException_WhenApproveNullCaseId() {
+        // When / Then
+        System.Test.startTest();
+        try {
+            T5DispatchBriefingController.approveDispatch(null);
+            Assert.fail('null Case Id 승인은 예외를 던져야 함');
+        } catch (AuraHandledException e) {
+            Assert.isTrue(true, '예외 발생 확인');
+        }
+        System.Test.stopTest();
+    }
 }

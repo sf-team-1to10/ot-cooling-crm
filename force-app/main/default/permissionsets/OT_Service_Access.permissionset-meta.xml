@@ -96,6 +96,9 @@
     <fieldPermissions><field>Case.Dispatch_Briefing__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>Case.Field_Visit_Required__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>Case.Impact_Level__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Case.Priority_Approved_At__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Case.Priority_Approved_By__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Case.Priority_Override_Reason__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>Case.Remote_Diagnosis__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>Case.Reported_Symptom__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
     <fieldPermissions><field>Case.Resolution_Hours__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
