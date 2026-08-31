@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Asset_Type_Label__c</fullName>
+    <label>Asset Type Label</label>
+    <description>고객 포털 카드에 노출되는 대분류 표시명(예: "냉각수 분배 장치", "팬 냉각 모듈"). 제품명(Name)과 별개로 유지 — Name은 모델명, 이 필드는 고객용 카테고리 라벨.</description>
+    <type>Text</type>
+    <length>60</length>
+</CustomField>

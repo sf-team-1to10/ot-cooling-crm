@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Category_Label__c</fullName>
+    <label>Category Label</label>
+    <description>배너/드로어에 그대로 노출되는 분류 문구. 예: "ADVISORY / 주의".</description>
+    <type>Text</type>
+    <length>60</length>
+    <required>true</required>
+</CustomField>

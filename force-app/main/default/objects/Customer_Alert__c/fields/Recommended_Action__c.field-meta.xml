@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recommended_Action__c</fullName>
+    <label>Recommended Action</label>
+    <description>드로어의 "권장 행동" 박스 문구.</description>
+    <type>LongTextArea</type>
+    <length>500</length>
+    <visibleLines>3</visibleLines>
+</CustomField>

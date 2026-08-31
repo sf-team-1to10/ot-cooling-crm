@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Asset_Category__c</fullName>
+    <label>Asset Category</label>
+    <description>고객 포털 "장비 유형" 세부 필터값(예: "액체-액체 CDU", "냉각 모듈 확장형"). Family(표준 필드)는 대분류(CDU/MODULE) 구분용으로 별도 사용.</description>
+    <type>Text</type>
+    <length>60</length>
+</CustomField>
