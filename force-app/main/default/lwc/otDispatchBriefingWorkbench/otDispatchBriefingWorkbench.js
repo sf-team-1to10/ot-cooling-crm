@@ -1,14 +1,18 @@
 import { LightningElement, api, wire } from 'lwc';
-import { CurrentPageReference } from 'lightning/navigation';
+import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon
+    setTabIcon,
+    IsConsoleNavigation,
+    getFocusedTabInfo,
+    openSubtab,
+    focusTab
 } from 'lightning/platformWorkspaceApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
 
-export default class OtDispatchBriefingWorkbench extends LightningElement {
+export default class OtDispatchBriefingWorkbench extends NavigationMixin(LightningElement) {
     // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
     @api recordId;
     _stateRecordId;
@@ -21,6 +25,12 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         if (stateId) {
             this._stateRecordId = stateId;
         }
+    }
+
+    @wire(IsConsoleNavigation) isConsoleNavigation;
+
+    get isConsole() {
+        return this.isConsoleNavigation?.data === true;
     }
 
     // EnclosingTabId wire는 탭 컨텍스트가 준비된 후에 tabId를 반응형으로 준다.
@@ -101,8 +111,30 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         });
     }
 
-    handleEvidence() {
-        this.notReady('2022년 원기록');
+    async handleEvidence() {
+        const caseId = this.recordId || this._stateRecordId;
+        if (!caseId) {
+            return;
+        }
+        // step5 브리핑 → step7 원기록 이동. otBriefingNavigator와 동일하게
+        // 워크벤치처럼 UrlAddressable 컴포넌트로 열어 App Page 껍데기 없이 화면만 띄운다.
+        const pageReference = {
+            type: 'standard__component',
+            attributes: { componentName: 'c__otAssetEvidenceHistory' },
+            state: { c__recordId: caseId }
+        };
+
+        if (this.isConsole) {
+            const focused = await getFocusedTabInfo();
+            const subtabId = await openSubtab({
+                parentTabId: focused.parentTabId || focused.tabId,
+                pageReference,
+                focus: true
+            });
+            await focusTab(subtabId);
+        } else {
+            this[NavigationMixin.Navigate](pageReference);
+        }
     }
 
     handleSlack() {
