@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>T5 FSM Knowledge All Access</label>
+    <description>T5-26: FSM 사용자(강시공)가 계정 경계 없이 전사 Knowledge Article을 검색·열람. Knowledge__kav는 Read 부여 시 viewAllRecords가 함께 켜져야 고객사 경계를 넘어 검색된다.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <objectPermissions>
+        <object>Knowledge__kav</object>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+</PermissionSet>
