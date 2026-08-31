@@ -14,13 +14,13 @@
         <inputParameters>
             <name>slackAppIdForToken</name>
             <value>
-                <stringValue>A01RDL2NJAH</stringValue>
+                <elementReference>Get_Slack_Config.App_Id__c</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
             <name>slackWorkspaceIdForToken</name>
             <value>
-                <stringValue>T0BH9PW51CZ</stringValue>
+                <elementReference>Get_Slack_Config.Workspace_Id__c</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -71,13 +71,13 @@
         <inputParameters>
             <name>slackAppIdForToken</name>
             <value>
-                <stringValue>A01RDL2NJAH</stringValue>
+                <elementReference>Get_Slack_Config.App_Id__c</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
             <name>slackWorkspaceIdForToken</name>
             <value>
-                <stringValue>T0BH9PW51CZ</stringValue>
+                <elementReference>Get_Slack_Config.Workspace_Id__c</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -92,7 +92,7 @@
         <inputParameters>
             <name>slackWorkspaceIdForChannel</name>
             <value>
-                <stringValue>T0BH9PW51CZ</stringValue>
+                <elementReference>Get_Slack_Config.Workspace_Id__c</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -292,6 +292,30 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
+        <name>Get_Slack_Config</name>
+        <label>Slack 워크스페이스 설정 조회</label>
+        <locationX>182</locationX>
+        <locationY>62</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Case</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Default</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Slack_Workspace_Config__mdt</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Workspace_Id__c</queriedFields>
+        <queriedFields>App_Id__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
         <name>Get_Case</name>
         <label>Case 조회</label>
         <locationX>182</locationX>
@@ -421,7 +445,7 @@
         <locationX>56</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Get_Case</targetReference>
+            <targetReference>Get_Slack_Config</targetReference>
         </connector>
     </start>
     <status>Active</status>
