@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>T5 Portal Asset Access</label>
-    <description>T5-07 고객 포털용. WorkOrderLineItem을 직접 조회할 수 없는 Customer Community User에게, Asset(요약 필드 포함)과 관련 조회 경로(Account/Contact)를 열어준다. OtTrendAlertCardController 클래스 실행 권한도 포함.</description>
-    <classAccesses>
-        <apexClass>OtTrendAlertCardController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
+    <description>T5-07 고객 포털용. WorkOrderLineItem을 직접 조회할 수 없는 Customer Community User에게, Asset(요약 필드 포함)과 관련 조회 경로(Account/Contact)를 열어준다.</description>
+    <!-- OtTrendAlertCardController classAccesses는 이 PR(T5-07: otEquipDashboard/
+         otEquipDetail)에서 제외 — 그 클래스는 별도 PR(T5-08/T5-22, otTrendAlertCard
+         컴포넌트)에 속해있고 아직 main에 merge 안 됨. CI가 "no ApexClass named
+         OtTrendAlertCardController found"로 실패했던 원인(2026-08-31). 그 PR이
+         merge된 뒤 필요하면 다시 추가. -->
     <classAccesses>
         <apexClass>OTMyAssetsController</apexClass>
         <enabled>true</enabled>
