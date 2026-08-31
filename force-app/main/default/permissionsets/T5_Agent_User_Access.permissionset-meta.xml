@@ -51,6 +51,37 @@
         <modifyAllRecords>false</modifyAllRecords>
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
+    <objectPermissions>
+        <!-- T5-23: escalate 시 Case를 MessagingSession에 연결(CaseId Update),
+             자산 컨텍스트 조회 시 Asset_Id__c 읽기. -->
+        <object>MessagingSession</object>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <!-- MessagingSession Read가 요구하는 의존 권한(배포 에러로 확인,
+             2026-08-31) — MessagingEndUser 없이는 MessagingSession도 못 읽음. -->
+        <object>MessagingEndUser</object>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <object>Product2</object>
+        <allowCreate>false</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>false</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <viewAllRecords>false</viewAllRecords>
+    </objectPermissions>
     <!-- T5-22 재검증(2026-08-30): create_case_from_agent 실행 시
          "Operation failed due to fields being inaccessible on Sobject Case"
          에러 발생 — 커스텀 필드는 FLS가 있었는데 표준 필드(AssetId 등)엔
@@ -141,6 +172,46 @@
     <!-- Knowledge__kav.Title/UrlName은 required 필드라 FLS 배포 자체가 거부됨
          ("You cannot deploy to a required field") — 항상 자동 접근 가능하므로
          제외(T3 CLAUDE.md에 이미 기록된 동일 패턴, 2026-08-30 재확인). -->
+    <fieldPermissions>
+        <field>MessagingSession.Asset_Id__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>MessagingSession.CaseId</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.SerialNumber</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Site_Location__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Latest_Trend_Flag__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Warranty_Type__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Open_Items_Summary__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Latest_Gauges_JSON__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
 
     <classAccesses>
         <apexClass>T5AgentCaseIntakeAction</apexClass>
@@ -148,6 +219,10 @@
     </classAccesses>
     <classAccesses>
         <apexClass>T5AgentKnowledgeSearchAction</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>T5AgentAssetContextAction</apexClass>
         <enabled>true</enabled>
     </classAccesses>
 </PermissionSet>

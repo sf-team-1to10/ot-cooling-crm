@@ -300,7 +300,14 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     // 그쪽에서 하도록 다리를 놓는다.
     handleLaunchChat() {
         try {
-            const evt = new CustomEvent('ot_launch_chat', { bubbles: true, composed: true });
+            // T5-23: assetId를 이벤트 detail로 실어 보낸다 — Head Markup
+            // 스크립트가 이걸 Hidden Pre-Chat Field로 MIAW에 넘겨서,
+            // 고객이 장비를 말하기 전에 Agent가 이미 어떤 자산인지 안다.
+            const evt = new CustomEvent('ot_launch_chat', {
+                bubbles: true,
+                composed: true,
+                detail: { assetId: this.assetId }
+            });
             document.dispatchEvent(evt);
         } catch (e) {
             // eslint-disable-next-line no-console

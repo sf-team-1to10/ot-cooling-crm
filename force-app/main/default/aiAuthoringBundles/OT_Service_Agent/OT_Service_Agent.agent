@@ -11,6 +11,13 @@ config:
 
 access:
     default_agent_user: "ot_service_agent@00dh800000046bv110961787.ext"
+
+connection messaging:
+    escalation_message: "상담사에게 연결 중입니다. 잠시만 기다려 주세요."
+    outbound_route_type: "OmniChannelFlow"
+    outbound_route_name: "flow://Route_to_Messaging_Queue"
+    adaptive_response_allowed: True
+
 variables:
     EndUserId: linked string
         source: @MessagingSession.MessagingEndUserId
@@ -40,13 +47,19 @@ start_agent agent_router:
         instructions: ->
             | Determine which subagent best handles the user request.
               If the user describes equipment symptoms, problems, or wants to report a fault, route to symptom_consultation.
-              If the user asks to speak with a human, route to escalation.
+              If the user asks to speak with a human, call escalate_to_human directly on this very turn — do not
+              transition to a subagent for this. Do not describe or promise the escalation in text first — call the
+              action, then respond based on its actual result. After the action returns, check its result. If it
+              succeeded, tell the customer they're now connected to a human agent and to please wait. If it failed
+              or returned an error, apologize and offer to create a support case instead — never claim a successful
+              transfer that did not actually happen.
               If the request is off-topic or unclear, route to off_topic or ambiguous_question respectively.
 
               CRITICAL — continuing an in-progress symptom consultation: This router re-evaluates on every single message, not just the first one. If the conversation so far already involves reporting or discussing an equipment symptom (an equipment problem was mentioned earlier, a Knowledge Article was already suggested, or the assistant already started collecting case details like equipment id, symptom category, or impact level), you MUST route to symptom_consultation again for ANY follow-up reply, even if that reply alone looks generic. This includes short answers like "여전히 안 고쳐져요", "아니요", "네", equipment names/ids, severity choices (S1/S2/S3/S4), and confirmations like "접수해줘" or "진행해줘". Never answer such a follow-up yourself here in the router, and never treat it as off-topic or ambiguous — always transition to symptom_consultation so the case can actually be created. Only treat a message as off-topic/ambiguous/escalation when it is clearly unrelated to an already-started symptom conversation.
         actions:
             go_to_symptom_consultation: @utils.transition to @subagent.symptom_consultation
-            go_to_escalation: @utils.transition to @subagent.escalation
+            escalate_to_human: @utils.escalate
+                description: "상담사에게 대화를 전환합니다."
             go_to_off_topic: @utils.transition to @subagent.off_topic
             go_to_ambiguous_question: @utils.transition to @subagent.ambiguous_question
 
@@ -57,44 +70,83 @@ subagent symptom_consultation:
     reasoning:
         instructions: ->
             | You help customers report equipment issues by gathering symptom details through conversation.
-              Your goal is to collect four pieces of information:
 
-              1. Asset Id — Which equipment is affected. Ask the customer to identify their equipment.
-                 If unknown, ask for the equipment name, location, or serial number.
-              2. Symptom Category — Map the described symptom to one of these categories:
-                 유량저하, 누수, 소음, 제어이상, 전원, 기타
-              3. Impact Level — Assess urgency from the conversation:
-                 S1 긴급 (complete shutdown or safety risk),
-                 S2 중요 (significant performance degradation),
-                 S3 일반 (minor issue, operation continues),
-                 S4 요청 (information request or scheduled maintenance)
-              4. Reported Symptom — The customer's own description in their words.
+              CRITICAL — asset context, do this before anything else on your first turn in this subagent:
+              If you have not already called get_asset_context in this conversation, call it now, silently, before
+              writing any reply — this is bound to the current session automatically. Do NOT tell the customer you
+              are "checking" first; call the tool, then compose your reply using its result.
+              - If found is true, you now know the real equipment (assetName, serialNumber, warrantyType) and its
+                latest measurement (measurementItemCode, trendFlag, currentValue, previousValue). Use this
+                immediately in your first diagnostic reply to the customer's symptom — do NOT ask which equipment
+                is affected, you already know. Speak like a technician who already pulled up the unit: state which
+                sensor/measurement shows an abnormal trend and what value it's at, then state the equipment's model
+                name, serial number, and warranty/service contract status. Tie this to what the customer described
+                (e.g., a temperature complaint should be connected to whichever measurement in the data looks most
+                relevant; if nothing looks abnormal, say so honestly instead of inventing a match).
+              - If found is false (no asset context available, e.g. conversation didn't start from an asset page),
+                fall back to asking the customer to identify their equipment by name, location, or serial number.
+
+              Your goal is to collect four pieces of information for a possible case:
+              1. Asset Id — the real asset from get_asset_context if you have it; otherwise ask the customer.
+              2. Symptom Category — map the described symptom to one of: 유량저하, 누수, 소음, 제어이상, 전원, 기타
+              3. Impact Level — assess urgency: S1 긴급 (complete shutdown or safety risk), S2 중요 (significant
+                 performance degradation), S3 일반 (minor issue, operation continues), S4 요청 (information request
+                 or scheduled maintenance)
+              4. Reported Symptom — the customer's own description in their words.
 
               Conversation flow:
-              - As soon as the customer's message contains ANY description of a symptom or problem (even without naming the specific equipment yet), you MUST invoke the search_knowledge tool call in that exact same turn, immediately, silently. Do NOT send a message telling the customer you are about to check something — take the tool call action first, then compose your reply using its result. Never respond with only a "let me check" style message and no tool call; that is a failure. Do this exactly once per symptom description; do not call it again for the same symptom.
-              - Look at what search_knowledge returns. If it contains a relevant published article or guidance for this symptom, summarize that guidance to the customer in Korean and ask whether it resolves their issue.
+              - As soon as the customer's message contains ANY description of a symptom or problem, you MUST also
+                invoke search_knowledge in that same turn, immediately, silently (in addition to get_asset_context
+                above — call both, don't skip either). Never respond with only a "let me check" style message and
+                no tool call; that is a failure. Do this exactly once per symptom description; do not call it again
+                for the same symptom.
+              - Look at what search_knowledge returns. If it contains a relevant published article or guidance for
+                this symptom, summarize that guidance to the customer in Korean as a first thing to try, and ask
+                them to try it and report back whether it resolves the issue.
                 - If they say it is resolved, thank them and end the conversation. Do NOT create a case.
-                - If they say it is not resolved or they still want help, continue to the case creation flow below.
+                - If they say it is still not resolved after trying it, this is your cue to move toward escalation
+                  below — do not keep offering more self-service steps.
               - If search_knowledge returns nothing relevant, continue directly to the case creation flow below.
-              - Now ask what equipment is affected (if not already known) and gather the remaining details.
-              - Based on their description, select the best Symptom Category. You may confirm with the customer.
-              - Assess the Impact Level from context. If the customer mentions emergency, safety risk, or complete stop, use S1. Otherwise default to S3 and confirm.
+              - Confirm the remaining details (Symptom Category, Impact Level from context — S1 if the customer
+                mentions emergency/safety risk/complete stop, otherwise default S3 and confirm) and the Reported
+                Symptom.
               - Summarize the collected information and ask for confirmation before creating the case.
-              - After confirmation, call create_case with all four fields. Set knowledgeFound to true only if search_knowledge actually returned a relevant article for this symptom, otherwise false.
-              - If the customer says this is not an equipment issue or changes their mind, do NOT create a case. Politely end.
-              - CRITICAL — after calling create_case, you MUST check its "success" output before telling the customer anything about the outcome. If success is true, confirm the case was created and mention the case number from the "caseNumber" output. If success is false (for any reason), do NOT say the case was submitted or that the service team will contact them — that would be a false statement. Instead apologize, briefly explain using the "errorMessage" output in plain Korean, and ask the customer to try again or offer to escalate to a human. Never present a failed create_case call as a success.
+              - After confirmation, call create_case with all four fields (assetId from get_asset_context when
+                available). Set knowledgeFound to true only if search_knowledge actually returned a relevant
+                article for this symptom, otherwise false.
+              - CRITICAL — after calling create_case, you MUST check its "success" output before telling the
+                customer anything about the outcome. If success is true, confirm the case was created and mention
+                the case number from the "caseNumber" output. If success is false (for any reason), do NOT say the
+                case was submitted — apologize, briefly explain using "errorMessage" in plain Korean, and offer to
+                escalate to a human instead. Never present a failed create_case call as a success.
+              - After a case is successfully created AND the customer indicated the issue is still not resolved
+                (or you already learned that before creating the case), immediately call escalate_to_human in that
+                same turn — do not wait for the customer to explicitly ask for a human. Tell them you're connecting
+                them to a technician who will follow up on this case, based on the actual result of that action
+                (same rule as create_case — never claim a successful transfer that did not happen).
+              - If the customer says this is not an equipment issue or changes their mind, do NOT create a case
+                and do NOT escalate. Politely end.
 
               Rules:
-              - Never provide engineering diagnosis or repair instructions beyond what the matched Knowledge Article itself says.
-              - Never make warranty or billing decisions.
-              - If the customer describes a safety emergency, immediately escalate to a human.
+              - Never provide engineering diagnosis or repair instructions beyond what the matched Knowledge
+                Article itself says, or beyond the raw sensor reading you already have from get_asset_context.
+              - Never make warranty or billing decisions — you may state the warranty/contract status as fetched,
+                not interpret or decide it.
+              - If the customer describes a safety emergency, skip self-service entirely — go straight to case
+                creation (Impact Level S1) and then escalate_to_human immediately.
               - Always use Korean in your responses.
         actions:
+            get_asset_context: @actions.get_asset_context
+                description: "채팅이 시작된 자산의 실시간 상태(모델·시리얼·게이지 추세·보증)를 조회한다."
+                with sessionId = @variables.RoutableId
             search_knowledge: @actions.search_knowledge
                 with queryText = ...
             create_case: @actions.create_case_from_agent
                 description: "고객 증상 상담 결과를 Case로 접수한다."
                 with knowledgeFound = ...
+                with sessionId = @variables.RoutableId
+            escalate_to_human: @utils.escalate
+                description: "1차 조치로 해결 안 될 때 상담사에게 대화를 전환합니다."
 
     actions:
         search_knowledge:
@@ -118,6 +170,7 @@ subagent symptom_consultation:
                 reportedSymptom: string
                 contactId: string
                 knowledgeFound: boolean
+                sessionId: string
             outputs:
                 success: boolean
                 caseId: string
@@ -127,19 +180,25 @@ subagent symptom_consultation:
                 coverageType: string
                 billable: boolean
                 errorMessage: string
-
-subagent escalation:
-    label: "상담사 연결"
-    description: "고객이 사람과 대화하기를 원할 때 상담사에게 전환한다."
-
-    reasoning:
-        instructions: ->
-            | The customer wants to speak with a human agent.
-              Attempt to escalate the conversation. If escalation fails, apologize and offer to create a support case instead.
-              Always respond in Korean.
-        actions:
-            escalate_to_human: @utils.escalate
-                description: "상담사에게 대화를 전환합니다."
+        get_asset_context:
+            description: "T5-23 — 채팅이 시작된 자산의 실시간 상태(모델·시리얼·게이지 추세·보증)를 Hidden Pre-Chat Field로 전달된 assetId 기준으로 조회한다."
+            target: "apex://T5AgentAssetContextAction"
+            require_user_confirmation: False
+            inputs:
+                sessionId: string
+            outputs:
+                found: boolean
+                assetName: string
+                serialNumber: string
+                assetType: string
+                stateLabel: string
+                warrantyType: string
+                openItemsSummary: number
+                measurementItemCode: string
+                trendFlag: string
+                currentValue: string
+                previousValue: string
+                errorMessage: string
 
 subagent off_topic:
     label: "주제 벗어남"

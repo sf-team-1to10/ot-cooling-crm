@@ -65,6 +65,19 @@ public without sharing class T5AgentCaseIntakeAction {
             );
             insert newCase;
 
+            // T5-23: 이관(escalate) 시 상담사가 큐에서 Accept한 세션이 어떤
+            // Case인지 알아야 Case 레코드로 이어갈 수 있다. MessagingSession
+            // 표준 필드 CaseId에 방금 만든 Case를 바로 연결해둔다 — 이관은
+            // 이 Case 생성 다음에 일어나므로, 이관 시점엔 이미 연결돼 있다.
+            if (String.isNotBlank(inp.sessionId)) {
+                try {
+                    Id sessionId = Id.valueOf(inp.sessionId);
+                    update new MessagingSession(Id = sessionId, CaseId = newCase.Id);
+                } catch (Exception ignoreLinkError) {
+                    // 세션 연결 실패는 Case 접수 자체를 막지 않는다 — 조용히 넘어감.
+                }
+            }
+
             Case saved = [
                 SELECT CaseNumber, Account.Name,
                        Warranty_Decision__c, Coverage_Type__c, Billable__c
@@ -208,6 +221,9 @@ public without sharing class T5AgentCaseIntakeAction {
 
         @InvocableVariable(label='Knowledge Found' description='Case 생성 전 Knowledge 검색에서 매치되는 Article을 찾았으면 true (T5-22, search_knowledge Action의 found 값을 그대로 전달)')
         public Boolean knowledgeFound;
+
+        @InvocableVariable(label='Session Id' description='현재 MessagingSession Id(RoutableId). 이 Case를 그 세션에 즉시 연결해, 나중에 이관·Accept 시 상담사가 Case로 이어갈 수 있게 한다.')
+        public String sessionId;
     }
 
     public class CaseOutput {
