@@ -1,116 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>67.0</apiVersion>
-    <description>Agent가 고객 대화에서 파악한 증상·영향을 Case로 접수한다. T5AgentCaseIntakeAction Apex를 감싸는 Agentforce Action용 Flow.</description>
-    <interviewLabel>T5 Agent Create Case From Consultation {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>T5 Agent: Create Case From Consultation</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value><stringValue>LightningFlowBuilder</stringValue></value>
-    </processMetadataValues>
-    <processType>AutoLaunchedFlow</processType>
-    <runInMode>SystemModeWithoutSharing</runInMode>
-    <status>Active</status>
-    <start>
-        <locationX>50</locationX>
-        <locationY>0</locationY>
-        <connector>
-            <targetReference>Call_Apex_Create_Case</targetReference>
-        </connector>
-    </start>
-
-    <variables>
-        <name>assetId</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <description>장애 대상 자산의 Salesforce Id</description>
-    </variables>
-    <variables>
-        <name>symptomCategory</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <description>증상 분류 (유량저하/누수/소음/제어이상/전원/기타)</description>
-    </variables>
-    <variables>
-        <name>impactLevel</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <description>영향 등급 (S1 긴급/S2 중요/S3 일반/S4 요청)</description>
-    </variables>
-    <variables>
-        <name>reportedSymptom</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <description>고객이 설명한 증상 원문</description>
-    </variables>
-    <variables>
-        <name>contactId</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <description>고객 담당자 Id (선택)</description>
-    </variables>
-    <variables>
-        <name>knowledgeFound</name>
-        <dataType>Boolean</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-        <description>T5-22 — Case 생성 전 Knowledge 검색에서 매치되는 Article을 찾았으면 true</description>
-    </variables>
-
-    <variables>
-        <name>success</name>
-        <dataType>Boolean</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>caseId</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>caseNumber</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>accountName</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>warrantyDecision</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-    <variables>
-        <name>errorMessage</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>false</isInput>
-        <isOutput>true</isOutput>
-    </variables>
-
     <actionCalls>
         <name>Call_Apex_Create_Case</name>
         <label>Create Case via Apex</label>
@@ -121,28 +10,41 @@
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>assetId</name>
-            <value><elementReference>assetId</elementReference></value>
+            <value>
+                <elementReference>assetId</elementReference>
+            </value>
         </inputParameters>
         <inputParameters>
             <name>symptomCategory</name>
-            <value><elementReference>symptomCategory</elementReference></value>
+            <value>
+                <elementReference>symptomCategory</elementReference>
+            </value>
         </inputParameters>
         <inputParameters>
             <name>impactLevel</name>
-            <value><elementReference>impactLevel</elementReference></value>
+            <value>
+                <elementReference>impactLevel</elementReference>
+            </value>
         </inputParameters>
         <inputParameters>
             <name>reportedSymptom</name>
-            <value><elementReference>reportedSymptom</elementReference></value>
+            <value>
+                <elementReference>reportedSymptom</elementReference>
+            </value>
         </inputParameters>
         <inputParameters>
             <name>contactId</name>
-            <value><elementReference>contactId</elementReference></value>
+            <value>
+                <elementReference>contactId</elementReference>
+            </value>
         </inputParameters>
         <inputParameters>
             <name>knowledgeFound</name>
-            <value><elementReference>knowledgeFound</elementReference></value>
+            <value>
+                <elementReference>knowledgeFound</elementReference>
+            </value>
         </inputParameters>
+        <nameSegment>T5AgentCaseIntakeAction</nameSegment>
         <outputParameters>
             <assignToReference>success</assignToReference>
             <name>success</name>
@@ -168,4 +70,115 @@
             <name>errorMessage</name>
         </outputParameters>
     </actionCalls>
+    <apiVersion>67.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <description>Agent가 고객 대화에서 파악한 증상·영향을 Case로 접수한다. T5AgentCaseIntakeAction Apex를 감싸는 Agentforce Action용 Flow.</description>
+    <interviewLabel>T5 Agent Create Case From Consultation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>T5 Agent: Create Case From Consultation</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <runInMode>SystemModeWithoutSharing</runInMode>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Call_Apex_Create_Case</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>accountName</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>장애 대상 자산의 Salesforce Id</description>
+        <name>assetId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>caseId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <name>caseNumber</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>고객 담당자 Id (선택)</description>
+        <name>contactId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>errorMessage</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>영향 등급 (S1 긴급/S2 중요/S3 일반/S4 요청)</description>
+        <name>impactLevel</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>T5-22 — Case 생성 전 Knowledge 검색에서 매치되는 Article을 찾았으면 true</description>
+        <name>knowledgeFound</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>고객이 설명한 증상 원문</description>
+        <name>reportedSymptom</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>success</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>증상 분류 (유량저하/누수/소음/제어이상/전원/기타)</description>
+        <name>symptomCategory</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>warrantyDecision</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
 </Flow>

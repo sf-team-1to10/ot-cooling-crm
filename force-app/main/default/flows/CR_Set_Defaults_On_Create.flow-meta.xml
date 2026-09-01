@@ -1,7 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Set_Default_Subject</name>
+        <label>Subject 기본값 설정</label>
+        <locationX>50</locationX>
+        <locationY>398</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Subject</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Default_Subject</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Set_Defaults</name>
+        <label>기본값 설정</label>
+        <locationX>176</locationX>
+        <locationY>158</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Received_Date__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Subject_Is_Blank</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>Subject_Is_Blank</name>
+        <label>Subject 비어있는지 확인</label>
+        <locationX>176</locationX>
+        <locationY>278</locationY>
+        <defaultConnectorLabel>Subject 있음</defaultConnectorLabel>
+        <rules>
+            <name>Subject_Blank</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Subject</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Default_Subject</targetReference>
+            </connector>
+            <label>Subject 비어있음</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
+    <formulas>
+        <name>Default_Subject</name>
+        <dataType>String</dataType>
+        <expression>&quot;변경요청 &quot; &amp; TEXT({!$Flow.CurrentDate})</expression>
+    </formulas>
     <interviewLabel>CR 기본값 설정 {!$Flow.CurrentDateTime}</interviewLabel>
     <label>CR 기본값 설정 (생성 시)</label>
     <processMetadataValues>
@@ -28,60 +85,4 @@
         <triggerType>RecordBeforeSave</triggerType>
     </start>
     <status>Active</status>
-    <assignments>
-        <name>Set_Defaults</name>
-        <label>기본값 설정</label>
-        <locationX>176</locationX>
-        <locationY>158</locationY>
-        <assignmentItems>
-            <assignToReference>$Record.Received_Date__c</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>$Flow.CurrentDate</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Subject_Is_Blank</targetReference>
-        </connector>
-    </assignments>
-    <assignments>
-        <name>Set_Default_Subject</name>
-        <label>Subject 기본값 설정</label>
-        <locationX>50</locationX>
-        <locationY>398</locationY>
-        <assignmentItems>
-            <assignToReference>$Record.Subject</assignToReference>
-            <operator>Assign</operator>
-            <value>
-                <elementReference>Default_Subject</elementReference>
-            </value>
-        </assignmentItems>
-    </assignments>
-    <decisions>
-        <name>Subject_Is_Blank</name>
-        <label>Subject 비어있는지 확인</label>
-        <locationX>176</locationX>
-        <locationY>278</locationY>
-        <defaultConnectorLabel>Subject 있음</defaultConnectorLabel>
-        <rules>
-            <name>Subject_Blank</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Subject</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Set_Default_Subject</targetReference>
-            </connector>
-            <label>Subject 비어있음</label>
-        </rules>
-    </decisions>
-    <formulas>
-        <name>Default_Subject</name>
-        <dataType>String</dataType>
-        <expression>&quot;변경요청 &quot; &amp; TEXT({!$Flow.CurrentDate})</expression>
-    </formulas>
 </Flow>

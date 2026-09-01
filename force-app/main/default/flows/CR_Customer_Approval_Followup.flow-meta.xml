@@ -1,43 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
-    <environments>Default</environments>
-    <interviewLabel>CR 고객 수락 무응답 팔로업 {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>CR 고객 수락 7일 무응답 팔로업 Task 생성</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processMetadataValues>
-        <name>OriginBuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processType>AutoLaunchedFlow</processType>
-    <start>
-        <locationX>50</locationX>
-        <locationY>50</locationY>
-        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
-        <filterFormula>ISPICKVAL({!$Record.Status}, &quot;고객승인대기&quot;)</filterFormula>
-        <object>ChangeRequest</object>
-        <recordTriggerType>CreateAndUpdate</recordTriggerType>
-        <scheduledPaths>
-            <name>Followup_7_Days</name>
-            <connector>
-                <targetReference>Check_Still_Waiting</targetReference>
-            </connector>
-            <label>7일 후 팔로업</label>
-            <offsetNumber>7</offsetNumber>
-            <offsetUnit>Days</offsetUnit>
-            <recordField>Customer_Approval_Requested_Date__c</recordField>
-            <timeSource>RecordField</timeSource>
-        </scheduledPaths>
-        <triggerType>RecordAfterSave</triggerType>
-    </start>
-    <status>Active</status>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <name>Check_Still_Waiting</name>
         <label>아직 고객승인대기 상태인지 확인</label>
@@ -67,6 +31,22 @@
             <label>아직 대기 중</label>
         </rules>
     </decisions>
+    <environments>Default</environments>
+    <interviewLabel>CR 고객 수락 무응답 팔로업 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>CR 고객 수락 7일 무응답 팔로업 Task 생성</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
     <recordCreates>
         <name>Create_Followup_Task</name>
         <label>팔로업 Task 생성</label>
@@ -76,27 +56,15 @@
             <targetReference>Mark_Followup_Created</targetReference>
         </connector>
         <inputAssignments>
-            <field>Subject</field>
+            <field>ActivityDate</field>
             <value>
-                <stringValue>[팔로업] 고객 수락 무응답 7일 경과 - {!$Record.Name}</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhatId</field>
-            <value>
-                <elementReference>$Record.Id</elementReference>
+                <elementReference>$Flow.CurrentDate</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
             <field>OwnerId</field>
             <value>
                 <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value>
-                <elementReference>$Flow.CurrentDate</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -109,6 +77,18 @@
             <field>Status</field>
             <value>
                 <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>[팔로업] 고객 수락 무응답 7일 경과 - {!$Record.ChangeRequestNumber}</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
             </value>
         </inputAssignments>
         <object>Task</object>
@@ -126,4 +106,25 @@
         </inputAssignments>
         <inputReference>$Record</inputReference>
     </recordUpdates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>ISPICKVAL({!$Record.Status}, &quot;고객승인대기&quot;)</filterFormula>
+        <object>ChangeRequest</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <scheduledPaths>
+            <name>Followup_7_Days</name>
+            <connector>
+                <targetReference>Check_Still_Waiting</targetReference>
+            </connector>
+            <label>7일 후 팔로업</label>
+            <offsetNumber>7</offsetNumber>
+            <offsetUnit>Days</offsetUnit>
+            <recordField>Customer_Approval_Requested_Date__c</recordField>
+            <timeSource>RecordField</timeSource>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
 </Flow>

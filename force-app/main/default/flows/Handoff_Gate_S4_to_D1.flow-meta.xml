@@ -1,1 +1,231 @@
-<?xml version="1.0"?><Flow xmlns="http://soap.sforce.com/2006/04/metadata"><apiVersion>65</apiVersion><decisions><locationY>458</locationY><locationX>176</locationX><name>Check_All_Requirements_Met</name><description>Evaluates if all three prerequisites (Accepted Quote, Contract, and Customer Commitment) exist and the current Handoff_Status__c is not already 'READY' or 'ACCEPTED', routing to READY path when all conditions are met to proceed with S4 to D1 handoff gate validation</description><defaultConnectorLabel>Default Outcome</defaultConnectorLabel><rules><connector><targetReference>Update_Opportunity_to_READY</targetReference></connector><name>READY</name><description>Routes to READY path when all three record lookups returned at least one record (Accepted Quote, Contract, and Customer Commitment exist) AND the current Handoff_Status__c is not 'READY' and not 'ACCEPTED'</description><conditionLogic>1 AND 2 AND 3 AND 4 AND 5</conditionLogic><label>READY</label><conditions><leftValueReference>Find_Accepted_Quote</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions><conditions><leftValueReference>Find_Related_Contract</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions><conditions><leftValueReference>Find_Customer_Commitment</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions><conditions><leftValueReference>$Record.Handoff_Status__c</leftValueReference><operator>NotEqualTo</operator><rightValue><stringValue>READY</stringValue></rightValue></conditions><conditions><leftValueReference>$Record.Handoff_Status__c</leftValueReference><operator>NotEqualTo</operator><rightValue><stringValue>ACCEPTED</stringValue></rightValue></conditions></rules><label>Check All Requirements Met</label></decisions><environments>Default</environments><interviewLabel>Opportunity Handoff Trigger</interviewLabel><label>Opportunity Handoff Trigger</label><processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues><processMetadataValues><name>CanvasMode</name><value><stringValue>AUTO_LAYOUT_CANVAS</stringValue></value></processMetadataValues><processType>AutoLaunchedFlow</processType><recordCreates><locationY>674</locationY><storeOutputAutomatically>false</storeOutputAutomatically><locationX>308</locationX><name>Create_Handoff_Task</name><description>Creates a high-priority Task record assigned to the Opportunity owner to review and accept the S4 to D1 handoff after all prerequisites (Accepted Quote, Contract, and Customer Commitment) are met</description><label>Create Handoff Task</label><inputAssignments><field>Subject</field><value><stringValue>S4 to D1 Handoff - review and accept</stringValue></value></inputAssignments><inputAssignments><field>OwnerId</field><value><elementReference>$Record.OwnerId</elementReference></value></inputAssignments><inputAssignments><field>WhatId</field><value><elementReference>$Record.Id</elementReference></value></inputAssignments><inputAssignments><field>Status</field><value><stringValue>Not Started</stringValue></value></inputAssignments><inputAssignments><field>Priority</field><value><stringValue>High</stringValue></value></inputAssignments><object>Task</object></recordCreates><recordLookups><locationY>134</locationY><filterLogic>1 AND 2</filterLogic><locationX>176</locationX><queriedFields>Id</queriedFields><description>Queries Quote object to find any Accepted Quote related to the triggering Opportunity, determining if at least one accepted quote exists as a prerequisite for S4 to D1 handoff gate validation</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Find Accepted Quote</label><filters><field>OpportunityId</field><value><elementReference>$Record.Id</elementReference></value><operator>EqualTo</operator></filters><filters><field>Status</field><value><stringValue>Accepted</stringValue></value><operator>EqualTo</operator></filters><connector><targetReference>Find_Related_Contract</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><name>Find_Accepted_Quote</name><getFirstRecordOnly>true</getFirstRecordOnly><object>Quote</object></recordLookups><recordLookups><locationY>242</locationY><filterLogic>1</filterLogic><locationX>176</locationX><queriedFields>Id</queriedFields><description>Queries Contract object to find any Contract related to the triggering Opportunity via Source_Opportunity__c field, determining if at least one contract exists as a prerequisite for S4 to D1 handoff gate validation</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Find Related Contract</label><filters><field>Source_Opportunity__c</field><value><elementReference>$Record.Id</elementReference></value><operator>EqualTo</operator></filters><connector><targetReference>Find_Customer_Commitment</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><name>Find_Related_Contract</name><getFirstRecordOnly>true</getFirstRecordOnly><object>Contract</object></recordLookups><recordLookups><locationY>350</locationY><filterLogic>1</filterLogic><locationX>176</locationX><queriedFields>Id</queriedFields><description>Queries Customer_Commitment__c object to find any Customer Commitment related to the triggering Opportunity, determining if at least one customer commitment exists as a prerequisite for S4 to D1 handoff gate validation</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Find Customer Commitment</label><filters><field>Opportunity__c</field><value><elementReference>$Record.Id</elementReference></value><operator>EqualTo</operator></filters><connector><targetReference>Check_All_Requirements_Met</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><name>Find_Customer_Commitment</name><getFirstRecordOnly>true</getFirstRecordOnly><object>Customer_Commitment__c</object></recordLookups><recordUpdates><locationY>566</locationY><filterLogic>1</filterLogic><connector><targetReference>Create_Handoff_Task</targetReference></connector><locationX>308</locationX><name>Update_Opportunity_to_READY</name><description>Updates the triggering Opportunity's Handoff_Status__c field to 'READY' when all three prerequisites (Accepted Quote, Contract, and Customer Commitment) exist, marking the opportunity ready for S4 to D1 handoff gate review</description><label>Update Opportunity to READY</label><filters><field>Id</field><value><elementReference>$Record.Id</elementReference></value><operator>EqualTo</operator></filters><inputAssignments><field>Handoff_Status__c</field><value><stringValue>READY</stringValue></value></inputAssignments><object>Opportunity</object></recordUpdates><start><locationY>50</locationY><filterLogic>1</filterLogic><connector><targetReference>Find_Accepted_Quote</targetReference></connector><locationX>50</locationX><recordTriggerType>CreateAndUpdate</recordTriggerType><triggerType>RecordAfterSave</triggerType><doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria><filters><field>Handoff_Status__c</field><value><stringValue>ACCEPTED</stringValue></value><operator>NotEqualTo</operator></filters><object>Opportunity</object></start><status>Active</status></Flow>
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <description>Evaluates if all three prerequisites (Accepted Quote, Contract, and Customer Commitment) exist and the current Handoff_Status__c is not already &apos;READY&apos; or &apos;ACCEPTED&apos;, routing to READY path when all conditions are met to proceed with S4 to D1 handoff gate validation</description>
+        <name>Check_All_Requirements_Met</name>
+        <label>Check All Requirements Met</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <description>Routes to READY path when all three record lookups returned at least one record (Accepted Quote, Contract, and Customer Commitment exist) AND the current Handoff_Status__c is not &apos;READY&apos; and not &apos;ACCEPTED&apos;</description>
+            <name>READY</name>
+            <conditionLogic>1 AND 2 AND 3 AND 4 AND 5</conditionLogic>
+            <conditions>
+                <leftValueReference>Find_Accepted_Quote</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Find_Related_Contract</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Find_Customer_Commitment</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Handoff_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>READY</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Handoff_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>ACCEPTED</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Opportunity_to_READY</targetReference>
+            </connector>
+            <label>READY</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Opportunity Handoff Trigger</interviewLabel>
+    <label>Opportunity Handoff Trigger</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <description>Creates a high-priority Task record assigned to the Opportunity owner to review and accept the S4 to D1 handoff after all prerequisites (Accepted Quote, Contract, and Customer Commitment) are met</description>
+        <name>Create_Handoff_Task</name>
+        <label>Create Handoff Task</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>S4 to D1 Handoff - review and accept</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordCreates>
+    <recordLookups>
+        <description>Queries Quote object to find any Accepted Quote related to the triggering Opportunity, determining if at least one accepted quote exists as a prerequisite for S4 to D1 handoff gate validation</description>
+        <name>Find_Accepted_Quote</name>
+        <label>Find Accepted Quote</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Find_Related_Contract</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>OpportunityId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Accepted</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Quote</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Queries Customer_Commitment__c object to find any Customer Commitment related to the triggering Opportunity, determining if at least one customer commitment exists as a prerequisite for S4 to D1 handoff gate validation</description>
+        <name>Find_Customer_Commitment</name>
+        <label>Find Customer Commitment</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_All_Requirements_Met</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Opportunity__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Customer_Commitment__c</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Queries Contract object to find any Contract related to the triggering Opportunity via Source_Opportunity__c field, determining if at least one contract exists as a prerequisite for S4 to D1 handoff gate validation</description>
+        <name>Find_Related_Contract</name>
+        <label>Find Related Contract</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Find_Customer_Commitment</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Source_Opportunity__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Contract</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <description>Updates the triggering Opportunity&apos;s Handoff_Status__c field to &apos;READY&apos; when all three prerequisites (Accepted Quote, Contract, and Customer Commitment) exist, marking the opportunity ready for S4 to D1 handoff gate review</description>
+        <name>Update_Opportunity_to_READY</name>
+        <label>Update Opportunity to READY</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Create_Handoff_Task</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Handoff_Status__c</field>
+            <value>
+                <stringValue>READY</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Opportunity</object>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Find_Accepted_Quote</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Handoff_Status__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>ACCEPTED</stringValue>
+            </value>
+        </filters>
+        <object>Opportunity</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
