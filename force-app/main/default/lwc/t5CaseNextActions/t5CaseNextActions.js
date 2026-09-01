@@ -1,5 +1,5 @@
 import { LightningElement, api } from 'lwc';
 
-export default class T5CaseIntakePanel extends LightningElement {
+export default class T5CaseNextActions extends LightningElement {
     @api recordId;
 }
