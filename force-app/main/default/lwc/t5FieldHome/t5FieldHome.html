@@ -18,12 +18,21 @@
                 <ul class="list">
                     <template for:each={appointments} for:item="appt">
                         <li key={appt.id} class="card">
-                            <div class="card__row">
-                                <span class="card__number">{appt.number}</span>
-                                <span class={appt.badgeClass}>{appt.statusLabel}</span>
+                            <div
+                                class="card__btn"
+                                role="button"
+                                tabindex="0"
+                                data-id={appt.id}
+                                onclick={handleOpen}
+                                onkeydown={handleOpen}
+                            >
+                                <div class="card__row">
+                                    <span class="card__number">{appt.number}</span>
+                                    <span class={appt.badgeClass}>{appt.statusLabel}</span>
+                                </div>
+                                <p class="card__time">{appt.timeRange}</p>
+                                <p class="card__subject">{appt.subject}</p>
                             </div>
-                            <p class="card__time">{appt.timeRange}</p>
-                            <p class="card__subject">{appt.subject}</p>
                         </li>
                     </template>
                 </ul>

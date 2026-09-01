@@ -1,4 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import { gql, graphql } from 'lightning/uiGraphQLApi';
 import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 import USER_ID from '@salesforce/user/Id';
@@ -6,7 +7,7 @@ import NAME_FIELD from '@salesforce/schema/User.Name';
 
 // 목업(작업기록/ChatGPT Image 2026년 9월 2일) 화면1 "메인 - 오늘 일정" 재현.
 // FSM 모바일 앱 홈 탭용. Apex 없이 GraphQL wire로 오늘 일정을 읽는다.
-export default class T5FieldHome extends LightningElement {
+export default class T5FieldHome extends NavigationMixin(LightningElement) {
     @api greeting = '안녕하세요';
     @api subtitle = '오늘도 안전한 하루 되세요!';
     @api brandLabel = 'OT전자';
@@ -106,5 +107,26 @@ export default class T5FieldHome extends LightningElement {
 
     get hasAppointments() {
         return this.appointments.length > 0;
+    }
+
+    handleOpen(event) {
+        if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
+            return;
+        }
+        if (event.type === 'keydown') {
+            event.preventDefault();
+        }
+        const recordId = event.currentTarget.dataset.id;
+        if (!recordId) {
+            return;
+        }
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId,
+                objectApiName: 'ServiceAppointment',
+                actionName: 'view'
+            }
+        });
     }
 }

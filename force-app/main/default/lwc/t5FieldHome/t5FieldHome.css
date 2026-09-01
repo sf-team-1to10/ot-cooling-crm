@@ -7,7 +7,7 @@
 .hero {
     background: #1b365d;
     color: #ffffff;
-    padding: 1.25rem 1rem 1.5rem;
+    padding: 0.25rem 1rem 1.5rem;
 }
 
 .hero__brand {
@@ -15,7 +15,7 @@
     font-weight: 700;
     letter-spacing: 0.08em;
     opacity: 0.85;
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.375rem;
 }
 
 .hero__greeting {
@@ -73,8 +73,24 @@
     background: #ffffff;
     border-left: 3px solid #1b365d;
     border-radius: 0.5rem;
-    padding: 0.75rem 0.875rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.card__btn {
+    display: block;
+    padding: 0.75rem 0.875rem;
+    cursor: pointer;
+    transition: background 0.1s ease-in-out;
+}
+
+.card__btn:active {
+    background: #eef3fb;
+}
+
+.card__btn:focus-visible {
+    outline: 2px solid #1b365d;
+    outline-offset: -2px;
 }
 
 .card__row {
