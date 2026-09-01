@@ -7,6 +7,7 @@
     <targets>
         <target>lightning__RecordPage</target>
         <target>lightning__AppPage</target>
+        <target>lightning__RecordAction</target>
         <target>lightning__ECSFSApp</target>
     </targets>
     <targetConfigs>
@@ -14,6 +15,10 @@
             <objects>
                 <object>WorkOrder</object>
             </objects>
+            <supportedFormFactors>
+                <supportedFormFactor type="Small"/>
+                <supportedFormFactor type="Large"/>
+            </supportedFormFactors>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
