@@ -1,3 +1,13 @@
+:host {
+    --ot-cyan: #16b8c8;
+    --ot-success: #4caf50;
+    --ot-warning: #f57c00;
+    --ot-critical: #d32f2f;
+    --ot-muted: #5c6a72;
+    --ot-font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Apple SD Gothic Neo", sans-serif;
+}
+
 .ot-banner {
     display: flex;
     align-items: center;
@@ -5,6 +15,7 @@
     padding: 10px 16px;
     border-radius: 4px;
     border-left: 4px solid transparent;
+    font-family: var(--ot-font-sans);
     font-size: 13px;
     font-weight: 500;
     margin-bottom: 2px;
@@ -14,27 +25,27 @@
 .ot-banner__text { flex: 1; }
 
 .ot-banner--critical {
-    background: rgba(196, 61, 75, 0.08);
-    border-left-color: #C43D4B;
-    color: #7a1e27;
+    background: rgba(211, 47, 47, 0.08);
+    border-left-color: var(--ot-critical);
+    color: var(--ot-critical);
 }
 .ot-banner--warning {
-    background: rgba(200, 121, 19, 0.08);
-    border-left-color: #C87913;
-    color: #7a4a0a;
+    background: rgba(245, 124, 0, 0.08);
+    border-left-color: var(--ot-warning);
+    color: var(--ot-warning);
 }
 .ot-banner--success {
-    background: rgba(46, 139, 87, 0.08);
-    border-left-color: #2E8B57;
-    color: #1a5233;
+    background: rgba(76, 175, 80, 0.08);
+    border-left-color: var(--ot-success);
+    color: var(--ot-success);
 }
 .ot-banner--info {
     background: rgba(22, 184, 200, 0.08);
-    border-left-color: #16B8C8;
-    color: #0a6e78;
+    border-left-color: var(--ot-cyan);
+    color: var(--ot-cyan);
 }
 .ot-banner--neutral {
     background: rgba(176, 190, 197, 0.1);
-    border-left-color: #526273;
-    color: #3d4f5c;
+    border-left-color: var(--ot-muted);
+    color: var(--ot-muted);
 }

@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Asset Detail",
+  "contentBody" : {
+    "activeViewId" : "Asset_Detail",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom-asset-detail",
+    "urlPrefix" : "asset-detail"
+  },
+  "urlName" : "asset-detail"
+}

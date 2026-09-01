@@ -199,10 +199,10 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         const area = d + 'L' + x(n - 1).toFixed(1) + ' ' + y(vmin).toFixed(1) + ' L' + pL + ' ' + y(vmin).toFixed(1) + ' Z';
         const last = x(n - 1), lastY = y(pts[n - 1]);
         return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="width:100%">` +
-            `<path d="${area}" fill="rgba(46,107,230,.08)"/>` +
-            `<path d="${d}" fill="none" stroke="#2E6BE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>` +
-            `<circle cx="${last.toFixed(1)}" cy="${lastY.toFixed(1)}" r="3.5" fill="#2E6BE6" stroke="#fff" stroke-width="1.5"/>` +
-            `<text x="${(last - 6).toFixed(1)}" y="${(lastY - 8).toFixed(1)}" text-anchor="end" font-size="10" font-weight="700" fill="#1A2540">${pts[n - 1]}</text>` +
+            `<path d="${area}" fill="rgba(89,128,166,.08)"/>` +
+            `<path d="${d}" fill="none" stroke="#5980a6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>` +
+            `<circle cx="${last.toFixed(1)}" cy="${lastY.toFixed(1)}" r="3.5" fill="#16b8c8" stroke="#fff" stroke-width="1.5"/>` +
+            `<text x="${(last - 6).toFixed(1)}" y="${(lastY - 8).toFixed(1)}" text-anchor="end" font-size="10" font-weight="700" font-family="JetBrains Mono,monospace" fill="#1d1f20">${pts[n - 1]}</text>` +
             `</svg>`;
     }
     get trendLegend() {
@@ -218,9 +218,9 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get donutSvg() {
         const score = this.healthScore;
         const r = 34, c = 2 * Math.PI * r, off = c * (1 - score / 100);
-        const col = score >= 90 ? '#17A566' : (score >= 80 ? '#B67611' : '#D14C3F');
+        const col = score >= 90 ? '#4caf50' : (score >= 80 ? '#f57c00' : '#d32f2f');
         return `<svg viewBox="0 0 88 88" style="width:88px;height:88px">` +
-            `<circle cx="44" cy="44" r="${r}" fill="none" stroke="#E4E9F3" stroke-width="9"/>` +
+            `<circle cx="44" cy="44" r="${r}" fill="none" stroke="#e9e9ea" stroke-width="9"/>` +
             `<circle cx="44" cy="44" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" ` +
             `stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 44 44)"/>` +
             `</svg>`;

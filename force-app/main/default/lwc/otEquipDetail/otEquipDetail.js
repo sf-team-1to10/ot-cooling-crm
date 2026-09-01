@@ -1,6 +1,7 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
+import setAssetContextFromLwc from '@salesforce/apex/T5SetAssetContextService.setAssetContextFromLwc';
 
 const METRICS = {
     flow: { label:'CHW Flow', unit:'L/min', from:105, to:71, band:[95,115], vmin:60, vmax:125, interp:'냉수 유량은 기준선 하한보다 낮은 상태로 관찰되고 있으며, 상세 이력과 함께 확인이 필요합니다.' },
@@ -224,13 +225,13 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
         let g='';
         const yt=[M.vmin,M.vmin+(M.vmax-M.vmin)*0.25,M.vmin+(M.vmax-M.vmin)*0.5,M.vmin+(M.vmax-M.vmin)*0.75,M.vmax];
         yt.forEach(v => {
-            g+=`<line x1="${pL}" y1="${Y(v).toFixed(1)}" x2="${W-pR}" y2="${Y(v).toFixed(1)}" stroke="#E9EEF6"/>`;
-            g+=`<text x="${pL-8}" y="${(Y(v)+3).toFixed(1)}" text-anchor="end" font-size="9.5" fill="#95A0B7">${(Math.round(v*10)/10)}</text>`;
+            g+=`<line x1="${pL}" y1="${Y(v).toFixed(1)}" x2="${W-pR}" y2="${Y(v).toFixed(1)}" stroke="#e9e9ea"/>`;
+            g+=`<text x="${pL-8}" y="${(Y(v)+3).toFixed(1)}" text-anchor="end" font-size="9.5" font-family="JetBrains Mono,monospace" fill="#7f95a9">${(Math.round(v*10)/10)}</text>`;
         });
         const xl=RANGES[this.curRange];
         xl.forEach((lb,q) => {
             const xx=pL+q/(xl.length-1)*iw;
-            g+=`<text x="${xx.toFixed(1)}" y="${H-12}" text-anchor="middle" font-size="9.5" fill="#95A0B7">${lb}</text>`;
+            g+=`<text x="${xx.toFixed(1)}" y="${H-12}" text-anchor="middle" font-size="9.5" font-family="JetBrains Mono,monospace" fill="#7f95a9">${lb}</text>`;
         });
         const bandY1=Y(M.band[1]), bandY0=Y(M.band[0]);
         const last=X(n-1), lastY=Y(pts[n-1]);
@@ -238,8 +239,8 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
         let evtMarkers = '';
         if ((this.curRange === '8' || this.curRange === '1') && this.curMetric === 'flow') {
             const events = [
-                { frac: this.curRange === '1' ? 0.66 : 0.905, color: '#B4740F', time: '02:14', label: 'P3 Advisory 발생' },
-                { frac: this.curRange === '1' ? 0.92 : 0.955, color: '#2E6BE6', time: '02:37', label: '고객 알림 확인' }
+                { frac: this.curRange === '1' ? 0.66 : 0.905, color: '#f57c00', time: '02:14', label: 'P3 Advisory 발생' },
+                { frac: this.curRange === '1' ? 0.92 : 0.955, color: '#5980a6', time: '02:37', label: '고객 알림 확인' }
             ];
             events.forEach(e => {
                 const ex = pL + e.frac * iw;
@@ -251,13 +252,13 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
         }
 
         el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" style="width:100%">`+
-            `<rect x="${pL}" y="${bandY1.toFixed(1)}" width="${iw}" height="${(bandY0-bandY1).toFixed(1)}" fill="#E6F3EF"/>`+
-            `<line x1="${pL}" y1="${bandY0.toFixed(1)}" x2="${W-pR}" y2="${bandY0.toFixed(1)}" stroke="#63B79A" stroke-dasharray="5 3"/>`+
-            `<line x1="${pL}" y1="${bandY1.toFixed(1)}" x2="${W-pR}" y2="${bandY1.toFixed(1)}" stroke="#9FCFBD" stroke-dasharray="4 4"/>`+
+            `<rect x="${pL}" y="${bandY1.toFixed(1)}" width="${iw}" height="${(bandY0-bandY1).toFixed(1)}" fill="rgba(76,175,80,.08)"/>`+
+            `<line x1="${pL}" y1="${bandY0.toFixed(1)}" x2="${W-pR}" y2="${bandY0.toFixed(1)}" stroke="#4caf50" stroke-dasharray="5 3"/>`+
+            `<line x1="${pL}" y1="${bandY1.toFixed(1)}" x2="${W-pR}" y2="${bandY1.toFixed(1)}" stroke="#81c784" stroke-dasharray="4 4"/>`+
             g + evtMarkers +
-            `<path d="${area}" fill="rgba(46,107,230,.07)"/>`+
-            `<path d="${d}" fill="none" stroke="#2E6BE6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`+
-            `<circle cx="${last.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4" fill="#2E6BE6" stroke="#fff" stroke-width="1.6"/>`+
+            `<path d="${area}" fill="rgba(89,128,166,.07)"/>`+
+            `<path d="${d}" fill="none" stroke="#5980a6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`+
+            `<circle cx="${last.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4" fill="#16b8c8" stroke="#fff" stroke-width="1.6"/>`+
             `</svg>`;
     }
 
@@ -298,11 +299,43 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     // 다르게 보임). 그래서 표준 DOM 이벤트로 최상위 페이지(Head Markup
     // 스크립트, LWS 밖에 있음)에 "채팅 열어줘"만 알리고, 실제 API 호출은
     // 그쪽에서 하도록 다리를 놓는다.
+    // T5-23: LWC(LWS 안)에서 localStorage를 읽으면 LWS 샌드박스
+    // 네임스페이스의 localStorage가 반환되어 MIAW JWT가 안 보인다.
+    // 해결: Head Markup(LWS 밖)이 uid를 추출해 'ot_uid_ready' 이벤트로
+    // 돌려주고, LWC는 그 uid를 받아 @AuraEnabled Apex를 호출한다.
+    connectedCallback() {
+        this._uidHandler = (e) => {
+            const { uid, assetId } = e.detail || {};
+            if (uid && assetId) {
+                // eslint-disable-next-line no-console
+                console.log('[T5-23] uid received, scheduling Apex calls at +0s/+4s/+8s', uid);
+                const delays = [0, 4000, 8000];
+                delays.forEach((delay) => {
+                    // eslint-disable-next-line @lwc/lwc/no-async-operation
+                    setTimeout(() => {
+                        // eslint-disable-next-line no-console
+                        console.log(`[T5-23] Apex call attempt at +${delay}ms`);
+                        setAssetContextFromLwc({ uid, assetId }).catch((err) => {
+                            // eslint-disable-next-line no-console
+                            console.error('[T5-23] 자산 컨텍스트 전달 실패', err);
+                        });
+                    }, delay);
+                });
+            }
+        };
+        document.addEventListener('ot_uid_ready', this._uidHandler);
+    }
+
+    disconnectedCallback() {
+        if (this._uidHandler) {
+            document.removeEventListener('ot_uid_ready', this._uidHandler);
+        }
+    }
+
     handleLaunchChat() {
+        // eslint-disable-next-line no-console
+        console.log('[T5-23] handleLaunchChat called, assetId=', this.assetId);
         try {
-            // T5-23: assetId를 이벤트 detail로 실어 보낸다 — Head Markup
-            // 스크립트가 이걸 Hidden Pre-Chat Field로 MIAW에 넘겨서,
-            // 고객이 장비를 말하기 전에 Agent가 이미 어떤 자산인지 안다.
             const evt = new CustomEvent('ot_launch_chat', {
                 bubbles: true,
                 composed: true,

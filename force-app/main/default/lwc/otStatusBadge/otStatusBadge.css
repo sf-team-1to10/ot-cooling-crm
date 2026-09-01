@@ -1,13 +1,11 @@
-/* OT전자 디자인 토큰 */
 :host {
-    --ot-navy:   #0B1F33;
-    --ot-blue:   #0877D1;
-    --ot-cyan:   #16B8C8;
-    --ot-green:  #2E8B57;
-    --ot-orange: #C87913;
-    --ot-red:    #C43D4B;
-    --ot-white:  #FFFFFF;
-    --ot-muted:  #B0BEC5;
+    --ot-navy: #0b1f33;
+    --ot-blue: #5980a6;
+    --ot-cyan: #16b8c8;
+    --ot-success: #4caf50;
+    --ot-warning: #f57c00;
+    --ot-critical: #d32f2f;
+    --ot-muted: #5c6a72;
 }
 
 .ot-badge {
@@ -29,42 +27,37 @@
     flex-shrink: 0;
 }
 
-/* variant: critical — #C43D4B */
 .ot-badge--critical {
-    background: rgba(196, 61, 75, 0.12);
-    color: #C43D4B;
-    border: 1px solid rgba(196, 61, 75, 0.35);
+    background: rgba(211, 47, 47, 0.12);
+    color: var(--ot-critical);
+    border: 1px solid rgba(211, 47, 47, 0.35);
 }
-.ot-badge--critical .ot-badge__dot { background: #C43D4B; }
+.ot-badge--critical .ot-badge__dot { background: var(--ot-critical); }
 
-/* variant: warning — #C87913 */
 .ot-badge--warning {
-    background: rgba(200, 121, 19, 0.12);
-    color: #C87913;
-    border: 1px solid rgba(200, 121, 19, 0.35);
+    background: rgba(245, 124, 0, 0.12);
+    color: var(--ot-warning);
+    border: 1px solid rgba(245, 124, 0, 0.35);
 }
-.ot-badge--warning .ot-badge__dot { background: #C87913; }
+.ot-badge--warning .ot-badge__dot { background: var(--ot-warning); }
 
-/* variant: success — #2E8B57 */
 .ot-badge--success {
-    background: rgba(46, 139, 87, 0.12);
-    color: #2E8B57;
-    border: 1px solid rgba(46, 139, 87, 0.35);
+    background: rgba(76, 175, 80, 0.12);
+    color: var(--ot-success);
+    border: 1px solid rgba(76, 175, 80, 0.35);
 }
-.ot-badge--success .ot-badge__dot { background: #2E8B57; }
+.ot-badge--success .ot-badge__dot { background: var(--ot-success); }
 
-/* variant: info — #16B8C8 */
 .ot-badge--info {
     background: rgba(22, 184, 200, 0.12);
-    color: #16B8C8;
+    color: var(--ot-cyan);
     border: 1px solid rgba(22, 184, 200, 0.35);
 }
-.ot-badge--info .ot-badge__dot { background: #16B8C8; }
+.ot-badge--info .ot-badge__dot { background: var(--ot-cyan); }
 
-/* variant: neutral */
 .ot-badge--neutral {
     background: rgba(176, 190, 197, 0.15);
-    color: #526273;
+    color: var(--ot-muted);
     border: 1px solid rgba(176, 190, 197, 0.4);
 }
-.ot-badge--neutral .ot-badge__dot { background: #526273; }
+.ot-badge--neutral .ot-badge__dot { background: var(--ot-muted); }

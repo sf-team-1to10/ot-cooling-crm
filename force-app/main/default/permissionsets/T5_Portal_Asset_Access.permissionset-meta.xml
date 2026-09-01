@@ -30,6 +30,23 @@
         <apexClass>OTEquipDashboardController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <!-- T5-23: Hidden Pre-Chat이 플랫폼 제약으로 막혀서(Flow 세션 핸들러
+         전용), 브라우저 JWT의 uid로 MessagingSession.Asset_Id__c를 직접
+         써주는 자체 REST 엔드포인트 — 채팅을 여는 포털 로그인 사용자가
+         이 호출을 한다(Guest 아님, 실제로는 Customer Community User). -->
+    <classAccesses>
+        <apexClass>T5SetAssetContextService</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <objectPermissions>
+        <object>Asset_Context_Event__e</object>
+        <allowRead>true</allowRead>
+        <allowCreate>true</allowCreate>
+        <allowEdit>false</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
     <objectPermissions>
         <object>Contact</object>
         <allowRead>true</allowRead>

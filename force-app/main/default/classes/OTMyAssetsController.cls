@@ -41,7 +41,8 @@ public with sharing class OTMyAssetsController {
             List<Asset> assets = [
                 SELECT Id, Name, SerialNumber, Status, InstallDate,
                        Product2.Name, Applied_Revision__c,
-                       Next_Inspection_Date__c, Open_Items_Summary__c
+                       Next_Inspection_Date__c, Open_Items_Summary__c,
+                       Latest_Trend_Flag__c
                 FROM Asset
                 WHERE AccountId = :accountId
                 WITH USER_MODE
@@ -109,6 +110,8 @@ public with sharing class OTMyAssetsController {
         public Date nextInspectionDate { get; set; }
         @AuraEnabled
         public Decimal openItemsSummary { get; set; }
+        @AuraEnabled
+        public String trendFlag { get; set; }
 
         /**
          * @param record Asset already filtered by stripInaccessible; any field
@@ -126,6 +129,7 @@ public with sharing class OTMyAssetsController {
             this.appliedRevision = record.Applied_Revision__c;
             this.nextInspectionDate = record.Next_Inspection_Date__c;
             this.openItemsSummary = record.Open_Items_Summary__c;
+            this.trendFlag = record.Latest_Trend_Flag__c;
         }
     }
 }

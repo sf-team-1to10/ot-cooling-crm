@@ -1,0 +1,139 @@
+/* t5HmiScaleGauge — Industrial SVG arc gauge card with sparkline trend.
+   Light background card style matching the HMI asset detail portal. */
+
+:host {
+    display: block;
+}
+
+/* --- Font variables (fallback if not set by parent) --- */
+.gcard {
+    --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    border: 1px solid #CDD9E0;
+    border-radius: 5px;
+    background: #FFFFFF;
+    padding: 16px 18px 15px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 2px rgba(26, 45, 59, 0.05);
+}
+
+/* ---- Header ---- */
+
+.gc-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #E2E9ED;
+}
+
+.gc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1A2D3B;
+}
+
+.gc-badge {
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 3px;
+    padding: 2px 7px;
+    white-space: nowrap;
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+}
+
+.gcard.alert .gc-badge {
+    background: #FBEAE7;
+    color: #C0402E;
+    border: 1px solid #E9C4BC;
+}
+
+.gcard.ok .gc-badge {
+    background: #EFF9F5;
+    color: #1D8A72;
+    border: 1px solid #B9E2D4;
+}
+
+/* ---- Gauge container ---- */
+
+.gauge-container {
+    text-align: center;
+    margin: 4px auto 0;
+    width: 240px;
+    max-width: 100%;
+}
+
+.gauge-container svg {
+    width: 100%;
+    height: auto;
+}
+
+/* ---- Process value display ---- */
+
+.gauge-pv {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 35px;
+    font-weight: 700;
+    line-height: 1.05;
+    margin-top: -8px;
+    color: #D8452F;
+}
+
+.pv-unit {
+    font-size: 14px;
+    font-weight: 600;
+    color: #7A8D9C;
+    margin-left: 4px;
+}
+
+/* ---- Explanation text ---- */
+
+.gc-explain {
+    font-size: 11.5px;
+    color: #6A7F8D;
+    line-height: 1.45;
+    margin-top: 8px;
+    padding: 7px 10px;
+    background: #F5F7FA;
+    border-radius: 4px;
+    border-left: 3px solid #D0DAE0;
+}
+
+/* ---- Extra note ---- */
+
+.extra-note {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #4A5D6B;
+}
+
+/* ---- Trend sparkline box ---- */
+
+.trend-box {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #E2E9ED;
+}
+
+.tb-cap {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10.5px;
+    color: #8A9DAB;
+    margin-bottom: 5px;
+    font-family: var(--font-mono);
+}
+
+.spark-container {
+    width: 100%;
+}
+
+.spark-container svg {
+    width: 100%;
+    height: auto;
+}

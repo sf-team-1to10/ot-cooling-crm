@@ -29,6 +29,8 @@ public without sharing class T5AgentKnowledgeSearchAction {
     private static SearchOutput execute(SearchInput inp) {
         SearchOutput out = new SearchOutput();
         out.found = false;
+        out.assetFound = false;
+        attachAssetContext(inp.sessionId, out);
         if (String.isBlank(inp.queryText)) {
             return out;
         }
@@ -77,6 +79,54 @@ public without sharing class T5AgentKnowledgeSearchAction {
         return out;
     }
 
+    private static void attachAssetContext(String sessionIdStr, SearchOutput out) {
+        try {
+            Id assetId = T5AgentAssetContextAction.resolveAssetIdForAgent(sessionIdStr);
+            if (assetId == null) {
+                return;
+            }
+            List<Asset> assets = [
+                SELECT Id, Name, SerialNumber, Product2.Name,
+                       Warranty_Type__c, Open_Items_Summary__c
+                FROM Asset WHERE Id = :assetId LIMIT 1
+            ];
+            if (assets.isEmpty()) {
+                return;
+            }
+            Asset a = assets[0];
+
+            // 게이지는 Asset 스냅샷이 아니라 IoT가 흘려보낸 WOLI 측정 이력을
+            // 실시간으로 읽는다(T5AgentAssetContextAction와 단일 소스 공유).
+            List<T5AgentAssetContextAction.GaugeInfo> gauges =
+                T5AgentAssetContextAction.resolveGaugesForAgent(assetId);
+            T5AgentAssetContextAction.GaugeInfo primary =
+                T5AgentAssetContextAction.pickPrimary(gauges);
+            Boolean anyAbnormal = false;
+            for (T5AgentAssetContextAction.GaugeInfo g : gauges) {
+                if (g.abnormal) { anyAbnormal = true; break; }
+            }
+
+            out.assetFound = true;
+            out.assetName = a.Name;
+            out.serialNumber = a.SerialNumber;
+            out.assetType = a.Product2 != null ? a.Product2.Name : '';
+            out.stateLabel = anyAbnormal ? 'P3 Advisory / 주의' : '정상';
+            out.warrantyType = a.Warranty_Type__c;
+            out.openItemsSummary = a.Open_Items_Summary__c;
+            out.gaugesSummary = T5AgentAssetContextAction.formatGaugesSummary(gauges);
+            if (primary != null) {
+                out.measurementItemCode = primary.measurementItemCode;
+                out.trendFlag = primary.trendFlag;
+                out.currentValue = primary.currentValue != null ? String.valueOf(primary.currentValue) : null;
+                out.previousValue = primary.previousValue != null ? String.valueOf(primary.previousValue) : null;
+                out.baselineRange = T5AgentAssetContextAction.formatBaselineRange(primary);
+                out.advisoryDuration = primary.abnormal ? T5AgentAssetContextAction.formatDuration(primary.streakStart) : null;
+            }
+        } catch (Exception e) {
+            // silent — asset context is best-effort
+        }
+    }
+
     /** 흔한 일반 단어·조사성 잡음을 걸러낸 2글자 이상 토큰만 키워드로 쓴다. */
     private static final Set<String> STOPWORDS = new Set<String>{
         '확인', '안내', '알림', '시', '및', '등', '또는', '그리고', '데모', '고객', '방법'
@@ -97,6 +147,8 @@ public without sharing class T5AgentKnowledgeSearchAction {
     public class SearchInput {
         @InvocableVariable(label='Query Text' description='고객이 설명한 증상 원문 또는 핵심 키워드' required=true)
         public String queryText;
+        @InvocableVariable(label='Session Id' description='현재 MessagingSession Id — 자산 컨텍스트를 함께 반환한다.' required=false)
+        public String sessionId;
     }
 
     public class SearchOutput {
@@ -108,5 +160,19 @@ public without sharing class T5AgentKnowledgeSearchAction {
         public String articleSummary;
         @InvocableVariable(label='Article Url Name')
         public String articleUrlName;
+        @InvocableVariable(label='Asset Found') public Boolean assetFound;
+        @InvocableVariable(label='Asset Name') public String assetName;
+        @InvocableVariable(label='Serial Number') public String serialNumber;
+        @InvocableVariable(label='Asset Type') public String assetType;
+        @InvocableVariable(label='State Label') public String stateLabel;
+        @InvocableVariable(label='Warranty Type') public String warrantyType;
+        @InvocableVariable(label='Open Items Summary') public Decimal openItemsSummary;
+        @InvocableVariable(label='Gauges Summary' description='전 측정 항목의 현재값·기준선·추세·지속시간 요약(실측 WOLI 기반).') public String gaugesSummary;
+        @InvocableVariable(label='Measurement Item Code') public String measurementItemCode;
+        @InvocableVariable(label='Trend Flag') public String trendFlag;
+        @InvocableVariable(label='Current Value') public String currentValue;
+        @InvocableVariable(label='Previous Value') public String previousValue;
+        @InvocableVariable(label='Baseline Range') public String baselineRange;
+        @InvocableVariable(label='Advisory Duration') public String advisoryDuration;
     }
 }

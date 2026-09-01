@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>고객 포털 사이트 헤더</masterLabel>
+    <description>모든 페이지 상단에 공통으로 뜨는 브랜드/탭/유저칩 헤더. Experience Builder의 Header 영역에 배치한다.</description>
+    <targets>
+        <target>lightningCommunity__Default</target>
+    </targets>
+</LightningComponentBundle>
