@@ -2,7 +2,9 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Technical_Impact__c</fullName>
     <label>기술 영향</label>
-    <type>LongTextArea</type>
     <length>32768</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
     <visibleLines>5</visibleLines>
 </CustomField>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Impact_Level__c</fullName>
-    <label>영향 등급</label>
     <description>장애의 파급 범위와 조치 시급성을 등급화해 SLA Entitlement 프로세스 자동 할당과 우선순위 판단의 기준으로 사용한다.</description>
     <inlineHelpText>장애 파급 범위와 시급성에 따라 S1(긴급)~S4(요청) 중 하나를 선택하세요.</inlineHelpText>
+    <label>영향 등급</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

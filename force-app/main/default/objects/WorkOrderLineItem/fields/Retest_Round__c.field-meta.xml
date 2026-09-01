@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Retest_Round__c</fullName>
-    <label>재시험 회차</label>
     <defaultValue>1</defaultValue>
     <externalId>false</externalId>
+    <label>재시험 회차</label>
     <precision>3</precision>
     <required>false</required>
     <scale>0</scale>

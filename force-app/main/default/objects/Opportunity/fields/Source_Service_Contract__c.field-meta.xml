@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source_Service_Contract__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>갱신 Opportunity가 시작된 원본 Service Contract입니다.</description>
+    <inlineHelpText>이 사업기회의 갱신 근거가 된 서비스 계약을 선택합니다.</inlineHelpText>
+    <label>원본 서비스 계약</label>
+    <referenceTo>ServiceContract</referenceTo>
+    <relationshipLabel>갱신 Opportunities</relationshipLabel>
+    <relationshipName>Renewal_Opportunities</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Lookup</type>
+</CustomField>

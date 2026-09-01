@@ -3,7 +3,6 @@
     <fullName>Site_Issue__c</fullName>
     <label>현장 이슈</label>
     <length>32768</length>
-    <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <type>LongTextArea</type>

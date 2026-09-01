@@ -250,7 +250,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:t5MeasurementTab</componentName>
+                <componentName>t5MeasurementTab</componentName>
                 <identifier>c_t5MeasurementTab_wo</identifier>
             </componentInstance>
         </itemInstances>
@@ -310,7 +310,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:otRecordBanner</componentName>
+                <componentName>otRecordBanner</componentName>
                 <identifier>c_otRecordBanner_wo</identifier>
             </componentInstance>
         </itemInstances>
@@ -324,7 +324,7 @@
                     <name>variant</name>
                     <value>success</value>
                 </componentInstanceProperties>
-                <componentName>c:otStatusBadge</componentName>
+                <componentName>otStatusBadge</componentName>
                 <identifier>c_otStatusBadge_wo</identifier>
             </componentInstance>
         </itemInstances>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>나세일 영업 홈 — 내 기회, 이번 달/다음 달 Close 예정, 오늘의 할 일</description>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -17,7 +18,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>c:otKpiCard</componentName>
+                <componentName>otKpiCard</componentName>
                 <identifier>c_otKpiCard_sales</identifier>
             </componentInstance>
         </itemInstances>
@@ -108,7 +109,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <description>나세일 영업 홈 — 내 기회, 이번 달/다음 달 Close 예정, 오늘의 할 일</description>
     <masterLabel>OT 영업 홈</masterLabel>
     <template>
         <name>home:desktopTemplate</name>
