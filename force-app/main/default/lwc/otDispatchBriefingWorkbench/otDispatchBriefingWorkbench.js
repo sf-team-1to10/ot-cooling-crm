@@ -4,11 +4,9 @@ import {
     EnclosingTabId,
     setTabLabel,
     setTabIcon,
-    IsConsoleNavigation,
-    getFocusedTabInfo,
-    openSubtab,
-    focusTab
+    IsConsoleNavigation
 } from 'lightning/platformWorkspaceApi';
+import { openOrFocusSubtab } from 'c/otConsoleNav';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
@@ -171,29 +169,35 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
         });
     }
 
-    async handleEvidence() {
-        const caseId = this.recordId || this._stateRecordId;
-        if (!caseId) {
+    // 서브탭 클릭 → 다른 장면으로 이동.
+    // Case는 레코드 페이지로, 나머지는 UrlAddressable 컴포넌트를 콘솔 서브탭(전체폭)으로 연다.
+    async handleSubtab(event) {
+        const target = event.currentTarget.dataset.goto;
+        const caseId = this.effectiveRecordId;
+        if (!target || !caseId) {
             return;
         }
-        // step5 브리핑 → step7 원기록 이동. otBriefingNavigator와 동일하게
-        // 워크벤치처럼 UrlAddressable 컴포넌트로 열어 App Page 껍데기 없이 화면만 띄운다.
-        const pageReference = {
-            type: 'standard__component',
-            attributes: { componentName: 'c__otAssetEvidenceHistory' },
-            state: { c__recordId: caseId }
-        };
+
+        if (target === 'case') {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: {
+                    recordId: caseId,
+                    objectApiName: 'Case',
+                    actionName: 'view'
+                }
+            });
+            return;
+        }
 
         if (this.isConsole) {
-            const focused = await getFocusedTabInfo();
-            const subtabId = await openSubtab({
-                parentTabId: focused.parentTabId || focused.tabId,
-                pageReference,
-                focus: true
-            });
-            await focusTab(subtabId);
+            await openOrFocusSubtab(target, caseId);
         } else {
-            this[NavigationMixin.Navigate](pageReference);
+            this[NavigationMixin.Navigate]({
+                type: 'standard__component',
+                attributes: { componentName: target },
+                state: { c__recordId: caseId }
+            });
         }
     }
 

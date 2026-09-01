@@ -66,3 +66,8 @@ docs
 scripts/share_cdu_a07_to_sjeongbi.apex
 scripts/verify_sjeongbi_access.apex
 scripts/check_woli_layout.apex
+scripts/dedupe_seed.apex
+scripts/seed_export.ps1
+
+## Phase 3 시드 데이터 export/import (일회성, org별 데이터)
+data/

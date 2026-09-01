@@ -30,12 +30,7 @@
     box-shadow: inset 0 0 0 1px #16b8c8;
 }
 
-/* 시각 분리 블록 */
-.handoff {
-    border-top: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
-    padding-top: var(--slds-g-spacing-x-small, 0.5rem);
-}
-
-.time-block {
-    flex: 1 1 auto;
+/* 숫자값 정렬 */
+.num {
+    font-variant-numeric: tabular-nums;
 }

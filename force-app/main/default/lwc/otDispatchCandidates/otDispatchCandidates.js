@@ -8,12 +8,13 @@ import {
 } from 'lightning/platformWorkspaceApi';
 import { openOrFocusSubtab } from 'c/otConsoleNav';
 
-// 프로토타입 v-rca(20) — 직접 원인 vs 조직 차원 원인, RCA·범위 확정.
-export default class OtProblemRca extends NavigationMixin(LightningElement) {
+export default class OtDispatchCandidates extends NavigationMixin(LightningElement) {
     @api recordId;
     _stateRecordId;
     _tabId;
     _tabLabeled = false;
+
+    isAssigned = false;
 
     @wire(CurrentPageReference)
     setPageRef(pageRef) {
@@ -31,6 +32,8 @@ export default class OtProblemRca extends NavigationMixin(LightningElement) {
         return this.isConsoleNavigation?.data === true;
     }
 
+    // standard__component 서브탭은 로드 완료 시 라벨을 'Loading...'으로 덮으므로,
+    // EnclosingTabId wire(=로드 후)로 tabId를 받아 라벨/아이콘을 다시 설정한다.
     @wire(EnclosingTabId)
     setTabId(tabId) {
         this._tabId = tabId;
@@ -42,20 +45,23 @@ export default class OtProblemRca extends NavigationMixin(LightningElement) {
             return;
         }
         this._tabLabeled = true;
-        await setTabLabel(this._tabId, 'RCA');
-        await setTabIcon(this._tabId, 'standard:problem');
+        await setTabLabel(this._tabId, '담당자 확정');
+        await setTabIcon(this._tabId, 'standard:service_resource');
     }
 
-    // "RCA·범위 확정 저장" — 21번(otRcaActions) 탭으로 진행.
-    handleSaveRca() {
-        this.navigate('c__otActionResults');
+    // 1순위 후보 카드 — 확정 시 picked 상태로 전환
+    get cand1Class() {
+        return this.isAssigned ? 'cand-item picked' : 'cand-item top';
     }
 
+    // 강시공 확정 — 프로토타입 applyAssign(배지·버튼·배정 필드 전환). 시스템이 아니라 사람이 선택.
+    handleAssign() {
+        this.isAssigned = true;
+    }
+
+    // 서브탭 클릭 → 다른 장면으로 이동.
     async handleSubtab(event) {
-        this.navigate(event.currentTarget.dataset.goto);
-    }
-
-    async navigate(target) {
+        const target = event.currentTarget.dataset.goto;
         const rid = this.effectiveRecordId;
         if (!target || !rid) {
             return;

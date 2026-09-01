@@ -1,18 +1,372 @@
-.section {
-    border-top: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
-    padding-bottom: var(--slds-g-spacing-small, 0.75rem);
+/* ── Path 바 (프로토타입 v-c360) ── */
+.path {
+    display: flex;
+    background-color: #ffffff;
+    padding: 11px 18px 12px;
+    border-bottom: 1px solid #cfdae5;
+    gap: 0;
+    overflow-x: auto;
 }
 
-.section:first-of-type {
-    border-top: none;
+.path-step {
+    flex: 1 1 0;
+    min-width: 74px;
+    padding: 7px 6px 7px 19px;
+    background-color: #eaf0f6;
+    color: #6e8599;
+    font-size: 10.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%, 11px 50%);
+    margin-right: -9px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.section-row {
-    padding: var(--slds-g-spacing-xx-small, 0.25rem) 0;
+.path-step:first-child {
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%);
+    padding-left: 14px;
+    border-radius: 4px 0 0 4px;
 }
 
-.section-row.is-current {
-    border-left: 3px solid var(--slds-g-color-brand-base-50, #0176d3);
-    padding-left: var(--slds-g-spacing-x-small, 0.5rem);
-    background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);
+.path-step:last-child {
+    margin-right: 0;
+}
+
+.path-step.done {
+    background-color: #2e8b57;
+    color: #ffffff;
+}
+
+.path-step.on {
+    background-color: #0877d1;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.path-num {
+    opacity: 0.6;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ── 서브탭 ── */
+.subtabs {
+    background-color: #ffffff;
+    display: flex;
+    gap: 2px;
+    padding: 0 18px;
+    border-bottom: 1px solid #cfdae5;
+    font-size: 12.5px;
+    overflow-x: auto;
+}
+
+.subtab {
+    padding: 8px 14px;
+    color: #3d5568;
+    border: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.subtab:hover {
+    color: #0b1f33;
+    background-color: #f4f7fa;
+}
+
+.subtab.on {
+    color: #0877d1;
+    border-bottom-color: #0877d1;
+    font-weight: 600;
+}
+
+/* ── 하이라이트 ── */
+.c360-hl {
+    background-color: #ffffff;
+    border-bottom: 1px solid #cfdae5;
+    padding: 14px 18px;
+}
+
+.c360-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.c360-hl-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 7px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #16b8c8;
+}
+
+.c360-hl-title {
+    flex: 1 1 auto;
+    min-width: 180px;
+}
+
+.c360-hl-eyebrow {
+    margin: 0;
+    font-size: 11px;
+    color: #6e8599;
+    letter-spacing: 0.3px;
+}
+
+.c360-hl-name {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    line-height: 1.25;
+}
+
+.c360-hl-actions {
+    flex: 0 0 auto;
+}
+
+/* ── 프로필 ── */
+.c360-profile {
+    background-color: #ffffff;
+    border: 1px solid #cfdae5;
+    border-radius: 9px;
+    padding: 16px 18px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin: 14px 0 0;
+}
+
+.c360-av {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+    background: linear-gradient(135deg, #16b8c8, #0877d1);
+    color: #04121d;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.c360-id {
+    flex: 1 1 220px;
+    min-width: 0;
+}
+
+.c360-name {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+}
+
+.c360-role {
+    font-size: 12.5px;
+    color: #6e8599;
+    margin-top: 2px;
+}
+
+.c360-contact {
+    flex: 2 1 380px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+    gap: 8px 20px;
+    font-size: 12px;
+    align-content: center;
+    margin: 0;
+}
+
+.c360-contact dt {
+    color: #6e8599;
+    font-size: 10.5px;
+    margin-bottom: 1px;
+}
+
+.c360-contact dd {
+    margin: 0;
+    font-weight: 500;
+}
+
+.c360-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 7px;
+    align-self: flex-start;
+}
+
+/* ── 고객 인사이트 KPI ── */
+.mini-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #6e8599;
+    margin: 14px 0 5px;
+}
+
+.c360-kpi {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+@media (max-width: 700px) {
+    .c360-kpi {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.c360-kpi-card {
+    background-color: #ffffff;
+    border: 1px solid #cfdae5;
+    border-radius: 8px;
+    padding: 12px 14px;
+    text-align: center;
+}
+
+.c360-kpi-v {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+.c360-kpi-v.c360-kpi-good {
+    color: #2e8b57;
+}
+
+.c360-kpi-v.c360-kpi-sm {
+    font-size: 15px;
+}
+
+.c360-kpi-l {
+    font-size: 10.5px;
+    color: #6e8599;
+    margin-top: 3px;
+}
+
+/* ── 탭바 ── */
+.c360-tabbar {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid #cfdae5;
+    padding: 0 2px;
+    margin-top: 14px;
+}
+
+.c360-tabbtn {
+    padding: 9px 15px;
+    font-size: 12.5px;
+    color: #3d5568;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.c360-tabbtn.on {
+    color: #0877d1;
+    border-bottom-color: #0877d1;
+    font-weight: 600;
+}
+
+.c360-panel-single {
+    margin-top: 14px;
+}
+
+/* ── 카드 / 리스트 ── */
+.card {
+    background-color: #ffffff;
+    border: 1px solid #cfdae5;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-head {
+    padding: 9px 13px;
+    border-bottom: 1px solid #e3eaf1;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background-color: #f4f7fa;
+}
+
+.card-head h3 {
+    margin: 0;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: -0.1px;
+}
+
+.card-body-tight {
+    padding: 0;
+}
+
+.rl {
+    display: flex;
+    flex-direction: column;
+}
+
+.rl-row {
+    padding: 9px 13px;
+    border-bottom: 1px solid #e3eaf1;
+    display: flex;
+    gap: 11px;
+    align-items: center;
+    font-size: 12.5px;
+}
+
+.rl-row:last-child {
+    border-bottom: none;
+}
+
+.rl-row:hover {
+    background-color: #f4f7fa;
+}
+
+.rl-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.rl-t {
+    font-weight: 500;
+    color: #0877d1;
+}
+
+.rl-s {
+    color: #6e8599;
+    font-size: 11.5px;
+    margin-top: 1px;
+}
+
+.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── 배지 ── */
+.c360-badge-ok {
+    background-color: #e6f2eb;
+    color: #2e8b57;
+}
+
+.c360-badge-warn {
+    background-color: #fbf1e1;
+    color: #c87913;
+}
+
+.c360-badge-neutral {
+    background-color: #eaf0f6;
+    color: #3d5568;
 }

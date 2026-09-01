@@ -1,7 +1,7 @@
-name: Production 통합 CI/CD
+name: Main 검증 (Production org 대조)
 
-# 1. production 브랜치로 PR이 올라오면 '검증'을 수행합니다.
-# 2. production 브랜치에 코드가 병합(push)되면 '실제 배포'를 수행합니다.
+# git은 기록용. 어떤 org에도 자동 배포하지 않는다. 실제 배포는 org에서 직접 수행한다.
+# main으로 PR이 올라오면 Production org를 대상으로 delta를 '검증(dry-run)'만 한다.
 on:
   pull_request:
     branches: [production]
@@ -15,7 +15,7 @@ on:
       - ".github/workflows/**"
 
 jobs:
-  production-workflow:
+  verify:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,7 +23,6 @@ jobs:
       security-events: write
 
     steps:
-      # [공통] 코드 가져오기 및 환경 설정
       - name: "코드 체크아웃"
         uses: actions/checkout@v4
         with:
@@ -43,29 +42,21 @@ jobs:
         run: |
           echo y | sf plugins install sfdx-git-delta
 
-      # [공통] 운영 환경(Production Org) 인증
-      # GitHub Secrets에 SFDX_PRODUCTION_URL이 반드시 등록되어 있어야 합니다.
-      - name: "운영 환경 인증 정보 준비"
+      # Production org 인증 (검증 대상 org). GitHub Secrets에 SFDX_PRODUCTION_URL 필요.
+      - name: "Production org 인증 정보 준비"
         run: echo "${{ secrets.SFDX_PRODUCTION_URL }}" > ./SFDX_PRODUCTION_URL.txt
 
-      - name: "운영 환경(Production) 로그인"
+      - name: "Production org 로그인"
         run: sf org login sfdx-url --sfdx-url-file ./SFDX_PRODUCTION_URL.txt --alias production --set-default
 
-      # [공통] 변경된 파일만 추출 (Delta)
+      # 변경된 메타데이터만 추출 (base = main)
       - name: "변경된 메타데이터 추출"
         run: |
           mkdir -p changed-sources
-          # PR일 때는 base 브랜치와 비교, push일 때는 이전 커밋과 비교합니다.
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            sf sgd source delta --to "HEAD" --from "origin/production" --output changed-sources/ --generate-delta --source force-app/
-          else
-            sf sgd source delta --to "HEAD" --from "HEAD^1" --output changed-sources/ --generate-delta --source force-app/
-          fi
+          sf sgd source delta --to "HEAD" --from "origin/main" --output changed-sources/ --generate-delta --source force-app/
 
-      # [검증/배포 선택 실행]
-      # PR 상태일 때는 --dry-run을 붙여서 '검증'만 수행합니다.
-      - name: "운영 환경 배포 검증 (PR 상태일 때)"
-        if: github.event_name == 'pull_request'
+      # Production org를 대상으로 검증(dry-run)만 수행한다. 실제 배포는 하지 않는다.
+      - name: "Production org 배포 검증 (dry-run)"
         run: |
           if [ -d "changed-sources/force-app" ] && [ "$(ls -A changed-sources/force-app 2>/dev/null)" ]; then
             # 델타에 Apex 클래스/트리거가 포함될 때만 테스트를 강제한다.
@@ -98,32 +89,13 @@ jobs:
             echo "검증할 변경사항이 없습니다."
           fi
 
-      # production 브랜치에 병합(push)되었을 때는 --dry-run 없이 '실제 배포'를 수행합니다.
-      - name: "운영 환경 실제 배포 (병합 완료 시)"
-        if: github.event_name == 'push'
-        run: |
-          if [ -d "changed-sources/force-app" ] && [ "$(ls -A changed-sources/force-app 2>/dev/null)" ]; then
-            sf project deploy start \
-              --source-dir "changed-sources/force-app" \
-              --test-level RunLocalTests \
-              --target-org production \
-              --wait 30 \
-              --json
-          else
-            echo "배포할 변경사항이 없습니다."
-          fi
-
-      # 삭제된 항목 처리 (PR 검증 및 실제 배포 공통)
-      - name: "삭제된 메타데이터 처리"
+      # 삭제 예정 메타데이터도 검증(dry-run)만 수행한다.
+      - name: "삭제 메타데이터 검증 (dry-run)"
         run: |
           if [ -f "changed-sources/destructiveChanges/destructiveChanges.xml" ]; then
-            DRY_RUN_FLAG=""
-            if [ "${{ github.event_name }}" == "pull_request" ]; then
-              DRY_RUN_FLAG="--dry-run"
-            fi
             sf project deploy start \
               --metadata-dir "changed-sources/destructiveChanges" \
-              $DRY_RUN_FLAG \
+              --dry-run \
               --ignore-warnings \
               --target-org production \
               --wait 30 \
@@ -131,3 +103,21 @@ jobs:
           else
             echo "삭제할 항목이 없습니다."
           fi
+
+  # verify(dry-run) 검증이 통과하면 해당 PR을 main으로 자동 병합한다.
+  # 실제 org 배포는 하지 않는다(배포는 org에서 직접). 커밋 이력은 보존(merge commit).
+  auto-merge:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: "PR 자동 병합 (merge commit)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" \
+            --merge \
+            --auto

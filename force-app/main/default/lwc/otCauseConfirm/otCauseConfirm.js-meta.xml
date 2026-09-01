@@ -2,8 +2,8 @@
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>66.0</apiVersion>
     <isExposed>true</isExposed>
-    <masterLabel>Customer 360</masterLabel>
-    <description>Case에서 서브탭으로 여는 고객 360 전체폭 화면 — 프로필·인사이트·계약/제품/문제/영업 이력 (T5-25)</description>
+    <masterLabel>Cause Confirm</masterLabel>
+    <description>Case에서 서브탭으로 여는 원인 확정 화면 — 현장 근거(WO/WOLI)로 확정된 원인을 Case의 Problem으로 승격</description>
     <targets>
         <target>lightning__RecordPage</target>
         <target>lightning__AppPage</target>

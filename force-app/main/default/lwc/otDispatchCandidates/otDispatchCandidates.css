@@ -1,4 +1,4 @@
-/* ── Path 바 ── */
+/* ── Path 바 (프로토타입 v-candidates) ── */
 .path {
     display: flex;
     background-color: #ffffff;
@@ -84,48 +84,45 @@
 }
 
 /* ── 하이라이트 ── */
-.rca-hl {
+.cand-hl {
     background-color: #ffffff;
     border-bottom: 1px solid #cfdae5;
     padding: 14px 18px;
 }
 
-.rca-hl-head {
+.cand-hl-head {
     display: flex;
     align-items: flex-start;
     gap: 14px;
     flex-wrap: wrap;
 }
 
-.rca-hl-icon {
+.cand-hl-icon {
     width: 38px;
     height: 38px;
     border-radius: 7px;
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 700;
     color: #ffffff;
+    background-color: #0877d1;
 }
 
-.icon-crit {
-    background-color: #c43d4b;
-}
-
-.rca-hl-title {
+.cand-hl-title {
     flex: 1 1 auto;
     min-width: 180px;
 }
 
-.rca-hl-eyebrow {
+.cand-hl-eyebrow {
     margin: 0;
     font-size: 11px;
     color: #6e8599;
     letter-spacing: 0.3px;
 }
 
-.rca-hl-name {
+.cand-hl-name {
     margin: 0;
     font-size: 19px;
     font-weight: 600;
@@ -133,7 +130,7 @@
     line-height: 1.25;
 }
 
-.rca-hl-actions {
+.cand-hl-actions {
     flex: 0 0 auto;
     display: flex;
     gap: 7px;
@@ -141,7 +138,18 @@
     flex-wrap: wrap;
 }
 
-.rca-hl-fields {
+.assign-done {
+    background-color: #e6f2eb;
+    border: 1px solid #2e8b57;
+    color: #2e8b57;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 6px 13px;
+    font-size: 12.5px;
+    cursor: default;
+}
+
+.cand-hl-fields {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 2px 20px;
@@ -150,66 +158,149 @@
     margin: 12px 0 0;
 }
 
-.rca-hl-f dt {
+.cand-hl-f dt {
     font-size: 10.5px;
     color: #6e8599;
     margin-bottom: 2px;
 }
 
-.rca-hl-f dd {
+.cand-hl-f dd {
     margin: 0;
     font-size: 13px;
     font-weight: 500;
 }
 
-/* ── 콜아웃 ── */
-.co-stack {
+/* ── 후보 카드 ── */
+.cand {
     display: flex;
     flex-direction: column;
-    gap: 11px;
+    gap: 10px;
 }
 
-.callout {
-    display: flex;
-    gap: 11px;
+.cand-item {
+    border: 1px solid #cfdae5;
+    border-radius: 9px;
     padding: 12px 14px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    line-height: 1.6;
-    border: 1px solid transparent;
+    background-color: #ffffff;
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.callout strong {
-    display: block;
-    margin-bottom: 3px;
-    font-size: 13px;
+.cand-item.top {
+    border-color: #2e8b57;
+    box-shadow: 0 0 0 1px #2e8b57;
 }
 
-.co-ico {
+.cand-item.picked {
+    border-color: #2e8b57;
+    background-color: #e6f2eb;
+    box-shadow: 0 0 0 2px #2e8b57;
+}
+
+.cand-item.out {
+    opacity: 0.62;
+}
+
+.cand-av {
     flex: 0 0 auto;
-    font-size: 15px;
-    line-height: 1.3;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
 }
 
-.co-sub {
-    margin-top: 6px;
+.cand-av-green {
+    background-color: #2e8b57;
+}
+
+.cand-av-warn {
+    background-color: #c87913;
+}
+
+.cand-av-muted {
+    background-color: #6e8599;
+}
+
+.cand-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.cand-name {
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+.cand-skills {
     font-size: 11.5px;
     color: #3d5568;
+    margin-top: 3px;
+    display: flex;
+    gap: 9px;
+    flex-wrap: wrap;
 }
 
-.co-crit {
-    background-color: #fbe9eb;
-    border-color: #f0c2c8;
-    color: #7a1f2a;
+.cand-skills i {
+    font-style: normal;
 }
 
-.co-warn {
-    background-color: #fdf1e3;
-    border-color: #f2d6ac;
-    color: #7a4a12;
+.cand-sched {
+    font-size: 11.5px;
+    color: #6e8599;
+    margin-top: 3px;
 }
 
-/* ── 테이블 ── */
+.cand-eta {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.cand-eta .t {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+}
+
+.cand-t-green {
+    color: #2e8b57;
+}
+
+.cand-t-warn {
+    color: #c87913;
+}
+
+.cand-t-muted {
+    color: #6e8599;
+}
+
+.cand-eta .l {
+    font-size: 10.5px;
+    color: #6e8599;
+    margin-top: 2px;
+}
+
+.ok-i {
+    color: #2e8b57;
+    font-weight: 700;
+}
+
+.no-i {
+    color: #6e8599;
+}
+
+/* ── 랭킹 근거 테이블 ── */
 .tbl {
     width: 100%;
     border-collapse: collapse;
@@ -232,45 +323,46 @@
 .tbl td {
     padding: 8px 11px;
     border-bottom: 1px solid #e3eaf1;
-    vertical-align: top;
+    white-space: nowrap;
 }
 
 .tbl tr:last-child td {
     border-bottom: none;
 }
 
+.tbl tr.flag {
+    background-color: #fbe9eb;
+}
+
+.tbl tr.flag td {
+    font-weight: 600;
+}
+
+.cand-x {
+    color: #c43d4b;
+}
+
 /* ── 배지 ── */
-.rca-badge-rule {
+.cand-badge-rule {
     background-color: #e2f6f8;
     color: #0f8a97;
 }
 
-.rca-badge-neutral {
+.cand-badge-ok {
+    background-color: #e6f2eb;
+    color: #2e8b57;
+}
+
+.cand-badge-neutral {
     background-color: #eaf0f6;
     color: #3d5568;
 }
 
-.rca-badge-crit {
+.cand-badge-crit {
     background-color: #c43d4b;
     color: #ffffff;
 }
 
-.rca-badge-warn {
-    background-color: #fdf1e3;
-    color: #a5620f;
-}
-
-.rca-badge-human {
-    background-color: #ede4f5;
-    color: #6b3fa0;
-}
-
-.rca-badge-agent {
-    background-color: #e2eefb;
-    color: #1a5fb4;
-}
-
-/* ── 숫자 유틸 ── */
 .num {
     font-variant-numeric: tabular-nums;
 }
