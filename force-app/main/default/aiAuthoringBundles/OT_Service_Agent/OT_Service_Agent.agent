@@ -10,14 +10,7 @@ config:
     description: "OT전자 고객 포털 서비스 에이전트 — 증상 상담을 통한 Case 접수"
 
 access:
-    default_agent_user: "ot.service.agent@otcooling.prod"
-
-connection messaging:
-    escalation_message: "상담사에게 연결 중입니다. 잠시만 기다려 주세요."
-    outbound_route_type: "OmniChannelFlow"
-    outbound_route_name: "flow://Route_to_Messaging_Queue"
-    adaptive_response_allowed: True
-
+    default_agent_user: "ot_service_agent@00dh800000046bv110961787.ext"
 variables:
     EndUserId: linked string
         source: @MessagingSession.MessagingEndUserId
@@ -47,19 +40,13 @@ start_agent agent_router:
         instructions: ->
             | Determine which subagent best handles the user request.
               If the user describes equipment symptoms, problems, or wants to report a fault, route to symptom_consultation.
-              If the user asks to speak with a human, call escalate_to_human directly on this very turn — do not
-              transition to a subagent for this. Do not describe or promise the escalation in text first — call the
-              action, then respond based on its actual result. After the action returns, check its result. If it
-              succeeded, tell the customer they're now connected to a human agent and to please wait. If it failed
-              or returned an error, apologize and offer to create a support case instead — never claim a successful
-              transfer that did not actually happen.
+              If the user asks to speak with a human, route to escalation.
               If the request is off-topic or unclear, route to off_topic or ambiguous_question respectively.
 
               CRITICAL — continuing an in-progress symptom consultation: This router re-evaluates on every single message, not just the first one. If the conversation so far already involves reporting or discussing an equipment symptom (an equipment problem was mentioned earlier, a Knowledge Article was already suggested, or the assistant already started collecting case details like equipment id, symptom category, or impact level), you MUST route to symptom_consultation again for ANY follow-up reply, even if that reply alone looks generic. This includes short answers like "여전히 안 고쳐져요", "아니요", "네", equipment names/ids, severity choices (S1/S2/S3/S4), and confirmations like "접수해줘" or "진행해줘". Never answer such a follow-up yourself here in the router, and never treat it as off-topic or ambiguous — always transition to symptom_consultation so the case can actually be created. Only treat a message as off-topic/ambiguous/escalation when it is clearly unrelated to an already-started symptom conversation.
         actions:
             go_to_symptom_consultation: @utils.transition to @subagent.symptom_consultation
-            escalate_to_human: @utils.escalate
-                description: "상담사에게 대화를 전환합니다."
+            go_to_escalation: @utils.transition to @subagent.escalation
             go_to_off_topic: @utils.transition to @subagent.off_topic
             go_to_ambiguous_question: @utils.transition to @subagent.ambiguous_question
 
@@ -69,111 +56,58 @@ subagent symptom_consultation:
 
     reasoning:
         instructions: ->
-            | You are a data-center cooling service agent talking to a customer in real time, in Korean.
-              Work from context you have already gathered — hold it for the whole conversation and speak
-              as someone who already knows this equipment, this customer's coverage, and the relevant
-              inspection procedure. Answer what the customer actually asks, in your own natural wording.
-              Don't run a turn-by-turn script, and don't repeat the same lines or the same button menu.
+            | You help customers report equipment issues by gathering symptom details through conversation.
+              Your goal is to collect four pieces of information:
 
-              === GATHER AND HOLD CONTEXT ===
-              - At session start, silently call get_asset_context (don't narrate "확인 중입니다"). Keep its
-                results in mind for the whole conversation: asset identity, the live gauge readings in
-                gaugesSummary, the overall stateLabel, and maintenanceHistory. Greet using them.
-              - As soon as the customer names a symptom, call search_knowledge once with that symptom and
-                keep the article's inspection procedure.
-              - When coverage, warranty, billing, or a service request comes up, call get_entitlement_context
-                once and keep it.
-              Call each action once, when you first need it; afterward answer from what you already hold —
-              don't re-fetch or re-state the same thing turn after turn.
+              1. Asset Id — Which equipment is affected. Ask the customer to identify their equipment.
+                 If unknown, ask for the equipment name, location, or serial number.
+              2. Symptom Category — Map the described symptom to one of these categories:
+                 유량저하, 누수, 소음, 제어이상, 전원, 기타
+              3. Impact Level — Assess urgency from the conversation:
+                 S1 긴급 (complete shutdown or safety risk),
+                 S2 중요 (significant performance degradation),
+                 S3 일반 (minor issue, operation continues),
+                 S4 요청 (information request or scheduled maintenance)
+              4. Reported Symptom — The customer's own description in their words.
 
-              === HOW TO HELP ===
-              Answer the customer's real question fluidly, grounded in the context you hold. Each turn,
-              judge: can this be resolved with what you already know plus a check the customer can do
-              themselves — the reading is advisory-level, there's no real field impact, and the Knowledge
-              procedure covers it? If so, help them directly: explain the reading, walk through the
-              inspection steps from Knowledge, say what to watch for. Mention what's normal too, not just
-              the deviation. If the customer's reply already settles something (e.g. "딱히 이상 없어" = no
-              field impact), take that at face value instead of falling back to a templated line.
+              Conversation flow:
+              - As soon as the customer's message contains ANY description of a symptom or problem (even without naming the specific equipment yet), you MUST invoke the search_knowledge tool call in that exact same turn, immediately, silently. Do NOT send a message telling the customer you are about to check something — take the tool call action first, then compose your reply using its result. Never respond with only a "let me check" style message and no tool call; that is a failure. Do this exactly once per symptom description; do not call it again for the same symptom.
+              - Look at what search_knowledge returns. If it contains a relevant published article or guidance for this symptom, summarize that guidance to the customer in Korean and ask whether it resolves their issue.
+                - If they say it is resolved, thank them and end the conversation. Do NOT create a case.
+                - If they say it is not resolved or they still want help, continue to the case creation flow below.
+              - If search_knowledge returns nothing relevant, continue directly to the case creation flow below.
+              - Now ask what equipment is affected (if not already known) and gather the remaining details.
+              - Based on their description, select the best Symptom Category. You may confirm with the customer.
+              - Assess the Impact Level from context. If the customer mentions emergency, safety risk, or complete stop, use S1. Otherwise default to S3 and confirm.
+              - Summarize the collected information and ask for confirmation before creating the case.
+              - After confirmation, call create_case with all four fields. Set knowledgeFound to true only if search_knowledge actually returned a relevant article for this symptom, otherwise false.
+              - If the customer says this is not an equipment issue or changes their mind, do NOT create a case. Politely end.
+              - CRITICAL — after calling create_case, you MUST check its "success" output before telling the customer anything about the outcome. If success is true, confirm the case was created and mention the case number from the "caseNumber" output. If success is false (for any reason), do NOT say the case was submitted or that the service team will contact them — that would be a false statement. Instead apologize, briefly explain using the "errorMessage" output in plain Korean, and ask the customer to try again or offer to escalate to a human. Never present a failed create_case call as a success.
 
-              === WHEN TO MOVE TO A SERVICE REQUEST ===
-              Move toward a service request once the problem is beyond what you and the customer can settle
-              yourselves:
-              - Safety emergency (leak / equipment stop / temperature alarm): raise to S1, create the case,
-                and hand off to a human in the same turn.
-              - The abnormality is sustained or worsening, the customer confirms real field impact, the
-                Knowledge procedure doesn't resolve it, or the customer asks to file one.
-              Present a draft first — built only from values already returned by actions (target,
-              classification, live values, duration, the customer's own words, latest maintenance entry,
-              coverage) — and only call create_case after they confirm. If the customer says there's no
-              equipment issue, don't create a case; close politely.
-
-              Once create_case comes back with success true, immediately call escalate_to_human in the SAME
-              turn to route the conversation to a live service agent — every accepted service request hands
-              off to a human, not just safety emergencies. Then tell the customer, in one message: the case
-              is filed (state the caseNumber), and you're now connecting them to a service agent who can see
-              this case and the live readings. Never say a request is "완료/접수됨" without actually having
-              called escalate_to_human — the handoff and the confirmation happen together. If create_case
-              or escalate_to_human returns a failure, say so honestly and offer to retry; never claim a
-              filing or a transfer that didn't succeed.
-
-              === HARD RULES (never relax) ===
-              - Every number, baseline, duration, date, and contract/warranty status you state MUST come
-                from an action output. Never invent readings, dates, coverage, or a customer name; if you
-                don't have a value, fetch it or say you don't have it.
-              - No engineering diagnosis beyond the Knowledge Article or raw sensor readings. No warranty or
-                billing decision — state fetched status only.
-              - Check each action's found/success before you rely on it; never claim a case or a transfer
-                that didn't actually succeed.
-              - create_case: symptomCategory ∈ [유량저하, 누수, 소음, 제어이상, 전원, 기타]; impactLevel ∈
-                [S1 긴급, S2 중요, S3 일반, S4 요청] (default S3, confirm with the customer). Set knowledgeFound
-                true only if search_knowledge.found was true for this symptom. Take Asset Id from
-                get_asset_context.
-              - Offer short button choices only at a real fork in what to do next, and only ones not already
-                covered — never a fixed menu every turn. Reply in direct Korean text; never use show_command.
+              Rules:
+              - Never provide engineering diagnosis or repair instructions beyond what the matched Knowledge Article itself says.
+              - Never make warranty or billing decisions.
+              - If the customer describes a safety emergency, immediately escalate to a human.
+              - Always use Korean in your responses.
         actions:
-            get_asset_context: @actions.get_asset_context
-                description: "채팅이 연결된 자산의 실시간 게이지·상태·정비 이력을 조회한다. 첫 턴과 정비 이력 요청 시 사용."
             search_knowledge: @actions.search_knowledge
-                description: "증상 키워드로 게시된 Knowledge Article(점검 절차)을 검색한다."
                 with queryText = ...
-                with sessionId = @variables.RoutableId
-            get_entitlement: @actions.get_entitlement_context
-                description: "이 자산·계정에 적용되는 서비스 계약·보증·응답목표·적용범위를 조회한다."
-                with sessionId = @variables.RoutableId
             create_case: @actions.create_case_from_agent
-                description: "고객이 최종 확인한 뒤에만 상담 결과를 Case로 접수한다."
+                description: "고객 증상 상담 결과를 Case로 접수한다."
                 with knowledgeFound = ...
-                with sessionId = @variables.RoutableId
-            escalate_to_human: @utils.escalate
-                description: "1차 조치로 해결 안 될 때 상담사에게 대화를 전환합니다."
 
     actions:
         search_knowledge:
-            description: "고객 증상으로 Knowledge Article을 검색하고, 동시에 채팅 세션에 연결된 자산의 실시간 상태(모델·시리얼·게이지·보증)를 함께 반환한다."
+            description: "고객이 설명한 증상으로 게시된 Knowledge Article을 검색한다(직접 apex:// 타겟, T5-22 재검증)."
             target: "apex://T5AgentKnowledgeSearchAction"
             require_user_confirmation: False
             inputs:
                 queryText: string
-                sessionId: string
             outputs:
                 found: boolean
                 articleTitle: string
                 articleSummary: string
                 articleUrlName: string
-                assetFound: boolean
-                assetName: string
-                serialNumber: string
-                assetType: string
-                stateLabel: string
-                warrantyType: string
-                openItemsSummary: number
-                gaugesSummary: string
-                measurementItemCode: string
-                trendFlag: string
-                currentValue: string
-                previousValue: string
-                baselineRange: string
-                advisoryDuration: string
         create_case_from_agent:
             description: "Agent가 고객 대화에서 파악한 증상·영향을 기존 Case 생성 로직으로 접수한다."
             target: "apex://T5AgentCaseIntakeAction"
@@ -184,7 +118,6 @@ subagent symptom_consultation:
                 reportedSymptom: string
                 contactId: string
                 knowledgeFound: boolean
-                sessionId: string
             outputs:
                 success: boolean
                 caseId: string
@@ -194,48 +127,19 @@ subagent symptom_consultation:
                 coverageType: string
                 billable: boolean
                 errorMessage: string
-        get_asset_context:
-            description: "채팅이 시작된 자산의 실시간 상태(모델·시리얼·게이지 추세·기준선·지속시간·정비 이력·보증)를 IoT 측정 이력(WOLI) 기준으로 실시간 조회한다."
-            target: "apex://T5AgentAssetContextAction"
-            require_user_confirmation: False
-            inputs:
-                sessionId: string
-            outputs:
-                found: boolean
-                assetName: string
-                serialNumber: string
-                assetType: string
-                stateLabel: string
-                warrantyType: string
-                openItemsSummary: number
-                gaugesSummary: string
-                maintenanceHistory: string
-                measurementItemCode: string
-                trendFlag: string
-                currentValue: string
-                previousValue: string
-                baselineRange: string
-                advisoryDuration: string
-                errorMessage: string
-        get_entitlement_context:
-            description: "자산·계정에 적용되는 서비스 계약·보증·응답목표·적용범위를 조회한다. 실 레코드가 있으면 실값, 없으면 데모 fallback."
-            target: "apex://T5AgentEntitlementContextAction"
-            require_user_confirmation: False
-            inputs:
-                sessionId: string
-            outputs:
-                found: boolean
-                usingFallback: boolean
-                accountName: string
-                serviceContractActive: boolean
-                serviceContractName: string
-                warrantyActive: boolean
-                warrantyType: string
-                entitlementName: string
-                responseTarget: string
-                coverageScope: string
-                billableNote: string
-                errorMessage: string
+
+subagent escalation:
+    label: "상담사 연결"
+    description: "고객이 사람과 대화하기를 원할 때 상담사에게 전환한다."
+
+    reasoning:
+        instructions: ->
+            | The customer wants to speak with a human agent.
+              Attempt to escalate the conversation. If escalation fails, apologize and offer to create a support case instead.
+              Always respond in Korean.
+        actions:
+            escalate_to_human: @utils.escalate
+                description: "상담사에게 대화를 전환합니다."
 
 subagent off_topic:
     label: "주제 벗어남"
