@@ -3,9 +3,11 @@
     <apiVersion>66.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Customer 360</masterLabel>
-    <description>MIAW 2차 인수 시점에 고객사 기준 계약·제품·문제·영업 이력을 한 화면에 요약 (T5-25)</description>
+    <description>Case에서 서브탭으로 여는 고객 360 전체폭 화면 — 프로필·인사이트·계약/제품/문제/영업 이력 (T5-25)</description>
     <targets>
         <target>lightning__RecordPage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__UrlAddressable</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">

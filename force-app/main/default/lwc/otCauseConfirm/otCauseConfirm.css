@@ -1,4 +1,4 @@
-/* ── Path 바 ── */
+/* ── Path 바 (프로토타입 v-cause/v-rca/v-actions) ── */
 .path {
     display: flex;
     background-color: #ffffff;
@@ -109,6 +109,10 @@
     color: #ffffff;
 }
 
+.icon-green {
+    background-color: #2e8b57;
+}
+
 .icon-crit {
     background-color: #c43d4b;
 }
@@ -141,6 +145,17 @@
     flex-wrap: wrap;
 }
 
+.rca-done {
+    background-color: #e6f2eb;
+    border: 1px solid #2e8b57;
+    color: #2e8b57;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 6px 13px;
+    font-size: 12.5px;
+    cursor: default;
+}
+
 .rca-hl-fields {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -160,6 +175,72 @@
     margin: 0;
     font-size: 13px;
     font-weight: 500;
+}
+
+/* ── 타임라인 (STEP 1) ── */
+.tl {
+    position: relative;
+    padding-left: 20px;
+}
+
+.tl::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background-color: #cfdae5;
+}
+
+.tl-node {
+    position: relative;
+    padding: 0 0 16px 4px;
+}
+
+.tl-node:last-child {
+    padding-bottom: 0;
+}
+
+.tl-dot {
+    position: absolute;
+    left: -20px;
+    top: 3px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: #6e8599;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px #cfdae5;
+}
+
+.tl-node.hit .tl-dot {
+    background-color: #c43d4b;
+    box-shadow: 0 0 0 1px #c43d4b;
+}
+
+.tl-node.ok .tl-dot {
+    background-color: #2e8b57;
+    box-shadow: 0 0 0 1px #2e8b57;
+}
+
+.tl-when {
+    font-size: 10.5px;
+    color: #6e8599;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.tl-what {
+    font-size: 13.5px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.tl-detail {
+    font-size: 11.5px;
+    color: #3d5568;
+    margin-top: 3px;
+    line-height: 1.55;
 }
 
 /* ── 콜아웃 ── */
@@ -209,6 +290,170 @@
     color: #7a4a12;
 }
 
+.co-green {
+    background-color: #e6f2eb;
+    border-color: #b8dcc6;
+    color: #1e5c3a;
+}
+
+/* ── 결과 그리드 (STEP 3) ── */
+.res-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.res {
+    background-color: #ffffff;
+    border: 1px solid #cfdae5;
+    border-radius: 9px;
+    padding: 14px 12px;
+    text-align: center;
+}
+
+.res-n {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    color: #0b1f33;
+}
+
+.res-n.green {
+    color: #2e8b57;
+}
+
+.res-n.warn {
+    color: #c87913;
+}
+
+.res-l {
+    font-size: 11px;
+    color: #6e8599;
+    margin-top: 6px;
+}
+
+/* ── 관련 목록 행 (자동 생성 WO) ── */
+.rl {
+    display: flex;
+    flex-direction: column;
+}
+
+.rl-row {
+    display: flex;
+    gap: 11px;
+    align-items: flex-start;
+    padding: 11px 4px;
+    border-bottom: 1px solid #e3eaf1;
+}
+
+.rl-row:last-child {
+    border-bottom: none;
+}
+
+.rl-main {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.rl-t {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.rl-s {
+    font-size: 11.5px;
+    color: #6e8599;
+    margin-top: 2px;
+}
+
+/* ── T5-22 Knowledge 카드 ── */
+.kb-card {
+    --slds-c-card-color-border: #0877d1;
+}
+
+.kb-lead {
+    font-size: 12.5px;
+    line-height: 1.65;
+    margin: 0 0 11px;
+}
+
+.kb-inner {
+    background-color: #f4f7fa;
+    border: 1px solid #e3eaf1;
+    border-radius: 8px;
+    padding: 11px;
+}
+
+.mini-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: #6e8599;
+    margin-bottom: 5px;
+}
+
+.kb-quote {
+    font-size: 11.5px;
+    color: #3d5568;
+    line-height: 1.6;
+    padding: 8px 10px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    border-left: 2.5px solid #6e8599;
+}
+
+.kb-arrow {
+    text-align: center;
+    font-size: 16px;
+    color: #0877d1;
+    margin: 7px 0 5px;
+}
+
+.kb-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.kb-kv {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+    margin: 0;
+    font-size: 11.5px;
+}
+
+.kb-kv > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.kb-kv dt {
+    color: #6e8599;
+}
+
+.kb-kv dd {
+    margin: 0;
+    font-weight: 500;
+}
+
+.kb-actions {
+    display: flex;
+    gap: 7px;
+    margin-top: 11px;
+    flex-wrap: wrap;
+}
+
+.kb-note {
+    font-size: 11.5px;
+    color: #6e8599;
+    margin: 9px 0 0;
+    line-height: 1.55;
+}
+
 /* ── 테이블 ── */
 .tbl {
     width: 100%;
@@ -239,10 +484,23 @@
     border-bottom: none;
 }
 
+.tbl tr.flag {
+    background-color: #e6f2eb;
+}
+
+.tbl .muted {
+    color: #9aa9b8;
+}
+
 /* ── 배지 ── */
 .rca-badge-rule {
     background-color: #e2f6f8;
     color: #0f8a97;
+}
+
+.rca-badge-ok {
+    background-color: #e6f2eb;
+    color: #2e8b57;
 }
 
 .rca-badge-neutral {
@@ -270,7 +528,17 @@
     color: #1a5fb4;
 }
 
-/* ── 숫자 유틸 ── */
+/* ── 숫자/색상 유틸 ── */
 .num {
     font-variant-numeric: tabular-nums;
+}
+
+.crit {
+    color: #c43d4b;
+    font-weight: 600;
+}
+
+.green {
+    color: #2e8b57;
+    font-weight: 600;
 }

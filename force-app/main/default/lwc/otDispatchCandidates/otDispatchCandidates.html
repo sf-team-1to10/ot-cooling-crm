@@ -16,6 +16,9 @@
             <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
             <button class="subtab" data-goto="c__otDispatchBriefingWorkbench" onclick={handleSubtab}>출동 브리핑</button>
             <button class="subtab on">담당자 확정</button>
+            <button class="subtab" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
+            <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
+            <button class="subtab" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
             <button class="subtab">협업 로그</button>
         </div>
 
@@ -113,27 +116,5 @@
                 </lightning-card>
             </div>
         </div>
-
-        <!-- 확정 시 표준 Swarming Flow — Swarm 레코드와 Slack 채널을 함께 생성한다.
-             채널이 붙으면 T5_Swarm_Created_Invite_And_Summary 가 초대·요약을 발신. -->
-        <template lwc:if={showSwarmFlow}>
-            <div class="swarm-overlay" onclick={handleSwarmOverlayClick}>
-                <template lwc:if={swarmFlowLoading}>
-                    <div class="swarm-spinner">
-                        <lightning-spinner alternative-text="로딩 중" size="medium"
-                            variant="brand"></lightning-spinner>
-                    </div>
-                </template>
-
-                <div class={swarmCardClass} onclick={stopPropagation}
-                    role="dialog" aria-modal="true" aria-label="Slack 협업 채널 개설">
-                    <div class="slds-p-around_medium">
-                        <lightning-flow flow-api-name="swarming__Begin_Enhanced_Slack_Swarm"
-                            flow-input-variables={swarmFlowInputVariables}
-                            onstatuschange={handleSwarmStatusChange}></lightning-flow>
-                    </div>
-                </div>
-            </div>
-        </template>
     </div>
 </template>
