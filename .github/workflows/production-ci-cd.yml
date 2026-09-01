@@ -1,0 +1,120 @@
+name: Production 통합 CI/CD
+
+# 1. production 브랜치로 PR이 올라오면 '검증'을 수행합니다.
+# 2. production 브랜치에 코드가 병합(push)되면 '실제 배포'를 수행합니다.
+on:
+  pull_request:
+    branches: [production]
+    paths:
+      - "force-app/**"
+      - ".github/workflows/**"
+  push:
+    branches: [production]
+    paths:
+      - "force-app/**"
+      - ".github/workflows/**"
+
+jobs:
+  production-workflow:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+
+    steps:
+      # [공통] 코드 가져오기 및 환경 설정
+      - name: "코드 체크아웃"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Node.js 설정"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: "Salesforce CLI 설치"
+        run: |
+          npm install -g @salesforce/cli
+          sf --version
+
+      - name: "sfdx-git-delta 플러그인 설치"
+        run: |
+          echo y | sf plugins install sfdx-git-delta
+
+      # [공통] 운영 환경(Production Org) 인증
+      # GitHub Secrets에 SFDX_PRODUCTION_URL이 반드시 등록되어 있어야 합니다.
+      - name: "운영 환경 인증 정보 준비"
+        run: echo "${{ secrets.SFDX_PRODUCTION_URL }}" > ./SFDX_PRODUCTION_URL.txt
+
+      - name: "운영 환경(Production) 로그인"
+        run: sf org login sfdx-url --sfdx-url-file ./SFDX_PRODUCTION_URL.txt --alias production --set-default
+
+      # [공통] 변경된 파일만 추출 (Delta)
+      - name: "변경된 메타데이터 추출"
+        run: |
+          mkdir -p changed-sources
+          # PR일 때는 base 브랜치와 비교, push일 때는 이전 커밋과 비교합니다.
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            sf sgd source delta --to "HEAD" --from "origin/production" --output changed-sources/ --generate-delta --source force-app/
+          else
+            sf sgd source delta --to "HEAD" --from "HEAD^1" --output changed-sources/ --generate-delta --source force-app/
+          fi
+
+      # [검증/배포 선택 실행]
+      # PR 상태일 때는 --dry-run을 붙여서 '검증'만 수행합니다.
+      - name: "운영 환경 배포 검증 (PR 상태일 때)"
+        if: github.event_name == 'pull_request'
+        run: |
+          if [ -d "changed-sources/force-app" ] && [ "$(ls -A changed-sources/force-app 2>/dev/null)" ]; then
+            sf project deploy start \
+              --source-dir "changed-sources/force-app" \
+              --dry-run \
+              --test-level RunLocalTests \
+              --target-org production \
+              --wait 30 \
+              --json | tee deploy-result.json
+            TESTS_RAN=$(jq '.result.numberTestsTotal // 0' deploy-result.json)
+            echo "실행된 테스트 수: $TESTS_RAN"
+            if [ "$TESTS_RAN" -eq 0 ]; then
+              echo "::error::검증 실패 - 실행된 Apex 테스트가 0개입니다. 변경사항을 커버하는 테스트가 필요합니다."
+              exit 1
+            fi
+          else
+            echo "검증할 변경사항이 없습니다."
+          fi
+
+      # production 브랜치에 병합(push)되었을 때는 --dry-run 없이 '실제 배포'를 수행합니다.
+      - name: "운영 환경 실제 배포 (병합 완료 시)"
+        if: github.event_name == 'push'
+        run: |
+          if [ -d "changed-sources/force-app" ] && [ "$(ls -A changed-sources/force-app 2>/dev/null)" ]; then
+            sf project deploy start \
+              --source-dir "changed-sources/force-app" \
+              --test-level RunLocalTests \
+              --target-org production \
+              --wait 30 \
+              --json
+          else
+            echo "배포할 변경사항이 없습니다."
+          fi
+
+      # 삭제된 항목 처리 (PR 검증 및 실제 배포 공통)
+      - name: "삭제된 메타데이터 처리"
+        run: |
+          if [ -f "changed-sources/destructiveChanges/destructiveChanges.xml" ]; then
+            DRY_RUN_FLAG=""
+            if [ "${{ github.event_name }}" == "pull_request" ]; then
+              DRY_RUN_FLAG="--dry-run"
+            fi
+            sf project deploy start \
+              --metadata-dir "changed-sources/destructiveChanges" \
+              $DRY_RUN_FLAG \
+              --ignore-warnings \
+              --target-org production \
+              --wait 30 \
+              --json
+          else
+            echo "삭제할 항목이 없습니다."
+          fi

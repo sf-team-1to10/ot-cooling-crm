@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Slack 워크스페이스 설정</label>
+    <pluralLabel>Slack 워크스페이스 설정</pluralLabel>
+    <visibility>Public</visibility>
+    <description>T5-24 전문가 소집 Flow가 사용하는 Slack 워크스페이스/앱 ID를 하드코딩 대신 org별 레코드로 보관한다. slackJoinChannel·slackInviteUsersToChannel 액션의 ...ForToken 파라미터에 주입하여, org마다 자기 워크스페이스에 연결된 봇 토큰을 찾도록 한다. 각 org(T1SALES·T0INT)는 자기 워크스페이스 ID를 담은 Default 레코드를 가진다.</description>
+</CustomObject>

@@ -1,0 +1,80 @@
+<template>
+    <div class="slds-p-vertical_x-small">
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
+
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template lwc:if={evidence}>
+            <!-- ── Highlights 헤더 (브리핑과 동일 골격, prefix만 evidence) ── -->
+            <div class="evidence-hl">
+                <div class="evidence-hl-head">
+                    <span class="evidence-hl-icon">
+                        <lightning-icon icon-name="utility:date_input" size="small"
+                            variant="inverse"></lightning-icon>
+                    </span>
+                    <div class="evidence-hl-title">
+                        <p class="evidence-hl-eyebrow">Asset 이력 근거 · Case {caseNumberText}</p>
+                        <h1 class="evidence-hl-name">{assetName} 변경·시운전 원기록</h1>
+                    </div>
+                    <div class="evidence-hl-actions">
+                        <lightning-button label="Case로 돌아가기" variant="brand"
+                            onclick={handleBackToBriefing} class="slds-m-left_xx-small"></lightning-button>
+                    </div>
+                </div>
+                <dl class="evidence-hl-fields">
+                    <div class="evidence-hl-f">
+                        <dt>적용 Revision</dt>
+                        <dd>{revisionText}</dd>
+                    </div>
+                    <div class="evidence-hl-f">
+                        <dt>최초 실패값</dt>
+                        <dd class="num">{firstFailValue}</dd>
+                    </div>
+                    <div class="evidence-hl-f">
+                        <dt>재시험 합격값</dt>
+                        <dd class="num">{retestPassValue}</dd>
+                    </div>
+                    <div class="evidence-hl-f">
+                        <dt>원기록</dt>
+                        <dd class="num">{recordCount}건</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <div class="slds-m-top_small">
+                <lightning-card>
+                    <span slot="title" class="slds-text-heading_small">변경 요청부터 시운전 합격까지</span>
+                    <span slot="actions" class="slds-badge source-rule">원기록</span>
+                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+                        <template lwc:if={hasTimeline}>
+                            <div class="tl">
+                                <template for:each={timeline} for:item="node">
+                                    <div key={node.key} class={node.nodeClass}>
+                                        <div class="tl-dot"></div>
+                                        <div class="tl-when">{node.whenText}</div>
+                                        <div class="tl-what">{node.what}</div>
+                                        <div class="tl-detail">{node.detail}</div>
+                                        <template lwc:if={node.hasSrc}>
+                                            <div class="tl-src">↗ {node.source}</div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <p class="slds-text-body_small slds-text-color_weak">
+                                이 Asset에 연결된 원기록이 없습니다.
+                            </p>
+                        </template>
+                    </div>
+                </lightning-card>
+            </div>
+        </template>
+    </div>
+</template>

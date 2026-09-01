@@ -3,109 +3,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>actionNames</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>FeedItem.TextPost</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Case.LogACall</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>FeedItem.ContentPost</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>FeedItem.LinkPost</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Edit</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Delete</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>ChangeOwnerOne</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>ChangeRecordType</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>SendSurveyInvitation</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>MassAccept</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Clone</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Share</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>RecordShareHierarchy</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>CaseHierarchy</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>PrintableView</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>MergeCase</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>StartOutboundConversation</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>CreateGroupAction</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>AddToActionableList</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>SelectCoverage</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>AssignRecordLabel</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>OmniChannelRouteWork</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>SearchInventory</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>ResolveCase</value>
-                        </valueListItems>
-                    </valueList>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>collapsed</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>enableActionsConfiguration</name>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>enableActionsInNative</name>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>hideChatterActions</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>hideSlackAction</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>numVisibleActions</name>
-                    <value>3</value>
-                </componentInstanceProperties>
-                <componentName>force:highlightsPanel</componentName>
-                <identifier>force_highlightsPanel</identifier>
+                <componentName>c:t5CaseHeader</componentName>
+                <identifier>c_t5CaseHeader_header</identifier>
             </componentInstance>
         </itemInstances>
         <name>header</name>
@@ -257,33 +156,11 @@
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Dispatch_Briefing__c</fieldItem>
-                <identifier>RecordDispatch_Briefing_cField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-a4dacf18-9c66-4509-b0b5-5f4e49890340</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-a4dacf18-9c66-4509-b0b5-5f4e49890340</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_column</identifier>
+                <componentName>c:t5CaseIntakePanel</componentName>
+                <identifier>c_t5CaseIntakePanel</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-38e865d3-9d28-484d-9114-bc7680864043</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -300,24 +177,6 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>columns</name>
-                    <value>Facet-38e865d3-9d28-484d-9114-bc7680864043</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>horizontalAlignment</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
-                    <value>출동 브리핑</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSection2</identifier>
             </componentInstance>
         </itemInstances>
         <name>detailTabContent</name>
@@ -360,26 +219,6 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>c:otRecordBanner</componentName>
-                <identifier>c_otRecordBanner_case</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>label</name>
-                    <value>케이스 상태</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>variant</name>
-                    <value>info</value>
-                </componentInstanceProperties>
-                <componentName>c:otStatusBadge</componentName>
-                <identifier>c_otStatusBadge_case</identifier>
-            </componentInstance>
-        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>

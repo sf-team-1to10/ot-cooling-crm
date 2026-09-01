@@ -1,0 +1,205 @@
+<template>
+    <div class="slds-p-vertical_x-small">
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
+
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template lwc:if={briefing}>
+            <!-- ── Highlights 헤더 ── -->
+            <div class="briefing-hl">
+                <div class="briefing-hl-head">
+                    <span class="briefing-hl-icon">
+                        <lightning-icon icon-name="utility:trending" size="small"
+                            variant="inverse"></lightning-icon>
+                    </span>
+                    <div class="briefing-hl-title">
+                        <p class="briefing-hl-eyebrow">출동 브리핑 · Case {caseNumber}</p>
+                        <h1 class="briefing-hl-name">{headerTitle}</h1>
+                    </div>
+                    <div class="briefing-hl-actions">
+                        <span class={priorityBadgeClass}>{priorityBadgeText}</span>
+                        <lightning-button label="2022년 원기록 확인" onclick={handleEvidence}
+                            class="slds-m-left_xx-small"></lightning-button>
+                        <lightning-button label="Slack 인계" onclick={handleSlack}
+                            class="slds-m-left_xx-small"></lightning-button>
+                        <template lwc:if={isApproved}>
+                            <button type="button" class="approve-done slds-m-left_xx-small" disabled>
+                                {approveButtonLabel}
+                            </button>
+                        </template>
+                        <template lwc:else>
+                            <lightning-button label={approveButtonLabel} variant="brand"
+                                onclick={handleApprove}
+                                class="slds-m-left_xx-small"></lightning-button>
+                        </template>
+                    </div>
+                </div>
+                <dl class="briefing-hl-fields">
+                    <div class="briefing-hl-f">
+                        <dt>SLA 잔여</dt>
+                        <dd class="num">{slaRemaining}</dd>
+                    </div>
+                    <div class="briefing-hl-f">
+                        <dt>산정 시각</dt>
+                        <dd class="num">{calculatedAtText}</dd>
+                    </div>
+                    <div class="briefing-hl-f">
+                        <dt>비교 대상</dt>
+                        <dd>Hall A CDU {rationale.comparedCount}대</dd>
+                    </div>
+                    <template lwc:if={isApproved}>
+                        <div class="briefing-hl-f">
+                            <dt>승인</dt>
+                            <dd>{approvedByText}</dd>
+                        </div>
+                    </template>
+                </dl>
+            </div>
+
+            <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+                <!-- ── 중앙: Priority 근거 + 12대 비교 ── -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                    <!-- Priority 산정 근거 -->
+                    <lightning-card>
+                        <span slot="title" class="slds-text-heading_small">Priority 산정 근거</span>
+                        <span slot="actions" class="slds-badge source-rule">규칙 산정</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered rationale-table">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">산정 인자</div></th>
+                                        <th scope="col"><div class="slds-truncate">{rationale.maxDriftAssetName} 값</div></th>
+                                        <th scope="col"><div class="slds-truncate">기여</div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={rationaleFactors} for:item="f">
+                                        <tr key={f.key} class="slds-hint-parent">
+                                            <th scope="row"><div class="slds-truncate">{f.label}</div></th>
+                                            <td><div>{f.valueText}</div></td>
+                                            <td><span class={f.contributionClass}>{f.contributionText}</span></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                            <div class="rationale-callout slds-box slds-box_x-small slds-m-top_small">
+                                <p class="slds-text-body_small">
+                                    <strong>Priority {priority}</strong> — 유량 하락 폭이 12대 중 최대이고 동일 위치 과거 실패 이력이 있어
+                                    상향했습니다. 전체 냉각 상실은 아니므로 <strong>Critical은 아닙니다.</strong>
+                                </p>
+                                <div class="slds-m-top_xx-small">
+                                    <span class="slds-badge source-rule">규칙 산정</span>
+                                    <span class="slds-badge source-agent slds-m-left_xx-small">Agent 설명</span>
+                                    <span class="slds-badge slds-m-left_xx-small">담당자 승인 대기</span>
+                                </div>
+                            </div>
+                        </div>
+                    </lightning-card>
+
+                    <!-- Hall A CDU 12대 비교 -->
+                    <lightning-card class="slds-m-top_small">
+                        <span slot="title" class="slds-text-heading_small">Hall A CDU 12대 비교</span>
+                        <span slot="actions" class="slds-badge source-agent">Agent 제안</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <template lwc:if={hasComparisons}>
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th scope="col"><div class="slds-truncate">장비</div></th>
+                                            <th scope="col"><div class="slds-truncate">Revision</div></th>
+                                            <th scope="col"><div class="slds-truncate">현재 유량</div></th>
+                                            <th scope="col"><div class="slds-truncate">기준선 대비</div></th>
+                                            <th scope="col"><div class="slds-truncate">추세</div></th>
+                                            <th scope="col"><div class="slds-truncate">과거 실패</div></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={comparisonRows} for:item="row">
+                                            <tr key={row.key} class={row.rowClass}>
+                                                <th scope="row">
+                                                    <div class="slds-truncate">
+                                                        {row.assetName}
+                                                        <template lwc:if={row.isTarget}>
+                                                            <lightning-icon icon-name="utility:pinned" size="xx-small"
+                                                                class="slds-m-left_xx-small"></lightning-icon>
+                                                        </template>
+                                                    </div>
+                                                </th>
+                                                <td><div class="slds-truncate">{row.revisionText}</div></td>
+                                                <td><div class="slds-truncate">{row.measuredText}</div></td>
+                                                <td><div class="slds-truncate">{row.driftText}</div></td>
+                                                <td>
+                                                    <span class={row.trendClass}>{row.trendFlag}</span>
+                                                </td>
+                                                <td><div class="slds-truncate">{row.pastFailureText}</div></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+                            <template lwc:else>
+                                <p class="slds-text-body_small slds-text-color_weak">비교할 측정 데이터가 없습니다.</p>
+                            </template>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <!-- ── 우측 레일: 우선 점검 후보 + 유사사례 ── -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <lightning-card>
+                        <span slot="title" class="slds-text-heading_small">우선 점검 후보</span>
+                        <span slot="actions" class="slds-badge source-agent">Agent</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <template lwc:if={briefingBody}>
+                                <lightning-formatted-rich-text value={briefingBody}></lightning-formatted-rich-text>
+                            </template>
+                            <template lwc:else>
+                                <p class="slds-text-body_small slds-text-color_weak">브리핑 본문이 아직 생성되지 않았습니다.</p>
+                            </template>
+                        </div>
+                    </lightning-card>
+
+                    <lightning-card class="slds-m-top_small">
+                        <span slot="title" class="slds-text-heading_small">전사 유사사례</span>
+                        <span slot="actions" class="slds-badge source-agent">Agent</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <template lwc:if={similarCasesSummary}>
+                                <lightning-formatted-rich-text value={similarCasesSummary}></lightning-formatted-rich-text>
+                            </template>
+                            <template lwc:else>
+                                <p class="slds-text-body_small slds-text-color_weak">유사사례 요약이 아직 없습니다.</p>
+                            </template>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+        </template>
+
+        <!-- Slack 전문가 소집 Flow 모달 — 회색 backdrop 없이, 밖 클릭 시 닫힘 -->
+        <template lwc:if={showSwarmFlow}>
+            <div class="swarm-overlay" onclick={handleSwarmOverlayClick}>
+                <template lwc:if={swarmFlowLoading}>
+                    <div class="swarm-spinner">
+                        <lightning-spinner alternative-text="로딩 중" size="medium"
+                            variant="brand"></lightning-spinner>
+                    </div>
+                </template>
+
+                <div class={swarmCardClass} onclick={stopPropagation}
+                    role="dialog" aria-modal="true" aria-label="Slack 전문가 소집">
+                    <div class="slds-p-around_medium">
+                        <lightning-flow flow-api-name="T5_Case_Expert_Finder_Swarm"
+                            flow-input-variables={swarmFlowInputVariables}
+                            onstatuschange={handleSwarmStatusChange}></lightning-flow>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

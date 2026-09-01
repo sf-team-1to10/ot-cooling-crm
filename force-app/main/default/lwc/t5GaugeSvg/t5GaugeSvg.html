@@ -1,0 +1,30 @@
+<template>
+    <div class="hmi-tile">
+        <div class="hmi-head">
+            <span class={statusDotClass}></span>
+            <span class="hmi-label">{label}</span>
+            <span class={statusPillClass}>{statusText}</span>
+        </div>
+
+        <div class="dial-wrap">
+            <div class="dial-track"></div>
+            <div class="dial-needle" style={needleStyle}></div>
+            <div class="dial-cap"></div>
+            <div class="dial-readout">
+                <span class="dial-value">{displayValue}</span>
+                <span class="dial-unit">{unit}</span>
+            </div>
+        </div>
+
+        <template lwc:if={hasSparkline}>
+            <svg class="sparkline-svg" viewBox="0 0 80 24" preserveAspectRatio="none">
+                <polyline points={sparklinePoints}></polyline>
+            </svg>
+            <div class="observed-range">{observedRangeText}</div>
+        </template>
+
+        <template lwc:if={hasDelta}>
+            <div class={deltaClass}>{deltaText}</div>
+        </template>
+    </div>
+</template>

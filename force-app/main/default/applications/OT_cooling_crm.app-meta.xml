@@ -35,8 +35,12 @@
     <tabs>standard-WorkOrder</tabs>
     <tabs>standard-Case</tabs>
     <tabs>standard-Problem</tabs>
+    <tabs>Dispatch_Briefing_Workbench</tabs>
     <uiType>Lightning</uiType>
     <workspaceConfig>
+        <mappings>
+            <tab>Dispatch_Briefing_Workbench</tab>
+        </mappings>
         <mappings>
             <tab>Customer_Commitment__c</tab>
         </mappings>

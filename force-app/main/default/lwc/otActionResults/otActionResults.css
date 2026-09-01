@@ -1,0 +1,152 @@
+/* ── Highlights 헤더 — 기존 화면과 동일 골격(prefix action, 완료=초록 아이콘) ── */
+.action-hl {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+}
+
+.action-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.action-hl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    background-color: #2e844a;
+    flex: 0 0 auto;
+}
+
+.action-hl-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.action-hl-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.action-hl-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.action-hl-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.action-hl-f dt {
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.action-hl-f dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.action-hl-f dd.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── 배지 ── */
+.source-human {
+    background-color: #747474;
+    color: #ffffff;
+}
+
+.source-agent {
+    background-color: #0877d1;
+    color: #ffffff;
+}
+
+.scope-corrective {
+    background-color: #ba0517;
+    color: #ffffff;
+}
+
+.scope-preventive {
+    background-color: #dd7a01;
+    color: #ffffff;
+}
+
+.scope-new {
+    background-color: #2e844a;
+    color: #ffffff;
+}
+
+/* ── 신규사례 Article 카드 ── */
+.article-card {
+    --slds-c-card-color-border: #0877d1;
+}
+
+.article-detect {
+    line-height: 1.6;
+    color: #444444;
+}
+
+.article-draft {
+    background-color: #f3f9fd;
+    border-radius: 0.25rem;
+}
+
+.mini-label {
+    margin: 0 0 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    color: #5c5c5c;
+    text-transform: uppercase;
+}
+
+.article-title {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.article-kv-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    padding: 0.1875rem 0;
+}
+
+.article-kv-row dt {
+    color: #5c5c5c;
+    flex: 0 0 auto;
+}
+
+.article-kv-row dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 600;
+}
+
+.article-kv-row dd.num {
+    font-variant-numeric: tabular-nums;
+}
+
+.article-note {
+    font-size: 0.6875rem;
+    color: #747474;
+    line-height: 1.5;
+}

@@ -1,0 +1,161 @@
+/* ── Highlights 헤더 — otDispatchBriefingWorkbench와 동일 값(prefix만 evidence) ── */
+.evidence-hl {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+}
+
+.evidence-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.evidence-hl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    background-color: #16b8c8;
+    flex: 0 0 auto;
+}
+
+.evidence-hl-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.evidence-hl-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.evidence-hl-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.evidence-hl-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+}
+
+.evidence-hl-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.evidence-hl-f dt {
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.evidence-hl-f dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.evidence-hl-f dd.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 2022년 이력 배지 */
+.evidence-year-badge {
+    background-color: #16b8c8;
+    color: #ffffff;
+}
+
+/* 출처 배지 — 브리핑과 색 일치 */
+.source-rule {
+    background-color: #16b8c8;
+    color: #ffffff;
+}
+
+/* ── 타임라인 — 프로토타입 .tl 골격 이식 ── */
+.tl {
+    position: relative;
+    padding-left: 1.625rem;
+}
+
+.tl::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0.375rem;
+    bottom: 0.375rem;
+    width: 2px;
+    background-color: #e5e5e5;
+}
+
+.tl-node {
+    position: relative;
+    padding: 0 0 1rem;
+}
+
+.tl-node:last-child {
+    padding-bottom: 0;
+}
+
+.tl-dot {
+    position: absolute;
+    left: -1.375rem;
+    top: 0.1875rem;
+    width: 0.6875rem;
+    height: 0.6875rem;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 2.5px solid #16b8c8;
+}
+
+.tl-node.hit .tl-dot {
+    border-color: #ba0517;
+    background-color: #ba0517;
+}
+
+.tl-node.ok .tl-dot {
+    border-color: #2e844a;
+    background-color: #2e844a;
+}
+
+.tl-when {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 0.6875rem;
+    color: #747474;
+    letter-spacing: 0.2px;
+}
+
+.tl-what {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin: 0.0625rem 0 0.1875rem;
+}
+
+.tl-detail {
+    font-size: 0.75rem;
+    color: #444444;
+    line-height: 1.55;
+}
+
+.tl-src {
+    font-size: 0.6875rem;
+    color: #0877d1;
+    margin-top: 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}

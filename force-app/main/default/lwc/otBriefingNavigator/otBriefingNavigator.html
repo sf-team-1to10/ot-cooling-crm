@@ -1,0 +1,16 @@
+<template>
+    <div class="slds-box slds-theme_shade slds-text-align_center">
+        <p class="slds-text-heading_small slds-m-bottom_x-small">
+            출동 브리핑이 생성되었습니다
+        </p>
+        <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">
+            <template lwc:if={caseNumber}>Case {caseNumber} · </template>A-07과 나머지 11대 비교·Priority 근거를 확인하세요.
+        </p>
+        <lightning-button
+            variant="brand"
+            label="출동 브리핑 열기"
+            icon-name="utility:new_window"
+            onclick={handleOpen}>
+        </lightning-button>
+    </div>
+</template>
