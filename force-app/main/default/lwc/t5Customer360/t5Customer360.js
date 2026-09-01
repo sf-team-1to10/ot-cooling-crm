@@ -1,6 +1,14 @@
 import { LightningElement, api, wire } from 'lwc';
 import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
-import { EnclosingTabId, setTabLabel, setTabIcon } from 'lightning/platformWorkspaceApi';
+import {
+    EnclosingTabId,
+    setTabLabel,
+    setTabIcon,
+    IsConsoleNavigation,
+    getFocusedTabInfo,
+    openSubtab,
+    focusTab
+} from 'lightning/platformWorkspaceApi';
 
 export default class T5Customer360 extends NavigationMixin(LightningElement) {
     @api recordId; // Record page에 직접 놓일 때 플랫폼 주입
@@ -73,11 +81,22 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         this.activeTab = event.currentTarget.dataset.c360;
     }
 
-    // "Case로 돌아가기" — 현재 Case 레코드 페이지로 이동
-    handleSubtab(event) {
+    @wire(IsConsoleNavigation) isConsoleNavigation;
+
+    get isConsole() {
+        return this.isConsoleNavigation?.data === true;
+    }
+
+    // 서브탭 클릭 → 다른 장면으로 이동.
+    // Case는 레코드 페이지로, 나머지는 UrlAddressable 컴포넌트를 콘솔 서브탭(전체폭)으로 연다.
+    async handleSubtab(event) {
         const target = event.currentTarget.dataset.goto;
         const rid = this.effectiveRecordId;
-        if (target === 'case' && rid) {
+        if (!target || !rid) {
+            return;
+        }
+
+        if (target === 'case') {
             this[NavigationMixin.Navigate]({
                 type: 'standard__recordPage',
                 attributes: {
@@ -86,6 +105,25 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
                     actionName: 'view'
                 }
             });
+            return;
+        }
+
+        const pageReference = {
+            type: 'standard__component',
+            attributes: { componentName: target },
+            state: { c__recordId: rid }
+        };
+
+        if (this.isConsole) {
+            const focused = await getFocusedTabInfo();
+            const subtabId = await openSubtab({
+                parentTabId: focused.parentTabId || focused.tabId,
+                pageReference,
+                focus: true
+            });
+            await focusTab(subtabId);
+        } else {
+            this[NavigationMixin.Navigate](pageReference);
         }
     }
 }
