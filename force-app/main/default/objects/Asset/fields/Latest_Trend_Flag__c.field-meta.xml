@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Latest_Trend_Flag__c</fullName>
-    <label>최신 추세 플래그</label>
-    <description>WorkOrderLineItem.Trend_Flag__c의 최신값을 이 Asset으로 복사한 요약 필드(T5-07). 고객 포털은 WorkOrderLineItem을 직접 조회할 권한을 라이선스 제약으로 못 받아서(2026-08-30 확인 — Guest든 로그인 포털 유저든 org 전체에서 WorkOrderLineItem에 명시적 ObjectPermissions를 못 줌), 대신 이 요약 필드를 통해 최신 상태를 본다. T5_Sync_Asset_Trend_Summary Flow(WorkOrderLineItem 저장 후 트리거)가 자동 갱신하며, 사람이 직접 입력하지 않는다.</description>
-    <inlineHelpText>최근 점검의 추세 판정 결과입니다. 자동 계산되며 직접 입력하지 않습니다.</inlineHelpText>
+    <description>이 Asset(호기)의 최신 운전 추세 상태 플래그(정상/주의/이상). 고객 포털이 자산 상태를 판정하는 근거 필드다. 실제 구현에서는 BMS/IoT·CMMS 추세 분석 결과가 채우며, 현재 데모 단계에서는 대표값을 시딩한다.</description>
     <externalId>false</externalId>
+    <inlineHelpText>최신 운전 추세 상태 문자열. 정상 범위면 정상, 관찰 필요면 주의, 기준 이탈이면 이상.</inlineHelpText>
+    <label>최신 추세 플래그</label>
     <length>20</length>
     <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <type>Text</type>
     <unique>false</unique>

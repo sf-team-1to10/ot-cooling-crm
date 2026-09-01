@@ -9,6 +9,6 @@
     </filters>
     <label>활성 자산</label>
     <sharedTo>
-        <allInternalUsers/>
+        <allInternalUsers></allInternalUsers>
     </sharedTo>
 </ListView>

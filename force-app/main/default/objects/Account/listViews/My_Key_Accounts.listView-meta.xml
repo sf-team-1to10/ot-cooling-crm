@@ -4,6 +4,6 @@
     <filterScope>Mine</filterScope>
     <label>내 주요 고객</label>
     <sharedTo>
-        <allInternalUsers/>
+        <allInternalUsers></allInternalUsers>
     </sharedTo>
 </ListView>

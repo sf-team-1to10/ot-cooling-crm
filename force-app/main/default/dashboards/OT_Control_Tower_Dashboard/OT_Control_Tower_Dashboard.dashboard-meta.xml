@@ -4,6 +4,7 @@
     <backgroundFadeDirection>Diagonal</backgroundFadeDirection>
     <backgroundStartColor>#F8F9FA</backgroundStartColor>
     <dashboardType>LoggedInUser</dashboardType>
+    <description>관리자 컨트롤 타워 — 케이스·변경요청·워크오더 핵심 현황 4종</description>
     <isGridLayout>false</isGridLayout>
     <leftSection>
         <columnSize>Medium</columnSize>
@@ -12,30 +13,41 @@
             <chartAxisRange>Auto</chartAxisRange>
             <componentType>Bar</componentType>
             <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
+            <enableHover>false</enableHover>
+            <expandOthers>false</expandOthers>
             <groupingSortProperties/>
             <report>OT_Control_Tower/Open_Cases_By_Priority</report>
             <showPercentage>false</showPercentage>
-            <showRange>false</showRange>
-            <showTotal>true</showTotal>
+            <showPicturesOnCharts>false</showPicturesOnCharts>
             <showValues>true</showValues>
             <sortBy>RowValueDescending</sortBy>
+            <sortLegendValues>false</sortLegendValues>
             <title>우선순위별 미결 케이스</title>
+            <useReportChart>false</useReportChart>
         </components>
         <components>
             <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
             <chartAxisRange>Auto</chartAxisRange>
             <componentType>Bar</componentType>
             <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
+            <enableHover>false</enableHover>
+            <expandOthers>false</expandOthers>
             <groupingSortProperties/>
             <report>OT_Control_Tower/Cases_By_Asset</report>
             <showPercentage>false</showPercentage>
-            <showRange>false</showRange>
-            <showTotal>true</showTotal>
+            <showPicturesOnCharts>false</showPicturesOnCharts>
             <showValues>true</showValues>
             <sortBy>RowValueDescending</sortBy>
+            <sortLegendValues>false</sortLegendValues>
             <title>케이스 발생 현황 (담당자별)</title>
+            <useReportChart>false</useReportChart>
         </components>
     </leftSection>
+    <owner>trailsignup.8617b18a6871a9@salesforce.com</owner>
     <rightSection>
         <columnSize>Medium</columnSize>
         <components>
@@ -43,31 +55,40 @@
             <chartAxisRange>Auto</chartAxisRange>
             <componentType>Donut</componentType>
             <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
+            <enableHover>false</enableHover>
+            <expandOthers>false</expandOthers>
             <groupingSortProperties/>
             <report>OT_Control_Tower/Change_Request_By_Status</report>
             <showPercentage>true</showPercentage>
-            <showRange>false</showRange>
             <showTotal>true</showTotal>
             <showValues>true</showValues>
             <sortBy>RowValueDescending</sortBy>
+            <sortLegendValues>false</sortLegendValues>
             <title>변경요청 상태별 현황</title>
+            <useReportChart>false</useReportChart>
         </components>
         <components>
             <autoselectColumnsFromReport>true</autoselectColumnsFromReport>
             <chartAxisRange>Auto</chartAxisRange>
             <componentType>Line</componentType>
             <displayUnits>Auto</displayUnits>
+            <drillEnabled>false</drillEnabled>
+            <drillToDetailEnabled>false</drillToDetailEnabled>
+            <enableHover>false</enableHover>
+            <expandOthers>false</expandOthers>
             <groupingSortProperties/>
             <report>OT_Control_Tower/WorkOrder_Monthly_Completion</report>
             <showPercentage>false</showPercentage>
-            <showRange>false</showRange>
-            <showTotal>true</showTotal>
             <showValues>true</showValues>
             <sortBy>RowValueDescending</sortBy>
+            <sortLegendValues>false</sortLegendValues>
             <title>워크오더 월별 완료 추이</title>
+            <useReportChart>false</useReportChart>
         </components>
     </rightSection>
-    <description>관리자 컨트롤 타워 — 케이스·변경요청·워크오더 핵심 현황 4종</description>
+    <runningUser>trailsignup.8617b18a6871a9@salesforce.com</runningUser>
     <textColor>#0B1F33</textColor>
     <title>OT전자 관리자 Control Tower</title>
     <titleColor>#0B1F33</titleColor>

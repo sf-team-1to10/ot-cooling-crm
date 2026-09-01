@@ -4,12 +4,12 @@
     <active>true</active>
     <description>증설(Type=Existing Business) 사업기회는 내부 추진 승인(Internal_Approval_Status__c=승인)을 받기 전에는 SELL 단계(Proposal/Quote 이상)로 넘어갈 수 없다.</description>
     <errorConditionFormula>AND(
-    ISPICKVAL(Type, "Existing Business"),
-    NOT(ISPICKVAL(Internal_Approval_Status__c, "승인")),
+    ISPICKVAL(Type, &quot;Existing Business&quot;),
+    NOT(ISPICKVAL(Internal_Approval_Status__c, &quot;승인&quot;)),
     OR(
-        ISPICKVAL(StageName, "Proposal/Quote"),
-        ISPICKVAL(StageName, "Negotiation"),
-        ISPICKVAL(StageName, "Closed Won")
+        ISPICKVAL(StageName, &quot;Proposal/Quote&quot;),
+        ISPICKVAL(StageName, &quot;Negotiation&quot;),
+        ISPICKVAL(StageName, &quot;Closed Won&quot;)
     )
 )</errorConditionFormula>
     <errorDisplayField>StageName</errorDisplayField>

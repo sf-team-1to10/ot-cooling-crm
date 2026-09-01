@@ -6,7 +6,7 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>none</value>
+                    <value>required</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.LineItemNumber</fieldItem>
                 <identifier>RecordLineItemNumberPrimaryField0</identifier>
@@ -40,7 +40,7 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>none</value>
+                    <value>required</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.WorkOrderId</fieldItem>
                 <identifier>RecordWorkOrderIdSecondaryField2</identifier>
@@ -107,7 +107,7 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>none</value>
+                    <value>required</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.LineItemNumber</fieldItem>
                 <identifier>RecordLineItemNumberBasicC1Field0</identifier>
@@ -117,7 +117,7 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>none</value>
+                    <value>required</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.WorkOrderId</fieldItem>
                 <identifier>RecordWorkOrderIdBasicC1Field1</identifier>

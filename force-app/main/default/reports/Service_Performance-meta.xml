@@ -3,7 +3,7 @@
     <folderShares>
         <accessLevel>Manage</accessLevel>
         <sharedTo>AllInternalUsers</sharedTo>
-        <sharedToType>Group</sharedToType>
+        <sharedToType>Organization</sharedToType>
     </folderShares>
     <name>서비스 성과 지표</name>
 </ReportFolder>
