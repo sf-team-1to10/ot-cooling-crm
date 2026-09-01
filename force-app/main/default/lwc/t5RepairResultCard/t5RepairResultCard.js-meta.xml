@@ -11,6 +11,17 @@
         <target>lightning__ECSFSApp</target>
     </targets>
     <targetConfigs>
+        <targetConfig targets="lightning__ECSFSApp">
+            <property name="workOrderNumber" type="String" label="WorkOrder 번호"/>
+            <property name="measurePoint" type="String" label="측정 위치"/>
+            <property name="initialTorque" type="Integer" label="최초 체결 N·m"/>
+            <property name="retorqueTorque" type="Integer" label="재조임 후 N·m"/>
+            <property name="flowBefore" type="Integer" label="조치 전 L/min"/>
+            <property name="flowAfter" type="Integer" label="조치 후 L/min"/>
+            <property name="isPending" type="Boolean" label="진행 중 여부"/>
+            <property name="recurrenceTitle" type="String" label="재발 근거 제목"/>
+            <property name="recurrenceNote" type="String" label="재발 근거 설명"/>
+        </targetConfig>
         <targetConfig targets="lightning__FlowScreen">
             <property name="workOrderNumber" type="String" label="WorkOrder 번호" role="inputOnly"/>
             <property name="measurePoint" type="String" label="측정 위치" role="inputOnly"/>

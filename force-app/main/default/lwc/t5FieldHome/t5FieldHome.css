@@ -1,0 +1,127 @@
+/* 목업 화면1 톤. FSM 브랜딩(#1B365D)과 맞춘다. */
+.home {
+    background: #f4f6fa;
+    min-height: 100%;
+}
+
+.hero {
+    background: #1b365d;
+    color: #ffffff;
+    padding: 1.25rem 1rem 1.5rem;
+}
+
+.hero__brand {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    opacity: 0.85;
+    margin: 0 0 0.75rem;
+}
+
+.hero__greeting {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+}
+
+.hero__subtitle {
+    font-size: 0.8125rem;
+    opacity: 0.8;
+    margin: 0 0 1rem;
+}
+
+.summary {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+}
+
+.summary__label {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    margin: 0 0 0.25rem;
+}
+
+.summary__count {
+    font-size: 1.375rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.section {
+    padding: 1rem;
+}
+
+.section__title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #16325c;
+    margin: 0 0 0.75rem;
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.card {
+    background: #ffffff;
+    border-left: 3px solid #1b365d;
+    border-radius: 0.5rem;
+    padding: 0.75rem 0.875rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.card__number {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #16325c;
+}
+
+.badge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    white-space: nowrap;
+}
+
+.badge_planned {
+    background: #e3edfb;
+    color: #1b365d;
+}
+
+.badge_done {
+    background: #ddf1e3;
+    color: #2e844a;
+}
+
+.card__time {
+    font-size: 0.8125rem;
+    color: #5c6b82;
+    margin: 0.25rem 0 0.125rem;
+}
+
+.card__subject {
+    font-size: 0.8125rem;
+    color: #3e3e3c;
+    margin: 0;
+}
+
+.empty {
+    font-size: 0.8125rem;
+    color: #5c6b82;
+    margin: 0;
+}

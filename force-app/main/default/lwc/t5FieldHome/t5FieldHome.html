@@ -1,0 +1,37 @@
+<template>
+    <div class="home">
+        <header class="hero">
+            <p class="hero__brand">{brandLabel}</p>
+            <h1 class="hero__greeting">{greetingLine}</h1>
+            <p class="hero__subtitle">{subtitle}</p>
+
+            <div class="summary">
+                <p class="summary__label">예정된 서비스 어포인트먼트</p>
+                <p class="summary__count">{countLabel}</p>
+            </div>
+        </header>
+
+        <section class="section">
+            <h2 class="section__title">오늘의 일정</h2>
+
+            <template lwc:if={hasAppointments}>
+                <ul class="list">
+                    <template for:each={appointments} for:item="appt">
+                        <li key={appt.id} class="card">
+                            <div class="card__row">
+                                <span class="card__number">{appt.number}</span>
+                                <span class={appt.badgeClass}>{appt.statusLabel}</span>
+                            </div>
+                            <p class="card__time">{appt.timeRange}</p>
+                            <p class="card__subject">{appt.subject}</p>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+
+            <template lwc:else>
+                <p class="empty">오늘 예정된 일정이 없습니다.</p>
+            </template>
+        </section>
+    </div>
+</template>
