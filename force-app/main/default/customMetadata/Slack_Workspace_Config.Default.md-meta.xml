@@ -3,11 +3,11 @@
     <label>Default</label>
     <protected>false</protected>
     <values>
-        <field>Workspace_Id__c</field>
-        <value xsi:type="xsd:string">T0BH9PW51CZ</value>
-    </values>
-    <values>
         <field>App_Id__c</field>
         <value xsi:type="xsd:string">A01RDL2NJAH</value>
+    </values>
+    <values>
+        <field>Workspace_Id__c</field>
+        <value xsi:type="xsd:string">T0BH9PW51CZ</value>
     </values>
 </CustomMetadata>

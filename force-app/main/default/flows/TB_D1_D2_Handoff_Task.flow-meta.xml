@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <description>Technical Baseline Handoff_Status__c가 READY로 전환될 때 강시공(레코드 소유자)에게 인수 확인 Task를 생성한다.</description>
     <interviewLabel>TB_D1_D2_Handoff_Task {!$Flow.CurrentDateTime}</interviewLabel>
     <label>TB D1→D2 Handoff Task 생성</label>
@@ -23,6 +24,30 @@
         <locationX>176</locationX>
         <locationY>167</locationY>
         <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>$Record.Delivery_Date__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
             <field>Subject</field>
             <value>
                 <stringValue>D1→D2 Handoff 인수 확인 — Baseline 검토 후 ACCEPTED 처리 요청</stringValue>
@@ -34,32 +59,7 @@
                 <elementReference>$Record.Id</elementReference>
             </value>
         </inputAssignments>
-        <inputAssignments>
-            <field>OwnerId</field>
-            <value>
-                <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value>
-                <elementReference>$Record.Delivery_Date__c</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Status</field>
-            <value>
-                <stringValue>Not Started</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Priority</field>
-            <value>
-                <stringValue>High</stringValue>
-            </value>
-        </inputAssignments>
         <object>Task</object>
-        <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
     <start>
         <locationX>50</locationX>

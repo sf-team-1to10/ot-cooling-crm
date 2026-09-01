@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workflow xmlns="http://soap.sforce.com/2006/04/metadata">
     <fieldUpdates>
-        <fullName>Quote_Status_In_Review</fullName>
+        <fullName>Quote_Status_Approved</fullName>
         <field>Status</field>
-        <literalValue>In Review</literalValue>
-        <name>견적 상태 검토중</name>
+        <literalValue>Approved</literalValue>
+        <name>견적 상태 승인됨</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Literal</operation>
         <protected>false</protected>
         <reevaluateOnChange>false</reevaluateOnChange>
     </fieldUpdates>
     <fieldUpdates>
-        <fullName>Quote_Status_Approved</fullName>
+        <fullName>Quote_Status_In_Review</fullName>
         <field>Status</field>
-        <literalValue>Approved</literalValue>
-        <name>견적 상태 승인됨</name>
+        <literalValue>In Review</literalValue>
+        <name>견적 상태 검토중</name>
         <notifyAssignee>false</notifyAssignee>
         <operation>Literal</operation>
         <protected>false</protected>

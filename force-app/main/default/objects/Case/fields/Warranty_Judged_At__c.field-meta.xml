@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Warranty_Judged_At__c</fullName>
-    <label>보증 판정 시각</label>
     <description>보증 판정이 확정된 시각 스냅샷. 읽기전용으로 고정해 언제 판정됐는지 감사할 수 있게 한다. 수식이 아닌 실필드로 판정 시점에 스탬프한다.</description>
     <inlineHelpText>보증 판정이 이루어진 시각입니다. 이후 변경되지 않습니다.</inlineHelpText>
+    <label>보증 판정 시각</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

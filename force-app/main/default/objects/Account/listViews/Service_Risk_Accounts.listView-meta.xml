@@ -4,6 +4,6 @@
     <filterScope>Everything</filterScope>
     <label>서비스 위험 고객</label>
     <sharedTo>
-        <allInternalUsers/>
+        <allInternalUsers></allInternalUsers>
     </sharedTo>
 </ListView>

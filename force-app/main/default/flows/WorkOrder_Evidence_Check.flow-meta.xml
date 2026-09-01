@@ -1,2 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Flow xmlns="http://soap.sforce.com/2006/04/metadata"><apiVersion>65</apiVersion><assignments><locationY>240</locationY><locationX>176</locationX><name>Set_Has_Evidence</name><description>Assigns the evidence-exists formula result to the WorkOrder's own Has_Evidence__c field (Before Save fast field update pattern)</description><label>Set Has Evidence</label><assignmentItems><assignToReference>$Record.Has_Evidence__c</assignToReference><operator>Assign</operator><value><elementReference>Evidence_Exists_Formula</elementReference></value></assignmentItems></assignments><formulas><name>Evidence_Exists_Formula</name><dataType>Boolean</dataType><expression>NOT(ISBLANK({!Get_First_Evidence_Link.Id}))</expression></formulas><interviewLabel>WorkOrder Evidence Check {!$Flow.CurrentDateTime}</interviewLabel><label>WorkOrder Evidence Check</label><processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues><processMetadataValues><name>CanvasMode</name><value><stringValue>AUTO_LAYOUT_CANVAS</stringValue></value></processMetadataValues><processType>AutoLaunchedFlow</processType><recordLookups><locationY>134</locationY><connector><targetReference>Set_Has_Evidence</targetReference></connector><locationX>176</locationX><queriedFields>Id</queriedFields><description>Checks whether at least one Salesforce File is linked to this WorkOrder</description><assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound><label>Get First Evidence Link</label><filters><field>LinkedEntityId</field><value><elementReference>$Record.Id</elementReference></value><operator>EqualTo</operator></filters><storeOutputAutomatically>true</storeOutputAutomatically><name>Get_First_Evidence_Link</name><getFirstRecordOnly>true</getFirstRecordOnly><object>ContentDocumentLink</object></recordLookups><start><locationY>0</locationY><locationX>50</locationX><connector><targetReference>Get_First_Evidence_Link</targetReference></connector><filterLogic>1</filterLogic><recordTriggerType>Update</recordTriggerType><triggerType>RecordBeforeSave</triggerType><doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria><filters><field>Status</field><value><stringValue>Completed</stringValue></value><operator>EqualTo</operator></filters><object>WorkOrder</object></start><status>Active</status></Flow>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <description>Assigns the evidence-exists formula result to the WorkOrder&apos;s own Has_Evidence__c field (Before Save fast field update pattern)</description>
+        <name>Set_Has_Evidence</name>
+        <label>Set Has Evidence</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Has_Evidence__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Evidence_Exists_Formula</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <formulas>
+        <name>Evidence_Exists_Formula</name>
+        <dataType>Boolean</dataType>
+        <expression>NOT(ISBLANK({!Get_First_Evidence_Link.Id}))</expression>
+    </formulas>
+    <interviewLabel>WorkOrder Evidence Check {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>WorkOrder Evidence Check</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Checks whether at least one Salesforce File is linked to this WorkOrder</description>
+        <name>Get_First_Evidence_Link</name>
+        <label>Get First Evidence Link</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Set_Has_Evidence</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>LinkedEntityId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>ContentDocumentLink</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_First_Evidence_Link</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Status</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Completed</stringValue>
+            </value>
+        </filters>
+        <object>WorkOrder</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

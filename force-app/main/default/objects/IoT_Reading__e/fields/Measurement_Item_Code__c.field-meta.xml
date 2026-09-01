@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Measurement_Item_Code__c</fullName>
-    <label>측정 항목 코드</label>
-    <type>Text</type>
-    <length>100</length>
     <description>T3·T4 Work Type 템플릿이 쓰는 6종 코드와 동일한 값을 문자열로 전달(유량·온도·차압·전류·누기·체결토크)</description>
+    <externalId>false</externalId>
+    <isFilteringDisabled>false</isFilteringDisabled>
+    <isNameField>false</isNameField>
+    <isSortingDisabled>false</isSortingDisabled>
+    <label>측정 항목 코드</label>
+    <length>100</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
 </CustomField>

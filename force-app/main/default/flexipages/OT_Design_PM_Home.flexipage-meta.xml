@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>오도면 설계·PM 홈 — 내 Work Order, 오픈 케이스, 기술 검토 승인 대기</description>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -17,7 +18,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>c:otKpiCard</componentName>
+                <componentName>otKpiCard</componentName>
                 <identifier>c_otKpiCard_design</identifier>
             </componentInstance>
         </itemInstances>
@@ -108,7 +109,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <description>오도면 설계·PM 홈 — 내 Work Order, 오픈 케이스, 기술 검토 승인 대기</description>
     <masterLabel>OT 설계·PM 홈</masterLabel>
     <template>
         <name>home:desktopTemplate</name>

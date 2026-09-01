@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Field_Visit_Required__c</fullName>
-    <label>현장 방문 필요</label>
+    <defaultValue>false</defaultValue>
     <description>원격 진단만으로 원인 규명·복구가 어려워 현장 방문이 필요한지 여부. 복구 Work Order 발행(T4-11)의 트리거 조건으로 사용된다.</description>
     <inlineHelpText>원격 진단으로 해결이 불가능해 현장 출동이 필요하면 체크하세요.</inlineHelpText>
-    <defaultValue>false</defaultValue>
-    <externalId>false</externalId>
+    <label>현장 방문 필요</label>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
