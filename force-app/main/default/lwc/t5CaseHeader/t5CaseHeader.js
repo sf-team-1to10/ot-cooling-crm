@@ -1,26 +1,10 @@
-import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin } from 'lightning/navigation';
-import {
-    IsConsoleNavigation,
-    getFocusedTabInfo,
-    openSubtab,
-    focusTab
-} from 'lightning/platformWorkspaceApi';
+import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getRecordNotifyChange } from 'lightning/uiRecordApi';
-import getHeader from '@salesforce/apex/T5CaseHeaderController.getHeader';
 
-export default class T5CaseHeader extends NavigationMixin(LightningElement) {
+export default class T5CaseHeader extends LightningElement {
     @api recordId;
 
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
-
-    header;
-    error;
     showBriefingFlow = false;
     flowLoaded = false;
 
@@ -33,76 +17,6 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
         return this.flowLoaded ? 'briefing-card' : 'briefing-card briefing-card_hidden';
     }
 
-    @wire(getHeader, { caseId: '$recordId' })
-    wiredHeader({ data, error }) {
-        if (data) {
-            this.header = data;
-            this.error = undefined;
-        } else if (error) {
-            this.error = error;
-            this.header = undefined;
-        }
-    }
-
-    get isLoading() {
-        return !this.header && !this.error;
-    }
-
-    get errorMessage() {
-        return this.error?.body?.message || '헤더 데이터를 불러오지 못했습니다.';
-    }
-
-    get caseNumber() {
-        return this.header?.caseNumber;
-    }
-
-    get accountName() {
-        return this.header?.accountName || '고객';
-    }
-
-    get assetName() {
-        return this.header?.assetName || '—';
-    }
-
-    get status() {
-        return this.header?.status;
-    }
-
-    // 프로토타입 4번 장면 타이틀 — {Asset} {증상 분류} (예: "CDU-A-07 유량 저하")
-    get headerTitle() {
-        const asset = this.header?.assetName;
-        const symptom = this.header?.symptomCategory;
-        const parts = [asset, symptom].filter((p) => p);
-        return parts.length ? parts.join(' ') : this.header?.subject || 'Case';
-    }
-
-    get responseSla() {
-        return this.header?.responseSla || '—';
-    }
-
-    get recoverySla() {
-        return this.header?.recoverySla || '—';
-    }
-
-    // Agent 시각 2필드 — 캐시 미반영 시 '준비중'으로 degrade
-    get agentFirstResponseText() {
-        return this.toTime(this.header?.agentFirstResponseAt);
-    }
-
-    get agentHandoffText() {
-        return this.toTime(this.header?.agentHandoffAt);
-    }
-
-    toTime(raw) {
-        if (!raw) {
-            return '준비중';
-        }
-        return new Date(raw).toLocaleTimeString('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
-
     // 표준 QuickAction(Case.Dispatch_Briefing_Generate)과 동일한 Screen Flow를 모달로 실행
     get flowInputVariables() {
         return [{ name: 'recordId', type: 'String', value: this.recordId }];
@@ -111,31 +25,6 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
     handleBriefing() {
         this.flowLoaded = false;
         this.showBriefingFlow = true;
-    }
-
-    // 장면 4 — Case에서 연결된 Problem/RCA 검토 화면(step18)을 서브탭으로 연다.
-    // evidence·브리핑과 동일하게 UrlAddressable 컴포넌트로 열어 App Page 껍데기 없이 화면만 띄운다.
-    async handleProblemRca() {
-        if (!this.recordId) {
-            return;
-        }
-        const pageReference = {
-            type: 'standard__component',
-            attributes: { componentName: 'c__otProblemRca' },
-            state: { c__recordId: this.recordId }
-        };
-
-        if (this.isConsole) {
-            const focused = await getFocusedTabInfo();
-            const subtabId = await openSubtab({
-                parentTabId: focused.parentTabId || focused.tabId,
-                pageReference,
-                focus: true
-            });
-            await focusTab(subtabId);
-        } else {
-            this[NavigationMixin.Navigate](pageReference);
-        }
     }
 
     closeBriefingFlow() {
