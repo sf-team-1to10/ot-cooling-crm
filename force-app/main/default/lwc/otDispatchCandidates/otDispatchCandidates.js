@@ -4,11 +4,9 @@ import {
     EnclosingTabId,
     setTabLabel,
     setTabIcon,
-    IsConsoleNavigation,
-    getFocusedTabInfo,
-    openSubtab,
-    focusTab
+    IsConsoleNavigation
 } from 'lightning/platformWorkspaceApi';
+import { openOrFocusSubtab } from 'c/otConsoleNav';
 
 export default class OtDispatchCandidates extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -77,22 +75,14 @@ export default class OtDispatchCandidates extends NavigationMixin(LightningEleme
             return;
         }
 
-        const pageReference = {
-            type: 'standard__component',
-            attributes: { componentName: target },
-            state: { c__recordId: rid }
-        };
-
         if (this.isConsole) {
-            const focused = await getFocusedTabInfo();
-            const subtabId = await openSubtab({
-                parentTabId: focused.parentTabId || focused.tabId,
-                pageReference,
-                focus: true
-            });
-            await focusTab(subtabId);
+            await openOrFocusSubtab(target, rid);
         } else {
-            this[NavigationMixin.Navigate](pageReference);
+            this[NavigationMixin.Navigate]({
+                type: 'standard__component',
+                attributes: { componentName: target },
+                state: { c__recordId: rid }
+            });
         }
     }
 }

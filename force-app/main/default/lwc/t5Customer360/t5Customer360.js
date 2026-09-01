@@ -4,11 +4,9 @@ import {
     EnclosingTabId,
     setTabLabel,
     setTabIcon,
-    IsConsoleNavigation,
-    getFocusedTabInfo,
-    openSubtab,
-    focusTab
+    IsConsoleNavigation
 } from 'lightning/platformWorkspaceApi';
+import { openOrFocusSubtab } from 'c/otConsoleNav';
 
 export default class T5Customer360 extends NavigationMixin(LightningElement) {
     @api recordId; // Record page에 직접 놓일 때 플랫폼 주입
@@ -108,22 +106,14 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
             return;
         }
 
-        const pageReference = {
-            type: 'standard__component',
-            attributes: { componentName: target },
-            state: { c__recordId: rid }
-        };
-
         if (this.isConsole) {
-            const focused = await getFocusedTabInfo();
-            const subtabId = await openSubtab({
-                parentTabId: focused.parentTabId || focused.tabId,
-                pageReference,
-                focus: true
-            });
-            await focusTab(subtabId);
+            await openOrFocusSubtab(target, rid);
         } else {
-            this[NavigationMixin.Navigate](pageReference);
+            this[NavigationMixin.Navigate]({
+                type: 'standard__component',
+                attributes: { componentName: target },
+                state: { c__recordId: rid }
+            });
         }
     }
 }
