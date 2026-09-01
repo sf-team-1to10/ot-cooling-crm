@@ -7,10 +7,12 @@ on:
     branches: [production]
     paths:
       - "force-app/**"
+      - ".github/workflows/**"
   push:
     branches: [production]
     paths:
       - "force-app/**"
+      - ".github/workflows/**"
 
 jobs:
   production-workflow:
