@@ -103,7 +103,7 @@
         <offset>0</offset>
         <versionString>2.0.0</versionString>
     </actionCalls>
-    <apiVersion>68.0</apiVersion>
+    <apiVersion>67.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <!-- T5-23: Parameter Mapping으로 넘어온 AssetId가 있을 때만

@@ -109,7 +109,7 @@
         <offset>0</offset>
         <versionString>2.0.0</versionString>
     </actionCalls>
-    <apiVersion>68.0</apiVersion>
+    <apiVersion>67.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Capture_Fault</name>
