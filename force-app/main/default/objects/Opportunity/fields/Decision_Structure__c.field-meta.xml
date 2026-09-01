@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Decision_Structure__c</fullName>
+    <description>고객사의 구매 의사결정 구조·관계자. Lead 자격심사에서 파악한 내용이 전환 시 이관된다.</description>
+    <inlineHelpText>구매 결정에 관여하는 조직·직책·영향력 관계를 기술하세요.</inlineHelpText>
+    <label>의사결정 구조</label>
+    <length>32000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reported_Symptom__c</fullName>
+    <label>고객 진술 원문</label>
+    <description>고객이 신고 시 진술한 증상 내용을 가공 없이 원문 그대로 보존해 진단·근본원인 규명의 1차 근거로 사용한다.</description>
+    <inlineHelpText>고객이 말한 증상을 요약하지 말고 진술한 표현 그대로 입력하세요.</inlineHelpText>
+    <length>32000</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>6</visibleLines>
+</CustomField>

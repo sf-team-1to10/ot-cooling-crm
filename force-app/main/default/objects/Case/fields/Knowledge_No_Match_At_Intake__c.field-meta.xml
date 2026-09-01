@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Knowledge_No_Match_At_Intake__c</fullName>
+    <label>최초검색시Knowledge매치없음</label>
+    <description>T5-22 — 증상 상담 Agent가 Case 생성 전 Knowledge Article을 검색했지만 일치하는 게 없어서(자가 해결 실패) Case가 만들어졌음을 표시한다. Case가 Closed로 바뀔 때 이 필드가 체크돼 있으면 "Create Article from Case" 등록 제안 배너를 띄우는 기준으로 쓴다.</description>
+    <inlineHelpText>Agent가 증상 접수 전 Knowledge를 검색했지만 매치되는 Article이 없어 Case가 생성된 경우 체크됩니다(Agent가 자동 기록).</inlineHelpText>
+    <defaultValue>false</defaultValue>
+    <externalId>false</externalId>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Minimum_Project_Amount__c</fullName>
+    <inlineHelpText>이 캠페인의 대상이 되는 최소 프로젝트 금액. 이 금액 미만은 캠페인 대상에서 제외합니다.</inlineHelpText>
+    <label>최소 규모</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <type>Currency</type>
+</CustomField>

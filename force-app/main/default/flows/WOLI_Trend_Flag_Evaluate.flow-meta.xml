@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <description>최근 회차부터 이어지는 하락 연속 횟수를 1 올린다.</description>
+        <name>Increment_Streak</name>
+        <label>Increment Streak</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varStreak</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Recent</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>하락이 아닌 회차를 만나면 연속이 끊긴 것으로 표시해 이후 회차는 세지 않는다.</description>
+        <name>Mark_Broken</name>
+        <label>Mark Broken</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varBroken</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Recent</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>규칙 ③ 해당 → 이상 / WO 위험 수준 높음(3). 잔여 여유 임계치 미만 + 기준선 대비 -6% 이하 하락.</description>
+        <name>Set_Flag_Abnormal</name>
+        <label>Set Flag 이상</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varFlag</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>이상</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewRiskRank</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <numberValue>3.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Own_Trend_Flag</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>규칙 ①② 중 하나 이상 해당 → 주의 / WO 위험 수준 보통(2)</description>
+        <name>Set_Flag_Caution</name>
+        <label>Set Flag 주의</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varFlag</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>주의</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewRiskRank</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <numberValue>2.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Own_Trend_Flag</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>규칙 미해당 → 정상 / WO 위험 수준 낮음(1)</description>
+        <name>Set_Flag_Normal</name>
+        <label>Set Flag 정상</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varFlag</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>정상</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewRiskRank</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Own_Trend_Flag</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>CMT 레코드를 못 찾았을 때 폴백: 하락률 5% · 연속 3회 · 잔여 5%. 판정이 조용히 거짓이 되는 것을 막는다.</description>
+        <name>Set_Threshold_Defaults</name>
+        <label>Set Threshold Defaults</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varDropRate</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <numberValue>5.0</numberValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varConsec</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <numberValue>3.0</numberValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varRemaining</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <numberValue>5.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Recent_Records</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Trend_Threshold__mdt.Default 레코드의 임계치 3종을 변수에 담는다.</description>
+        <name>Set_Threshold_From_CMT</name>
+        <label>Set Threshold From CMT</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varDropRate</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Threshold.Drop_Rate_Pct__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varConsec</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Threshold.Consecutive_Drops__c</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varRemaining</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Threshold.Remaining_Margin_Pct__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Recent_Records</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <description>정렬은 CreatedDate 기준이라 소급 입력 시 실제 점검 순서와 다르다. 후보의 WorkOrder.StartDate가 현재 레코드의 점검일보다 이후면 미래 회차이므로 streak 계산에서 제외하고 다음 후보로 넘어간다.</description>
+        <name>Check_In_Range</name>
+        <label>Check In Range</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Check_Streak</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>In Range</defaultConnectorLabel>
+        <rules>
+            <name>After_Current</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Loop_Recent.WorkOrder.StartDate</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>$Record.WorkOrder.StartDate</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Loop_Recent</targetReference>
+            </connector>
+            <label>After Current</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>WO 위험 수준은 상향만 허용. 새 등급이 현재 등급보다 높을 때만 갱신한다(낮음1&lt;보통2&lt;높음3).</description>
+        <name>Check_Risk_Upgrade</name>
+        <label>Check Risk Upgrade</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>No Change</defaultConnectorLabel>
+        <rules>
+            <name>Upgrade</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varNewRiskRank</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <elementReference>fCurrentRiskRank</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_WorkOrder_Risk</targetReference>
+            </connector>
+            <label>Upgrade</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>연속이 끊기지 않았고 이번 회차 Delta가 음수면 연속 횟수를 올린다.</description>
+        <name>Check_Streak</name>
+        <label>Check Streak</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Mark_Broken</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not a Drop</defaultConnectorLabel>
+        <rules>
+            <name>Is_Drop</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varBroken</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Loop_Recent.Delta_From_Previous__c</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Increment_Streak</targetReference>
+            </connector>
+            <label>Is Drop</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>규칙 ① 기준선 대비 하락률 ≤ -임계치 / 규칙 ② 연속 하락 ≥ 임계치. 하나 이상 해당=주의, 없음=정상. &quot;이상&quot;은 규칙 ③(잔여 여유, T3-16 Threshold_Min 전파 후)에서만 부여한다 — 백로그 57·59행.</description>
+        <name>Evaluate_Rules</name>
+        <label>Evaluate Rules</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Set_Flag_Normal</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>None</defaultConnectorLabel>
+        <rules>
+            <name>Rule_Three_Margin</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>fRule3_Margin</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Flag_Abnormal</targetReference>
+            </connector>
+            <label>이상</label>
+        </rules>
+        <rules>
+            <name>One_Rule</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>fRule1_DropRate</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>fRule2_Consecutive</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Flag_Caution</targetReference>
+            </connector>
+            <label>One Rule</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>CMT Default 레코드 존재 여부. 없으면 폴백 값으로 간다.</description>
+        <name>Threshold_Found</name>
+        <label>Threshold Found?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Set_Threshold_Defaults</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not Found</defaultConnectorLabel>
+        <rules>
+            <name>Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Threshold</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Threshold_From_CMT</targetReference>
+            </connector>
+            <label>Found</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <formulas>
+        <description>부모 WO의 현재 위험 수준을 숫자 등급으로(비어 있으면 0)</description>
+        <name>fCurrentRiskRank</name>
+        <dataType>Number</dataType>
+        <expression>CASE({!$Record.WorkOrder.Risk_Level__c}, &quot;낮음&quot;, 1, &quot;보통&quot;, 2, &quot;높음&quot;, 3, 0)</expression>
+        <scale>0</scale>
+    </formulas>
+    <formulas>
+        <description>새 등급 숫자를 Risk_Level__c 픽리스트 값으로</description>
+        <name>fNewRiskLevel</name>
+        <dataType>String</dataType>
+        <expression>CASE({!varNewRiskRank}, 3, &quot;높음&quot;, 2, &quot;보통&quot;, &quot;낮음&quot;)</expression>
+    </formulas>
+    <formulas>
+        <description>WO 권고 조치 문구(등급별)</description>
+        <name>fRecommendedAction</name>
+        <dataType>String</dataType>
+        <expression>&quot;[&quot; &amp; TEXT({!$Record.Measurement_Item_Code__c}) &amp; &quot;] 추세 판정 &quot; &amp; {!varFlag} &amp; &quot; — 기준선 대비 &quot; &amp; TEXT({!$Record.Drift_From_Baseline__c}) &amp; &quot;%, 연속 하락 &quot; &amp; TEXT({!varStreak}) &amp; &quot;회. &quot; &amp; IF({!varNewRiskRank} = 3, &quot;절대 기준은 합격이나 악화 추세가 뚜렷합니다. 다음 정기 점검을 기다리지 말고 해당 항목 정밀 점검과 원인 조사를 권고합니다.&quot;, IF({!varNewRiskRank} = 2, &quot;악화 징후가 있습니다. 다음 점검에서 해당 항목을 우선 확인하고 기준선 대비 변화를 추적하십시오.&quot;, &quot;추세 이상 없음.&quot;))</expression>
+    </formulas>
+    <formulas>
+        <description>규칙 ①: 기준선 대비 변화율이 -임계치 이하(경계 포함, QA -5.0% = 해당)</description>
+        <name>fRule1_DropRate</name>
+        <dataType>Boolean</dataType>
+        <expression>NOT(ISBLANK({!$Record.Drift_From_Baseline__c})) &amp;&amp; {!$Record.Drift_From_Baseline__c} &lt;= (-1 * {!varDropRate})</expression>
+    </formulas>
+    <formulas>
+        <description>규칙 ②: 최근 회차부터 이어진 하락 연속 횟수가 임계치 이상</description>
+        <name>fRule2_Consecutive</name>
+        <dataType>Boolean</dataType>
+        <expression>{!varStreak} &gt;= {!varConsec}</expression>
+    </formulas>
+    <formulas>
+        <description>규칙 ③: 허용 하한까지 잔여 여유(%)가 임계치 미만이면서 기준선 대비 하락이 -6% 이하. Threshold_Min__c가 비어 있으면 건너뛴다(해당 안 됨).</description>
+        <name>fRule3_Margin</name>
+        <dataType>Boolean</dataType>
+        <expression>NOT(ISBLANK({!$Record.Threshold_Min__c})) &amp;&amp; ((({!$Record.Measured_Value__c} - {!$Record.Threshold_Min__c}) / {!$Record.Threshold_Min__c}) * 100 &lt; {!Get_Threshold.Remaining_Margin_Pct__c}) &amp;&amp; {!$Record.Drift_From_Baseline__c} &lt;= -6</expression>
+    </formulas>
+    <interviewLabel>WOLI 추세 이상 판정 {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>WOLI 추세 이상 판정 (Trend Flag)</label>
+    <loops>
+        <description>같은 Asset·측정항목의 회차를 최신순으로 돌며 연속 하락 횟수를 센다(현재 레코드 포함).</description>
+        <name>Loop_Recent</name>
+        <label>Loop Recent</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <collectionReference>Get_Recent_Records</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Check_In_Range</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Evaluate_Rules</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>같은 Asset·측정항목 코드의 WOLI 중 Delta가 있는 것을 CreatedDate 최신순으로. After Save라 현재 레코드가 포함된다(T4-05와 반대).</description>
+        <name>Get_Recent_Records</name>
+        <label>Get Recent Records</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Recent</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>AssetId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.AssetId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Measurement_Item_Code__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Measurement_Item_Code__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Delta_From_Previous__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Line_Item_Role__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>점검</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>WorkOrderLineItem</object>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Trend_Threshold__mdt의 Default 레코드 1건</description>
+        <name>Get_Threshold</name>
+        <label>Get Threshold (CMT)</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Threshold_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Default</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Trend_Threshold__mdt</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Drop_Rate_Pct__c</queriedFields>
+        <queriedFields>Consecutive_Drops__c</queriedFields>
+        <queriedFields>Remaining_Margin_Pct__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <description>트리거 레코드의 Trend_Flag__c 기입. Entry 조건이 ISCHANGED(Measured_Value__c)라 이 업데이트로 재진입하지 않는다.</description>
+        <name>Update_Own_Trend_Flag</name>
+        <label>Update Own Trend Flag</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Risk_Upgrade</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Trend_Flag__c</field>
+            <value>
+                <elementReference>varFlag</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrderLineItem</object>
+    </recordUpdates>
+    <recordUpdates>
+        <description>부모 WO의 위험 수준·권고 조치 갱신(상향 시에만 도달)</description>
+        <name>Update_WorkOrder_Risk</name>
+        <label>Update WorkOrder Risk</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.WorkOrderId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Recommended_Action__c</field>
+            <value>
+                <elementReference>fRecommendedAction</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Risk_Level__c</field>
+            <value>
+                <elementReference>fNewRiskLevel</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Threshold</targetReference>
+        </connector>
+        <filterFormula>AND(
+  NOT(ISBLANK({!$Record.Measured_Value__c})),
+  NOT(ISBLANK({!$Record.AssetId})),
+  NOT(ISBLANK(TEXT({!$Record.Measurement_Item_Code__c}))),
+  OR(ISNEW(), ISCHANGED({!$Record.Measured_Value__c}))
+)</filterFormula>
+        <object>WorkOrderLineItem</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>varBroken</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <booleanValue>false</booleanValue>
+        </value>
+    </variables>
+    <variables>
+        <name>varConsec</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <name>varDropRate</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>1</scale>
+    </variables>
+    <variables>
+        <name>varFlag</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varNewRiskRank</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <name>varRemaining</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>1</scale>
+    </variables>
+    <variables>
+        <name>varStreak</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+</Flow>

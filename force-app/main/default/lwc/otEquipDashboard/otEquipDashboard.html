@@ -1,0 +1,279 @@
+<template>
+    <div class="app">
+        <!-- Left Nav Rail -->
+        <c-ot-equip-sidebar active-nav="assets" customer-name="아이언데이터센터" contact-name="유신" contact-role="고객 운영 담당자"></c-ot-equip-sidebar>
+
+        <!-- Main -->
+        <div class="main">
+            <c-ot-equip-util-bar breadcrumb-prefix="고객 포털" breadcrumb-current="내 자산"></c-ot-equip-util-bar>
+
+            <div class="content">
+                <!-- Page Header -->
+                <div class="page-h">
+                    <h1>내 자산</h1>
+                    <span class="sub">마이클라우드 데이터센터 · Hall A</span>
+                </div>
+
+                <!-- Top Tabs -->
+                <div class="tabsrow">
+                    <button class="t on">전체 자산</button>
+                    <button class="t">장비 유형별</button>
+                    <button class="t">상태별</button>
+                    <span class="grow"></span>
+                    <button class="btn" onclick={handleServiceRequest}>
+                        <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor"/></svg>
+                        서비스 요청
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters">
+                    <div class="search">
+                        <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor"/><path d="M21 21l-4.3-4.3" stroke="currentColor"/></svg>
+                        <input type="text" placeholder="장비명, Asset ID 또는 설치 위치 검색" value={searchTerm} oninput={handleSearch}>
+                    </div>
+                    <button class="sel">전체 장비 유형 <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
+                    <button class="sel">전체 상태 <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
+                    <button class="sel">Hall A <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="kpis">
+                    <div class="kpi b">
+                        <div class="ic">
+                            <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor"/><path d="M3 9h18M9 3v18" stroke="currentColor"/></svg>
+                        </div>
+                        <div class="kt"><span>전체 자산</span><b>{kpiTotal}</b></div>
+                    </div>
+                    <div class="kpi g">
+                        <div class="ic"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor"/></svg></div>
+                        <div class="kt"><span>정상</span><b>{kpiNormal}</b></div>
+                    </div>
+                    <div class="kpi a">
+                        <div class="ic"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 3.9L2 18a1.7 1.7 0 001.5 2.5h17A1.7 1.7 0 0022 18L13.7 3.9a1.7 1.7 0 00-3 0z" stroke="currentColor"/></svg></div>
+                        <div class="kt"><span>주의</span><b>{kpiAdvisory}</b></div>
+                    </div>
+                    <div class="kpi">
+                        <div class="ic"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 00-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 005.4-5.4l-2.7 2.7-2-2z" stroke="currentColor"/></svg></div>
+                        <div class="kt"><span>정비 예정</span><b>{kpiMaintenance}</b></div>
+                    </div>
+                </div>
+
+                <!-- 3-Column Workspace -->
+                <div class="ws">
+                    <!-- LEFT: Equipment List -->
+                    <div class="col-left">
+                        <div class="panel eqlist">
+                            <div class="panel-h">
+                                <h3>장비 목록</h3>
+                                <span class="panel-rt">정렬: 상태 우선</span>
+                            </div>
+                            <div class="rows">
+                                <template for:each={pageItems} for:item="asset">
+                                    <div key={asset.id} class={asset.rowClass} data-id={asset.id} onclick={handleSelectAsset}>
+                                        <div class="th">
+                                            <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#96A1B8"/><path d="M8 3v18M8 8h13M8 14h13" stroke="#96A1B8"/></svg>
+                                        </div>
+                                        <div class="ei">
+                                            <span class="n">{asset.id}</span>
+                                            <span class="ty">{asset.type}</span>
+                                            <span class="lo">{asset.loc}</span>
+                                        </div>
+                                        <div class="st">
+                                            <c-ot-equip-status-chip label={asset.chipLabel} variant={asset.chipVariant}></c-ot-equip-status-chip>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="pager">
+                                <button class="pg" disabled={prevDisabled} onclick={handlePrevPage}>‹</button>
+                                <template for:each={pagerButtons} for:item="pg">
+                                    <button key={pg.num} class={pg.cls} data-num={pg.num} onclick={handlePage}>{pg.num}</button>
+                                </template>
+                                <button class="pg" disabled={nextDisabled} onclick={handleNextPage}>›</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CENTER: Selected Equipment -->
+                    <div class="col-center">
+                        <div class="panel">
+                            <div class="selhead">
+                                <div class="ht">
+                                    <div class="r1">
+                                        <b>{sel.id}</b>
+                                        <c-ot-equip-status-chip label={sel.stateLabel} variant={sel.stateCode}></c-ot-equip-status-chip>
+                                    </div>
+                                    <div class="r2">{sel.type} · {sel.family} · {sel.loc}</div>
+                                </div>
+                                <div class="ha">
+                                    <button class="btn ghost sm" onclick={handleGoDetail}>상세 보기</button>
+                                </div>
+                            </div>
+
+                            <!-- Sub Tabs -->
+                            <div class="subtabs">
+                                <template for:each={subTabs} for:item="st">
+                                    <button key={st.label} class={st.cls} data-tab={st.label} onclick={handleSubTab}>{st.label}</button>
+                                </template>
+                            </div>
+
+                            <!-- Overview Content -->
+                            <template lwc:if={isOverview}>
+                                <div class="selbody">
+                                    <div class="ov-grid">
+                                        <div>
+                                            <div class={assessStyle}>
+                                                <div class={assessIconStyle}>
+                                                    <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
+                                                        <template lwc:if={isAdvisory}>
+                                                            <path d="M12 9v4m0 4h.01M10.3 3.9L2 18a1.7 1.7 0 001.5 2.5h17A1.7 1.7 0 0022 18L13.7 3.9a1.7 1.7 0 00-3 0z" stroke="currentColor"/>
+                                                        </template>
+                                                        <template lwc:if={isNormal}>
+                                                            <path d="M20 6L9 17l-5-5" stroke="currentColor"/>
+                                                        </template>
+                                                    </svg>
+                                                    현재 상태
+                                                </div>
+                                                <div class="hl">{sel.assess.hl}</div>
+                                                <div class="ds">{sel.assess.ds}</div>
+                                                <div class="vv">
+                                                    <div><span>현재 유량</span><b>{sel.assess.flow}</b></div>
+                                                    <div><span>기준선</span><b>{sel.assess.base}</b></div>
+                                                </div>
+                                                <div class="ft">
+                                                    <span class="demo-badge">데모 데이터</span>
+                                                    <a class="lnk" onclick={handleGoDetail}>상세 상태 보기 →</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="heroimg">
+                                            <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#96A1B8"/><path d="M8 3v18M8 8h13M8 14h13" stroke="#96A1B8"/><circle cx="15.5" cy="11" r="1.2" stroke="#96A1B8"/></svg>
+                                            <span class="ph-text">제품 이미지</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Key Status -->
+                                    <div class="kstat">
+                                        <div class="kh">Key Status · 데모 데이터</div>
+                                        <div class="kg">
+                                            <template for:each={keyItems} for:item="ki">
+                                                <div key={ki.label} class="ki">
+                                                    <span>{ki.label}</span>
+                                                    <b class={ki.cls}>{ki.value}</b>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <!-- Trend Chart -->
+                                    <div class="trend">
+                                        <div class="trend-h">
+                                            <h4>냉수 유량 추세</h4>
+                                            <span class="demo-badge">데모 데이터</span>
+                                        </div>
+                                        <div class="lg">{trendLegend}</div>
+                                        <div class="chart-container" lwc:dom="manual"></div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Non-overview placeholder -->
+                            <template lwc:if={isNotOverview}>
+                                <div class="placeholder">
+                                    <div class="ph-title">{activeSubTab}</div>
+                                    <p>{subTabPlaceholder}</p>
+                                    <button class="btn ghost sm" onclick={handleGoDetail}>장비 상세로 이동</button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Info Panels -->
+                    <div class="col-right">
+                        <!-- Location -->
+                        <div class="panel rp">
+                            <div class="panel-h"><h3>설치 위치</h3></div>
+                            <div class="bd">
+                                <div class="infolist">
+                                    <div class="ir"><span>고객</span><b>{location.customerName}</b></div>
+                                    <div class="ir"><span>사이트</span><b>{location.siteName}</b></div>
+                                    <div class="ir"><span>Hall</span><b>{location.hall}</b></div>
+                                    <div class="ir"><span>위치</span><b>{sel.row}</b></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Health -->
+                        <div class="panel rp">
+                            <div class="panel-h"><h3>장비 상태</h3></div>
+                            <div class="bd">
+                                <div class="health">
+                                    <div class="donut-container" lwc:dom="manual"></div>
+                                    <div class="sc">
+                                        <template for:each={healthSubs} for:item="sub">
+                                            <div key={sub.name} class="sr">
+                                                <span>{sub.name} <b>{sub.value}</b></span>
+                                                <div class="bar"><i style={sub.barStyle}></i></div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div class="health-lbl">{healthScore} / 100 · {healthLabel}</div>
+                                <div class="health-note">고객용 요약 지표입니다. 공식 신뢰성 엔지니어링 계산 결과가 아니며, 참고용으로만 활용하세요. (데모 데이터)</div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Alarms -->
+                        <div class="panel rp">
+                            <div class="panel-h"><h3>최근 알람</h3></div>
+                            <div class="bd">
+                                <div class="miniAl">
+                                    <template for:each={sel.alarms} for:item="alarm">
+                                        <div key={alarm.text} class="m">
+                                            <span class={alarm.tagClass}>{alarm.tagLabel}</span>
+                                            <p>{alarm.text}<br/><small>{alarm.date}</small></p>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="panel rp">
+                            <div class="panel-h"><h3>빠른 작업</h3></div>
+                            <div class="bd">
+                                <div class="qa">
+                                    <button onclick={handleGoDetail}>
+                                        <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor"/><path d="M21 21l-4.3-4.3" stroke="currentColor"/></svg>
+                                        상세 보기
+                                    </button>
+                                    <button onclick={handleServiceRequest}>
+                                        <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor"/></svg>
+                                        서비스 요청
+                                    </button>
+                                    <button>
+                                        <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 00-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 005.4-5.4l-2.7 2.7-2-2z" stroke="currentColor"/></svg>
+                                        정비 이력
+                                    </button>
+                                    <button>
+                                        <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 3v5h5M8 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8l-5-5z" stroke="currentColor"/></svg>
+                                        장비 문서
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-foot">
+                    ※ 이 화면의 모든 운영 수치·상태·추세는 데모 데이터입니다. 실제 계측·진단 결과가 아니며,
+                    Case·Work Order 자동 생성 및 원인 자동 확정은 수행하지 않습니다.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Request Modal -->
+    <c-ot-service-request-modal is-open={modalOpen} onclose={handleModalClose} ongodetail={handleModalGoDetail}></c-ot-service-request-modal>
+</template>

@@ -1,0 +1,19 @@
+<template>
+    <template lwc:if={isOpen}>
+        <div class="ovl" onclick={handleBackdrop}>
+            <div class="modal">
+                <div class="mh">
+                    <b>서비스 요청</b>
+                    <button class="x" onclick={handleClose}>
+                        <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor"/></svg>
+                    </button>
+                </div>
+                <div class="mb">서비스 요청은 장비 상세 화면에서 계속할 수 있습니다.</div>
+                <div class="mf">
+                    <button class="btn ghost sm" onclick={handleClose}>닫기</button>
+                    <button class="btn sm" onclick={handleGoDetail}>장비 상세로 이동</button>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

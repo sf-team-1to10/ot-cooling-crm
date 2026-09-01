@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ReportType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <baseObject>ChangeRequest</baseObject>
+    <category>other</category>
+    <deployed>true</deployed>
+    <label>변경요청 영향도 분석</label>
+    <description>ChangeRequest의 비용·일정·기술 영향을 집계하기 위한 리포트 타입</description>
+    <sections>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Subject</field>
+            <table>ChangeRequest</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Status</field>
+            <table>ChangeRequest</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Scope_Type__c</field>
+            <table>ChangeRequest</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Cost_Impact__c</field>
+            <table>ChangeRequest</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Schedule_Impact_Days__c</field>
+            <table>ChangeRequest</table>
+        </columns>
+        <columns>
+            <checkedByDefault>true</checkedByDefault>
+            <field>Technical_Impact__c</field>
+            <table>ChangeRequest</table>
+        </columns>
+        <masterLabel>변경 요청</masterLabel>
+    </sections>
+</ReportType>

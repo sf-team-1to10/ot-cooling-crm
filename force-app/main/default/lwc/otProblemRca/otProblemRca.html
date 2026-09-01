@@ -1,0 +1,82 @@
+<template>
+    <div class="slds-p-vertical_x-small">
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
+
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template lwc:if={rca}>
+            <!-- ── Highlights 헤더 (§2-1 골격, prefix problem) ── -->
+            <div class="problem-hl">
+                <div class="problem-hl-head">
+                    <span class="problem-hl-icon">
+                        <lightning-icon icon-name="utility:priority" size="small"
+                            variant="inverse"></lightning-icon>
+                    </span>
+                    <div class="problem-hl-title">
+                        <p class="problem-hl-eyebrow">Problem {problemNumber} · Case {caseNumberText}에서 연결</p>
+                        <h1 class="problem-hl-name">A-07만 고치면 끝인가</h1>
+                    </div>
+                    <div class="problem-hl-actions">
+                        <lightning-button label="영향 범위 승인" variant="brand"
+                            onclick={handleApproveScope} class="slds-m-left_xx-small"></lightning-button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-m-top_small">
+                <!-- 원인 구분 (담당자 확정) -->
+                <lightning-card>
+                    <span slot="title" class="slds-text-heading_small">원인 구분</span>
+                    <span slot="actions" class="slds-badge source-human">담당자 확정</span>
+                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+                        <div class="cause-callout cause-direct">
+                            <p class="cause-label">직접 원인</p>
+                            <p class="cause-text">{directCause}</p>
+                        </div>
+                        <div class="cause-callout cause-root slds-m-top_x-small">
+                            <p class="cause-label">조직 차원의 근본원인</p>
+                            <p class="cause-text">{rootCause}</p>
+                        </div>
+                    </div>
+                </lightning-card>
+
+                <!-- 특수 조건 vs 공통 조건 (Agent 제안 라벨 제거) -->
+                <lightning-card class="slds-m-top_small">
+                    <span slot="title" class="slds-text-heading_small">특수 조건과 공통 조건은 다른 질문에 답합니다</span>
+                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col"><div class="slds-truncate">판단 단위</div></th>
+                                    <th scope="col"><div class="slds-truncate">근거</div></th>
+                                    <th scope="col"><div class="slds-truncate">답하는 질문</div></th>
+                                    <th scope="col"><div class="slds-truncate">범위</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="slds-hint-parent">
+                                    <th scope="row"><div class="slds-truncate"><strong>A-07만의 특수 조건</strong></div></th>
+                                    <td><div>Rev.B · F-07 · 과거 동일 위치 실패</div></td>
+                                    <td><div>장애 원인을 어디서 찾을까</div></td>
+                                    <td><span class="slds-badge scope-corrective">{correctiveText}</span></td>
+                                </tr>
+                                <tr class="slds-hint-parent">
+                                    <th scope="row"><div class="slds-truncate"><strong>12대의 공통 조건</strong></div></th>
+                                    <td><div>같은 프로젝트 · 설치 기간 · 시공업체 · 연결부 규격 · 작업 절차 · 점검 기준 누락</div></td>
+                                    <td><div>예방 범위를 어디까지 볼까</div></td>
+                                    <td><span class="slds-badge scope-preventive">{preventiveText}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </lightning-card>
+            </div>
+        </template>
+    </div>
+</template>

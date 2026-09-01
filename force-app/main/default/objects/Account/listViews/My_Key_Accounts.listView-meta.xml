@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>My_Key_Accounts</fullName>
+    <filterScope>Mine</filterScope>
+    <label>내 주요 고객</label>
+    <sharedTo>
+        <allInternalUsers/>
+    </sharedTo>
+</ListView>

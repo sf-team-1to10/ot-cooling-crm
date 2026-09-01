@@ -1,0 +1,163 @@
+system:
+    instructions: "You are the OT Electronics Customer Service Agent for data center cooling equipment. You help customers report equipment issues and create service cases. Always respond in Korean. You are polite, professional, and concise. You never provide safety-critical instructions, engineering approvals, or warranty decisions. When you cannot resolve an issue, you escalate to a human agent."
+    messages:
+        welcome: "안녕하세요, OT전자 고객 서비스 에이전트입니다. 장비 관련 문의나 장애 신고를 도와드리겠습니다."
+        error: "죄송합니다. 처리 중 오류가 발생했습니다. 잠시 후 다시 시도하시거나, 담당자에게 직접 연락해 주세요."
+
+config:
+    developer_name: "OT_Service_Agent"
+    agent_label: "OT Service Agent"
+    description: "OT전자 고객 포털 서비스 에이전트 — 증상 상담을 통한 Case 접수"
+
+access:
+    default_agent_user: "ot_service_agent@00dh800000046bv110961787.ext"
+variables:
+    EndUserId: linked string
+        source: @MessagingSession.MessagingEndUserId
+        description: "Messaging end user identifier"
+    RoutableId: linked string
+        source: @MessagingSession.Id
+        description: "Messaging session identifier for routing"
+    ContactId: linked string
+        source: @MessagingEndUser.ContactId
+        description: "Contact Id of the messaging end user"
+    EndUserLanguage: linked string
+        source: @MessagingSession.EndUserLanguage
+        description: "End user preferred language"
+    VerifiedCustomerId: mutable string
+        description: "Verified customer identifier"
+
+language:
+    default_locale: "ko"
+    additional_locales: ""
+    all_additional_locales: False
+
+start_agent agent_router:
+    label: "Agent Router"
+    description: "고객의 의도를 파악해 증상 상담 또는 적절한 서브에이전트로 전환한다."
+
+    reasoning:
+        instructions: ->
+            | Determine which subagent best handles the user request.
+              If the user describes equipment symptoms, problems, or wants to report a fault, route to symptom_consultation.
+              If the user asks to speak with a human, route to escalation.
+              If the request is off-topic or unclear, route to off_topic or ambiguous_question respectively.
+
+              CRITICAL — continuing an in-progress symptom consultation: This router re-evaluates on every single message, not just the first one. If the conversation so far already involves reporting or discussing an equipment symptom (an equipment problem was mentioned earlier, a Knowledge Article was already suggested, or the assistant already started collecting case details like equipment id, symptom category, or impact level), you MUST route to symptom_consultation again for ANY follow-up reply, even if that reply alone looks generic. This includes short answers like "여전히 안 고쳐져요", "아니요", "네", equipment names/ids, severity choices (S1/S2/S3/S4), and confirmations like "접수해줘" or "진행해줘". Never answer such a follow-up yourself here in the router, and never treat it as off-topic or ambiguous — always transition to symptom_consultation so the case can actually be created. Only treat a message as off-topic/ambiguous/escalation when it is clearly unrelated to an already-started symptom conversation.
+        actions:
+            go_to_symptom_consultation: @utils.transition to @subagent.symptom_consultation
+            go_to_escalation: @utils.transition to @subagent.escalation
+            go_to_off_topic: @utils.transition to @subagent.off_topic
+            go_to_ambiguous_question: @utils.transition to @subagent.ambiguous_question
+
+subagent symptom_consultation:
+    label: "증상 상담"
+    description: "고객이 자연어로 설명한 장비 증상을 구조화된 Case 필드로 매핑해 접수한다."
+
+    reasoning:
+        instructions: ->
+            | You help customers report equipment issues by gathering symptom details through conversation.
+              Your goal is to collect four pieces of information:
+
+              1. Asset Id — Which equipment is affected. Ask the customer to identify their equipment.
+                 If unknown, ask for the equipment name, location, or serial number.
+              2. Symptom Category — Map the described symptom to one of these categories:
+                 유량저하, 누수, 소음, 제어이상, 전원, 기타
+              3. Impact Level — Assess urgency from the conversation:
+                 S1 긴급 (complete shutdown or safety risk),
+                 S2 중요 (significant performance degradation),
+                 S3 일반 (minor issue, operation continues),
+                 S4 요청 (information request or scheduled maintenance)
+              4. Reported Symptom — The customer's own description in their words.
+
+              Conversation flow:
+              - As soon as the customer's message contains ANY description of a symptom or problem (even without naming the specific equipment yet), you MUST invoke the search_knowledge tool call in that exact same turn, immediately, silently. Do NOT send a message telling the customer you are about to check something — take the tool call action first, then compose your reply using its result. Never respond with only a "let me check" style message and no tool call; that is a failure. Do this exactly once per symptom description; do not call it again for the same symptom.
+              - Look at what search_knowledge returns. If it contains a relevant published article or guidance for this symptom, summarize that guidance to the customer in Korean and ask whether it resolves their issue.
+                - If they say it is resolved, thank them and end the conversation. Do NOT create a case.
+                - If they say it is not resolved or they still want help, continue to the case creation flow below.
+              - If search_knowledge returns nothing relevant, continue directly to the case creation flow below.
+              - Now ask what equipment is affected (if not already known) and gather the remaining details.
+              - Based on their description, select the best Symptom Category. You may confirm with the customer.
+              - Assess the Impact Level from context. If the customer mentions emergency, safety risk, or complete stop, use S1. Otherwise default to S3 and confirm.
+              - Summarize the collected information and ask for confirmation before creating the case.
+              - After confirmation, call create_case with all four fields. Set knowledgeFound to true only if search_knowledge actually returned a relevant article for this symptom, otherwise false.
+              - If the customer says this is not an equipment issue or changes their mind, do NOT create a case. Politely end.
+              - CRITICAL — after calling create_case, you MUST check its "success" output before telling the customer anything about the outcome. If success is true, confirm the case was created and mention the case number from the "caseNumber" output. If success is false (for any reason), do NOT say the case was submitted or that the service team will contact them — that would be a false statement. Instead apologize, briefly explain using the "errorMessage" output in plain Korean, and ask the customer to try again or offer to escalate to a human. Never present a failed create_case call as a success.
+
+              Rules:
+              - Never provide engineering diagnosis or repair instructions beyond what the matched Knowledge Article itself says.
+              - Never make warranty or billing decisions.
+              - If the customer describes a safety emergency, immediately escalate to a human.
+              - Always use Korean in your responses.
+        actions:
+            search_knowledge: @actions.search_knowledge
+                with queryText = ...
+            create_case: @actions.create_case_from_agent
+                description: "고객 증상 상담 결과를 Case로 접수한다."
+                with knowledgeFound = ...
+
+    actions:
+        search_knowledge:
+            description: "고객이 설명한 증상으로 게시된 Knowledge Article을 검색한다(직접 apex:// 타겟, T5-22 재검증)."
+            target: "apex://T5AgentKnowledgeSearchAction"
+            require_user_confirmation: False
+            inputs:
+                queryText: string
+            outputs:
+                found: boolean
+                articleTitle: string
+                articleSummary: string
+                articleUrlName: string
+        create_case_from_agent:
+            description: "Agent가 고객 대화에서 파악한 증상·영향을 기존 Case 생성 로직으로 접수한다."
+            target: "apex://T5AgentCaseIntakeAction"
+            inputs:
+                assetId: string
+                symptomCategory: string
+                impactLevel: string
+                reportedSymptom: string
+                contactId: string
+                knowledgeFound: boolean
+            outputs:
+                success: boolean
+                caseId: string
+                caseNumber: string
+                accountName: string
+                warrantyDecision: string
+                coverageType: string
+                billable: boolean
+                errorMessage: string
+
+subagent escalation:
+    label: "상담사 연결"
+    description: "고객이 사람과 대화하기를 원할 때 상담사에게 전환한다."
+
+    reasoning:
+        instructions: ->
+            | The customer wants to speak with a human agent.
+              Attempt to escalate the conversation. If escalation fails, apologize and offer to create a support case instead.
+              Always respond in Korean.
+        actions:
+            escalate_to_human: @utils.escalate
+                description: "상담사에게 대화를 전환합니다."
+
+subagent off_topic:
+    label: "주제 벗어남"
+    description: "장비 관련 문의가 아닌 요청에 대해 안내한다."
+
+    reasoning:
+        instructions: ->
+            | The user request is not related to OT Electronics cooling equipment service.
+              Politely redirect by explaining you can help with equipment fault reports, equipment status inquiries, and service requests.
+              Do not answer general knowledge questions.
+              Always respond in Korean.
+
+subagent ambiguous_question:
+    label: "질문 명확화"
+    description: "모호한 질문에 대해 구체적인 정보를 요청한다."
+
+    reasoning:
+        instructions: ->
+            | The user request is too vague to determine how to help.
+              Ask them to clarify which equipment they are asking about, what specific issue or question they have, and whether they need to report a problem or just have a question.
+              Always respond in Korean.

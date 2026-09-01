@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Report xmlns="http://soap.sforce.com/2006/04/metadata">
+    <name>추세 조기 감지 실적</name>
+    <reportType>WorkOrders_with_Line_Items__c</reportType>
+    <format>Tabular</format>
+    <description>측정 라인 집계. T5 커스텀 필드(Trend_Flag__c) 배포 후 그룹핑을 추가한다.</description>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <columns>
+        <field>WorkOrder$Subject</field>
+    </columns>
+    <columns>
+        <field>WorkOrder$Status</field>
+    </columns>
+</Report>

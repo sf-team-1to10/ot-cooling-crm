@@ -1,0 +1,143 @@
+:host {
+    --brand: #0e858f;
+    --brand-d: #0a666e;
+    --ink: #181818;
+    --sub: #5c6a72;
+    --line: #e3e8ea;
+    --bg: #f5f7f8;
+    --card: #fff;
+    --ok: #2e7d32;
+    --warn: #c77700;
+    --bad: #c0392b;
+    display: block;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, 'Malgun Gothic', 'Apple SD Gothic Neo',
+        sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.ot-main {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 22px 20px 60px;
+}
+
+h1 {
+    font-size: 20px;
+    margin: 0 0 4px;
+    font-weight: 700;
+}
+
+.sub {
+    color: var(--sub);
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.tools {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.pill {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 20px;
+    padding: 5px 13px;
+    font-size: 12.5px;
+    cursor: pointer;
+    font-family: inherit;
+    color: var(--ink);
+}
+
+.pill.is-on {
+    background: var(--brand);
+    color: #fff;
+    border-color: var(--brand);
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.row {
+    padding: 14px 16px;
+    border-bottom: 1px solid #eef2f3;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    cursor: pointer;
+    text-align: left;
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.row:hover {
+    background: #fafcfc;
+}
+
+.st {
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 62px;
+    padding-top: 1px;
+}
+
+.ok {
+    color: var(--ok);
+}
+
+.warn {
+    color: var(--warn);
+}
+
+.bad {
+    color: var(--bad);
+}
+
+.rmain {
+    flex: 1;
+    min-width: 0;
+}
+
+.rt {
+    font-weight: 700;
+    font-size: 14.5px;
+}
+
+.rs {
+    color: var(--sub);
+    font-size: 12.5px;
+    margin-top: 3px;
+}
+
+.chev {
+    color: #b9c4c9;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.loading,
+.empty,
+.error {
+    padding: 16px;
+    font-size: 13.5px;
+    color: var(--sub);
+    text-align: center;
+}
+
+.error {
+    color: var(--bad);
+    text-align: left;
+}

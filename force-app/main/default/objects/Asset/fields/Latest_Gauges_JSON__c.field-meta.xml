@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Latest_Gauges_JSON__c</fullName>
+    <label>최신 게이지 JSON</label>
+    <description>OtTrendAlertCardController.GaugeView 목록을 JSON.serialize한 결과(측정항목·현재값·직전값·델타·스파크라인). WorkOrderLineItem을 고객 포털이 직접 조회할 수 없어서(2026-08-30, WorkOrderLineItem 라이선스 제약 확인) T5_Sync_Asset_Trend_Summary Flow가 WorkOrderLineItem 저장 시마다 이 필드를 갱신한다. 포털 LWC는 이 필드만 읽고 파싱한다. 사람이 직접 입력하지 않는다.</description>
+    <inlineHelpText>게이지 카드용 요약 데이터입니다(JSON). 자동 계산되며 직접 입력하지 않습니다.</inlineHelpText>
+    <length>131072</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
+    <visibleLines>10</visibleLines>
+</CustomField>

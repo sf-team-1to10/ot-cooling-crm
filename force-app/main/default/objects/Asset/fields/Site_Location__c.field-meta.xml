@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_Location__c</fullName>
+    <label>Site Location</label>
+    <description>고객 포털 카드/목록에 그대로 노출되는 설치 위치 표기(예: "Hall A · 3열"). T5-07 "고객 운영 콘솔"(고객운영홈_HMI) 화면 전용 표시 필드.</description>
+    <type>Text</type>
+    <length>60</length>
+</CustomField>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>복구 WorkOrder가 생성되면 강시공(시공) Slack DM으로 알림 발신. Feature Flag(T5_Feature_Flags__mdt.Default.Slack_Alert__c) Off면 미발신. AssetId가 있는 WO만 대상(Entry Condition). Slack 콜아웃은 Record-Triggered 즉시 경로 불가로 AsyncAfterCommit 비동기 경로에서 실행. 발신은 T5_Send_Slack_Channel_Message subflow 재사용. WorkOrder에 쓰기 없음(순수 알림). T5-14.</description>
+    <environments>Default</environments>
+    <interviewLabel>T5 WorkOrder Created Slack Alert {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>T5 WorkOrder Created Slack Alert</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <filterFormula>NOT(ISBLANK({!$Record.AssetId}))</filterFormula>
+        <object>WorkOrder</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <scheduledPaths>
+            <name>Run_Async_Slack_Callout</name>
+            <connector>
+                <targetReference>Get_Feature_Flag_Setting</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <recordLookups>
+        <name>Get_Feature_Flag_Setting</name>
+        <label>Feature Flag 조회</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Slack_Alert_Enabled</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Default</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>T5_Feature_Flags__mdt</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Slack_Alert__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <decisions>
+        <name>Check_Slack_Alert_Enabled</name>
+        <label>Slack Alert 활성 확인</label>
+        <locationX>176</locationX>
+        <locationY>240</locationY>
+        <defaultConnectorLabel>Off(종료)</defaultConnectorLabel>
+        <rules>
+            <name>Slack_Alert_On</name>
+            <label>Slack Alert On</label>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Feature_Flag_Setting.Slack_Alert__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_WO_Slack_Alert</targetReference>
+            </connector>
+        </rules>
+    </decisions>
+    <textTemplates>
+        <name>Msg_WO_Created</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:wrench: [복구 작업지시 배정] {!$Record.Subject}
+자산: {!$Record.Asset.Name}
+상태: {!$Record.Status}
+
+강시공님(시공) 앞으로 배정된 복구 작업지시입니다.
+WorkOrder: {!Lightning_Host}lightning/r/WorkOrder/{!$Record.Id}/view</text>
+    </textTemplates>
+    <subflows>
+        <name>Send_WO_Slack_Alert</name>
+        <label>Slack 발신 (WO 생성)</label>
+        <locationX>176</locationX>
+        <locationY>360</locationY>
+        <flowName>T5_Send_Slack_Channel_Message</flowName>
+        <inputAssignments>
+            <name>channelId</name>
+            <value>
+                <elementReference>Slack_Channel_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>messageText</name>
+            <value>
+                <elementReference>Msg_WO_Created</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <constants>
+        <name>Slack_Channel_Id</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>D0BUF2AUW80</stringValue>
+        </value>
+    </constants>
+    <constants>
+        <name>Lightning_Host</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>https://trailsignup-8617b18a6871a9--t1sales.sandbox.lightning.force.com/</stringValue>
+        </value>
+    </constants>
+    <status>Active</status>
+</Flow>

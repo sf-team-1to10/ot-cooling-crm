@@ -1,0 +1,14 @@
+<template>
+    <header class="ot-header">
+        <div class="ot-logo">OT전자 고객 포털</div>
+        <nav class="ot-nav">
+            <a class={assetsClass} role="button" tabindex="0" onclick={handleAssets}
+                >내 자산</a
+            >
+            <a class={intakeClass} role="button" tabindex="0" onclick={handleIntake}
+                >장애 신고</a
+            >
+        </nav>
+        <div class="ot-me" title={meLabel}>{meLabel}</div>
+    </header>
+</template>

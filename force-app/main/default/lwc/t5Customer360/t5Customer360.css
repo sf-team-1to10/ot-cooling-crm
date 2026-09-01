@@ -1,0 +1,18 @@
+.section {
+    border-top: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+    padding-bottom: var(--slds-g-spacing-small, 0.75rem);
+}
+
+.section:first-of-type {
+    border-top: none;
+}
+
+.section-row {
+    padding: var(--slds-g-spacing-xx-small, 0.25rem) 0;
+}
+
+.section-row.is-current {
+    border-left: 3px solid var(--slds-g-color-brand-base-50, #0176d3);
+    padding-left: var(--slds-g-spacing-x-small, 0.5rem);
+    background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Measured_Value_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+  NOT(ISBLANK(TEXT(Measurement_Item_Code__c))),
+  NOT(ISPICKVAL(Judgement__c, &quot;&quot;)),
+  NOT(ISPICKVAL(Judgement__c, &quot;측정불가&quot;)),
+  ISBLANK(Measured_Value__c)
+)</errorConditionFormula>
+    <errorDisplayField>Measured_Value__c</errorDisplayField>
+    <errorMessage>측정값을 입력한 뒤 판정하세요. 측정이 불가하면 판정을 &apos;측정불가&apos;로 선택하고 사유를 Description에 남기세요.</errorMessage>
+</ValidationRule>

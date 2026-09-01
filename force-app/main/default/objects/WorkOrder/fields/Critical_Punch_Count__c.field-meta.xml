@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Critical_Punch_Count__c</fullName>
+    <label>Critical Punch 수</label>
+    <summaryFilterItems>
+        <field>WorkOrderLineItem.Severity__c</field>
+        <operation>equals</operation>
+        <value>Critical</value>
+    </summaryFilterItems>
+    <summaryFilterItems>
+        <field>WorkOrderLineItem.Punch_Status__c</field>
+        <operation>notEqual</operation>
+        <value>검증완료</value>
+    </summaryFilterItems>
+    <summaryForeignKey>WorkOrderLineItem.WorkOrderId</summaryForeignKey>
+    <summaryOperation>count</summaryOperation>
+    <trackHistory>false</trackHistory>
+    <type>Summary</type>
+</CustomField>

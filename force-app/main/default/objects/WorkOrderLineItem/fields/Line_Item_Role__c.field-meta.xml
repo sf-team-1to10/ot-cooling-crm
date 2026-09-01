@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Line_Item_Role__c</fullName>
+    <label>항목 역할</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>시험</fullName>
+                <default>false</default>
+                <label>시험</label>
+            </value>
+            <value>
+                <fullName>복구조치</fullName>
+                <default>false</default>
+                <label>복구조치</label>
+            </value>
+            <value>
+                <fullName>검증</fullName>
+                <default>false</default>
+                <label>검증</label>
+            </value>
+            <value>
+                <fullName>점검</fullName>
+                <default>false</default>
+                <label>점검</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

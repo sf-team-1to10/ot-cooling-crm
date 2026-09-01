@@ -1,0 +1,190 @@
+/* 산업용 HMI/SCADA 계기판 톤 — 항상 다크(뷰어 테마와 무관, 계기판은 원래
+   자기만의 고정된 어두운 화면을 가진다는 컨셉을 그대로 반영). */
+
+.hmi-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    background: radial-gradient(120% 140% at 50% -10%, #16233a 0%, #0b1220 60%, #060a14 100%);
+    border: 1px solid #1f2e47;
+    border-radius: 14px;
+    padding: 14px 12px 12px;
+    color: #cfe0f5;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+        0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.hmi-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.hmi-label {
+    flex: 1;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8fa8c9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 6px currentColor;
+}
+.dot.ok {
+    background: #34d399;
+    color: #34d399;
+}
+.dot.warn {
+    background: #fbbf24;
+    color: #fbbf24;
+}
+.dot.bad {
+    background: #f87171;
+    color: #f87171;
+}
+
+.pill {
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+.pill.ok {
+    background: rgba(52, 211, 153, 0.15);
+    color: #34d399;
+}
+.pill.warn {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+}
+.pill.bad {
+    background: rgba(248, 113, 113, 0.15);
+    color: #f87171;
+}
+
+/* ---- 반원 다이얼 ---- */
+
+.dial-wrap {
+    position: relative;
+    width: 140px;
+    height: 70px;
+    margin-top: 6px;
+}
+
+.dial-track {
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(
+        from 270deg at 50% 100%,
+        #22c55e 0deg 60deg,
+        #eab308 60deg 120deg,
+        #ef4444 120deg 180deg,
+        transparent 180deg 360deg
+    );
+    -webkit-mask: radial-gradient(circle 70px at 70px 70px, transparent 62%, black 63%, black 100%, transparent 100%);
+    mask: radial-gradient(circle 70px at 70px 70px, transparent 62%, black 63%, black 100%, transparent 100%);
+    filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.18));
+}
+
+.dial-needle {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 3px;
+    height: 58px;
+    margin-left: -1.5px;
+    background: linear-gradient(to top, #e2ebf7, #7fa8e0);
+    border-radius: 2px;
+    transform-origin: bottom center;
+    box-shadow: 0 0 6px rgba(126, 168, 224, 0.7);
+    transition: transform 0.4s ease;
+}
+
+.dial-cap {
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    border-radius: 50%;
+    background: #dbe6f5;
+    box-shadow: 0 0 6px rgba(219, 230, 245, 0.85);
+}
+
+.dial-readout {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 4px;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    pointer-events: none;
+}
+
+.dial-value {
+    font-size: 1.55rem;
+    font-weight: 700;
+    color: #f4f8ff;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 12px rgba(122, 168, 224, 0.35);
+}
+
+.dial-unit {
+    font-size: 0.68rem;
+    color: #8fa8c9;
+}
+
+/* ---- 스파크라인 + 관측 범위 ---- */
+
+.sparkline-svg {
+    width: 100%;
+    max-width: 104px;
+    height: 20px;
+    margin-top: 2px;
+}
+.sparkline-svg polyline {
+    fill: none;
+    stroke: #7fa8e0;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.observed-range {
+    font-size: 0.62rem;
+    color: #6f88ab;
+    text-align: center;
+}
+
+/* ---- 직전 대비 ---- */
+
+.delta {
+    font-size: 0.68rem;
+    color: #8fa8c9;
+    text-align: center;
+}
+.delta.up {
+    color: #f87171;
+}
+.delta.down {
+    color: #60a5fa;
+}

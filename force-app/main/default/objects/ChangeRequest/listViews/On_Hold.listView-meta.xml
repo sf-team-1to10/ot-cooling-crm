@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>On_Hold</fullName>
+    <filterScope>Everything</filterScope>
+    <label>보류 중인 변경요청</label>
+    <filters>
+        <field>Status</field>
+        <operation>equals</operation>
+        <value>보류</value>
+    </filters>
+    <columns>Name</columns>
+    <columns>Subject</columns>
+    <columns>Requester__c</columns>
+    <columns>Hold_Reason__c</columns>
+    <columns>Info_Requested_Date__c</columns>
+</ListView>

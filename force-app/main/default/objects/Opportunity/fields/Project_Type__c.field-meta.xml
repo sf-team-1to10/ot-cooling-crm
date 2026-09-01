@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Project_Type__c</fullName>
+    <description>냉각설비 프로젝트의 성격. 신축/증설/교체에 따라 설계·제안 접근이 달라진다.</description>
+    <inlineHelpText>프로젝트가 신축·증설·교체 중 어디에 해당하는지 선택하세요.</inlineHelpText>
+    <label>프로젝트 유형</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>신축</fullName>
+                <default>false</default>
+                <label>신축</label>
+            </value>
+            <value>
+                <fullName>증설</fullName>
+                <default>false</default>
+                <label>증설</label>
+            </value>
+            <value>
+                <fullName>교체</fullName>
+                <default>false</default>
+                <label>교체</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

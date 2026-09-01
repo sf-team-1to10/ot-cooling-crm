@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Competition__c</fullName>
+    <description>이 사업기회의 경쟁 구도·경쟁사 동향. Lead 자격심사에서 파악한 내용이 전환 시 이관된다.</description>
+    <inlineHelpText>경쟁사·경쟁 제품·수주 판세 등 경쟁 상황을 기술하세요.</inlineHelpText>
+    <label>경쟁 상황</label>
+    <length>32000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>LongTextArea</type>
+    <visibleLines>3</visibleLines>
+</CustomField>

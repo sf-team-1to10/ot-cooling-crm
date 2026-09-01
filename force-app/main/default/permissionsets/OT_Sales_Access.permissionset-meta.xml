@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>OT 영업 담당 접근</label>
+    <description>나세일(영업) 역할 통합 권한. Opportunity·Contract·Customer_Commitment·Technical_Review 접근 + 필드 FLS + 탭. 기존 T1 트랙 권한을 영업 역할 기준으로 정리. Sales History·Hall B 증설 제안·계약 특약 검토 커버.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+
+    <objectPermissions>
+        <object>Account</object>
+        <allowRead>true</allowRead>
+        <allowCreate>false</allowCreate>
+        <allowEdit>false</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <object>Contact</object>
+        <allowRead>true</allowRead>
+        <allowCreate>false</allowCreate>
+        <allowEdit>false</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <object>Opportunity</object>
+        <allowRead>true</allowRead>
+        <allowCreate>true</allowCreate>
+        <allowEdit>true</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <object>Contract</object>
+        <allowRead>true</allowRead>
+        <allowCreate>true</allowCreate>
+        <allowEdit>true</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <object>Customer_Commitment__c</object>
+        <allowRead>true</allowRead>
+        <allowCreate>true</allowCreate>
+        <allowEdit>true</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <object>Technical_Review__c</object>
+        <allowRead>true</allowRead>
+        <allowCreate>true</allowCreate>
+        <allowEdit>true</allowEdit>
+        <allowDelete>false</allowDelete>
+        <viewAllRecords>false</viewAllRecords>
+        <modifyAllRecords>false</modifyAllRecords>
+    </objectPermissions>
+
+    <!-- Opportunity (T1 계승) -->
+    <fieldPermissions><field>Opportunity.Capacity__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Competition__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Customer_Proposal_Status__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Decision_Structure__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Evidence_Link__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Expansion_Capacity__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Expansion_Timing__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Handoff_Status__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Internal_Approval_Status__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Opportunity.Project_Type__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+
+    <!-- Contract / Customer_Commitment (T1 계승) -->
+    <fieldPermissions><field>Contract.Contract_Version__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Contract.Source_Opportunity__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Customer_Commitment__c.Approval_Status__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Customer_Commitment__c.Commitment_Version__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Customer_Commitment__c.Delivery_Date__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Customer_Commitment__c.Opportunity__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Customer_Commitment__c.Price__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Customer_Commitment__c.Special_Terms__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+    <fieldPermissions><field>Customer_Commitment__c.Technical_Risk__c</field><readable>true</readable><editable>true</editable></fieldPermissions>
+
+    <tabSettings><tab>standard-Opportunity</tab><visibility>Visible</visibility></tabSettings>
+    <tabSettings><tab>standard-Contract</tab><visibility>Visible</visibility></tabSettings>
+    <tabSettings><tab>Technical_Review__c</tab><visibility>Visible</visibility></tabSettings>
+</PermissionSet>

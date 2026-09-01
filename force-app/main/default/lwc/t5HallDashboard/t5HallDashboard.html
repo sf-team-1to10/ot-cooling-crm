@@ -1,0 +1,62 @@
+<template>
+    <lightning-card icon-name="standard:asset_object">
+        <span slot="title" class="slds-text-heading_small">Hall A 운영 대시보드</span>
+
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <template lwc:if={isLoading}>
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </template>
+
+            <template lwc:if={error}>
+                <div class="slds-text-color_error slds-p-around_small" role="alert">
+                    {errorMessage}
+                </div>
+            </template>
+
+            <template lwc:if={data}>
+                <template lwc:if={hasAssets}>
+                    <!-- 상태 요약 타일 -->
+                    <div class="tile-row">
+                        <template for:each={tiles} for:item="t">
+                            <div key={t.key} class={t.cls}>
+                                <div class="tile__count">{t.count}</div>
+                                <div class="tile__label">{t.label}</div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- 예방정비 진행률 -->
+                    <div class="slds-m-top_medium">
+                        <div class="slds-grid slds-grid_align-spread slds-m-bottom_xx-small">
+                            <span class="slds-text-title_caps">예방정비 진행률</span>
+                            <span class="slds-text-body_small">{preventiveLabel}</span>
+                        </div>
+                        <div class="progress-track" role="progressbar"
+                             aria-valuenow={preventiveProgress} aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-fill" style={progressStyle}></div>
+                        </div>
+                    </div>
+
+                    <!-- 자산별 상태 리스트 -->
+                    <div class="slds-m-top_medium">
+                        <span class="slds-text-title_caps">자산별 현재 상태 ({data.totalAssets}대)</span>
+                        <ul class="slds-has-dividers_bottom-space slds-m-top_x-small">
+                            <template for:each={assetRows} for:item="a">
+                                <li key={a.id} class="slds-item asset-row">
+                                    <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+                                        <span class="slds-truncate" title={a.name}>{a.name}</span>
+                                        <span class={a.badgeClass}>{a.trend}</span>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </template>
+
+                <template lwc:else>
+                    <p class="slds-text-color_weak slds-p-vertical_small">Hall A 자산 데이터가 없습니다.</p>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

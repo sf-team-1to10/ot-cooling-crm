@@ -1,0 +1,70 @@
+<template>
+    <section class="ot-main">
+        <h1>내 자산</h1>
+        <div class="sub">{subheading}</div>
+
+        <!-- Loading -->
+        <template lwc:if={isLoading}>
+            <div class="card">
+                <div class="loading">불러오는 중…</div>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template lwc:if={error}>
+            <div class="card">
+                <div class="error" role="alert">{error}</div>
+            </div>
+        </template>
+
+        <!-- Filter pills + list (shown whenever the user owns any asset) -->
+        <template lwc:if={hasAnyAssets}>
+            <div class="tools">
+                <button class={allPillClass} onclick={handleShowAll}>
+                    전체 {allCount}
+                </button>
+                <button
+                    class={attentionPillClass}
+                    onclick={handleShowAttention}
+                >
+                    주의·이상 {attentionCount}
+                </button>
+            </div>
+
+            <div class="card">
+                <template lwc:if={hasVisibleAssets}>
+                    <template for:each={visibleAssets} for:item="asset">
+                        <div
+                            key={asset.assetId}
+                            class="row"
+                            role="button"
+                            tabindex="0"
+                            data-id={asset.assetId}
+                            data-name={asset.name}
+                            onclick={handleContact}
+                        >
+                            <div class={asset.statusClass}>
+                                {asset.statusText}
+                            </div>
+                            <div class="rmain">
+                                <div class="rt">{asset.name}</div>
+                                <div class="rs">{asset.subline}</div>
+                            </div>
+                            <div class="chev">&rsaquo;</div>
+                        </div>
+                    </template>
+                </template>
+                <template lwc:if={showNoMatch}>
+                    <div class="empty">해당하는 장비가 없습니다.</div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Empty state: user owns no assets at all -->
+        <template lwc:if={showEmptyState}>
+            <div class="card">
+                <div class="empty">조회 가능한 자산이 없습니다.</div>
+            </div>
+        </template>
+    </section>
+</template>

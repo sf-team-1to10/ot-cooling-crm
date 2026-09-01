@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Internal_Approval_Status__c</fullName>
+    <description>Hall B 증설 등 내부 추진 승인 프로세스의 상태. Approval Process의 Field Update가 자동 기입한다 — 사람이 손으로 입력하지 않는다. 승인 이력의 Source of Truth는 표준 ProcessInstance다.</description>
+    <inlineHelpText>승인 프로세스가 자동으로 갱신하는 값이다. 직접 수정하지 말고 &apos;승인 요청&apos;으로 제출한다.</inlineHelpText>
+    <label>내부 승인 상태</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>미제출</fullName>
+                <default>true</default>
+                <label>미제출</label>
+            </value>
+            <value>
+                <fullName>검토중</fullName>
+                <default>false</default>
+                <label>검토중</label>
+            </value>
+            <value>
+                <fullName>승인</fullName>
+                <default>false</default>
+                <label>승인</label>
+            </value>
+            <value>
+                <fullName>반려</fullName>
+                <default>false</default>
+                <label>반려</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
