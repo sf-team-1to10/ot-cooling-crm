@@ -1,0 +1,291 @@
+<template>
+    <div class="slds-p-vertical_x-small">
+        <!-- ── Path 바 (프로토타입 v-cause/v-rca/v-actions, path:5 = RCA·예방·지식 on) ── -->
+        <div class="path">
+            <div class="path-step done"><span class="path-num">0</span> 접수</div>
+            <div class="path-step done"><span class="path-num">1</span> 진단·브리핑</div>
+            <div class="path-step done"><span class="path-num">2</span> 담당자 배정</div>
+            <div class="path-step done"><span class="path-num">3</span> 현장 출동</div>
+            <div class="path-step done"><span class="path-num">4</span> 수리·복구</div>
+            <div class="path-step on"><span class="path-num">5</span> RCA·예방·지식</div>
+        </div>
+
+        <!-- ── 서브탭 (RCA·예방 활성) ── -->
+        <div class="subtabs">
+            <button class="subtab" data-goto="case" onclick={handleSubtab}>Case</button>
+            <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
+            <button class="subtab" data-goto="c__otDispatchBriefingWorkbench" onclick={handleSubtab}>출동 브리핑</button>
+            <button class="subtab" data-goto="c__otDispatchCandidates" onclick={handleSubtab}>담당자 확정</button>
+            <button class="subtab on">RCA·예방</button>
+        </div>
+
+        <!-- ═══════════ STEP 1 · 원인 확정 → Problem 생성 (v-cause) ═══════════ -->
+        <template lwc:if={isCause}>
+            <div class="rca-hl">
+                <div class="rca-hl-head">
+                    <span class="rca-hl-icon icon-green">→</span>
+                    <div class="rca-hl-title">
+                        <!-- 도메인 교정: Problem은 WO의 자식이 아니라 Case 라인(CaseRelatedIssue)에 붙는다.
+                             현장 근거(WO/WOLI)로 확정된 원인을 Case의 Problem으로 승격한다. -->
+                        <p class="rca-hl-eyebrow">Case 00001042 · 원인 확정 → Problem 승격</p>
+                        <h1 class="rca-hl-name">현장에서 확정된 원인을 Problem으로 넘깁니다</h1>
+                    </div>
+                    <div class="rca-hl-actions">
+                        <lightning-button label="Problem 생성 · RCA 기록" variant="brand"
+                            onclick={handleCreateProblem}></lightning-button>
+                    </div>
+                </div>
+                <dl class="rca-hl-fields">
+                    <div class="rca-hl-f"><dt>연결 Case</dt><dd class="num">00001042</dd></div>
+                    <div class="rca-hl-f"><dt>현장 근거 WO</dt><dd class="num">00000318</dd></div>
+                    <div class="rca-hl-f"><dt>측정 위치</dt><dd>F-07</dd></div>
+                    <div class="rca-hl-f"><dt>작업 완료</dt><dd class="num">04-08 05:30</dd></div>
+                </dl>
+            </div>
+
+            <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+                <!-- 중앙: 가설 → 원인 확정 타임라인 -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                    <lightning-card>
+                        <span slot="title" class="slds-text-heading_small">가설이 원인으로 확정된 경로</span>
+                        <span slot="actions" class="slds-badge rca-badge-human">현장 측정으로 확정</span>
+                        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                            <div class="tl">
+                                <div class="tl-node">
+                                    <div class="tl-dot"></div>
+                                    <div class="tl-when">02:40 · 출동 브리핑</div>
+                                    <div class="tl-what">가설 — F-07 체결 상태 저하</div>
+                                    <div class="tl-detail">Rev.B 변경 구간 · 2022년 동일 위치 불합격 이력
+                                        <span class="slds-badge rca-badge-agent">Agent 제안</span></div>
+                                </div>
+                                <div class="tl-node hit">
+                                    <div class="tl-dot"></div>
+                                    <div class="tl-when">03:55 · 현장 최초 측정</div>
+                                    <div class="tl-what">F-07 <span class="num crit">71 N·m</span> — 불합격</div>
+                                    <div class="tl-detail">허용 99–121 밖. <b>가설이 측정으로 확인된 지점입니다.</b></div>
+                                </div>
+                                <div class="tl-node ok">
+                                    <div class="tl-dot"></div>
+                                    <div class="tl-when">05:30 · 재조임 후 재시험</div>
+                                    <div class="tl-what">F-07 <span class="num green">111 N·m</span> · 유량 <span class="num green">2,080</span></div>
+                                    <div class="tl-detail">체결값 회복과 함께 유량도 정상 범위로 돌아왔습니다. <b>인과가 닫혔습니다.</b></div>
+                                </div>
+                                <div class="tl-node ok">
+                                    <div class="tl-dot"></div>
+                                    <div class="tl-when">06:24 · 고객 복구 확인</div>
+                                    <div class="tl-what">직접 원인 확정</div>
+                                    <div class="tl-detail">이제 이 원인을 <b>Problem 레코드</b>로 남겨야 12대 전체의 예방으로 확장됩니다.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <!-- 우측: Problem으로 넘어가는 필드 매핑 -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <lightning-card>
+                        <span slot="title" class="slds-text-heading_small">Problem으로 넘어가는 것</span>
+                        <span slot="actions" class="slds-badge rca-badge-neutral">필드 매핑</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <table class="tbl">
+                                <thead><tr><th>출처</th><th>값</th><th>→ Problem</th></tr></thead>
+                                <tbody>
+                                    <tr><td>WOLI 최초</td><td class="num">71 N·m 불합격</td><td>RootCauseSummary</td></tr>
+                                    <tr><td>WOLI 재시험</td><td class="num">111 N·m 합격</td><td>ResolutionSummary</td></tr>
+                                    <tr><td>측정 위치</td><td>F-07</td><td>RootCauseSummary</td></tr>
+                                    <tr><td>Asset Revision</td><td>Rev.B</td><td>Category</td></tr>
+                                    <tr><td>WO 잠정 원인</td><td>체결 상태 저하</td><td>RootCauseSummary</td></tr>
+                                    <tr><td>Case</td><td class="num">00001042</td><td>연결 Case</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+        </template>
+
+        <!-- ═══════════ STEP 2 · Problem/RCA 검토 (v-rca) ═══════════ -->
+        <template lwc:if={isRca}>
+            <div class="rca-hl">
+                <div class="rca-hl-head">
+                    <span class="rca-hl-icon icon-crit">P</span>
+                    <div class="rca-hl-title">
+                        <p class="rca-hl-eyebrow">Problem PRB-0091 · Case 00001042에서 생성</p>
+                        <h1 class="rca-hl-name">A-07만 고치면 끝인가</h1>
+                    </div>
+                    <div class="rca-hl-actions">
+                        <lightning-button label="RCA·범위 확정 저장" variant="brand"
+                            onclick={handleSaveRca}></lightning-button>
+                    </div>
+                </div>
+                <dl class="rca-hl-fields">
+                    <div class="rca-hl-f"><dt>현장 근거</dt><dd class="num">F-07 · 71 → 111</dd></div>
+                    <div class="rca-hl-f"><dt>연결 Case</dt><dd class="num">00001042</dd></div>
+                    <div class="rca-hl-f"><dt>저장 시 실행</dt><dd><span class="slds-badge rca-badge-rule">PRI_ Flow</span></dd></div>
+                </dl>
+            </div>
+
+            <div class="slds-m-top_small">
+                <lightning-card>
+                    <span slot="title" class="slds-text-heading_small">원인 구분</span>
+                    <span slot="actions" class="slds-badge rca-badge-human">담당자 확정</span>
+                    <div class="slds-p-horizontal_medium slds-p-bottom_medium co-stack">
+                        <div class="callout co-crit">
+                            <span class="co-ico">→</span>
+                            <div><strong>직접 원인</strong>CDU-A-07 Rev.B 변경 구간 F-07의 체결 상태 저하 재발
+                                <div class="co-sub">근거 — 현장 측정 <span class="num">71 N·m 불합격</span> → 재조임
+                                    <span class="num">111 N·m 합격</span> · 유량 <span class="num">1,961 → 2,080</span>
+                                    <span class="slds-badge rca-badge-human">WO 00000318에서 확정</span></div>
+                            </div>
+                        </div>
+                        <div class="callout co-warn">
+                            <span class="co-ico">⚑</span>
+                            <div><strong>조직 차원의 근본원인</strong>재조임 후 합격으로 종료하고, 변경·재작업 위치를
+                                이후 점검에서 재확인하는 기준을 만들지 않음</div>
+                        </div>
+                    </div>
+                </lightning-card>
+
+                <lightning-card class="slds-m-top_small">
+                    <span slot="title" class="slds-text-heading_small">특수 조건과 공통 조건은 다른 질문에 답합니다</span>
+                    <span slot="actions" class="slds-badge rca-badge-agent">Agent 제안</span>
+                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+                        <table class="tbl">
+                            <thead><tr><th>판단 단위</th><th>근거</th><th>답하는 질문</th><th>범위 후보</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>A-07만의 특수 조건</b></td>
+                                    <td>Rev.B · F-07 · 과거 동일 위치 불합격</td>
+                                    <td>장애 원인을 어디서 찾을까</td>
+                                    <td><span class="slds-badge rca-badge-crit">시정조치 1건</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>12대의 공통 조건</b></td>
+                                    <td>같은 프로젝트 · 설치 기간 · 시공업체 · 연결부 규격 · 점검 기준 누락</td>
+                                    <td>예방 범위를 어디까지 볼까</td>
+                                    <td><span class="slds-badge rca-badge-warn">예방확인 11건</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </lightning-card>
+            </div>
+        </template>
+
+        <!-- ═══════════ STEP 3 · 조치 생성 결과 (v-actions) ═══════════ -->
+        <template lwc:if={isActions}>
+            <div class="rca-hl">
+                <div class="rca-hl-head">
+                    <span class="rca-hl-icon icon-green">✓</span>
+                    <div class="rca-hl-title">
+                        <p class="rca-hl-eyebrow">PRB-0091 저장 → <b>PRI_Corrective_Preventive_WO_Dispatch</b> 자동 실행</p>
+                        <h1 class="rca-hl-name">한 대의 수리가 12대의 다음 업무가 됐습니다</h1>
+                    </div>
+                    <div class="rca-hl-actions">
+                        <span class="slds-badge rca-badge-rule">규칙 자동 실행</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+                <!-- 중앙: 결과 요약 + 생성 WO + 점검표 개정 -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                    <div class="res-grid">
+                        <div class="res"><div class="res-n green">1</div><div class="res-l">시정조치 WO · 완료</div></div>
+                        <div class="res"><div class="res-n warn">11</div><div class="res-l">예방점검 WO · 신규</div></div>
+                        <div class="res"><div class="res-n">12</div><div class="res-l">합계</div></div>
+                    </div>
+
+                    <lightning-card class="slds-m-top_small">
+                        <span slot="title" class="slds-text-heading_small">자동 생성된 Work Order</span>
+                        <span slot="actions" class="slds-badge rca-badge-rule">PRI_ Flow</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <div class="rl">
+                                <div class="rl-row">
+                                    <span class="slds-badge rca-badge-ok">시정 · 완료</span>
+                                    <div class="rl-main">
+                                        <div class="rl-t">CDU-A-07 · F-07 체결 상태 시정조치</div>
+                                        <div class="rl-s">강시공 · <b>완료 2026-04-08 05:30</b> · 실적 <span class="num">71 → 111 N·m</span></div>
+                                    </div>
+                                </div>
+                                <div class="rl-row">
+                                    <span class="slds-badge rca-badge-warn">예방 · 신규</span>
+                                    <div class="rl-main">
+                                        <div class="rl-t">CDU-A-01 ~ A-06 · 연결부 체결 상태 예방점검</div>
+                                        <div class="rl-s">6건 · 기한 2026-05-08 · 미배정</div>
+                                    </div>
+                                </div>
+                                <div class="rl-row">
+                                    <span class="slds-badge rca-badge-warn">예방 · 신규</span>
+                                    <div class="rl-main">
+                                        <div class="rl-t">CDU-A-08 ~ A-12 · 연결부 체결 상태 예방점검</div>
+                                        <div class="rl-s">5건 · 기한 2026-05-08 · 미배정</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </lightning-card>
+
+                    <div class="callout co-green slds-m-top_small">
+                        <span class="co-ico">◆</span>
+                        <div><strong>시정 1건은 새 할 일이 아니라 이미 한 일의 정식 기록입니다</strong>
+                            강시공은 오늘 새벽 05:30에 F-07을 이미 고쳤습니다. Flow는 그 작업을 <b>시정조치로 정식 기록</b>하고,
+                            같은 조건을 공유하는 <b>나머지 11대에만 새 예방점검을 만듭니다.</b> 이것이 수평적 예방입니다.</div>
+                    </div>
+
+                    <lightning-card class="slds-m-top_small">
+                        <span slot="title" class="slds-text-heading_small">점검표 개정</span>
+                        <span slot="actions" class="slds-badge rca-badge-ok">Rev.2 → Rev.3</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <table class="tbl">
+                                <thead><tr><th>점검 항목</th><th>Rev.2</th><th>Rev.3</th></tr></thead>
+                                <tbody>
+                                    <tr><td>유량·차압 측정</td><td>포함</td><td>포함</td></tr>
+                                    <tr><td>필터 상태 확인</td><td>포함</td><td>포함</td></tr>
+                                    <tr class="flag">
+                                        <td><b>변경·재작업 위치 체결 상태 재확인</b></td>
+                                        <td class="muted">없음</td>
+                                        <td><span class="slds-badge rca-badge-ok">신규 추가</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <!-- 우측: T5-22 Knowledge 초안 제안 -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <lightning-card class="kb-card">
+                        <span slot="title" class="slds-text-heading_small">T5-22 · 신규 사례 감지</span>
+                        <span slot="actions" class="slds-badge rca-badge-agent">Agent 제안</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <p class="kb-lead">같은 <b>PRB-0091 저장</b>이 두 번째 갈래도 실행했습니다. Case와 RCA를 기존
+                                Article과 대조해 신규 사례 가능성을 감지했습니다.</p>
+
+                            <div class="kb-inner">
+                                <div class="mini-label">원본 — PRB-0091 RootCauseSummary</div>
+                                <div class="kb-quote">"CDU-A-07 Rev.B 변경 구간 F-07의 체결 상태 저하 재발. 현장 측정 71 N·m 불합격
+                                    → 재조임 111 N·m 합격, 유량 1,961 → 2,080 회복."</div>
+                                <div class="kb-arrow">↓ Agent 요약</div>
+                                <div class="mini-label">Article 초안</div>
+                                <div class="kb-title">변경 적용 구간의 체결 상태 재발 — 확인 순서와 재점검 기준</div>
+                                <dl class="kb-kv">
+                                    <div><dt>출처 RCA</dt><dd class="num">PRB-0091</dd></div>
+                                    <div><dt>2022 원기록</dt><dd class="num">68 → 112</dd></div>
+                                    <div><dt>2026 측정</dt><dd class="num">71 → 111</dd></div>
+                                    <div><dt>적용 Asset Type</dt><dd>CDU-1700</dd></div>
+                                </dl>
+                            </div>
+
+                            <div class="kb-actions">
+                                <lightning-button label="등록 검토" variant="brand"></lightning-button>
+                                <lightning-button label="보류"></lightning-button>
+                            </div>
+                            <p class="kb-note">등록 제안까지가 자동입니다. <b>게시는 담당자가 공개 범위를 검토한 뒤</b>에만 이뤄집니다.</p>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>
