@@ -153,3 +153,40 @@
     border-top: 2px solid #ba0517;
     border-bottom: 2px solid #ba0517;
 }
+
+/* Slack 전문가 소집 Flow 모달 — t5CaseHeader 브리핑 모달과 동일 패턴 */
+.swarm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.swarm-spinner {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+}
+
+.swarm-card {
+    width: 40rem;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* 로딩 중엔 카드를 화면에서 숨기되 Flow는 DOM에 유지(statuschange 수신) */
+.swarm-card_hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    opacity: 0;
+    pointer-events: none;
+}

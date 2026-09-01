@@ -180,5 +180,26 @@
                 </div>
             </div>
         </template>
+
+        <!-- Slack 전문가 소집 Flow 모달 — 회색 backdrop 없이, 밖 클릭 시 닫힘 -->
+        <template lwc:if={showSwarmFlow}>
+            <div class="swarm-overlay" onclick={handleSwarmOverlayClick}>
+                <template lwc:if={swarmFlowLoading}>
+                    <div class="swarm-spinner">
+                        <lightning-spinner alternative-text="로딩 중" size="medium"
+                            variant="brand"></lightning-spinner>
+                    </div>
+                </template>
+
+                <div class={swarmCardClass} onclick={stopPropagation}
+                    role="dialog" aria-modal="true" aria-label="Slack 전문가 소집">
+                    <div class="slds-p-around_medium">
+                        <lightning-flow flow-api-name="T5_Case_Expert_Finder_Swarm"
+                            flow-input-variables={swarmFlowInputVariables}
+                            onstatuschange={handleSwarmStatusChange}></lightning-flow>
+                    </div>
+                </div>
+            </div>
+        </template>
     </div>
 </template>
