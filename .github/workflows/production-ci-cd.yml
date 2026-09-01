@@ -68,18 +68,31 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           if [ -d "changed-sources/force-app" ] && [ "$(ls -A changed-sources/force-app 2>/dev/null)" ]; then
-            sf project deploy start \
-              --source-dir "changed-sources/force-app" \
-              --dry-run \
-              --test-level RunLocalTests \
-              --target-org production \
-              --wait 30 \
-              --json | tee deploy-result.json
-            TESTS_RAN=$(jq '.result.numberTestsTotal // 0' deploy-result.json)
-            echo "실행된 테스트 수: $TESTS_RAN"
-            if [ "$TESTS_RAN" -eq 0 ]; then
-              echo "::error::검증 실패 - 실행된 Apex 테스트가 0개입니다. 변경사항을 커버하는 테스트가 필요합니다."
-              exit 1
+            # 델타에 Apex 클래스/트리거가 포함될 때만 테스트를 강제한다.
+            # PermSet·LWC·Flow 등 Apex 외 변경은 실행할 테스트가 없는 게 정상이므로 게이트를 적용하지 않는다.
+            if find changed-sources/force-app \( -name "*.cls" -o -name "*.trigger" \) | grep -q .; then
+              sf project deploy start \
+                --source-dir "changed-sources/force-app" \
+                --dry-run \
+                --test-level RunLocalTests \
+                --target-org production \
+                --wait 30 \
+                --json | tee deploy-result.json
+              TESTS_RAN=$(jq '.result.numberTestsTotal // 0' deploy-result.json)
+              echo "실행된 테스트 수: $TESTS_RAN"
+              if [ "$TESTS_RAN" -eq 0 ]; then
+                echo "::error::검증 실패 - Apex 변경이 있으나 실행된 테스트가 0개입니다. 변경사항을 커버하는 테스트가 필요합니다."
+                exit 1
+              fi
+            else
+              echo "Apex 변경 없음 - 테스트 게이트 skip, 배포 검증만 수행합니다."
+              sf project deploy start \
+                --source-dir "changed-sources/force-app" \
+                --dry-run \
+                --test-level NoTestRun \
+                --target-org production \
+                --wait 30 \
+                --json
             fi
           else
             echo "검증할 변경사항이 없습니다."
