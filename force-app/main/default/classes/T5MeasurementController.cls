@@ -10,7 +10,6 @@
 public with sharing class T5MeasurementController {
 
     private static final String JUDGE_PASS = '합격';
-    private static final String JUDGE_FAIL = '불합격';
     private static final String STATUS_COMPLETED = 'Completed';
 
     /**
@@ -30,12 +29,15 @@ public with sharing class T5MeasurementController {
     }
 
     /**
-     * 측정값을 저장하고 허용구간 판정을 수행한다.
-     * Threshold_Min__c ~ Threshold_Max__c 범위 안에 들면 합격, 아니면 불합격.
-     * Max가 비어 있으면 하한만, Min이 비어 있으면 상한만 검사한다.
+     * 측정값을 저장한다. 판정(Judgement__c)은 이 컨트롤러가 아니라 org의 기존
+     * 자동화 Flow(WOLI_Judgement_AutoSet, RecordBeforeSave)가 수행한다. 그 Flow는
+     * WorkOrder의 Technical_Baseline__c와 WOLI의 Measurement_Item_Code__c로
+     * Technical_Baseline_Spec__c를 조회해 허용구간을 판정한다. 따라서 여기서는
+     * Measured_Value__c만 쓰고, 저장 후 Flow가 세팅한 판정을 되읽어 반환한다.
+     * 자체 판정을 쓰면 같은 트랜잭션의 BeforeSave Flow가 덮어써 무력해지기 때문.
      * @param lineItemId 측정값을 저장할 WorkOrderLineItem Id
      * @param value 입력된 측정값
-     * @return 저장 후 판정 결과를 담은 MeasurementLine
+     * @return 저장 후 Flow가 판정한 결과를 담은 MeasurementLine
      */
     @AuraEnabled
     public static MeasurementLine saveMeasurement(Id lineItemId, Decimal value) {
@@ -46,6 +48,19 @@ public with sharing class T5MeasurementController {
             throw new AuraHandledException('측정값을 입력하세요.');
         }
 
+        // 변경 대상 필드만 담은 레코드로 업데이트한다. 조회 결과 전체를 업데이트하면
+        // USER_MODE가 로드된 모든 필드의 FLS를 검사해 불필요하게 막힐 수 있다.
+        WorkOrderLineItem toUpdate = new WorkOrderLineItem(
+            Id = lineItemId,
+            Measured_Value__c = value
+        );
+        try {
+            Database.update(toUpdate, AccessLevel.USER_MODE);
+        } catch (DmlException e) {
+            throw new AuraHandledException('측정값 저장에 실패했습니다: ' + e.getDmlMessage(0));
+        }
+
+        // BeforeSave Flow가 판정을 세팅한 뒤 상태를 되읽는다.
         List<WorkOrderLineItem> items = [
             SELECT Id, WorkOrderId, LineItemNumber, Measurement_Point__c,
                    Measured_Value__c, Previous_Measured_Value__c, Baseline_Value__c,
@@ -59,28 +74,7 @@ public with sharing class T5MeasurementController {
         if (items.isEmpty()) {
             throw new AuraHandledException('측정 항목을 찾을 수 없습니다: ' + lineItemId);
         }
-
-        WorkOrderLineItem item = items[0];
-        Boolean pass = isWithinThreshold(value, item.Threshold_Min__c, item.Threshold_Max__c);
-        String judgement = pass ? JUDGE_PASS : JUDGE_FAIL;
-
-        // 변경 대상 필드만 담은 레코드로 업데이트한다. 조회 결과 전체를 업데이트하면
-        // USER_MODE가 로드된 모든 필드의 FLS를 검사해 불필요하게 막힐 수 있다.
-        WorkOrderLineItem toUpdate = new WorkOrderLineItem(
-            Id = item.Id,
-            Measured_Value__c = value,
-            Judgement__c = judgement
-        );
-
-        try {
-            Database.update(toUpdate, AccessLevel.USER_MODE);
-        } catch (DmlException e) {
-            throw new AuraHandledException('측정값 저장에 실패했습니다: ' + e.getDmlMessage(0));
-        }
-
-        item.Measured_Value__c = value;
-        item.Judgement__c = judgement;
-        return toLine(item);
+        return toLine(items[0]);
     }
 
     /**
@@ -140,16 +134,6 @@ public with sharing class T5MeasurementController {
     }
 
     // ─── Helpers ───────────────────────────────────────────────────────────
-
-    private static Boolean isWithinThreshold(Decimal value, Decimal min, Decimal max) {
-        if (min != null && value < min) {
-            return false;
-        }
-        if (max != null && value > max) {
-            return false;
-        }
-        return min != null || max != null;
-    }
 
     private static MeasurementLine toLine(WorkOrderLineItem item) {
         MeasurementLine line = new MeasurementLine();

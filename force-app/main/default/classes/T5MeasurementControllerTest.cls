@@ -1,30 +1,65 @@
 /**
- * Tests for T5MeasurementController — 측정 컨텍스트 조회, 허용구간 판정(합격/불합격),
- * 작업 완료(Status=Completed) 전환, 입력 검증(null) 경로를 검증한다.
+ * Tests for T5MeasurementController — 측정 컨텍스트 조회, 측정값 저장, 작업 완료
+ * (Status=Completed) 전환, 입력 검증(null) 경로를 검증한다.
+ *
+ * 판정(Judgement__c)은 이 컨트롤러가 아니라 org의 WOLI_Judgement_AutoSet Flow가
+ * 수행하므로, 합격/불합격 테스트는 실제로 그 Flow가 Technical_Baseline_Spec__c를
+ * 조회해 판정하는 통합 경로를 검증한다. 그래서 setup에서 승인된 Technical_Baseline과
+ * Spec 레코드까지 갖춘 데이터 체인을 만든다.
  */
 @isTest
 private class T5MeasurementControllerTest {
 
     @testSetup
     static void setup() {
-        // PermissionSetAssignment(setup 객체)와 Account/WOLI(비setup)를 같은
-        // 트랜잭션에 DML하면 MIXED_DML_OPERATION이 나므로 runAs로 분리한다.
+        // PermissionSetAssignment(setup 객체)와 비setup DML을 같은 트랜잭션에 하면
+        // MIXED_DML_OPERATION이 나므로 runAs로 분리한다.
         System.runAs(new User(Id = UserInfo.getUserId())) {
             assignMeasurementAccess();
         }
+
+        Account acct = new Account(Name = 'T5 측정 테스트 고객');
+        insert acct;
+
+        Contract contract = new Contract(
+            AccountId = acct.Id, Status = 'Draft', StartDate = Date.today(), ContractTerm = 12
+        );
+        insert contract;
+
+        Customer_Commitment__c commitment = new Customer_Commitment__c(
+            Name = 'T5 측정 약속', Contract__c = contract.Id
+        );
+        insert commitment;
+
+        // 판정 Flow가 스펙을 찾으려면 baseline이 WO에 연결돼야 하고, 검증규칙
+        // Block_WO_Without_Approved_Baseline 때문에 baseline은 '승인' 상태여야 한다.
+        Technical_Baseline__c baseline = new Technical_Baseline__c(
+            Name = 'T5 측정 기준선', Version__c = 'Rev A',
+            Contract__c = contract.Id, Customer_Commitment__c = commitment.Id,
+            Approval_Status__c = '승인'
+        );
+        insert baseline;
+
+        insert new List<Technical_Baseline_Spec__c>{
+            new Technical_Baseline_Spec__c(
+                Technical_Baseline__c = baseline.Id, Measurement_Item_Code__c = '체결토크',
+                Threshold_Min__c = 100, Threshold_Max__c = 120, Unit__c = 'N·m', Spec_Value__c = 112
+            ),
+            new Technical_Baseline_Spec__c(
+                Technical_Baseline__c = baseline.Id, Measurement_Item_Code__c = '유량',
+                Threshold_Min__c = 2000, Unit__c = 'L/min', Spec_Value__c = 2100
+            )
+        };
 
         // WorkOrder에 AssetId를 연결하지 않는다: 측정값 저장이 트렌드 재계산 Flow
         // 체인(WOLI_Trend_Flag_Evaluate → T5_Sync_Asset_Trend_Summary)을 트리거하고,
         // 그 끝의 Apex가 USER_MODE로 Asset을 업데이트해 테스트 사용자 권한으로 실패한다.
         // Asset 미연결 WO면 그 체인이 Asset을 건드리지 않는다. 측정 판정 검증엔 무관.
         WorkOrder wo = new WorkOrder(
-            Status = 'New', Subject = '유량저하 복구'
+            Status = 'New', Subject = '유량저하 복구', Technical_Baseline__c = baseline.Id
         );
         insert wo;
 
-        // AssetId를 넣지 않는다: WOLI 업데이트가 "T5 Sync Asset Trend Summary" Flow를
-        // 트리거하고, 그 Flow가 Asset 필드를 건드려 테스트 사용자 권한으로는 실패하기
-        // 때문. 측정 판정 검증에 Asset 연결은 불필요하다.
         insert new List<WorkOrderLineItem>{
             new WorkOrderLineItem(
                 WorkOrderId = wo.Id, Line_Item_Role__c = '시험',
@@ -142,8 +177,14 @@ private class T5MeasurementControllerTest {
         Assert.isFalse(result.isPass, '130은 상한 120 초과이므로 불합격이어야 한다');
     }
 
+    /**
+     * org의 WOLI_Judgement_AutoSet Flow는 판정 시 "값 >= Threshold_Min AND
+     * 값 <= Threshold_Max"를 모두 요구한다. 유량 스펙은 상한(Threshold_Max)이
+     * 비어 있으므로 값 <= null 비교가 성립하지 않아 불합격으로 판정된다.
+     * 즉 이 org에서 상한 미설정 항목은 합격이 될 수 없다(실제 Flow 동작).
+     */
     @isTest
-    static void shouldPass_WhenOnlyMinThresholdMet() {
+    static void shouldFail_WhenMaxThresholdMissing() {
         WorkOrderLineItem line = getLine('유량');
 
         Test.startTest();
@@ -151,7 +192,7 @@ private class T5MeasurementControllerTest {
             T5MeasurementController.saveMeasurement(line.Id, 2080);
         Test.stopTest();
 
-        Assert.isTrue(result.isPass, '상한 없고 하한 2000 이상이므로 합격이어야 한다');
+        Assert.isFalse(result.isPass, '상한 스펙이 없으면 Flow가 불합격으로 판정한다');
     }
 
     @isTest
