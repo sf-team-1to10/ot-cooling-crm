@@ -1,7 +1,9 @@
 <template>
     <div class="home">
         <header class="hero">
-            <p class="hero__brand">{brandLabel}</p>
+            <template lwc:if={brandLabel}>
+                <p class="hero__brand">{brandLabel}</p>
+            </template>
             <h1 class="hero__greeting">{greetingLine}</h1>
             <p class="hero__subtitle">{subtitle}</p>
 

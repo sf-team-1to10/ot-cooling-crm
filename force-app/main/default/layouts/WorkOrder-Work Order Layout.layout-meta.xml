@@ -114,6 +114,10 @@
                 <behavior>Edit</behavior>
                 <field>Dispatch_Briefing__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Slack_Collaboration_Summary__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>
@@ -210,10 +214,12 @@
     <relatedLists>
         <fields>Name</fields>
         <fields>Description</fields>
+        <fields>Measurement_Point__c</fields>
         <fields>Measurement_Item_Code__c</fields>
         <fields>Spec_Value__c</fields>
         <fields>Threshold_Min__c</fields>
         <fields>Threshold_Max__c</fields>
+        <fields>Previous_Measured_Value__c</fields>
         <fields>Measured_Value__c</fields>
         <fields>Judgement__c</fields>
         <fields>Retest_Round__c</fields>
