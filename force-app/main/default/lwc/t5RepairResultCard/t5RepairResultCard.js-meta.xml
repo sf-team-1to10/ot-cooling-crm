@@ -8,6 +8,7 @@
         <target>lightning__FlowScreen</target>
         <target>lightning__RecordPage</target>
         <target>lightning__AppPage</target>
+        <target>lightning__ECSFSApp</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__FlowScreen">

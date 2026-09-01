@@ -1,5 +1,5 @@
 .card {
-    background: var(--slds-g-color-surface-container-1, #ffffff);
+    background: #1a2b5c;
     border-radius: 0.75rem;
     padding: 1rem;
     max-width: 32rem;
@@ -15,7 +15,7 @@
 .card__title {
     font-size: 1rem;
     font-weight: 700;
-    color: var(--slds-g-color-neutral-base-10, #16325c);
+    color: #ffffff;
 }
 
 .status {

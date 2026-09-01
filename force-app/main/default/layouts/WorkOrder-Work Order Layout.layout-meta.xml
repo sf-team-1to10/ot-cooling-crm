@@ -186,6 +186,9 @@
     </miniLayout>
     <quickActionList>
         <quickActionListItems>
+            <quickActionName>WorkOrder.T5_Mark_Repair_Complete</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
             <quickActionName>FeedItem.TextPost</quickActionName>
         </quickActionListItems>
         <quickActionListItems>
