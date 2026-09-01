@@ -1,0 +1,25 @@
+<template>
+    <div class="card">
+        <header class="card__header">
+            <h2 class="card__title">복구 결과</h2>
+            <span class={statusClass} aria-label={statusLabel}>{statusLabel}</span>
+        </header>
+
+        <div class="grid" role="list">
+            <template for:each={tiles} for:item="tile">
+                <div key={tile.key} class={tile.tileClass} role="listitem">
+                    <div class={tile.valueClass}>{tile.value}</div>
+                    <div class="tile__label">{tile.label}</div>
+                </div>
+            </template>
+        </div>
+
+        <div class="note">
+            <span class="note__check" aria-hidden="true">✓</span>
+            <div class="note__body">
+                <p class="note__title">{recurrenceTitle}</p>
+                <p class="note__text">{recurrenceNote}</p>
+            </div>
+        </div>
+    </div>
+</template>
