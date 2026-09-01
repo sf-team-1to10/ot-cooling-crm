@@ -39,6 +39,8 @@ export default class T5FieldHome extends NavigationMixin(LightningElement) {
                                     Status { value }
                                     SchedStartTime { value }
                                     SchedEndTime { value }
+                                    ParentRecordId { value }
+                                    ParentRecordType { value }
                                 }
                             }
                         }
@@ -62,8 +64,12 @@ export default class T5FieldHome extends NavigationMixin(LightningElement) {
         const end = node.SchedEndTime?.value;
         const status = node.Status?.value;
         const done = status === 'Completed';
+        const parentType = node.ParentRecordType?.value;
+        const workOrderId = parentType === 'WorkOrder' ? node.ParentRecordId?.value : null;
         return {
             id: node.Id,
+            targetId: workOrderId ?? node.Id,
+            targetObject: workOrderId ? 'WorkOrder' : 'ServiceAppointment',
             number: node.AppointmentNumber?.value,
             subject: node.Subject?.value,
             status,
@@ -117,6 +123,7 @@ export default class T5FieldHome extends NavigationMixin(LightningElement) {
             event.preventDefault();
         }
         const recordId = event.currentTarget.dataset.id;
+        const objectApiName = event.currentTarget.dataset.object;
         if (!recordId) {
             return;
         }
@@ -124,7 +131,7 @@ export default class T5FieldHome extends NavigationMixin(LightningElement) {
             type: 'standard__recordPage',
             attributes: {
                 recordId,
-                objectApiName: 'ServiceAppointment',
+                objectApiName,
                 actionName: 'view'
             }
         });
