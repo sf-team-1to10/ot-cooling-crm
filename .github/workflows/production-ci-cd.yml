@@ -7,10 +7,12 @@ on:
     branches: [production]
     paths:
       - "force-app/**"
+      - ".github/workflows/**"
   push:
     branches: [production]
     paths:
       - "force-app/**"
+      - ".github/workflows/**"
 
 jobs:
   production-workflow:
@@ -72,7 +74,13 @@ jobs:
               --test-level RunLocalTests \
               --target-org production \
               --wait 30 \
-              --json
+              --json | tee deploy-result.json
+            TESTS_RAN=$(jq '.result.numberTestsTotal // 0' deploy-result.json)
+            echo "실행된 테스트 수: $TESTS_RAN"
+            if [ "$TESTS_RAN" -eq 0 ]; then
+              echo "::error::검증 실패 - 실행된 Apex 테스트가 0개입니다. 변경사항을 커버하는 테스트가 필요합니다."
+              exit 1
+            fi
           else
             echo "검증할 변경사항이 없습니다."
           fi
