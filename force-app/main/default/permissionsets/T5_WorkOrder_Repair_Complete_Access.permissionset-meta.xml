@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>T5-29 수리 완료 버튼 전용. WorkOrder 조치내용/복구결과 필드 편집 FLS를 부여해 현장 기술자가 완료 화면에서 보고 내용을 입력할 수 있게 한다. 완료 시 Slack 완료보고 발신(T5_WorkOrder_Completed_Swarm_Notify) 흐름과 함께 동작.</description>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>WorkOrder.Action_Taken__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>WorkOrder.Repair_Result__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>T5 WorkOrder Repair Complete Access</label>
+</PermissionSet>

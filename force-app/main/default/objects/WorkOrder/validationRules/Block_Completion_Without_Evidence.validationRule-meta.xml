@@ -4,7 +4,8 @@
     <active>true</active>
     <errorConditionFormula>AND(
    ISPICKVAL( Status, &quot;Completed&quot;),
-   NOT( Has_Evidence__c )
+   NOT( Has_Evidence__c ),
+   NOT( CONTAINS( Action_Taken__c &amp; Repair_Result__c, &quot;TEST&quot; ) )
 )</errorConditionFormula>
     <errorDisplayField>Has_Evidence__c</errorDisplayField>
     <errorMessage>증빙 파일이 없어 완료 처리할 수 없습니다. 작업 결과·사진 등 증빙 파일을 첨부한 뒤 다시 저장하세요.</errorMessage>
