@@ -4,11 +4,9 @@ import {
     EnclosingTabId,
     setTabLabel,
     setTabIcon,
-    IsConsoleNavigation,
-    getFocusedTabInfo,
-    openSubtab,
-    focusTab
+    IsConsoleNavigation
 } from 'lightning/platformWorkspaceApi';
+import { openOrFocusSubtab } from 'c/otConsoleNav';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
@@ -192,22 +190,14 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
             return;
         }
 
-        const pageReference = {
-            type: 'standard__component',
-            attributes: { componentName: target },
-            state: { c__recordId: caseId }
-        };
-
         if (this.isConsole) {
-            const focused = await getFocusedTabInfo();
-            const subtabId = await openSubtab({
-                parentTabId: focused.parentTabId || focused.tabId,
-                pageReference,
-                focus: true
-            });
-            await focusTab(subtabId);
+            await openOrFocusSubtab(target, caseId);
         } else {
-            this[NavigationMixin.Navigate](pageReference);
+            this[NavigationMixin.Navigate]({
+                type: 'standard__component',
+                attributes: { componentName: target },
+                state: { c__recordId: caseId }
+            });
         }
     }
 

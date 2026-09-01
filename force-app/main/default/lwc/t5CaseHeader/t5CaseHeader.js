@@ -1,11 +1,7 @@
 import { LightningElement, api, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import {
-    IsConsoleNavigation,
-    getFocusedTabInfo,
-    openSubtab,
-    focusTab
-} from 'lightning/platformWorkspaceApi';
+import { IsConsoleNavigation } from 'lightning/platformWorkspaceApi';
+import { openOrFocusSubtab } from 'c/otConsoleNav';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getRecordNotifyChange } from 'lightning/uiRecordApi';
 
@@ -47,22 +43,14 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
         if (!componentName || !this.recordId) {
             return;
         }
-        const pageReference = {
-            type: 'standard__component',
-            attributes: { componentName },
-            state: { c__recordId: this.recordId }
-        };
-
         if (this.isConsole) {
-            const focused = await getFocusedTabInfo();
-            const subtabId = await openSubtab({
-                parentTabId: focused.parentTabId || focused.tabId,
-                pageReference,
-                focus: true
-            });
-            await focusTab(subtabId);
+            await openOrFocusSubtab(componentName, this.recordId);
         } else {
-            this[NavigationMixin.Navigate](pageReference);
+            this[NavigationMixin.Navigate]({
+                type: 'standard__component',
+                attributes: { componentName },
+                state: { c__recordId: this.recordId }
+            });
         }
     }
 

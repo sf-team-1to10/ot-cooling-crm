@@ -8,12 +8,15 @@ import {
 } from 'lightning/platformWorkspaceApi';
 import { openOrFocusSubtab } from 'c/otConsoleNav';
 
-// 프로토타입 v-rca(20) — 직접 원인 vs 조직 차원 원인, RCA·범위 확정.
-export default class OtProblemRca extends NavigationMixin(LightningElement) {
+// 프로토타입 v-cause(19) — 현장 근거로 확정된 원인을 Case의 Problem으로 승격.
+export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     @api recordId;
     _stateRecordId;
     _tabId;
     _tabLabeled = false;
+
+    // "Problem 생성·RCA 기록" 클릭 시 같은 화면에서 생성 상태로 전환(프로토타입 applyCause).
+    problemCreated = false;
 
     @wire(CurrentPageReference)
     setPageRef(pageRef) {
@@ -42,17 +45,22 @@ export default class OtProblemRca extends NavigationMixin(LightningElement) {
             return;
         }
         this._tabLabeled = true;
-        await setTabLabel(this._tabId, 'RCA');
-        await setTabIcon(this._tabId, 'standard:problem');
+        await setTabLabel(this._tabId, '원인확정');
+        await setTabIcon(this._tabId, 'standard:incident');
     }
 
-    // "RCA·범위 확정 저장" — 21번(otRcaActions) 탭으로 진행.
-    handleSaveRca() {
-        this.navigate('c__otActionResults');
+    handleCreateProblem() {
+        this.problemCreated = true;
+    }
+
+    // "RCA 검토 →" — 20번(otProblemRca) 탭으로 진행.
+    handleGoRca() {
+        this.navigate('c__otProblemRca');
     }
 
     async handleSubtab(event) {
-        this.navigate(event.currentTarget.dataset.goto);
+        const target = event.currentTarget.dataset.goto;
+        this.navigate(target);
     }
 
     async navigate(target) {
