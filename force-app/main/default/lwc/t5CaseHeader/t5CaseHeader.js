@@ -1,9 +1,22 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import {
+    IsConsoleNavigation,
+    getFocusedTabInfo,
+    openSubtab,
+    focusTab
+} from 'lightning/platformWorkspaceApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getRecordNotifyChange } from 'lightning/uiRecordApi';
 
-export default class T5CaseHeader extends LightningElement {
+export default class T5CaseHeader extends NavigationMixin(LightningElement) {
     @api recordId;
+
+    @wire(IsConsoleNavigation) isConsoleNavigation;
+
+    get isConsole() {
+        return this.isConsoleNavigation?.data === true;
+    }
 
     showBriefingFlow = false;
     flowLoaded = false;
@@ -25,6 +38,32 @@ export default class T5CaseHeader extends LightningElement {
     handleBriefing() {
         this.flowLoaded = false;
         this.showBriefingFlow = true;
+    }
+
+    // 서브탭 클릭 → 해당 UrlAddressable 컴포넌트를 콘솔 서브탭(전체폭)으로 연다.
+    // App Page 껍데기 없이 화면만 띄우고, 열린 서브탭으로 focus한다.
+    async handleSubtab(event) {
+        const componentName = event.currentTarget.dataset.goto;
+        if (!componentName || !this.recordId) {
+            return;
+        }
+        const pageReference = {
+            type: 'standard__component',
+            attributes: { componentName },
+            state: { c__recordId: this.recordId }
+        };
+
+        if (this.isConsole) {
+            const focused = await getFocusedTabInfo();
+            const subtabId = await openSubtab({
+                parentTabId: focused.parentTabId || focused.tabId,
+                pageReference,
+                focus: true
+            });
+            await focusTab(subtabId);
+        } else {
+            this[NavigationMixin.Navigate](pageReference);
+        }
     }
 
     closeBriefingFlow() {

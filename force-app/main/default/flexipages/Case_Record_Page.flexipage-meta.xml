@@ -275,12 +275,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>t5Customer360</componentName>
-                <identifier>c_t5Customer360</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentInstanceProperties>
                     <name>label</name>
                     <value>Tabs</value>
