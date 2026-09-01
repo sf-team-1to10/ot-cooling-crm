@@ -98,3 +98,21 @@ jobs:
           else
             echo "삭제할 항목이 없습니다."
           fi
+
+  # verify(dry-run) 검증이 통과하면 해당 PR을 main으로 자동 병합한다.
+  # 실제 org 배포는 하지 않는다(배포는 org에서 직접). 커밋 이력은 보존(merge commit).
+  auto-merge:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: "PR 자동 병합 (merge commit)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" \
+            --merge \
+            --auto
