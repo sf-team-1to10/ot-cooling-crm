@@ -1,0 +1,286 @@
+.flow {
+    background: #f4f6fa;
+    min-height: 100%;
+    padding: 0 0 1.5rem;
+}
+
+/* ── 홈 히어로 ── */
+.hero {
+    background: #1b365d;
+    color: #ffffff;
+    padding: 1.25rem 1rem 1.5rem;
+}
+
+.hero__eyebrow {
+    margin: 0 0 0.25rem;
+    font-size: 0.8125rem;
+    color: #b9c6dc;
+}
+
+.hero__title {
+    margin: 0 0 0.375rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+}
+
+.hero__sub {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #d5deeb;
+}
+
+/* ── 큰 버튼 ── */
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.actions_sticky {
+    position: sticky;
+    bottom: 0;
+    background: #f4f6fa;
+    padding-top: 0.75rem;
+}
+
+.bigbtn {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.125rem;
+    width: 100%;
+    border: none;
+    border-radius: 0.625rem;
+    padding: 1rem 1.125rem;
+    cursor: pointer;
+    text-align: left;
+}
+
+.bigbtn__title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.bigbtn__desc {
+    font-size: 0.8125rem;
+    opacity: 0.85;
+}
+
+.bigbtn_primary {
+    background: #1b365d;
+    color: #ffffff;
+}
+
+.bigbtn_ghost {
+    background: #ffffff;
+    color: #1b365d;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.bigbtn_complete {
+    background: #2e844a;
+    color: #ffffff;
+    align-items: center;
+}
+
+.bigbtn:disabled {
+    background: #c9d2df;
+    color: #6b7688;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* ── 상단바 ── */
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #1b365d;
+    color: #ffffff;
+}
+
+.topbar__title {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.linkbtn {
+    background: none;
+    border: none;
+    color: #d5deeb;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* ── Knowledge 목록 ── */
+.klist {
+    list-style: none;
+    margin: 0;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.kcard {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    padding: 0.875rem 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+}
+
+.kcard__title {
+    margin: 0 0 0.25rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #16325c;
+}
+
+.kcard__summary {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: #5c6b82;
+    line-height: 1.4;
+}
+
+.kcard__go {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #1b365d;
+}
+
+/* ── 측정 카드 ── */
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    padding: 0.875rem 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.card__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border-bottom: 1px solid #eef1f6;
+    padding-bottom: 0.625rem;
+    margin-bottom: 0.625rem;
+}
+
+.card__point-label {
+    display: block;
+    font-size: 0.6875rem;
+    color: #5c6b82;
+    margin-bottom: 0.125rem;
+}
+
+.card__point-value {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: #16325c;
+}
+
+.card__range {
+    margin: 0 0 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1b365d;
+}
+
+.card__ref {
+    margin: 0 0 0.625rem;
+    font-size: 0.75rem;
+    color: #5c6b82;
+}
+
+.badge {
+    align-self: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.25rem;
+    padding: 0.1875rem 0.5rem;
+    white-space: nowrap;
+}
+
+.badge_pass {
+    background: #ddf1e3;
+    color: #2e844a;
+}
+
+.badge_fail {
+    background: #fddde3;
+    color: #ba0517;
+}
+
+.badge_idle {
+    background: #eef1f6;
+    color: #5c6b82;
+}
+
+/* ── 측정값 입력 ── */
+.entry {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.entry__input {
+    flex: 1;
+}
+
+.entry__unit {
+    font-size: 0.8125rem;
+    color: #5c6b82;
+    padding-bottom: 0.5rem;
+    white-space: nowrap;
+}
+
+.savebtn {
+    border: none;
+    border-radius: 0.375rem;
+    background: #1b365d;
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    padding: 0.5rem 0.875rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.savebtn:disabled {
+    background: #c9d2df;
+    cursor: not-allowed;
+}
+
+/* ── 작업 완료 게이트 ── */
+.complete {
+    padding: 0.5rem 1rem 0;
+}
+
+.complete__hint {
+    margin: 0 0 0.625rem;
+    font-size: 0.8125rem;
+    color: #5c6b82;
+    text-align: center;
+}
+
+.empty {
+    font-size: 0.8125rem;
+    color: #5c6b82;
+    text-align: center;
+    padding: 2rem 1rem;
+    margin: 0;
+}

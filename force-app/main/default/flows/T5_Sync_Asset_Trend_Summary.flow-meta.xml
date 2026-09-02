@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Sync_Asset_Trend_Summary</name>
+        <label>Sync Asset Trend Summary</label>
+        <locationX>176</locationX>
+        <locationY>264</locationY>
+        <actionName>T5SyncAssetTrendSummary</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>assetIds</name>
+            <value>
+                <elementReference>$Record.AssetId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>T5SyncAssetTrendSummary</nameSegment>
+    </actionCalls>
+    <apiVersion>61.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <description>WorkOrderLineItem의 Trend_Flag__c이 바뀔 때마다(T4의 WOLI_Trend_Flag_Evaluate가 값을 쓴 다음 라운드) 해당 Asset의 게이지 요약 필드(Latest_Trend_Flag__c, Latest_Gauges_JSON__c)를 재계산한다. 고객 포털이 WorkOrderLineItem을 직접 조회할 수 없어서(2026-08-30, 라이선스 제약 확인) 만든 우회 경로 — T5-07 전용. T4 Flow는 수정하지 않는다.</description>
+    <environments>Default</environments>
+    <interviewLabel>T5 Sync Asset Trend Summary {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>T5 Sync Asset Trend Summary</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Sync_Asset_Trend_Summary</targetReference>
+        </connector>
+        <filterFormula>ISCHANGED({!$Record.Trend_Flag__c})</filterFormula>
+        <object>WorkOrderLineItem</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>복구 결과 지표 카드</masterLabel>
+    <description>WorkOrder 복구 결과(최초/재조임 체결값, 조치 전후 유량)와 재발 근거를 표시하는 카드 (T5-29 모바일 화면 프로토타입)</description>
+    <targets>
+        <target>lightning__FlowScreen</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__ECSFSApp</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__ECSFSApp">
+            <property name="workOrderNumber" type="String" label="WorkOrder 번호"/>
+            <property name="measurePoint" type="String" label="측정 위치"/>
+            <property name="initialTorque" type="Integer" label="최초 체결 N·m"/>
+            <property name="retorqueTorque" type="Integer" label="재조임 후 N·m"/>
+            <property name="flowBefore" type="Integer" label="조치 전 L/min"/>
+            <property name="flowAfter" type="Integer" label="조치 후 L/min"/>
+            <property name="isPending" type="Boolean" label="진행 중 여부"/>
+            <property name="recurrenceTitle" type="String" label="재발 근거 제목"/>
+            <property name="recurrenceNote" type="String" label="재발 근거 설명"/>
+        </targetConfig>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="workOrderNumber" type="String" label="WorkOrder 번호" role="inputOnly"/>
+            <property name="measurePoint" type="String" label="측정 위치" role="inputOnly"/>
+            <property name="initialTorque" type="Integer" label="최초 체결 N·m" role="inputOnly"/>
+            <property name="retorqueTorque" type="Integer" label="재조임 후 N·m" role="inputOnly"/>
+            <property name="flowBefore" type="Integer" label="조치 전 L/min" role="inputOnly"/>
+            <property name="flowAfter" type="Integer" label="조치 후 L/min" role="inputOnly"/>
+            <property name="isPending" type="Boolean" label="진행 중 여부" role="inputOnly"/>
+            <property name="recurrenceTitle" type="String" label="재발 근거 제목" role="inputOnly"/>
+            <property name="recurrenceNote" type="String" label="재발 근거 설명" role="inputOnly"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

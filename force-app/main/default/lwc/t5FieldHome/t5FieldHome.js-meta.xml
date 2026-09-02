@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>현장 홈</masterLabel>
+    <description>FSM 모바일 앱 홈 탭. 인사말, 오늘 서비스 어포인트먼트 건수, 오늘의 일정 목록을 보여준다. 목업 화면1 재현 (T5-31).</description>
+    <targets>
+        <target>lightning__ECSFSApp</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__ECSFSApp">
+            <property name="brandLabel" type="String" label="브랜드 표기" default="OT전자"/>
+            <property name="greeting" type="String" label="인사말" default="안녕하세요"/>
+            <property name="subtitle" type="String" label="부제" default="오늘도 안전한 하루 되세요!"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>
