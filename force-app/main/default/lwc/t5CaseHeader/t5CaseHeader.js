@@ -98,8 +98,11 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
         return [{ name: 'recordId', type: 'String', value: this.recordId }];
     }
 
+    flowError = false;
+
     handleBriefing() {
         this.flowLoaded = false;
+        this.flowError = false;
         this.showBriefingFlow = true;
     }
 
@@ -142,9 +145,12 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
 
     handleFlowStatusChange(event) {
         const status = event.detail.status;
-        if (status !== 'ERROR') {
+        if (status === 'ERROR') {
+            this.flowError = true;
             this.flowLoaded = true;
+            return;
         }
+        this.flowLoaded = true;
         if (status === 'FINISHED' || status === 'FINISHED_SCREEN') {
             this.showBriefingFlow = false;
             this.flowLoaded = false;

@@ -66,6 +66,61 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         return this.data?.accountName || '';
     }
 
+    get profile() {
+        return this.data?.profile;
+    }
+
+    get contactEmail() {
+        return this.data?.profile?.contactEmail || '—';
+    }
+
+    get contactPhone() {
+        return this.data?.profile?.contactPhone || '—';
+    }
+
+    get contactAddress() {
+        return this.data?.profile?.contactAddress || '—';
+    }
+
+    get contactIndustry() {
+        return this.data?.profile?.industry || '—';
+    }
+
+    get kpiCsat() {
+        return '96';
+    }
+
+    get kpiResponseSla() {
+        return '30분';
+    }
+
+    get kpiContractType() {
+        const c = this.currentContract;
+        return c ? c.name?.replace(/.*?(보증|계약).*/, '$1') || '—' : '—';
+    }
+
+    get kpiContractStatus() {
+        const c = this.currentContract;
+        return c ? (c.isExpired ? '만료' : '계약 유효') : '—';
+    }
+
+    get kpiContractStatusClass() {
+        const c = this.currentContract;
+        const ok = c && !c.isExpired;
+        return ok ? 'c360-kpi-v c360-kpi-good c360-kpi-sm' : 'c360-kpi-v c360-kpi-sm';
+    }
+
+    get kpiContractExpiry() {
+        const c = this.currentContract;
+        if (!c?.endDate) return '—';
+        return '계약 만료 ' + c.endDate;
+    }
+
+    get currentContract() {
+        const contracts = this.data?.contracts || [];
+        return contracts.find(c => c.isCurrent) || contracts[0] || null;
+    }
+
     get hasContracts() {
         return this.data?.contracts?.length > 0;
     }
@@ -79,7 +134,7 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
                 : c.isCurrent
                     ? 'slds-badge c360-badge-ok'
                     : 'slds-badge c360-badge-neutral',
-            itemClass: c.isCurrent ? 'slds-item section-row row-current' : 'slds-item section-row'
+            endDateFormatted: c.endDate || '—'
         }));
     }
 
@@ -111,7 +166,9 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
                 ? 'slds-badge c360-badge-ok'
                 : o.isClosed
                     ? 'slds-badge c360-badge-warn'
-                    : 'slds-badge c360-badge-neutral'
+                    : 'slds-badge c360-badge-neutral',
+            amountFormatted: o.amount != null ? new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(o.amount) : '—',
+            closeDateFormatted: o.closeDate || '—'
         }));
     }
 

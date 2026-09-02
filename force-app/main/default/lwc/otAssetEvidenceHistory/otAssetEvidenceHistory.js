@@ -4,11 +4,9 @@ import {
     EnclosingTabId,
     setTabLabel,
     setTabIcon,
-    IsConsoleNavigation,
-    getFocusedTabInfo,
-    openSubtab,
-    focusTab
+    IsConsoleNavigation
 } from 'lightning/platformWorkspaceApi';
+import { openOrFocusSubtab } from 'c/otConsoleNav';
 import getEvidence from '@salesforce/apex/T5AssetEvidenceController.getEvidence';
 
 export default class OtAssetEvidenceHistory extends NavigationMixin(LightningElement) {
@@ -121,23 +119,16 @@ export default class OtAssetEvidenceHistory extends NavigationMixin(LightningEle
         if (!this.effectiveRecordId) {
             return;
         }
-        // 브리핑과 동일하게 워크벤치 LWC를 UrlAddressable 컴포넌트로 연다.
-        const pageReference = {
-            type: 'standard__component',
-            attributes: { componentName: 'c__otDispatchBriefingWorkbench' },
-            state: { c__recordId: this.effectiveRecordId }
-        };
+        const target = 'c__otDispatchBriefingWorkbench';
 
         if (this.isConsole) {
-            const focused = await getFocusedTabInfo();
-            const subtabId = await openSubtab({
-                parentTabId: focused.parentTabId || focused.tabId,
-                pageReference,
-                focus: true
-            });
-            await focusTab(subtabId);
+            await openOrFocusSubtab(target, this.effectiveRecordId);
         } else {
-            this[NavigationMixin.Navigate](pageReference);
+            this[NavigationMixin.Navigate]({
+                type: 'standard__component',
+                attributes: { componentName: target },
+                state: { c__recordId: this.effectiveRecordId }
+            });
         }
     }
 }
