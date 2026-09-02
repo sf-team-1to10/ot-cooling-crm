@@ -3,7 +3,7 @@
     <fullName>Envelope_Min__c</fullName>
     <description>정상 운전 범위 하한(숫자). Envelope 막대 렌더링용.</description>
     <externalId>false</externalId>
-    <label>Envelope Min</label>
+    <label>정상 범위 하한</label>
     <precision>10</precision>
     <required>false</required>
     <scale>2</scale>

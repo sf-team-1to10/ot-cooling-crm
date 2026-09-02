@@ -27,6 +27,10 @@ export default class OtMyAssets extends LightningElement {
             this.assets = data;
             this.error = undefined;
             this.isLoading = false;
+            const count = data.filter(
+                (a) => a.trendFlag === '주의' || a.trendFlag === '이상'
+            ).length;
+            this.dispatchEvent(new CustomEvent('attentioncount', { detail: count }));
         } else if (error) {
             this.assets = [];
             this.error = this.reduceError(error);

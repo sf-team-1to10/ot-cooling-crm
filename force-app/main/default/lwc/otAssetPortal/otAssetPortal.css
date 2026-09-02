@@ -1,27 +1,89 @@
 :host {
     --ot-navy: #0b1f33;
+    --ot-navy-deep: #071724;
     --ot-blue: #5980a6;
     --ot-cyan: #16b8c8;
-    --ot-paper: #f2f2f3;
+    --ot-paper: #f0f2f5;
     --ot-surface: #ffffff;
     --ot-border: #e9e9ea;
     --ot-ink: #1d1f20;
     --ot-muted: #5c6a72;
     --ot-critical: #d32f2f;
+    --ot-focus-ring: 0 0 0 3px rgba(22, 184, 200, 0.28);
     --ot-font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, "Apple SD Gothic Neo", sans-serif;
     --ot-radius-sm: 4px;
     --ot-radius-md: 6px;
-    --ot-focus-ring: 0 0 0 3px rgba(22, 184, 200, 0.28);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
     font-family: var(--ot-font-sans);
+    background: var(--ot-paper);
 }
 
+/* ── 사이드바 + 콘텐츠 레이아웃 ── */
+.shell {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--ot-paper);
+}
+
+/* ── 개요 준비중 화면 ── */
+.coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    height: 100%;
+    min-height: 400px;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.cs-icon { width: 64px; height: 64px; }
+.cs-icon svg { width: 64px; height: 64px; }
+
+.cs-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ot-ink);
+}
+
+.cs-sub {
+    font-size: 13.5px;
+    color: var(--ot-muted);
+    line-height: 1.7;
+}
+
+.cs-btn {
+    background: var(--ot-navy);
+    color: var(--ot-surface);
+    border: none;
+    border-radius: var(--ot-radius-sm);
+    padding: 10px 22px;
+    font-size: 13.5px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+.cs-btn:hover { background: #163b5d; }
+
+/* ── 자산 상세 ── */
 .detail-wrap {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px;
-    max-width: 480px;
+    padding: 20px;
+    max-width: 520px;
 }
 
 .back-link {
@@ -29,21 +91,15 @@
     background: none;
     border: none;
     color: var(--ot-blue);
-    font-size: 0.85rem;
+    font-size: 13px;
     cursor: pointer;
     padding: 4px 0;
     font-family: var(--ot-font-sans);
 }
 
 .back-link:hover {
-    text-decoration: underline;
     color: var(--ot-cyan);
-}
-
-.back-link:focus {
-    outline: none;
-    box-shadow: var(--ot-focus-ring);
-    border-radius: var(--ot-radius-sm);
+    text-decoration: underline;
 }
 
 .report-cta {
@@ -52,17 +108,15 @@
     border: none;
     border-radius: var(--ot-radius-sm);
     padding: 10px 16px;
-    font-size: 0.9rem;
+    font-size: 13.5px;
     font-weight: 600;
     cursor: pointer;
     font-family: var(--ot-font-sans);
+    align-self: flex-start;
 }
 
-.report-cta:hover {
-    background: #c62828;
-}
+.report-cta:hover { background: #c62828; }
 
-.report-cta:focus {
-    outline: none;
-    box-shadow: var(--ot-focus-ring);
+@media (max-width: 768px) {
+    .shell { flex-direction: column; }
 }

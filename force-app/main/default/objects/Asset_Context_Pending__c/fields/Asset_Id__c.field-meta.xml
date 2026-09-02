@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Asset_Id__c</fullName>
-    <label>Asset Id</label>
+    <label>자산 ID</label>
     <description>The 18-character Asset record Id the visitor was viewing on the portal when they launched chat. Stamped onto MessagingSession.Asset_Id__c by the session-create trigger so the service agent can ground its answers in the correct equipment.</description>
     <inlineHelpText>Asset record Id (18 char) carried over from the portal detail page.</inlineHelpText>
     <type>Text</type>

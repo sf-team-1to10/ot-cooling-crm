@@ -3,7 +3,7 @@
     <fullName>Priority_Approved_At__c</fullName>
     <description>케이스 우선순위가 승인된 시각. Priority_Approved_By__c 와 쌍으로 기록되어 승인 이력을 추적한다.</description>
     <inlineHelpText>우선순위 승인이 완료된 날짜 및 시각입니다. 자동으로 기록됩니다.</inlineHelpText>
-    <label>Priority Approved At</label>
+    <label>우선순위 승인 시각</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

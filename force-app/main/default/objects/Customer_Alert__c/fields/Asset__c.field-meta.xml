@@ -2,9 +2,9 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Asset__c</fullName>
     <deleteConstraint>Cascade</deleteConstraint>
-    <label>Asset</label>
+    <label>자산</label>
     <referenceTo>Asset</referenceTo>
-    <relationshipLabel>Customer Alerts</relationshipLabel>
+    <relationshipLabel>고객 알림</relationshipLabel>
     <relationshipName>Customer_Alerts</relationshipName>
     <required>true</required>
     <trackTrending>false</trackTrending>

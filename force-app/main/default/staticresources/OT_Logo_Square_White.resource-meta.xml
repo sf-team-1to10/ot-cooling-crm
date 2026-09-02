@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>image/png</contentType>
+    <description>OT전자 정사각형 로고 (흰 배경·네이비 글씨) — Cooling Continuity 앱 로고</description>
+</StaticResource>

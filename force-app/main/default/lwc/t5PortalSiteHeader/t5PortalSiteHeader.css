@@ -1,18 +1,20 @@
 :host {
-    --header-bg: #08263d;
-    --header-border: #183e56;
-    --text-on-dark: #f3f7f9;
-    --state-advisory: #b97810;
-    --line-standard: #cdd9e0;
-    --font-kr: -apple-system, "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
-    --font-mono: "SFMono-Regular", "Cascadia Mono", "Roboto Mono", Consolas, monospace;
+    --ot-navy: #0b1f33;
+    --ot-navy-hover: #163b5d;
+    --ot-navy-border: #1e3a52;
+    --ot-cyan: #16b8c8;
+    --ot-surface: #ffffff;
+    --ot-muted-on-dark: rgba(255, 255, 255, 0.6);
+    --ot-border: #e9e9ea;
+    --ot-font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Apple SD Gothic Neo", sans-serif;
     display: block;
-    font-family: var(--font-kr);
+    font-family: var(--ot-font-sans);
 }
 
 .proto-banner {
-    background: #0a1a2c;
-    color: #9fb4c4;
+    background: #071724;
+    color: var(--ot-muted-on-dark);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -20,8 +22,8 @@
     font-size: 11.5px;
 }
 .proto-tag {
-    background: #2a5c8f;
-    color: #fff;
+    background: var(--ot-navy-hover);
+    color: var(--ot-surface);
     font-weight: 700;
     font-size: 10px;
     letter-spacing: 0.05em;
@@ -36,8 +38,8 @@
 }
 
 .site-header {
-    background: var(--header-bg);
-    color: var(--text-on-dark);
+    background: var(--ot-navy);
+    color: var(--ot-surface);
     display: flex;
     align-items: center;
     gap: 20px;
@@ -51,22 +53,25 @@
     gap: 8px;
     white-space: nowrap;
 }
-.brand-main {
-    font-weight: 700;
-    font-size: 15px;
+.brand-logo {
+    height: 32px;
+    width: 32px;
+    object-fit: contain;
+    border-radius: 4px;
+    flex-shrink: 0;
 }
 .brand-sep {
-    color: #4c6b82;
+    color: var(--ot-navy-border);
 }
 .brand-sub {
     font-weight: 400;
     font-size: 14px;
-    color: #cdd9e0;
+    color: var(--ot-muted-on-dark);
 }
 .ec-badge {
-    background: rgba(29, 138, 114, 0.18);
-    color: #4fd8b0;
-    border: 1px solid rgba(79, 216, 176, 0.35);
+    background: rgba(22, 184, 200, 0.15);
+    color: var(--ot-cyan);
+    border: 1px solid rgba(22, 184, 200, 0.35);
     border-radius: 999px;
     padding: 2px 10px;
     font-size: 11px;
@@ -81,7 +86,7 @@
 .site-tabs button {
     background: transparent;
     border: 0;
-    color: #8fa6b5;
+    color: var(--ot-muted-on-dark);
     padding: 0 14px;
     height: 52px;
     font-size: 14px;
@@ -90,9 +95,13 @@
     border-bottom: 2px solid transparent;
     letter-spacing: 0.02em;
 }
+.site-tabs button:hover {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--ot-surface);
+}
 .site-tabs button.active {
-    color: #ffffff;
-    border-bottom-color: #7fb3d5;
+    color: var(--ot-surface);
+    border-bottom-color: var(--ot-cyan);
     font-weight: 600;
 }
 
@@ -107,23 +116,23 @@
     align-items: center;
     gap: 7px;
     font-size: 13px;
-    color: #c9d6de;
+    color: var(--ot-muted-on-dark);
 }
 .avatar {
     width: 26px;
     height: 26px;
-    border-radius: 6px;
-    background: #1b3d55;
-    border: 1px solid var(--header-border);
+    border-radius: 4px;
+    background: var(--ot-navy-hover);
+    border: 1px solid var(--ot-navy-border);
     display: grid;
     place-items: center;
     font-size: 13px;
 }
 .exit-btn {
     background: transparent;
-    border: 1px solid #3a5972;
-    color: #cdd9e0;
-    border-radius: 6px;
+    border: 1px solid var(--ot-navy-border);
+    color: var(--ot-muted-on-dark);
+    border-radius: 4px;
     padding: 7px 14px;
     font-size: 12.5px;
     font-weight: 600;
@@ -132,7 +141,8 @@
     white-space: nowrap;
 }
 .exit-btn:hover {
-    background: #123249;
+    background: var(--ot-navy-hover);
+    color: var(--ot-surface);
 }
 
 .toast {
@@ -140,14 +150,14 @@
     left: 50%;
     bottom: 24px;
     transform: translateX(-50%) translateY(20px);
-    background: #ffffff;
-    border: 1px solid var(--line-standard);
-    color: #1a2d3b;
+    background: var(--ot-surface);
+    border: 1px solid var(--ot-border);
+    color: #1d1f20;
     padding: 12px 18px;
     border-radius: 6px;
     font-size: 13.5px;
     font-weight: 500;
-    box-shadow: 0 4px 14px rgba(20, 32, 43, 0.14);
+    box-shadow: 0 4px 14px rgba(11, 31, 51, 0.14);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s, transform 0.2s;

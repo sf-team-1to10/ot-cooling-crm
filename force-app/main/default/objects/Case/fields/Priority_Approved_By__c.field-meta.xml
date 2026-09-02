@@ -4,9 +4,9 @@
     <deleteConstraint>SetNull</deleteConstraint>
     <description>케이스 우선순위를 최종 승인한 사용자. Priority 변경이 시스템 자동이 아닌 책임자 결정임을 증명하는 감사 필드.</description>
     <inlineHelpText>우선순위를 승인한 담당자가 자동으로 기록됩니다. 수동 변경 시 필수 입력입니다.</inlineHelpText>
-    <label>Priority Approved By</label>
+    <label>우선순위 승인자</label>
     <referenceTo>User</referenceTo>
-    <relationshipLabel>Priority Approved Cases</relationshipLabel>
+    <relationshipLabel>우선순위 승인 케이스</relationshipLabel>
     <relationshipName>Priority_Approved_Cases</relationshipName>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Message__c</fullName>
     <description>배너/드로어에 그대로 노출되는 고객용 문구. 예: &quot;냉수 유량(CHW Flow)이 기준선 대비 낮은 상태로 지속되고 있습니다.&quot;</description>
-    <label>Message</label>
+    <label>알림 메시지</label>
     <length>500</length>
     <trackTrending>false</trackTrending>
     <type>LongTextArea</type>

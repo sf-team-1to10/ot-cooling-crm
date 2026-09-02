@@ -2,9 +2,9 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Problem__c</fullName>
     <deleteConstraint>SetNull</deleteConstraint>
-    <label>Problem</label>
+    <label>문제</label>
     <referenceTo>Problem</referenceTo>
-    <relationshipLabel>Cases</relationshipLabel>
+    <relationshipLabel>케이스</relationshipLabel>
     <relationshipName>Cases</relationshipName>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>

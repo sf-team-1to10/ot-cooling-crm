@@ -2,6 +2,12 @@ import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getEquipmentDashboard from '@salesforce/apex/OTEquipDashboardController.getEquipmentDashboard';
 import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
+import getLocationInfo from '@salesforce/apex/OTEquipDashboardController.getLocationInfo';
+import CDU_IMG from '@salesforce/resourceUrl/OT_Product_CDU';
+import CX_IMG from '@salesforce/resourceUrl/OT_Product_CX';
+import CRAH_IMG from '@salesforce/resourceUrl/OT_Product_CRAH';
+import COOLBIT_ALERT from '@salesforce/resourceUrl/OT_Coolbit_Alert';
+import COOLBIT_CLEAR from '@salesforce/resourceUrl/OT_Coolbit_Clear';
 
 const PAGE_SIZE = 7;
 
@@ -43,21 +49,27 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         }
         if (!data) return;
         this.kpis = data.kpis || this.kpis;
-        this.assets = (data.assets || []).map(a => ({
+        const mapped = (data.assets || []).map(a => ({
             id: a.assetId,
             name: a.name,
+            displayName: a.name || a.assetId,
             type: a.assetType || '',
             family: a.family || '',
             loc: a.location || '',
             stateCode: a.stateCode,
             stateLabel: a.stateLabel,
-            // 알람 이력은 Apex에 아직 데이터 모델이 없음(위 클래스독 참고) —
-            // for:each={sel.alarms}가 undefined로 깨지지 않도록 빈 배열 유지.
             alarms: []
         }));
+        // 이상·주의 항목을 1페이지 상단으로 강제 정렬
+        this.assets = mapped.sort((a, b) => {
+            const rank = s => (s === 'adv' ? 0 : 1);
+            if (rank(a.stateCode) !== rank(b.stateCode)) return rank(a.stateCode) - rank(b.stateCode);
+            return (a.displayName || '').localeCompare(b.displayName || '', 'ko');
+        });
         if (!this.selectedId && this.assets.length > 0) {
             this.selectedId = this.assets[0].id;
             this.loadSelectedDetail();
+            this.loadLocationInfo(this.assets[0].id);
         }
     }
 
@@ -74,6 +86,19 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
                 this.selDetail = null;
                 this.selGauges = [];
             });
+    }
+
+    loadLocationInfo(assetId) {
+        if (!assetId) return;
+        getLocationInfo({ assetId })
+            .then(result => {
+                this.location = {
+                    customerName: result.customerName || '',
+                    siteName: result.siteName || '마이클라우드 데이터센터',
+                    hall: result.hall || 'Hall A'
+                };
+            })
+            .catch(() => {});
     }
 
     parseGauges(gaugesJson) {
@@ -153,6 +178,30 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         return this.selGauges.find(g => /flow/i.test(g.measurementItemCode || '')) || this.selGauges[0];
     }
     get hasGaugeData() { return !!this.primaryGauge; }
+    // Asset에 직접 첨부된 파일이 있으면 우선, 없으면 이름 패턴으로 Static Resource 매핑
+    get selImageUrl() {
+        if (this.selDetail && this.selDetail.imageUrl) return this.selDetail.imageUrl;
+        const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
+        if (name.startsWith('CDU')) return CDU_IMG;
+        if (name.startsWith('CX')) return CX_IMG;
+        if (name.startsWith('CA') || name.includes('CRAH')) return CRAH_IMG;
+        return CDU_IMG;
+    }
+    get hasSelImage() { return true; }
+    get coolbitStatusUrl() { return this.isAdvisory ? COOLBIT_ALERT : COOLBIT_CLEAR; }
+
+    // 이미지 로드 실패 시 (포털 권한 없는 첨부파일 URL) → Static Resource로 폴백
+    handleImageError(event) {
+        const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
+        if (name.startsWith('CX')) {
+            event.target.src = CX_IMG;
+        } else if (name.startsWith('CA') || name.includes('CRAH')) {
+            event.target.src = CRAH_IMG;
+        } else {
+            event.target.src = CDU_IMG;
+        }
+        event.target.onerror = null;
+    }
 
     get assessHeadline() {
         if (!this.selDetail) return '';
@@ -257,6 +306,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         this.selectedId = event.currentTarget.dataset.id;
         this.activeSubTab = '개요';
         this.loadSelectedDetail();
+        this.loadLocationInfo(this.selectedId);
     }
     handlePrevPage() { if (this.currentPage > 1) this.currentPage--; }
     handleNextPage() { if (this.currentPage < this.totalPages) this.currentPage++; }

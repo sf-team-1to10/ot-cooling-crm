@@ -75,7 +75,7 @@
                                             <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#7f95a9"/><path d="M8 3v18M8 8h13M8 14h13" stroke="#7f95a9"/></svg>
                                         </div>
                                         <div class="ei">
-                                            <span class="n">{asset.id}</span>
+                                            <span class="n">{asset.displayName}</span>
                                             <span class="ty">{asset.type}</span>
                                             <span class="lo">{asset.loc}</span>
                                         </div>
@@ -101,7 +101,7 @@
                             <div class="selhead">
                                 <div class="ht">
                                     <div class="r1">
-                                        <b>{sel.id}</b>
+                                        <b>{sel.name}</b>
                                         <c-ot-equip-status-chip label={sel.stateLabel} variant={sel.stateCode}></c-ot-equip-status-chip>
                                     </div>
                                     <div class="r2">{sel.type} · {sel.family} · {sel.loc}</div>
@@ -148,8 +148,7 @@
                                             </div>
                                         </div>
                                         <div class="heroimg">
-                                            <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#7f95a9"/><path d="M8 3v18M8 8h13M8 14h13" stroke="#7f95a9"/><circle cx="15.5" cy="11" r="1.2" stroke="#7f95a9"/></svg>
-                                            <span class="ph-text">제품 이미지</span>
+                                            <img src={selImageUrl} alt="장비 이미지" class="hero-photo" onerror={handleImageError}/>
                                         </div>
                                     </div>
 
@@ -209,7 +208,10 @@
                             <div class="panel-h"><h3>장비 상태</h3></div>
                             <div class="bd">
                                 <div class="health">
-                                    <div class="donut-container" lwc:dom="manual"></div>
+                                    <div class="donut-wrap">
+                                        <div class="donut-container" lwc:dom="manual"></div>
+                                        <img src={coolbitStatusUrl} alt="쿨빗 상태" class="coolbit-status" />
+                                    </div>
                                     <div class="sc">
                                         <template for:each={healthSubs} for:item="sub">
                                             <div key={sub.name} class="sr">
