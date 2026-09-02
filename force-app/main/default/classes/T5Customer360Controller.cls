@@ -19,13 +19,13 @@ public with sharing class T5Customer360Controller {
 
         Customer360 result = new Customer360();
         result.accountName = current.Account?.Name;
-        result.currentEntitlementId = null;
+        result.currentEntitlementId = current.EntitlementId;
 
         if (accountId == null) {
             return result;
         }
 
-        result.contracts = buildContracts(accountId, null);
+        result.contracts = buildContracts(accountId, current.EntitlementId);
         result.assets = buildAssets(accountId);
         result.pastCases = buildPastCases(accountId, caseId);
         result.opportunities = buildOpportunities(accountId);
@@ -36,7 +36,7 @@ public with sharing class T5Customer360Controller {
 
     private static Case getCurrentCase(Id caseId) {
         List<Case> cases = [
-            SELECT Id, AccountId, Account.Name, AssetId
+            SELECT Id, AccountId, Account.Name, AssetId, EntitlementId
             FROM Case
             WHERE Id = :caseId
             WITH USER_MODE
