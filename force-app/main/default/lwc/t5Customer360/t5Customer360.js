@@ -11,7 +11,6 @@ import getCustomer360 from '@salesforce/apex/T5Customer360Controller.getCustomer
 
 export default class T5Customer360 extends NavigationMixin(LightningElement) {
     @api recordId;
-    @api caseId;
     _stateRecordId;
     _tabId;
     _tabLabeled = false;
@@ -23,7 +22,7 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
     }
 
     get effectiveRecordId() {
-        return this.caseId || this.recordId || this._stateRecordId || undefined;
+        return this.recordId || this._stateRecordId || undefined;
     }
 
     @wire(EnclosingTabId)
