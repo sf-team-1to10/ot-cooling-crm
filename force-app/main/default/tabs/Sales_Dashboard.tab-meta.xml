@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>영업 홈 대시보드 — My Tasks + Opportunity</description>
+    <flexiPage>Sales_Dashboard</flexiPage>
+    <label>Sales Home</label>
+    <motif>Custom70: Handshake</motif>
+</CustomTab>
