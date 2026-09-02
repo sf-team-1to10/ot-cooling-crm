@@ -1,32 +1,32 @@
 <template>
     <div class="flow">
 
-        <!-- ① 홈: 축소 hero + 측정 현황 카드 -->
+        <!-- ① 홈: 축소 hero + 실데이터 측정 현황 + 하단 액션 -->
         <template lwc:if={isHome}>
-            <div class="hero hero_slim">
-                <p class="hero__eyebrow">복구 작업</p>
-                <p class="hero__meta">{homeSubtitle}</p>
-            </div>
-
-            <section class="status">
-                <div class="status__head">
-                    <h2 class="status__title">측정 현황</h2>
-                    <span class="status__count">{statusSummary}</span>
+            <div class="home">
+                <div class="hero hero_slim">
+                    <p class="hero__eyebrow">복구 작업</p>
+                    <p class="hero__meta">{homeSubtitle}</p>
                 </div>
 
-                <template lwc:if={hasLines}>
-                    <ul class="statuslist">
+                <section class="summary">
+                    <div class="summary__head">
+                        <span class="summary__title">측정 현황</span>
+                        <span class="summary__meta">{statusSummary}</span>
+                    </div>
+
+                    <template lwc:if={hasLines}>
                         <template for:each={lines} for:item="line">
-                            <li key={line.id} class="scard">
-                                <div class="scard__head">
-                                    <div class="scard__point">
-                                        <span class="scard__point-label">측정 포인트</span>
-                                        <span class="scard__point-value">{line.headline}</span>
+                            <div key={line.id} class="scard">
+                                <div class="scard__top">
+                                    <div>
+                                        <span class="scard__label">측정 포인트</span>
+                                        <span class="scard__point">{line.headline}</span>
                                     </div>
-                                    <span class={line.badgeClass}>{line.badgeLabel}</span>
+                                    <span class={line.summaryBadgeClass}>{line.badgeLabel}</span>
                                 </div>
 
-                                <div class="scard__value">
+                                <div class="scard__metric">
                                     <template lwc:if={line.saved}>
                                         <span class={line.valueClass}>{line.measured}</span>
                                         <span class="scard__unit">{line.unit}</span>
@@ -38,15 +38,15 @@
                                 </div>
 
                                 <template lwc:if={line.retestVisible}>
-                                    <p class="scard__retest">
-                                        <span class="scard__retest-old">최초 {line.previous} 불합격</span>
-                                        <span class="scard__retest-arrow"> → </span>
-                                        <span class="scard__retest-new">재시험 {line.measured} 합격</span>
+                                    <p class="scard__hist">
+                                        <span class="hist_fail">최초 {line.previous} 불합격</span>
+                                        <span class="hist_arrow">→</span>
+                                        <span class="hist_pass">재시험 {line.measured} 합격</span>
                                     </p>
                                 </template>
 
                                 <button
-                                    class="scard__toggle"
+                                    class="hist_toggle"
                                     data-id={line.id}
                                     data-code={line.itemCode}
                                     onclick={handleToggleHistory}>
@@ -73,23 +73,29 @@
                                         <p class="hlist__empty">이 자산·항목의 과거 측정 이력이 없습니다.</p>
                                     </template>
                                 </template>
-                            </li>
+                            </div>
                         </template>
-                    </ul>
-                </template>
-                <template lwc:else>
-                    <p class="empty">이 작업지시에 등록된 측정 항목이 없습니다.</p>
-                </template>
-            </section>
 
-            <div class="actions">
-                <button class="linkline" onclick={goKnowledge}>
-                    Knowledge · 타 고객사 유사사례 보기
-                </button>
-                <button class="bigbtn bigbtn_primary" onclick={goMeasure}>
-                    <span class="bigbtn__title">측정 시작</span>
-                    <span class="bigbtn__desc">측정값 입력 및 판정</span>
-                </button>
+                        <div class="summary__foot">
+                            <span class={footDotClass}></span>
+                            <span>{footLabel}</span>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <p class="empty">이 작업지시에 등록된 측정 항목이 없습니다.</p>
+                    </template>
+                </section>
+
+                <div class="home__spacer"></div>
+                <div class="actions actions_bottom">
+                    <button class="linkline" onclick={goKnowledge}>
+                        Knowledge · 타 고객사 유사사례 보기
+                    </button>
+                    <button class="bigbtn bigbtn_primary" onclick={goMeasure}>
+                        <span class="bigbtn__title">측정 시작</span>
+                        <span class="bigbtn__desc">측정값 입력 및 판정</span>
+                    </button>
+                </div>
             </div>
         </template>
 

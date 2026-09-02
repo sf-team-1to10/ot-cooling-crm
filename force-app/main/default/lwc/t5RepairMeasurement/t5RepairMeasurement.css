@@ -4,82 +4,51 @@
     padding: 0 0 1.5rem;
 }
 
-/* ── 홈 히어로 ── */
-.hero {
-    background: #1b365d;
-    color: #ffffff;
-    padding: 1.25rem 1rem 1.5rem;
-}
-
-.hero_slim {
-    padding: 0.75rem 1rem 0.875rem;
-}
-
-.hero__eyebrow {
-    margin: 0 0 0.25rem;
-    font-size: 0.8125rem;
-    color: #b9c6dc;
-}
-
-.hero__title {
-    margin: 0 0 0.375rem;
-    font-size: 1.375rem;
-    font-weight: 700;
-}
-
-.hero__sub {
-    margin: 0;
-    font-size: 0.875rem;
-    color: #d5deeb;
-}
-
-.hero__meta {
-    margin: 0;
-    font-size: 0.8125rem;
-    color: #d5deeb;
-}
-
-/* ── 측정 현황 섹션 ── */
-.status {
-    padding: 1rem 1rem 0.5rem;
-}
-
-.status__head {
+/* ── 홈: 화면 세로 꽉 채워 버튼을 하단으로 ── */
+.home {
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin: 0 0 0.625rem;
+    flex-direction: column;
+    min-height: 100vh;
+    padding-bottom: 0;
 }
 
-.status__title {
-    margin: 0;
-    font-size: 1rem;
+.home__spacer {
+    flex: 1 1 auto;
+    min-height: 0.5rem;
+}
+
+/* ── 측정 현황 요약 (홈) ── */
+.summary {
+    padding: 1rem 1rem 0;
+}
+
+.summary__head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    margin-bottom: 0.625rem;
+}
+
+.summary__title {
+    font-size: 0.9375rem;
     font-weight: 700;
     color: #16325c;
 }
 
-.status__count {
+.summary__meta {
     font-size: 0.75rem;
     color: #5c6b82;
 }
 
-.statuslist {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-
 .scard {
     background: #ffffff;
-    border-radius: 0.625rem;
-    padding: 0.875rem 1rem;
+    border-radius: 0.5rem;
+    padding: 0.75rem 0.875rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-bottom: 0.625rem;
 }
 
-.scard__head {
+.scard__top {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -87,38 +56,35 @@
     margin-bottom: 0.5rem;
 }
 
-.scard__point-label {
+.scard__label {
     display: block;
     font-size: 0.6875rem;
     color: #5c6b82;
-    margin-bottom: 0.125rem;
 }
 
-.scard__point-value {
-    font-size: 1.0625rem;
+.scard__point {
+    font-size: 0.9375rem;
     font-weight: 700;
     color: #16325c;
 }
 
-.scard__value {
+.scard__metric {
     display: flex;
     align-items: baseline;
     gap: 0.375rem;
-    flex-wrap: wrap;
-    padding: 0.125rem 0 0.375rem;
 }
 
-.scard__value-num {
-    font-size: 1.75rem;
+.scard__value {
+    font-size: 1.5rem;
     font-weight: 700;
     line-height: 1;
 }
 
-.scard__value-num_pass {
+.scard__value_pass {
     color: #2e844a;
 }
 
-.scard__value-num_fail {
+.scard__value_fail {
     color: #ba0517;
 }
 
@@ -129,47 +95,84 @@
 }
 
 .scard__unit {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     color: #5c6b82;
-    font-weight: 600;
 }
 
 .scard__range {
     margin-left: auto;
-    font-size: 0.75rem;
-    color: #5c6b82;
+    align-self: center;
+    font-size: 0.6875rem;
+    color: #8a94a6;
 }
 
-.scard__retest {
-    margin: 0 0 0.5rem;
-    font-size: 0.8125rem;
+.scard__hist {
+    margin: 0.5rem 0 0;
+    padding-top: 0.5rem;
+    border-top: 1px solid #eef1f6;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.hist_fail {
+    color: #ba0517;
     font-weight: 600;
 }
 
-.scard__retest-old {
-    color: #ba0517;
+.hist_arrow {
+    color: #8a94a6;
 }
 
-.scard__retest-arrow {
-    color: #5c6b82;
-    margin: 0 0.125rem;
+.hist_pass {
+    color: #2e844a;
+    font-weight: 600;
 }
 
-.scard__retest-new {
+.sbadge {
+    align-self: center;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    border-radius: 0.25rem;
+    padding: 0.1875rem 0.5rem;
+    white-space: nowrap;
+}
+
+.sbadge_pass {
+    background: #ddf1e3;
     color: #2e844a;
 }
 
-.scard__toggle {
-    background: none;
-    border: none;
-    padding: 0.25rem 0;
-    color: #1b365d;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    cursor: pointer;
+.sbadge_fail {
+    background: #fddde3;
+    color: #ba0517;
 }
 
-/* ── 과거 이력 리스트 ── */
+.sbadge_idle {
+    background: #eef1f6;
+    color: #5c6b82;
+}
+
+.dot_fail {
+    background: #ba0517;
+}
+
+.dot_idle {
+    background: #8a95a6;
+}
+
+.hist_toggle {
+    background: none;
+    border: none;
+    padding: 0.375rem 0 0;
+    color: #1b365d;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: flex-start;
+}
+
 .hlist {
     list-style: none;
     margin: 0.375rem 0 0;
@@ -185,7 +188,7 @@
     grid-template-columns: auto 1fr auto auto;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
 }
 
 .hitem__date {
@@ -240,7 +243,6 @@
     text-align: center;
 }
 
-/* ── 얇은 링크형 버튼 (Knowledge) ── */
 .linkline {
     background: #ffffff;
     border: 1px solid #d8dee9;
@@ -251,6 +253,65 @@
     font-weight: 600;
     text-align: center;
     cursor: pointer;
+}
+
+.summary__foot {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: #5c6b82;
+    padding: 0.25rem 0.125rem 0;
+}
+
+.dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dot_ok {
+    background: #2e844a;
+}
+
+.actions_bottom {
+    padding: 1rem 1rem 2rem;
+}
+
+/* ── 홈 히어로 ── */
+.hero {
+    background: #1b365d;
+    color: #ffffff;
+    padding: 1.25rem 1rem 1.5rem;
+}
+
+.hero_slim {
+    padding: 0.75rem 1rem 0.875rem;
+}
+
+.hero__meta {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #d5deeb;
+}
+
+.hero__eyebrow {
+    margin: 0 0 0.25rem;
+    font-size: 0.8125rem;
+    color: #b9c6dc;
+}
+
+.hero__title {
+    margin: 0 0 0.375rem;
+    font-size: 1.375rem;
+    font-weight: 700;
+}
+
+.hero__sub {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #d5deeb;
 }
 
 /* ── 큰 버튼 ── */

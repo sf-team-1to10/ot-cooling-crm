@@ -1,0 +1,50 @@
+.path {
+    display: flex;
+    background-color: #ffffff;
+    padding: 11px 18px 12px;
+    border-bottom: 1px solid #cfdae5;
+    gap: 0;
+    overflow-x: auto;
+}
+
+.path-step {
+    flex: 1 1 0;
+    min-width: 74px;
+    padding: 7px 6px 7px 19px;
+    background-color: #eaf0f6;
+    color: #6e8599;
+    font-size: 10.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%, 11px 50%);
+    margin-right: -9px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.path-step:first-child {
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%);
+    padding-left: 14px;
+    border-radius: 4px 0 0 4px;
+}
+
+.path-step:last-child {
+    margin-right: 0;
+}
+
+.path-step.done {
+    background-color: #2e8b57;
+    color: #ffffff;
+}
+
+.path-step.on {
+    background-color: #0877d1;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.path-num {
+    opacity: 0.6;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}

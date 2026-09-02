@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Stage__c</fullName>
+    <description>고객사 요청 접수부터 RCA·예방·지식화까지 6단계 진행률. 워크벤치 상단 진행률 바(c-ot-case-path)의 데이터 소스. 값 앞의 숫자는 순서 보존용이며 라벨은 한글로 노출된다. WO Completed 시 자동으로 "4 수리·복구"까지 진행되지만 다운그레이드는 하지 않는다.</description>
+    <inlineHelpText>고객사 케이스의 진행 단계입니다. WorkOrder가 완료되면 자동으로 "4 수리·복구"로 진행됩니다.</inlineHelpText>
+    <label>진행 단계</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>0 접수</fullName>
+                <default>true</default>
+                <label>0 접수</label>
+            </value>
+            <value>
+                <fullName>1 진단·브리핑</fullName>
+                <default>false</default>
+                <label>1 진단·브리핑</label>
+            </value>
+            <value>
+                <fullName>2 담당자 배정</fullName>
+                <default>false</default>
+                <label>2 담당자 배정</label>
+            </value>
+            <value>
+                <fullName>3 현장 출동</fullName>
+                <default>false</default>
+                <label>3 현장 출동</label>
+            </value>
+            <value>
+                <fullName>4 수리·복구</fullName>
+                <default>false</default>
+                <label>4 수리·복구</label>
+            </value>
+            <value>
+                <fullName>5 RCA·예방·지식</fullName>
+                <default>false</default>
+                <label>5 RCA·예방·지식</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
