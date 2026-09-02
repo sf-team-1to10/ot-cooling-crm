@@ -200,6 +200,77 @@
         <editable>true</editable>
         <readable>true</readable>
     </fieldPermissions>
+    <!-- 2026-09-02: 상담/Case 360 화면의 USER_MODE 조회에 필요한 읽기 권한. -->
+    <fieldPermissions>
+        <field>Case.Agent_First_Response_At__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Agent_Handoff_At__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Diagnosed_Cause__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Field_Visit_Required__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Priority_Approved_At__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Priority_Approved_By__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Priority_Override_Reason__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Problem__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Remote_Diagnosis__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Resolution_Hours__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Source_Maintenance_Work_Order__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Stage__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Warranty_End_Date_At_Request__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Case.Warranty_Judged_At__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
     <!-- T5-22: search_knowledge Action의 WITH USER_MODE 쿼리가 SELECT/WHERE에
          쓰는 필드들 — 오브젝트 Read만으론 부족했다(2026-08-30 실측: Object
          권한은 확인됐는데도 Agent 실행 계정에서 계속 에러나서 필드 단위임을
@@ -250,6 +321,57 @@
     </fieldPermissions>
     <fieldPermissions>
         <field>Asset.Latest_Gauges_JSON__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <!-- 2026-09-02: Asset 상태/정비 화면의 USER_MODE 조회에 필요한 읽기 권한. -->
+    <fieldPermissions>
+        <field>Asset.Acceptance_Date__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Applied_Revision__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Criticality__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Frequency__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Maintenance_Enabled__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Maintenance_Frequency__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Next_Inspection_Date__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Service_Ready_Acceptor__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Service_Ready_Date__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Asset.Service_Ready_Status__c</field>
         <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
