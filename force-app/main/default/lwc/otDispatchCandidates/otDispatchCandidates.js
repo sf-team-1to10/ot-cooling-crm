@@ -11,6 +11,7 @@ import getHeader from '@salesforce/apex/T5DispatchCandidatesController.getHeader
 
 export default class OtDispatchCandidates extends NavigationMixin(LightningElement) {
     @api recordId;
+    @api caseId;
     _stateRecordId;
     _tabId;
     _tabLabeled = false;
@@ -24,7 +25,7 @@ export default class OtDispatchCandidates extends NavigationMixin(LightningEleme
     }
 
     get effectiveRecordId() {
-        return this.recordId || this._stateRecordId || undefined;
+        return this.caseId || this.recordId || this._stateRecordId || undefined;
     }
 
     @wire(IsConsoleNavigation) isConsoleNavigation;

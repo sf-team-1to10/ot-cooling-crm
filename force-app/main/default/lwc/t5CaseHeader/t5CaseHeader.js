@@ -8,6 +8,11 @@ import getHeader from '@salesforce/apex/T5CaseHeaderController.getHeader';
 
 export default class T5CaseHeader extends NavigationMixin(LightningElement) {
     @api recordId;
+    @api caseId;
+
+    get effectiveRecordId() {
+        return this.caseId || this.recordId;
+    }
 
     @wire(IsConsoleNavigation) isConsoleNavigation;
 
@@ -18,7 +23,7 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
     header;
     error;
 
-    @wire(getHeader, { caseId: '$recordId' })
+    @wire(getHeader, { caseId: '$effectiveRecordId' })
     wiredHeader({ data, error }) {
         if (data) {
             this.header = data;
@@ -95,7 +100,7 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
     }
 
     get flowInputVariables() {
-        return [{ name: 'recordId', type: 'String', value: this.recordId }];
+        return [{ name: 'recordId', type: 'String', value: this.effectiveRecordId }];
     }
 
     flowError = false;
@@ -112,16 +117,16 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
     }
 
     async navigate(target) {
-        if (!target || !this.recordId) {
+        if (!target || !this.effectiveRecordId) {
             return;
         }
         if (this.isConsole) {
-            await openOrFocusSubtab(target, this.recordId);
+            await openOrFocusSubtab(target, this.effectiveRecordId);
         } else {
             this[NavigationMixin.Navigate]({
                 type: 'standard__component',
                 attributes: { componentName: target },
-                state: { c__recordId: this.recordId }
+                state: { c__recordId: this.effectiveRecordId }
             });
         }
     }
@@ -150,7 +155,7 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
         if (status === 'FINISHED' || status === 'FINISHED_SCREEN') {
             this.showBriefingFlow = false;
             this.flowLoaded = false;
-            getRecordNotifyChange([{ recordId: this.recordId }]);
+            getRecordNotifyChange([{ recordId: this.effectiveRecordId }]);
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: '출동 브리핑 생성 완료',
