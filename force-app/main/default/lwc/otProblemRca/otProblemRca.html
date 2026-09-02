@@ -47,8 +47,9 @@
                     </div>
                 </div>
                 <dl class="rca-hl-fields">
-                    <div class="rca-hl-f"><dt>시정조치</dt><dd class="num">{correctiveCount}건</dd></div>
-                    <div class="rca-hl-f"><dt>예방확인</dt><dd class="num">{preventiveCount}건</dd></div>
+                    <div class="rca-hl-f"><dt>현장 근거</dt><dd class="num">{evidenceSummary}</dd></div>
+                    <div class="rca-hl-f"><dt>연결 Case</dt><dd class="num">{caseNumber}</dd></div>
+                    <div class="rca-hl-f"><dt>저장 시 실행</dt><dd><span class="slds-badge rca-badge-rule">PRI_ Flow</span></dd></div>
                 </dl>
             </div>
 
@@ -59,12 +60,40 @@
                     <div class="slds-p-horizontal_medium slds-p-bottom_medium co-stack">
                         <div class="callout co-crit">
                             <span class="co-ico">→</span>
-                            <div><strong>직접 원인</strong>{directCause}</div>
+                            <div><strong>직접 원인</strong>{directCause}
+                                <div class="co-sub">근거 — 현장 측정 <span class="num">{evidenceFailValue} N·m 불합격</span>
+                                    → 재조임 <span class="num">{evidencePassValue} N·m 합격</span>
+                                    · 유량 <span class="num">{evidenceFlowBefore} → {evidenceFlowAfter}</span></div>
+                            </div>
                         </div>
                         <div class="callout co-warn">
                             <span class="co-ico">⚑</span>
                             <div><strong>조직 차원의 근본원인</strong>{rootCause}</div>
                         </div>
+                    </div>
+                </lightning-card>
+
+                <lightning-card class="slds-m-top_small">
+                    <span slot="title" class="slds-text-heading_small">특수 조건과 공통 조건은 다른 질문에 답합니다</span>
+                    <span slot="actions" class="slds-badge rca-badge-agent">Agent 제안</span>
+                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+                        <table class="tbl">
+                            <thead><tr><th>판단 단위</th><th>근거</th><th>답하는 질문</th><th>범위 후보</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>A-07만의 특수 조건</b></td>
+                                    <td>Rev.B · F-07 · 과거 동일 위치 불합격</td>
+                                    <td>장애 원인을 어디서 찾을까</td>
+                                    <td><span class="slds-badge rca-badge-crit">시정조치 {correctiveCount}건</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>12대의 공통 조건</b></td>
+                                    <td>같은 프로젝트 · 설치 기간 · 시공업체 · 연결부 규격 · 점검 기준 누락</td>
+                                    <td>예방 범위를 어디까지 볼까</td>
+                                    <td><span class="slds-badge rca-badge-warn">예방확인 {preventiveCount}건</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </lightning-card>
             </div>

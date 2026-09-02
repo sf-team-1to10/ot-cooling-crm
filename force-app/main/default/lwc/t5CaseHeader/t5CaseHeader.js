@@ -106,10 +106,6 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
         this.showBriefingFlow = true;
     }
 
-    handleProblemRca() {
-        this.navigate('c__otCauseConfirm');
-    }
-
     async handleSubtab(event) {
         const componentName = event.currentTarget.dataset.goto;
         this.navigate(componentName);

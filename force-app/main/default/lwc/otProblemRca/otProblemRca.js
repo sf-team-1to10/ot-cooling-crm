@@ -96,6 +96,31 @@ export default class OtProblemRca extends NavigationMixin(LightningElement) {
         return this.rca?.preventiveCount ?? 0;
     }
 
+    get evidenceFailValue() {
+        return this.rca?.evidence?.recoveryFail ?? '—';
+    }
+
+    get evidencePassValue() {
+        return this.rca?.evidence?.recoveryPass ?? '—';
+    }
+
+    get evidenceFlowBefore() {
+        return '1,961';
+    }
+
+    get evidenceFlowAfter() {
+        return '2,080';
+    }
+
+    get evidenceSummary() {
+        const fail = this.rca?.evidence?.recoveryFail;
+        const pass = this.rca?.evidence?.recoveryPass;
+        if (fail != null && pass != null) {
+            return 'F-07 · ' + fail + ' → ' + pass;
+        }
+        return '—';
+    }
+
     handleSaveRca() {
         this.navigate('c__otActionResults');
     }

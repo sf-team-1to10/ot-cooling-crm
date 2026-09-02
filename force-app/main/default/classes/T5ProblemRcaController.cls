@@ -42,6 +42,7 @@ public with sharing class T5ProblemRcaController {
         result.workaround = prob.Workaround;
 
         applyScopeCounts(result, prob.Id);
+        result.evidence = buildArticleEvidence(current.AssetId, current.CaseNumber, prob.ProblemNumber);
         return result;
     }
 
@@ -232,6 +233,7 @@ public with sharing class T5ProblemRcaController {
         @AuraEnabled public Integer correctiveCount = 0;
         @AuraEnabled public Integer preventiveCount = 0;
         @AuraEnabled public Integer totalCount = 0;
+        @AuraEnabled public ArticleEvidence evidence;
     }
 
     public class ActionResults {
