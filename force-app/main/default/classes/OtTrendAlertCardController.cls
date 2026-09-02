@@ -114,32 +114,44 @@ public with sharing class OtTrendAlertCardController {
     }
 
     /**
-     * Most recent Trend_Flag__c value across this Asset's Work Order Line
-     * Items, newest first. WOLI_Trend_Flag_Evaluate (T4 owned) fills this
-     * field automatically — this controller only reads it.
+     * 자산의 종합 추세 상태. 측정 항목별 최신 판정을 종합해, 하나라도
+     * 이상이면 '이상', 주의가 있으면 '주의', 모두 정상이면 '정상',
+     * 측정 이력이 없으면 null을 돌려준다.
+     *
+     * 왜 단일 최신행이 아닌가: 항목마다 마지막 측정 시점(WorkOrder.StartDate)이
+     * 달라, 전 항목 통틀어 "가장 최근 1건"만 보면 그 시점에 정상인 다른 항목이
+     * 유량·차압의 주의를 덮어버린다. 자산 뱃지는 "어느 항목이든 비정상이면
+     * 비정상"이어야 하므로 항목별 최신을 종합한다. 비정상 항목 판정은
+     * resolveGauges와 같은 소스를 재사용한다(중복 로직 없음).
      *
      * public: also called by T5SyncAssetTrendSummary (internal system
      * context, no license restriction) to denormalize this onto Asset for
      * the portal, which cannot query WorkOrderLineItem directly.
      */
     public static String resolveLatestTrendFlag(Id assetId) {
-        List<WorkOrderLineItem> recentChecks = [
-            SELECT Id, Trend_Flag__c
+        Boolean hasIsang = false;
+        Boolean hasJuui = false;
+        for (GaugeView g : resolveGauges(assetId)) {
+            if (g.trendFlag == '이상') {
+                hasIsang = true;
+            } else if (g.trendFlag == '주의') {
+                hasJuui = true;
+            }
+        }
+        if (hasIsang) {
+            return '이상';
+        }
+        if (hasJuui) {
+            return '주의';
+        }
+        // 비정상 항목 없음 — 측정 이력이 있으면 '정상', 아예 없으면 null.
+        Integer readingCount = [
+            SELECT COUNT()
             FROM WorkOrderLineItem
             WHERE WorkOrder.AssetId = :assetId
             WITH USER_MODE
-            ORDER BY CreatedDate DESC
-            LIMIT 1
         ];
-
-        SObjectAccessDecision woliDecision = Security.stripInaccessible(
-            AccessType.READABLE,
-            recentChecks
-        );
-        List<WorkOrderLineItem> accessibleChecks =
-            (List<WorkOrderLineItem>) woliDecision.getRecords();
-
-        return accessibleChecks.isEmpty() ? null : accessibleChecks[0].Trend_Flag__c;
+        return readingCount > 0 ? '정상' : null;
     }
 
     /**
@@ -166,7 +178,7 @@ public with sharing class OtTrendAlertCardController {
               AND Measurement_Item_Code__c != null
               AND Measured_Value__c != null
             WITH USER_MODE
-            ORDER BY CreatedDate DESC
+            ORDER BY WorkOrder.StartDate DESC NULLS LAST, CreatedDate DESC
             LIMIT :READING_SCAN_LIMIT
         ];
 

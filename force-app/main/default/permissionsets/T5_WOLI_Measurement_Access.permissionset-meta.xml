@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label>T5 WOLI Measurement Access</label>
-    <description>WorkOrderLineItem 측정 필드 FLS. 필드는 PROD에 배포돼 있으나 어떤 프로필·권한세트에도 FLS가 부여되지 않아 SOQL에서 "No such column"으로 보이고 화면에도 뜨지 않았다. F-07 측정·재시험 이력(T5-17)과 판정 Flow 검증에 필요. T5-31.</description>
-    <hasActivationRequired>false</hasActivationRequired>
+    <description>WorkOrderLineItem 측정 필드 FLS. 필드는 PROD에 배포돼 있으나 어떤 프로필·권한세트에도 FLS가 부여되지 않아 SOQL에서 &quot;No such column&quot;으로 보이고 화면에도 뜨지 않았다. F-07 측정·재시험 이력(T5-17)과 판정 Flow 검증에 필요. T5-31.</description>
     <fieldPermissions>
         <editable>true</editable>
         <field>WorkOrderLineItem.Baseline_Value__c</field>
@@ -133,4 +131,6 @@
         <field>WorkOrderLineItem.Verified_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>T5 WOLI Measurement Access</label>
 </PermissionSet>
