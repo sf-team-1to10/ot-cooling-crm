@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Root_Cause_Draft__c</fullName>
-    <label>잠정 근본원인</label>
     <description>복구 시점에 파악된 잠정 근본원인. 확정 근본원인은 O3(Problem)의 표준 Root Cause 소관이므로 여기에는 반드시 잠정으로만 기록한다.</description>
     <inlineHelpText>현장에서 판단한 잠정 근본원인을 기록합니다. 확정 원인이 아니며 O3(Problem)에서 규명·확정됩니다. 예: Rev.B 재배치 구간 체결부 이완(잠정).</inlineHelpText>
-    <required>false</required>
+    <label>잠정 근본원인</label>
+    <length>32000</length>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <type>LongTextArea</type>
-    <length>32000</length>
     <visibleLines>3</visibleLines>
 </CustomField>

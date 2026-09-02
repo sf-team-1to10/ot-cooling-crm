@@ -3,8 +3,8 @@
     <baseObject>ChangeRequest</baseObject>
     <category>other</category>
     <deployed>true</deployed>
-    <label>변경요청 영향도 분석</label>
     <description>ChangeRequest의 비용·일정·기술 영향을 집계하기 위한 리포트 타입</description>
+    <label>변경요청 영향도 분석</label>
     <sections>
         <columns>
             <checkedByDefault>true</checkedByDefault>

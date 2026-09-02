@@ -1,0 +1,60 @@
+<template>
+    <div class="slds-p-around_x-small">
+        <!-- ── Agent가 수집한 내용 ── -->
+        <lightning-card>
+            <span slot="title" class="slds-text-heading_small">Agent가 수집한 내용</span>
+            <span slot="actions" class="slds-badge source-agent">Agent 제안</span>
+
+            <div class="slds-p-horizontal_small slds-p-bottom_small">
+                <dl class="kv">
+                    <dt class="slds-item_label">증상 분류</dt>
+                    <dd class="slds-item_detail">유량저하</dd>
+
+                    <dt class="slds-item_label">보고된 증상</dt>
+                    <dd class="slds-item_detail">기준선 대비 −6.6% 하락 지속</dd>
+
+                    <dt class="slds-item_label">영향 등급</dt>
+                    <dd class="slds-item_detail">S2 중요</dd>
+
+                    <dt class="slds-item_label">운전모드 / 알람</dt>
+                    <dd class="slds-item_detail">AUTO / 없음</dd>
+
+                    <dt class="slds-item_label">1분 후 재확인</dt>
+                    <dd class="slds-item_detail num">1,961 L/min 유지</dd>
+
+                    <dt class="slds-item_label">자가조치 결과</dt>
+                    <dd class="slds-item_detail">
+                        <span class="slds-badge slds-theme_error">해결되지 않음</span>
+                    </dd>
+                </dl>
+            </div>
+        </lightning-card>
+
+        <!-- ── 보증·SLA 판정 ── -->
+        <lightning-card class="slds-m-top_small">
+            <span slot="title" class="slds-text-heading_small">보증·SLA 판정</span>
+            <span slot="actions" class="slds-badge source-rule">규칙 산정</span>
+
+            <div class="slds-p-horizontal_small slds-p-bottom_small">
+                <dl class="kv">
+                    <dt class="slds-item_label">계약</dt>
+                    <dd class="slds-item_detail num">SC-2022-0114</dd>
+
+                    <dt class="slds-item_label">보증 판정</dt>
+                    <dd class="slds-item_detail">
+                        <span class="slds-badge slds-theme_success">적용</span>
+                    </dd>
+
+                    <dt class="slds-item_label">보증 범위</dt>
+                    <dd class="slds-item_detail">연장보증</dd>
+
+                    <dt class="slds-item_label">청구 대상</dt>
+                    <dd class="slds-item_detail">무상</dd>
+
+                    <dt class="slds-item_label">판정 시각</dt>
+                    <dd class="slds-item_detail num">02:38</dd>
+                </dl>
+            </div>
+        </lightning-card>
+    </div>
+</template>

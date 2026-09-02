@@ -18,9 +18,19 @@
         <type>Flexipage</type>
         <pageOrSobjectType>Case</pageOrSobjectType>
     </actionOverrides>
+    <actionOverrides>
+        <actionName>Tab</actionName>
+        <content>OT_Service_Home</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>standard-home</pageOrSobjectType>
+    </actionOverrides>
     <brand>
-        <headerColor>#0070D2</headerColor>
-        <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
+        <headerColor>#0B1F33</headerColor>
+        <logo>OT_Logo_KR</logo>
+        <logoVersion>1</logoVersion>
+        <shouldOverrideOrgTheme>true</shouldOverrideOrgTheme>
     </brand>
     <formFactors>Small</formFactors>
     <formFactors>Large</formFactors>
@@ -28,23 +38,30 @@
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
-    <label>OT전자 냉각</label>
+    <label>OT전자 Cooling Continuity</label>
     <navType>Console</navType>
-    <tabs>standard-Case</tabs>
-    <tabs>Technical_Baseline__c</tabs>
-    <tabs>standard-WorkOrder</tabs>
-    <tabs>standard-ChangeRequest</tabs>
-    <tabs>standard-Problem</tabs>
-    <tabs>standard-Asset</tabs>
-    <tabs>Technical_Baseline_Spec__c</tabs>
-    <tabs>Technical_Review__c</tabs>
-    <tabs>Customer_Commitment__c</tabs>
+    <tabs>standard-home</tabs>
+    <tabs>standard-Account</tabs>
+    <tabs>standard-Opportunity</tabs>
     <tabs>standard-Contract</tabs>
+    <tabs>Technical_Review__c</tabs>
+    <tabs>Technical_Baseline__c</tabs>
+    <tabs>Technical_Baseline_Spec__c</tabs>
+    <tabs>standard-ChangeRequest</tabs>
+    <tabs>Customer_Commitment__c</tabs>
+    <tabs>standard-Asset</tabs>
+    <tabs>standard-WorkOrder</tabs>
+    <tabs>standard-Case</tabs>
+    <tabs>standard-Problem</tabs>
+    <tabs>Dispatch_Briefing_Workbench</tabs>
     <uiType>Lightning</uiType>
-    <utilityBar>OT_UtilityBar</utilityBar>
+    <utilityBar>OT_Cooling_Continuity_UtilityBar</utilityBar>
     <workspaceConfig>
         <mappings>
             <tab>Customer_Commitment__c</tab>
+        </mappings>
+        <mappings>
+            <tab>Dispatch_Briefing_Workbench</tab>
         </mappings>
         <mappings>
             <tab>Technical_Baseline_Spec__c</tab>
@@ -54,6 +71,9 @@
         </mappings>
         <mappings>
             <tab>Technical_Review__c</tab>
+        </mappings>
+        <mappings>
+            <tab>standard-Account</tab>
         </mappings>
         <mappings>
             <tab>standard-Asset</tab>
@@ -68,10 +88,16 @@
             <tab>standard-Contract</tab>
         </mappings>
         <mappings>
+            <tab>standard-Opportunity</tab>
+        </mappings>
+        <mappings>
             <tab>standard-Problem</tab>
         </mappings>
         <mappings>
             <tab>standard-WorkOrder</tab>
+        </mappings>
+        <mappings>
+            <tab>standard-home</tab>
         </mappings>
     </workspaceConfig>
 </CustomApplication>

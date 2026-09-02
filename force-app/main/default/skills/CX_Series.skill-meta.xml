@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Skill xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>CX 계열 장비 설계·시공 전문 스킬. 전문가 소집(Swarm) 매칭 기준.</description>
+    <label>CX계열</label>
+</Skill>

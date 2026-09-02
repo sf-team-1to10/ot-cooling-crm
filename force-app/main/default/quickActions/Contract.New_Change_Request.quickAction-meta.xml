@@ -2,26 +2,29 @@
 <QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>새 변경요청</label>
     <optionsCreateFeedItem>false</optionsCreateFeedItem>
-    <targetObject>ChangeRequest</targetObject>
-    <targetParentField>Contract__c</targetParentField>
-    <type>Create</type>
     <quickActionLayout>
         <layoutSectionStyle>TwoColumnsTopToBottom</layoutSectionStyle>
         <quickActionLayoutColumns>
             <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
                 <field>Origin__c</field>
                 <uiBehavior>Required</uiBehavior>
             </quickActionLayoutItems>
             <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
                 <field>Requester__c</field>
                 <uiBehavior>Required</uiBehavior>
             </quickActionLayoutItems>
         </quickActionLayoutColumns>
         <quickActionLayoutColumns>
             <quickActionLayoutItems>
+                <emptySpace>false</emptySpace>
                 <field>Description</field>
                 <uiBehavior>Required</uiBehavior>
             </quickActionLayoutItems>
         </quickActionLayoutColumns>
     </quickActionLayout>
+    <targetObject>ChangeRequest</targetObject>
+    <targetParentField>Contract__c</targetParentField>
+    <type>Create</type>
 </QuickAction>

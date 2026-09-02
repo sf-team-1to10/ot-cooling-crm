@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Case의 Asset 계열에 맞는 스킬 보유자만 선별해 Slack 채널로 소집한다. 표준 Swarming 대체 경로. T5-24.</description>
+    <flowDefinition>T5_Case_Expert_Finder_Swarm</flowDefinition>
+    <label>전문가 소집</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>Flow</type>
+</QuickAction>

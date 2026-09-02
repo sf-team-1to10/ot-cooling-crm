@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Dispatch_Briefing__c</fullName>
+    <description>장애 Case의 관련 자산 진단 이력을 요약해 출동 판단 근거로 노출하는 출동 지시서. 원격 진단 소견·잠정 원인·권고 조치를 담아, 서비스 엔지니어가 현장 출동 전 자산 상태를 파악하도록 한다. Agentforce(T4-19) 출동 전 진단 브리핑의 출력 저장소로 쓰인다.</description>
+    <inlineHelpText>관련 자산의 진단 요약·잠정 원인·권고 조치를 기록합니다. 출동 판단 전 참고용으로 표시됩니다.</inlineHelpText>
+    <label>출동 브리핑</label>
+    <length>32000</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>LongTextArea</type>
+    <visibleLines>5</visibleLines>
+</CustomField>

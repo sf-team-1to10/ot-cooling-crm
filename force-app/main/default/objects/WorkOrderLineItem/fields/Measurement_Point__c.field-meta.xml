@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Measurement_Point__c</fullName>
+    <description>측정 위치 식별자 (예: F-07). 시나리오 전체에서 특정 측정 포인트를 추적하는 핵심 키. 현장 엔지니어가 Work Order Line Item에 기록한다.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>측정 포인트 코드를 입력하세요 (예: F-07, P-03). 점검표의 항목 번호와 일치해야 합니다.</inlineHelpText>
+    <label>Measurement Point</label>
+    <length>20</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

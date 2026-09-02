@@ -1,0 +1,21 @@
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10.5px;
+    font-weight: 650;
+    padding: 2.5px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+.chip::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+.chip.ok { color: #17A566; background: #E7F6EF; }
+.chip.adv { color: #B67611; background: #FBF1DF; }
+.chip.info { color: #6B7896; background: #F4F6FB; }
+.chip.neutral { color: #6B7896; background: #F4F6FB; }

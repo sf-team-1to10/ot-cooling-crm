@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
-    
     <flexiPageRegions>
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>none</value>
+                    <value>required</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Name</fieldItem>
                 <identifier>RecordNamePrimaryField</identifier>
@@ -15,10 +14,7 @@
         <name>Facet-PrimaryFields</name>
         <type>Facet</type>
     </flexiPageRegions>
-    
-    
     <flexiPageRegions>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -29,7 +25,6 @@
                 <identifier>RecordIndustrySecondaryField0</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -40,7 +35,6 @@
                 <identifier>RecordPhoneSecondaryField1</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -51,11 +45,9 @@
                 <identifier>RecordTypeSecondaryField2</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <name>Facet-SecondaryFields</name>
         <type>Facet</type>
     </flexiPageRegions>
-    
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -74,18 +66,14 @@
                     <name>numVisibleActions</name>
                     <value>3</value>
                 </componentInstanceProperties>
-                
                 <componentInstanceProperties>
                     <name>primaryField</name>
                     <value>Facet-PrimaryFields</value>
                 </componentInstanceProperties>
-                
-                
                 <componentInstanceProperties>
                     <name>secondaryFields</name>
                     <value>Facet-SecondaryFields</value>
                 </componentInstanceProperties>
-                
                 <componentName>record_flexipage:dynamicHighlights</componentName>
                 <identifier>record_flexipage_dynamicHighlights</identifier>
             </componentInstance>
@@ -115,22 +103,17 @@
         <name>relatedTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
-    <!-- Field Section: Detail Fields -->
-    
-    <!-- Column 1 Fields -->
     <flexiPageRegions>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>none</value>
+                    <value>required</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Name</fieldItem>
                 <identifier>RecordNameColumn1Field0</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -141,7 +124,6 @@
                 <identifier>RecordAccountNumberColumn1Field1</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -152,14 +134,30 @@
                 <identifier>RecordIndustryColumn1Field2</identifier>
             </fieldInstance>
         </itemInstances>
-        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.OwnerId</fieldItem>
+                <identifier>RecordOwnerIdColumn1Field3</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.AnnualRevenue</fieldItem>
+                <identifier>RecordAnnualRevenueColumn1Field4</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-FieldSection-Column1</name>
         <type>Facet</type>
     </flexiPageRegions>
-    <!-- Column 2 Fields -->
-    
     <flexiPageRegions>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -170,7 +168,6 @@
                 <identifier>RecordPhoneColumn2Field0</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -181,7 +178,6 @@
                 <identifier>RecordWebsiteColumn2Field1</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -192,12 +188,29 @@
                 <identifier>RecordTypeColumn2Field2</identifier>
             </fieldInstance>
         </itemInstances>
-        
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.BillingAddress</fieldItem>
+                <identifier>RecordBillingAddressColumn2Field3</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.NumberOfEmployees</fieldItem>
+                <identifier>RecordNumberOfEmployeesColumn2Field4</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-FieldSection-Column2</name>
         <type>Facet</type>
     </flexiPageRegions>
-    
-    <!-- Field Section: Column Facets -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -209,7 +222,6 @@
                 <identifier>flexipage_column1</identifier>
             </componentInstance>
         </itemInstances>
-        
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -220,11 +232,9 @@
                 <identifier>flexipage_column2</identifier>
             </componentInstance>
         </itemInstances>
-        
         <name>Facet-FieldSection-Columns</name>
         <type>Facet</type>
     </flexiPageRegions>
-    <!-- Field Section Component -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -238,7 +248,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Information</value>
+                    <value>거래처 기본 정보</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
@@ -347,7 +357,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <description>Hall A 라이프사이클 360 뷰 - Asset·Case·WorkOrder·Contract 관련목록 통합 조회 (T1-14)</description>
     <masterLabel>Hall A 라이프사이클 360</masterLabel>
     <sobjectType>Account</sobjectType>
     <template>

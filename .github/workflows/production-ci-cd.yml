@@ -1,0 +1,129 @@
+name: Main 검증 (Production org 대조)
+
+# git은 기록용. 어떤 org에도 자동 배포하지 않는다. 실제 배포는 org에서 직접 수행한다.
+# main으로 PR이 올라오면 Production org를 대상으로 delta를 '검증(dry-run)'만 한다.
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "force-app/**"
+      - ".github/workflows/**"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+
+    steps:
+      - name: "코드 체크아웃"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: "Node.js 설정"
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: "Salesforce CLI 설치"
+        run: |
+          npm install -g @salesforce/cli
+          sf --version
+
+      - name: "sfdx-git-delta 플러그인 설치"
+        run: |
+          echo y | sf plugins install sfdx-git-delta
+
+      # Production org 인증 (검증 대상 org). GitHub Secrets에 SFDX_PRODUCTION_URL 필요.
+      - name: "Production org 인증 정보 준비"
+        run: echo "${{ secrets.SFDX_PRODUCTION_URL }}" > ./SFDX_PRODUCTION_URL.txt
+
+      - name: "Production org 로그인"
+        run: sf org login sfdx-url --sfdx-url-file ./SFDX_PRODUCTION_URL.txt --alias production --set-default
+
+      # 변경된 메타데이터만 추출 (base = main)
+      - name: "변경된 메타데이터 추출"
+        run: |
+          mkdir -p changed-sources
+          sf sgd source delta --to "HEAD" --from "origin/main" --output changed-sources/ --generate-delta --source force-app/
+
+      # Production org를 대상으로 검증(dry-run)만 수행한다. 실제 배포는 하지 않는다.
+      - name: "Production org 배포 검증 (dry-run)"
+        run: |
+          if [ -d "changed-sources/force-app" ] && [ "$(ls -A changed-sources/force-app 2>/dev/null)" ]; then
+            # 델타에 Apex 클래스/트리거가 포함될 때만 테스트를 강제한다.
+            # PermSet·LWC·Flow 등 Apex 외 변경은 실행할 테스트가 없는 게 정상이므로 게이트를 적용하지 않는다.
+            if find changed-sources/force-app \( -name "*.cls" -o -name "*.trigger" \) | grep -q .; then
+              # 델타에 포함된 테스트 클래스(*Test.cls)를 자동 추출한다.
+              # dry-run은 코드를 org에 배포하지 않으므로 RunLocalTests는 새 테스트를 찾지 못한다.
+              # RunSpecifiedTests로 PR에 포함된 테스트를 직접 지정해야 한다.
+              TEST_CLASSES=$(find changed-sources/force-app -name "*Test.cls" -exec basename {} .cls \; | paste -sd, -)
+              if [ -n "$TEST_CLASSES" ]; then
+                echo "지정 테스트: $TEST_CLASSES"
+                sf project deploy start \
+                  --source-dir "changed-sources/force-app" \
+                  --dry-run \
+                  --test-level RunSpecifiedTests \
+                  --tests $TEST_CLASSES \
+                  --target-org production \
+                  --wait 30 \
+                  --json | tee deploy-result.json
+              else
+                echo "::warning::Apex 변경이 있으나 델타에 테스트 클래스가 없습니다. 구조 검증만 수행합니다."
+                sf project deploy start \
+                  --source-dir "changed-sources/force-app" \
+                  --dry-run \
+                  --test-level NoTestRun \
+                  --target-org production \
+                  --wait 30 \
+                  --json | tee deploy-result.json
+              fi
+            else
+              echo "Apex 변경 없음 - 테스트 게이트 skip, 배포 검증만 수행합니다."
+              sf project deploy start \
+                --source-dir "changed-sources/force-app" \
+                --dry-run \
+                --test-level NoTestRun \
+                --target-org production \
+                --wait 30 \
+                --json
+            fi
+          else
+            echo "검증할 변경사항이 없습니다."
+          fi
+
+      # 삭제 예정 메타데이터도 검증(dry-run)만 수행한다.
+      - name: "삭제 메타데이터 검증 (dry-run)"
+        run: |
+          if [ -f "changed-sources/destructiveChanges/destructiveChanges.xml" ]; then
+            sf project deploy start \
+              --metadata-dir "changed-sources/destructiveChanges" \
+              --dry-run \
+              --ignore-warnings \
+              --target-org production \
+              --wait 30 \
+              --json
+          else
+            echo "삭제할 항목이 없습니다."
+          fi
+
+  # verify(dry-run) 검증이 통과하면 해당 PR을 main으로 자동 병합한다.
+  # 실제 org 배포는 하지 않는다(배포는 org에서 직접). 커밋 이력은 보존(merge commit).
+  auto-merge:
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: "PR 자동 병합 (merge commit)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge "${{ github.event.pull_request.number }}" \
+            --repo "${{ github.repository }}" \
+            --merge \
+            --auto

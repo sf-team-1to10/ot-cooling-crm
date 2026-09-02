@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <description>Case에서 &quot;Slack 인계 요청&quot; 버튼으로 트리거하는 Screen Flow. 서정비→오도면→강시공 인계 순서를 Slack 채널로 평문 발신(멘션 대상은 평문 이름). 발신은 T5_Send_Slack_Channel_Message subflow 재사용. Case/WO에 쓰기 작업 없음(순수 알림). T5-15 Swarming 전환 시 비활성화/삭제 예정인 임시 폴백. T5-13.</description>
+    <environments>Default</environments>
+    <interviewLabel>T5 Case Slack Handoff Request {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>T5 Case Slack Handoff Request</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Get_Case</name>
+        <label>Case 조회</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Confirm_Handoff</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Case</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>CaseNumber</queriedFields>
+        <queriedFields>Subject</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <name>Confirm_Handoff</name>
+        <label>인계 요청 확인</label>
+        <locationX>176</locationX>
+        <locationY>240</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Send_Handoff_Message</targetReference>
+        </connector>
+        <fields>
+            <name>Confirm_Text</name>
+            <fieldText>&lt;p&gt;Case &lt;b&gt;{!Get_Case.CaseNumber}&lt;/b&gt; 를 서정비 → 오도면 → 강시공 순서로 Slack 인계 요청합니다.&lt;/p&gt;&lt;p&gt;확인을 누르면 인계 채널로 알림이 발신됩니다.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Done_Screen</name>
+        <label>발신 완료</label>
+        <locationX>176</locationX>
+        <locationY>480</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Done_Text</name>
+            <fieldText>&lt;p&gt;Slack 인계 알림을 발신했습니다. (서정비 → 오도면 → 강시공)&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>176</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Case</targetReference>
+        </connector>
+    </start>
+    <status>Draft</status>
+    <subflows>
+        <name>Send_Handoff_Message</name>
+        <label>Slack 인계 알림 발신</label>
+        <locationX>176</locationX>
+        <locationY>360</locationY>
+        <connector>
+            <targetReference>Done_Screen</targetReference>
+        </connector>
+        <flowName>T5_Send_Slack_Channel_Message</flowName>
+        <inputAssignments>
+            <name>channelId</name>
+            <value>
+                <stringValue>C0BTGS2BQLW</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>messageText</name>
+            <value>
+                <elementReference>Handoff_Message</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <textTemplates>
+        <name>Handoff_Message</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:handshake: [역할 인계 요청] Case {!Get_Case.CaseNumber}
+{!Get_Case.Subject}
+
+인계 순서: @서정비 → @오도면 → @강시공
+서정비가 1차 조치 후 오도면(현장 조율)을 거쳐 강시공(시공)으로 인계를 요청합니다.</text>
+    </textTemplates>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

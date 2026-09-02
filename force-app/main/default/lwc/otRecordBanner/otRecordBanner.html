@@ -1,0 +1,9 @@
+<template>
+    <template if:true={showBanner}>
+        <div class={bannerClass} role="status" aria-label={ariaLabel}>
+            <span class="ot-banner__icon" aria-hidden="true">{icon}</span>
+            <span class="ot-banner__text">{message}</span>
+            <c-ot-status-badge label={statusLabel} variant={badgeVariant}></c-ot-status-badge>
+        </div>
+    </template>
+</template>

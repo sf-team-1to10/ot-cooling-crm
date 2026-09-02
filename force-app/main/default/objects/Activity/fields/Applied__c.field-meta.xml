@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Applied__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>RCA 설계·체크리스트 환류 조치가 실제로 반영되었는지 추적. 체크되면 반영완료로 판별한다.</description>
+    <inlineHelpText>시정조치가 설계·체크리스트에 반영 완료되면 체크합니다.</inlineHelpText>
+    <label>반영 여부</label>
+    <type>Checkbox</type>
+</CustomField>

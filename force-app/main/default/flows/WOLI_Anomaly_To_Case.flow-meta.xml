@@ -1,38 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>65</apiVersion>
-    <description>추세 이상(Trend_Flag__c=주의/이상)이 감지된 WorkOrderLineItem에서 예방정비 발견 Case를 자동 생성한다. 측정항목에 따라 증상 분류를 분기하고, 같은 Asset+증상 분류에 열린 Case가 이미 있으면 생성하지 않는다. T4-05/07 XML을 템플릿으로 직접 작성(Flow 파이프라인 타임아웃 회피).</description>
-    <decisions>
-        <name>Route_By_Measurement</name>
-        <label>측정항목 분기</label>
-        <locationX>176</locationX>
-        <locationY>158</locationY>
-        <defaultConnectorLabel>해당 측정항목 없음(종료)</defaultConnectorLabel>
-        <rules>
-            <name>Flow_Rate</name>
-            <label>유량 → 유량저하</label>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Measurement_Item_Code__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>유량</stringValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Get_Open_Cases</targetReference>
-            </connector>
-        </rules>
-    </decisions>
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <name>No_Existing_Open_Case</name>
         <label>열린 Case 없음 확인</label>
-        <locationX>176</locationX>
-        <locationY>398</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnectorLabel>이미 열린 Case 있음(종료)</defaultConnectorLabel>
         <rules>
             <name>No_Open_Case</name>
-            <label>열린 Case 없음</label>
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>Get_Open_Cases</leftValueReference>
@@ -44,21 +21,45 @@
             <connector>
                 <targetReference>Create_Anomaly_Case</targetReference>
             </connector>
+            <label>열린 Case 없음</label>
         </rules>
     </decisions>
+    <decisions>
+        <name>Route_By_Measurement</name>
+        <label>측정항목 분기</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>해당 측정항목 없음(종료)</defaultConnectorLabel>
+        <rules>
+            <name>Flow_Rate</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Measurement_Item_Code__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>유량</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Open_Cases</targetReference>
+            </connector>
+            <label>유량 → 유량저하</label>
+        </rules>
+    </decisions>
+    <description>추세 이상(Trend_Flag__c=주의/이상)이 감지된 WorkOrderLineItem에서 예방정비 발견 Case를 자동 생성한다. 측정항목에 따라 증상 분류를 분기하고, 같은 Asset+증상 분류에 열린 Case가 이미 있으면 생성하지 않는다. T4-05/07 XML을 템플릿으로 직접 작성(Flow 파이프라인 타임아웃 회피).</description>
     <environments>Default</environments>
     <formulas>
         <name>Case_Description</name>
         <dataType>String</dataType>
-        <expression>"원본 Work Order: " &amp; {!$Record.WorkOrder.WorkOrderNumber} &amp; " / WOLI: " &amp; {!$Record.LineItemNumber}
-&amp; " / 측정항목: " &amp; TEXT({!$Record.Measurement_Item_Code__c})
-&amp; " / 측정값: " &amp; TEXT({!$Record.Measured_Value__c})
-&amp; " / 추세판정: " &amp; TEXT({!$Record.Trend_Flag__c})</expression>
+        <expression>&quot;원본 Work Order: &quot; &amp; {!$Record.WorkOrder.WorkOrderNumber} &amp; &quot; / WOLI: &quot; &amp; {!$Record.LineItemNumber}
+&amp; &quot; / 측정항목: &quot; &amp; TEXT({!$Record.Measurement_Item_Code__c})
+&amp; &quot; / 측정값: &quot; &amp; TEXT({!$Record.Measured_Value__c})
+&amp; &quot; / 추세판정: &quot; &amp; TEXT({!$Record.Trend_Flag__c})</expression>
     </formulas>
     <formulas>
         <name>Case_Subject</name>
         <dataType>String</dataType>
-        <expression>"[예방정비 발견] " &amp; {!$Record.Asset.Name} &amp; " " &amp; TEXT({!$Record.Measurement_Item_Code__c}) &amp; " 추세이상"</expression>
+        <expression>&quot;[예방정비 발견] &quot; &amp; {!$Record.Asset.Name} &amp; &quot; &quot; &amp; TEXT({!$Record.Measurement_Item_Code__c}) &amp; &quot; 추세이상&quot;</expression>
     </formulas>
     <interviewLabel>이상 항목 → Case 자동 생성</interviewLabel>
     <label>이상 항목 → Case 자동 생성</label>
@@ -78,8 +79,8 @@
     <recordCreates>
         <name>Create_Anomaly_Case</name>
         <label>예방정비 발견 Case 생성</label>
-        <locationX>176</locationX>
-        <locationY>518</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <inputAssignments>
             <field>AssetId</field>
             <value>
@@ -128,8 +129,8 @@
     <recordLookups>
         <name>Get_Open_Cases</name>
         <label>열린 Case 조회</label>
-        <locationX>176</locationX>
-        <locationY>278</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>No_Existing_Open_Case</targetReference>
@@ -162,8 +163,8 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
-        <locationX>50</locationX>
-        <locationY>50</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <connector>
             <targetReference>Route_By_Measurement</targetReference>
         </connector>

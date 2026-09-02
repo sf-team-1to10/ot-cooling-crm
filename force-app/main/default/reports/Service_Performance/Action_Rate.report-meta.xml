@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://soap.sforce.com/2006/04/metadata">
-    <name>조치율 추세 대응</name>
-    <reportType>WorkOrders_with_Line_Items__c</reportType>
-    <format>Summary</format>
-    <description>점검 WorkOrder에 권고 조치(Recommended_Action__c)가 채워진 비율을 위험 수준별로 집계한다. 감지-조치 폐쇄율을 갱신 협상의 가치 근거로 제시.</description>
-    <showDetails>true</showDetails>
-    <showGrandTotal>true</showGrandTotal>
-    <showSubTotals>true</showSubTotals>
     <columns>
         <field>WorkOrder$Subject</field>
     </columns>
     <columns>
-        <field>WorkOrder$Recommended_Action__c</field>
+        <field>WorkOrder$Status</field>
     </columns>
-    <groupingsDown>
-        <field>WorkOrder$Risk_Level__c</field>
-        <dateGranularity>None</dateGranularity>
-        <sortOrder>Asc</sortOrder>
-    </groupingsDown>
+    <description>점검 WorkOrder 목록. T5 커스텀 필드 배포 후 그룹핑을 추가한다.</description>
+    <format>Tabular</format>
+    <name>조치율 추세 대응</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>WorkOrders_with_Line_Items__c</reportType>
+    <scope>user</scope>
+    <showDetails>true</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
+    <timeFrameFilter>
+        <dateColumn>WorkOrder$CreatedDate</dateColumn>
+        <interval>INTERVAL_CURRENT</interval>
+    </timeFrameFilter>
 </Report>

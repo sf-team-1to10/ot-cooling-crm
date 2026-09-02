@@ -1,0 +1,62 @@
+.tile-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--slds-g-spacing-small, 0.75rem);
+    margin-top: var(--slds-g-spacing-small, 0.75rem);
+}
+
+.tile {
+    border-radius: var(--slds-g-radius-border-2, 0.25rem);
+    padding: var(--slds-g-spacing-small, 0.75rem);
+    text-align: center;
+    border: 1px solid var(--slds-g-color-border-base-1, #e5e5e5);
+}
+
+.tile__count {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.tile__label {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.tile--critical {
+    background-color: var(--slds-g-color-error-container-1, #fdecea);
+    color: var(--slds-g-color-error-1, #ba0517);
+}
+
+.tile--warning {
+    background-color: var(--slds-g-color-warning-container-1, #fef5e7);
+    color: var(--slds-g-color-warning-1, #8c4b02);
+}
+
+.tile--normal {
+    background-color: var(--slds-g-color-success-container-1, #ebf7e6);
+    color: var(--slds-g-color-success-1, #2e844a);
+}
+
+.tile--neutral {
+    background-color: var(--slds-g-color-neutral-base-95, #f3f3f3);
+    color: var(--slds-g-color-neutral-base-30, #444);
+}
+
+.progress-track {
+    width: 100%;
+    height: 0.75rem;
+    border-radius: 0.5rem;
+    background-color: var(--slds-g-color-neutral-base-90, #e5e5e5);
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--slds-g-color-success-1, #2e844a);
+    transition: width 0.3s ease;
+}
+
+.asset-row {
+    padding: var(--slds-g-spacing-x-small, 0.5rem) 0;
+}

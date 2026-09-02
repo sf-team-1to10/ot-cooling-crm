@@ -1,2 +1,302 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Flow xmlns="http://soap.sforce.com/2006/04/metadata"><apiVersion>65</apiVersion><decisions><locationY>50</locationY><locationX>302</locationX><name>Check_Technical_Baseline_Exists</name><description>Verifies if the parent WorkOrder has a Technical_Baseline__c value to determine if baseline spec lookup should proceed</description><defaultConnectorLabel>No Baseline</defaultConnectorLabel><rules><connector><targetReference>Get_Matching_Baseline_Spec</targetReference></connector><name>Baseline_Exists</name><description>Technical Baseline exists on parent WorkOrder</description><conditionLogic>1</conditionLogic><label>Baseline Exists</label><conditions><leftValueReference>Get_Parent_WorkOrder.Technical_Baseline__c</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions></rules><label>Check Technical Baseline Exists</label></decisions><decisions><locationY>50</locationY><defaultConnector><targetReference>Set_Missing_Spec_Warning</targetReference></defaultConnector><locationX>554</locationX><name>Check_Spec_Found</name><description>Determines if a matching Technical_Baseline_Spec__c record was found to route flow to either update WOLI fields or post warning</description><defaultConnectorLabel>Spec Not Found</defaultConnectorLabel><rules><connector><targetReference>Update_WOLI_With_Spec_Values</targetReference></connector><name>Spec_Found</name><description>Matching Technical Baseline Spec record was found</description><conditionLogic>1</conditionLogic><label>Spec Found</label><conditions><leftValueReference>Get_Matching_Baseline_Spec.Id</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions></rules><label>Check Spec Found</label></decisions><decisions><locationY>50</locationY><locationX>932</locationX><name>Check_Revision_Mismatch</name><description>Verifies if Applied_Revision__c is not blank AND Technical Baseline's Version__c is not blank AND they differ to determine if revision warning is needed</description><defaultConnectorLabel>No Mismatch</defaultConnectorLabel><rules><connector><targetReference>Set_Revision_Mismatch_Warning</targetReference></connector><name>Revision_Mismatch</name><description>Applied revision and baseline version are both populated and differ</description><conditionLogic>1 AND 2 AND 3</conditionLogic><label>Revision Mismatch</label><conditions><leftValueReference>Get_WorkOrder_Asset.Applied_Revision__c</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions><conditions><leftValueReference>Get_Parent_WorkOrder.Technical_Baseline__r.Version__c</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions><conditions><leftValueReference>Get_WorkOrder_Asset.Applied_Revision__c</leftValueReference><operator>NotEqualTo</operator><rightValue><elementReference>Get_Parent_WorkOrder.Technical_Baseline__r.Version__c</elementReference></rightValue></conditions></rules><label>Check Revision Mismatch</label></decisions><environments>Default</environments><interviewLabel>WOLI Creation Trigger</interviewLabel><label>WOLI Creation Trigger</label><processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues><processMetadataValues><name>CanvasMode</name><value><stringValue>AUTO_LAYOUT_CANVAS</stringValue></value></processMetadataValues><processType>AutoLaunchedFlow</processType><recordLookups><locationY>50</locationY><filterLogic>1</filterLogic><locationX>176</locationX><queriedFields>Id</queriedFields><queriedFields>Technical_Baseline__c</queriedFields><queriedFields>AssetId</queriedFields><description>Fetches the parent WorkOrder record to access Technical_Baseline__c field</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Get Parent WorkOrder</label><filters><field>Id</field><value><elementReference>$Record.WorkOrderId</elementReference></value><operator>EqualTo</operator></filters><connector><targetReference>Check_Technical_Baseline_Exists</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><name>Get_Parent_WorkOrder</name><getFirstRecordOnly>true</getFirstRecordOnly><object>WorkOrder</object></recordLookups><recordLookups><locationY>50</locationY><filterLogic>1 AND 2</filterLogic><locationX>428</locationX><queriedFields>Id</queriedFields><queriedFields>Spec_Value__c</queriedFields><queriedFields>Threshold_Min__c</queriedFields><queriedFields>Threshold_Max__c</queriedFields><description>Queries Technical_Baseline_Spec__c records matching the parent WorkOrder's Technical_Baseline__c and the WorkOrderLineItem's Measurement_Item_Code__c to retrieve spec values</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Get Matching Baseline Spec</label><filters><field>Technical_Baseline__c</field><value><elementReference>Get_Parent_WorkOrder.Technical_Baseline__c</elementReference></value><operator>EqualTo</operator></filters><filters><field>Measurement_Item_Code__c</field><value><elementReference>$Record.Measurement_Item_Code__c</elementReference></value><operator>EqualTo</operator></filters><connector><targetReference>Check_Spec_Found</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><name>Get_Matching_Baseline_Spec</name><getFirstRecordOnly>true</getFirstRecordOnly><object>Technical_Baseline_Spec__c</object></recordLookups><recordLookups><locationY>50</locationY><filterLogic>1</filterLogic><locationX>806</locationX><queriedFields>Id</queriedFields><queriedFields>Applied_Revision__c</queriedFields><description>Fetches the Asset record via parent WorkOrder's AssetId to access Applied_Revision__c field for revision comparison</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Get WorkOrder Asset</label><filters><field>Id</field><value><elementReference>Get_Parent_WorkOrder.AssetId</elementReference></value><operator>EqualTo</operator></filters><connector><targetReference>Check_Revision_Mismatch</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><name>Get_WorkOrder_Asset</name><getFirstRecordOnly>true</getFirstRecordOnly><object>Asset</object></recordLookups><recordUpdates><locationY>176</locationY><filterLogic>1</filterLogic><connector><targetReference>Get_WorkOrder_Asset</targetReference></connector><locationX>680</locationX><name>Set_Missing_Spec_Warning</name><description>Records a warning on the WorkOrderLineItem when no matching Technical_Baseline_Spec__c record is found for the measurement item</description><label>Set Missing Spec Warning</label><filters><field>Id</field><value><elementReference>$Record.Id</elementReference></value><operator>EqualTo</operator></filters><inputAssignments><field>Spec_Load_Warning__c</field><value><stringValue>기준값 미적재: {!$Record.Measurement_Item_Code__c} 항목의 Baseline Spec 없음</stringValue></value></inputAssignments><object>WorkOrderLineItem</object></recordUpdates><recordUpdates><locationY>50</locationY><filterLogic>1</filterLogic><locationX>1058</locationX><name>Set_Revision_Mismatch_Warning</name><description>Records a warning on the WorkOrderLineItem when the Asset's Applied_Revision__c does not match the Technical Baseline's Version__c</description><label>Set Revision Mismatch Warning</label><filters><field>Id</field><value><elementReference>$Record.Id</elementReference></value><operator>EqualTo</operator></filters><inputAssignments><field>Spec_Load_Warning__c</field><value><stringValue>리비전 불일치: 적용 {!Get_WorkOrder_Asset.Applied_Revision__c} ≠ Baseline {!Get_Parent_WorkOrder.Technical_Baseline__r.Version__c}</stringValue></value></inputAssignments><object>WorkOrderLineItem</object></recordUpdates><recordUpdates><locationY>50</locationY><filterLogic>1</filterLogic><connector><targetReference>Get_WorkOrder_Asset</targetReference></connector><locationX>680</locationX><name>Update_WOLI_With_Spec_Values</name><description>Copies Spec_Value__c, Threshold_Min__c, and Threshold_Max__c from the matching Technical_Baseline_Spec__c record into the triggering WorkOrderLineItem</description><label>Update WOLI With Spec Values</label><filters><field>Id</field><value><elementReference>$Record.Id</elementReference></value><operator>EqualTo</operator></filters><inputAssignments><field>Spec_Value__c</field><value><elementReference>Get_Matching_Baseline_Spec.Spec_Value__c</elementReference></value></inputAssignments><inputAssignments><field>Threshold_Min__c</field><value><elementReference>Get_Matching_Baseline_Spec.Threshold_Min__c</elementReference></value></inputAssignments><inputAssignments><field>Threshold_Max__c</field><value><elementReference>Get_Matching_Baseline_Spec.Threshold_Max__c</elementReference></value></inputAssignments><object>WorkOrderLineItem</object></recordUpdates><start><locationY>50</locationY><filterLogic>1 AND 2</filterLogic><connector><targetReference>Get_Parent_WorkOrder</targetReference></connector><locationX>50</locationX><recordTriggerType>Create</recordTriggerType><triggerType>RecordAfterSave</triggerType><doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria><filters><field>Line_Item_Role__c</field><value><stringValue>시험</stringValue></value><operator>EqualTo</operator></filters><filters><field>Measurement_Item_Code__c</field><value><stringValue></stringValue></value><operator>NotEqualTo</operator></filters><object>WorkOrderLineItem</object></start><status>Active</status></Flow>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <decisions>
+        <description>Verifies if Applied_Revision__c is not blank AND Technical Baseline&apos;s Version__c is not blank AND they differ to determine if revision warning is needed</description>
+        <name>Check_Revision_Mismatch</name>
+        <label>Check Revision Mismatch</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>No Mismatch</defaultConnectorLabel>
+        <rules>
+            <description>Applied revision and baseline version are both populated and differ</description>
+            <name>Revision_Mismatch</name>
+            <conditionLogic>1 AND 2 AND 3</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_WorkOrder_Asset.Applied_Revision__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_Parent_WorkOrder.Technical_Baseline__r.Version__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Get_WorkOrder_Asset.Applied_Revision__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <elementReference>Get_Parent_WorkOrder.Technical_Baseline__r.Version__c</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Revision_Mismatch_Warning</targetReference>
+            </connector>
+            <label>Revision Mismatch</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Determines if a matching Technical_Baseline_Spec__c record was found to route flow to either update WOLI fields or post warning</description>
+        <name>Check_Spec_Found</name>
+        <label>Check Spec Found</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Set_Missing_Spec_Warning</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Spec Not Found</defaultConnectorLabel>
+        <rules>
+            <description>Matching Technical Baseline Spec record was found</description>
+            <name>Spec_Found</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Matching_Baseline_Spec.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_WOLI_With_Spec_Values</targetReference>
+            </connector>
+            <label>Spec Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Verifies if the parent WorkOrder has a Technical_Baseline__c value to determine if baseline spec lookup should proceed</description>
+        <name>Check_Technical_Baseline_Exists</name>
+        <label>Check Technical Baseline Exists</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>No Baseline</defaultConnectorLabel>
+        <rules>
+            <description>Technical Baseline exists on parent WorkOrder</description>
+            <name>Baseline_Exists</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Parent_WorkOrder.Technical_Baseline__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Matching_Baseline_Spec</targetReference>
+            </connector>
+            <label>Baseline Exists</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>WOLI Creation Trigger</interviewLabel>
+    <label>WOLI Creation Trigger</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Queries Technical_Baseline_Spec__c records matching the parent WorkOrder&apos;s Technical_Baseline__c and the WorkOrderLineItem&apos;s Measurement_Item_Code__c to retrieve spec values</description>
+        <name>Get_Matching_Baseline_Spec</name>
+        <label>Get Matching Baseline Spec</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Spec_Found</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>Technical_Baseline__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Parent_WorkOrder.Technical_Baseline__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Measurement_Item_Code__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Measurement_Item_Code__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Technical_Baseline_Spec__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Spec_Value__c</queriedFields>
+        <queriedFields>Threshold_Min__c</queriedFields>
+        <queriedFields>Threshold_Max__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Fetches the parent WorkOrder record to access Technical_Baseline__c field</description>
+        <name>Get_Parent_WorkOrder</name>
+        <label>Get Parent WorkOrder</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Technical_Baseline_Exists</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.WorkOrderId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Technical_Baseline__c</queriedFields>
+        <queriedFields>AssetId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Fetches the Asset record via parent WorkOrder&apos;s AssetId to access Applied_Revision__c field for revision comparison</description>
+        <name>Get_WorkOrder_Asset</name>
+        <label>Get WorkOrder Asset</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Revision_Mismatch</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Parent_WorkOrder.AssetId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Asset</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Applied_Revision__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <description>Records a warning on the WorkOrderLineItem when no matching Technical_Baseline_Spec__c record is found for the measurement item</description>
+        <name>Set_Missing_Spec_Warning</name>
+        <label>Set Missing Spec Warning</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_WorkOrder_Asset</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Spec_Load_Warning__c</field>
+            <value>
+                <stringValue>기준값 미적재: {!$Record.Measurement_Item_Code__c} 항목의 Baseline Spec 없음</stringValue>
+            </value>
+        </inputAssignments>
+        <object>WorkOrderLineItem</object>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Records a warning on the WorkOrderLineItem when the Asset&apos;s Applied_Revision__c does not match the Technical Baseline&apos;s Version__c</description>
+        <name>Set_Revision_Mismatch_Warning</name>
+        <label>Set Revision Mismatch Warning</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Spec_Load_Warning__c</field>
+            <value>
+                <stringValue>리비전 불일치: 적용 {!Get_WorkOrder_Asset.Applied_Revision__c} ≠ Baseline {!Get_Parent_WorkOrder.Technical_Baseline__r.Version__c}</stringValue>
+            </value>
+        </inputAssignments>
+        <object>WorkOrderLineItem</object>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Copies Spec_Value__c, Threshold_Min__c, and Threshold_Max__c from the matching Technical_Baseline_Spec__c record into the triggering WorkOrderLineItem</description>
+        <name>Update_WOLI_With_Spec_Values</name>
+        <label>Update WOLI With Spec Values</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_WorkOrder_Asset</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Spec_Value__c</field>
+            <value>
+                <elementReference>Get_Matching_Baseline_Spec.Spec_Value__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Threshold_Max__c</field>
+            <value>
+                <elementReference>Get_Matching_Baseline_Spec.Threshold_Max__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Threshold_Min__c</field>
+            <value>
+                <elementReference>Get_Matching_Baseline_Spec.Threshold_Min__c</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrderLineItem</object>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Parent_WorkOrder</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>Line_Item_Role__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>시험</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Measurement_Item_Code__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </filters>
+        <object>WorkOrderLineItem</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Agent_First_Response_At__c</fullName>
+    <description>상담사가 고객에게 처음으로 응답한 시각. AI 자동응답(봇)과 구분하여 실제 사람이 개입한 시점을 기록한다.</description>
+    <inlineHelpText>상담사가 직접 고객에게 첫 메시지를 보낸 시각을 입력하세요. 봇 응답 시각과 혼동하지 마세요.</inlineHelpText>
+    <label>Agent First Response At</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

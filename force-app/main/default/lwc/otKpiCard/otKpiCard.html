@@ -1,0 +1,43 @@
+<template>
+    <div class="ot-kpi-grid">
+        <!-- 미결 케이스 -->
+        <div class="ot-kpi-tile ot-kpi-tile--info">
+            <span class="ot-kpi-tile__icon">📋</span>
+            <span class="ot-kpi-tile__value">
+                <template if:true={isLoading}>—</template>
+                <template if:false={isLoading}>{kpi.openCases}</template>
+            </span>
+            <span class="ot-kpi-tile__label">미결 케이스</span>
+        </div>
+        <!-- Critical 케이스 -->
+        <div class="ot-kpi-tile ot-kpi-tile--critical">
+            <span class="ot-kpi-tile__icon">🚨</span>
+            <span class="ot-kpi-tile__value">
+                <template if:true={isLoading}>—</template>
+                <template if:false={isLoading}>{kpi.criticalCases}</template>
+            </span>
+            <span class="ot-kpi-tile__label">Critical 케이스</span>
+        </div>
+        <!-- 진행 중 WO -->
+        <div class="ot-kpi-tile ot-kpi-tile--success">
+            <span class="ot-kpi-tile__icon">🔧</span>
+            <span class="ot-kpi-tile__value">
+                <template if:true={isLoading}>—</template>
+                <template if:false={isLoading}>{kpi.openWorkOrders}</template>
+            </span>
+            <span class="ot-kpi-tile__label">진행 중 워크오더</span>
+        </div>
+        <!-- 대기 중 CR -->
+        <div class="ot-kpi-tile ot-kpi-tile--warning">
+            <span class="ot-kpi-tile__icon">📝</span>
+            <span class="ot-kpi-tile__value">
+                <template if:true={isLoading}>—</template>
+                <template if:false={isLoading}>{kpi.pendingCR}</template>
+            </span>
+            <span class="ot-kpi-tile__label">대기 중 변경요청</span>
+        </div>
+    </div>
+    <template if:true={error}>
+        <p class="ot-kpi-error">데이터를 불러올 수 없습니다.</p>
+    </template>
+</template>

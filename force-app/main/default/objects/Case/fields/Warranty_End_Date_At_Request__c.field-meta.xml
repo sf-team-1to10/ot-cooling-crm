@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Warranty_End_Date_At_Request__c</fullName>
-    <label>접수시점 보증만료일</label>
     <description>Case 접수 시점의 보증 만료일 스냅샷. 읽기전용으로 고정해 보증 만료 후에도 판정 근거가 뒤집히지 않게 한다. 수식으로 만들면 만료 후 값이 뒤집혀 무상 처리 근거가 사라지므로 반드시 실필드로 접수 시점에 스탬프한다.</description>
     <inlineHelpText>접수 당시의 보증 만료일입니다. 감사 근거이므로 이후 변경되지 않습니다.</inlineHelpText>
+    <label>접수시점 보증만료일</label>
     <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>

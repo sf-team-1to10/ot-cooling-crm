@@ -4,7 +4,7 @@
     <active>true</active>
     <description>재시험 사유가 시정인 경우 시정 조치 내용 필수 입력</description>
     <errorConditionFormula>AND(
-    ISPICKVAL(Retest_Reason__c, '시정'),
+    ISPICKVAL(Retest_Reason__c, &apos;시정&apos;),
     ISBLANK(Corrective_Action__c)
 )</errorConditionFormula>
     <errorMessage>재시험 사유가 &apos;시정&apos;인 경우 시정 조치 내용을 입력해야 합니다.</errorMessage>

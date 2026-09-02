@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Drift_From_Baseline__c</fullName>
-    <label>기준선 대비 변화율</label>
     <description>기준선 값 대비 이번 측정값의 변화율((측정값 - 기준선 값) / 기준선 값 × 100). 절대 판정이 합격이어도 추세 악화를 드러내는 조기 감지 지표로 Flow가 자동 계산한다.</description>
     <inlineHelpText>기준선 대비 하락률(음수)·상승률(양수)이 백분율로 자동 계산됩니다.</inlineHelpText>
+    <label>기준선 대비 변화율</label>
     <precision>4</precision>
-    <scale>1</scale>
     <required>false</required>
+    <scale>1</scale>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
-    <trackTrending>false</trackTrending>
     <type>Percent</type>
 </CustomField>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Latest_Gauges_JSON__c</fullName>
+    <description>이 Asset(호기)의 최신 게이지 스냅샷 JSON. 고객 포털이 유량·차압 등 계측값과 스파크라인을 그리는 데 파싱해 쓴다. WorkOrderLineItem은 포털 라이선스로 직접 조회 불가라 이 필드로 우회한다. 실제 구현에서는 추세 요약 동기화가 채우며, 현재 데모 단계에서는 대표값을 시딩한다.</description>
+    <inlineHelpText>게이지 스냅샷 JSON(측정 항목·현재값·직전값·스파크라인). 시스템이 자동 갱신하며 직접 편집하지 않습니다.</inlineHelpText>
+    <label>최신 게이지 JSON</label>
+    <length>131072</length>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
+    <visibleLines>5</visibleLines>
+</CustomField>

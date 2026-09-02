@@ -48,10 +48,10 @@
         <expression>LEFT(&quot;[시정조치] &quot; &amp; {!$Record.Asset.Name} &amp; &quot; - &quot; &amp; {!$Record.Problem.Subject}, 255)</expression>
     </formulas>
     <formulas>
-        <description>예방점검 WO 제목 - 동일 모델 유사장비 예방점검</description>
+        <description>예방확인 WO 제목 - RCA 영향범위 예방확인 (공통 시공·관리 조건 근거)</description>
         <name>Preventive_Subject_Formula</name>
         <dataType>String</dataType>
-        <expression>LEFT(&quot;[예방점검] &quot; &amp; {!$Record.Asset.Name} &amp; &quot; - 동일모델 예방점검 (&quot; &amp; {!$Record.Problem.Subject} &amp; &quot;)&quot;, 255)</expression>
+        <expression>LEFT(&quot;[예방확인] &quot; &amp; {!$Record.Asset.Name} &amp; &quot; - RCA 영향범위 예방확인 (&quot; &amp; {!$Record.Problem.Subject} &amp; &quot;)&quot;, 255)</expression>
     </formulas>
     <interviewLabel>PRI Corrective Preventive WO Dispatch</interviewLabel>
     <label>PRI_Corrective_Preventive_WO_Dispatch</label>

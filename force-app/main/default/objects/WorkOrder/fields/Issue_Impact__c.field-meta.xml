@@ -3,7 +3,6 @@
     <fullName>Issue_Impact__c</fullName>
     <label>이슈 영향</label>
     <length>32768</length>
-    <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <type>LongTextArea</type>

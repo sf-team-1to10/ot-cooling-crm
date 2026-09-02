@@ -1,1 +1,102 @@
-<?xml version="1.0"?><Flow xmlns="http://soap.sforce.com/2006/04/metadata"><apiVersion>65</apiVersion><assignments><locationY>50</locationY><locationX>428</locationX><assignmentItems><assignToReference>$Record.EntitlementId</assignToReference><value><elementReference>Get_Entitlement_By_Account.Id</elementReference></value><operator>Assign</operator></assignmentItems><name>Assign_Entitlement_To_Case</name><description>Assigns the Entitlement record's Id to the triggering Case record's EntitlementId field in a Before-Save flow, allowing the Entitlement to be associated with the Case before it is saved to the database</description><label>Assign Entitlement To Case</label></assignments><decisions><locationY>50</locationY><locationX>302</locationX><name>Entitlement_Exists</name><description>Checks if an Entitlement record was found by evaluating whether the Get_Entitlement_By_Account variable's Id field is not null, routing to 'Found' outcome if Entitlement exists, otherwise ending flow with no changes</description><defaultConnectorLabel>Default Outcome</defaultConnectorLabel><rules><connector><targetReference>Assign_Entitlement_To_Case</targetReference></connector><name>Found</name><description>Routes flow to assignment when an Entitlement record is found for the Case's Account</description><conditionLogic>1</conditionLogic><label>Found</label><conditions><leftValueReference>Get_Entitlement_By_Account.Id</leftValueReference><operator>IsNull</operator><rightValue><booleanValue>false</booleanValue></rightValue></conditions></rules><label>Entitlement Exists</label></decisions><environments>Default</environments><interviewLabel>Case Impact S2 Trigger</interviewLabel><label>Case Impact S2 Trigger</label><processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues><processMetadataValues><name>CanvasMode</name><value><stringValue>AUTO_LAYOUT_CANVAS</stringValue></value></processMetadataValues><processType>AutoLaunchedFlow</processType><recordLookups><locationY>50</locationY><filterLogic>1</filterLogic><locationX>176</locationX><queriedFields>Id</queriedFields><queriedFields>AccountId</queriedFields><description>Retrieves the first Entitlement record associated with the Case's Account to determine if an Entitlement exists for assignment</description><assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound><label>Get Entitlement By Account</label><filters><field>AccountId</field><value><elementReference>$Record.AccountId</elementReference></value><operator>EqualTo</operator></filters><connector><targetReference>Entitlement_Exists</targetReference></connector><storeOutputAutomatically>true</storeOutputAutomatically><name>Get_Entitlement_By_Account</name><getFirstRecordOnly>true</getFirstRecordOnly><object>Entitlement</object></recordLookups><start><locationY>50</locationY><filterLogic>1</filterLogic><connector><targetReference>Get_Entitlement_By_Account</targetReference></connector><locationX>50</locationX><recordTriggerType>Create</recordTriggerType><triggerType>RecordBeforeSave</triggerType><doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria><filters><field>Impact_Level__c</field><value><stringValue>S2 중요</stringValue></value><operator>EqualTo</operator></filters><object>Case</object></start><status>Active</status></Flow>
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <description>Assigns the Entitlement record&apos;s Id to the triggering Case record&apos;s EntitlementId field in a Before-Save flow, allowing the Entitlement to be associated with the Case before it is saved to the database</description>
+        <name>Assign_Entitlement_To_Case</name>
+        <label>Assign Entitlement To Case</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.EntitlementId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Entitlement_By_Account.Id</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <description>Checks if an Entitlement record was found by evaluating whether the Get_Entitlement_By_Account variable&apos;s Id field is not null, routing to &apos;Found&apos; outcome if Entitlement exists, otherwise ending flow with no changes</description>
+        <name>Entitlement_Exists</name>
+        <label>Entitlement Exists</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <description>Routes flow to assignment when an Entitlement record is found for the Case&apos;s Account</description>
+            <name>Found</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Entitlement_By_Account.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Entitlement_To_Case</targetReference>
+            </connector>
+            <label>Found</label>
+        </rules>
+    </decisions>
+    <environments>Default</environments>
+    <interviewLabel>Case Impact S2 Trigger</interviewLabel>
+    <label>Case Impact S2 Trigger</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Retrieves the first Entitlement record associated with the Case&apos;s Account to determine if an Entitlement exists for assignment</description>
+        <name>Get_Entitlement_By_Account</name>
+        <label>Get Entitlement By Account</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Entitlement_Exists</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>AccountId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.AccountId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Entitlement</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>AccountId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Entitlement_By_Account</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Impact_Level__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>S2 중요</stringValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

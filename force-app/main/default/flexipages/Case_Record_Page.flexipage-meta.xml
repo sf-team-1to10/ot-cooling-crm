@@ -1,106 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  RecordPage FlexiPage Template
-  
-  Template Variables Available:
-  - flexipagename: The name of the FlexiPage
-  - masterlabel: The display label
-  - description: The page description
-  - apiVersion: The Salesforce API version
-  - entityName: The SObject API name (e.g., 'Account', 'Rental_Property__c')
-  - primaryField: Single primary field API name for dynamic highlights (e.g., 'Name')
-  - secondaryFields: Array of secondary field API names for dynamic highlights
-  - detailFields: Array of field API names for the Details tab field section
--->
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
-    
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Subject</fieldItem>
-                <identifier>RecordSubjectPrimaryField</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-PrimaryFields</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    
-    
-    <flexiPageRegions>
-        
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Status</fieldItem>
-                <identifier>RecordStatusSecondaryField0</identifier>
-            </fieldInstance>
-        </itemInstances>
-        
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Priority</fieldItem>
-                <identifier>RecordPrioritySecondaryField1</identifier>
-            </fieldInstance>
-        </itemInstances>
-        
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.AssetId</fieldItem>
-                <identifier>RecordAssetIdSecondaryField2</identifier>
-            </fieldInstance>
-        </itemInstances>
-        
-        <name>Facet-SecondaryFields</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>actionNames</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>Edit</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Delete</value>
-                        </valueListItems>
-                    </valueList>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>numVisibleActions</name>
-                    <value>3</value>
-                </componentInstanceProperties>
-                
-                <componentInstanceProperties>
-                    <name>primaryField</name>
-                    <value>Facet-PrimaryFields</value>
-                </componentInstanceProperties>
-                
-                
-                <componentInstanceProperties>
-                    <name>secondaryFields</name>
-                    <value>Facet-SecondaryFields</value>
-                </componentInstanceProperties>
-                
-                <componentName>record_flexipage:dynamicHighlights</componentName>
-                <identifier>record_flexipage_dynamicHighlights</identifier>
+                <componentName>t5CaseHeader</componentName>
+                <identifier>c_t5CaseHeader_header</identifier>
             </componentInstance>
         </itemInstances>
         <name>header</name>
@@ -128,62 +32,27 @@
         <name>relatedTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
-    <!-- Field Section: Detail Fields -->
-    
-    <!-- Column 1 Fields -->
     <flexiPageRegions>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Subject</fieldItem>
-                <identifier>RecordSubjectColumn1Field0</identifier>
+                <fieldItem>Record.AccountId</fieldItem>
+                <identifier>RecordAccountIdField</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Remote_Diagnosis__c</fieldItem>
-                <identifier>RecordRemote_Diagnosis__cColumn1Field1</identifier>
+                <fieldItem>Record.ContactId</fieldItem>
+                <identifier>RecordContactIdField</identifier>
             </fieldInstance>
         </itemInstances>
-        
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Diagnosed_Cause__c</fieldItem>
-                <identifier>RecordDiagnosed_Cause__cColumn1Field2</identifier>
-            </fieldInstance>
-        </itemInstances>
-        
-        <name>Facet-FieldSection-Column1</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <!-- Column 2 Fields -->
-    
-    <flexiPageRegions>
-        
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Field_Visit_Required__c</fieldItem>
-                <identifier>RecordField_Visit_Required__cColumn2Field0</identifier>
-            </fieldInstance>
-        </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
@@ -194,23 +63,73 @@
                 <identifier>RecordAssetIdColumn2Field1</identifier>
             </fieldInstance>
         </itemInstances>
-        
         <itemInstances>
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Problem__c</fieldItem>
-                <identifier>RecordProblem__cColumn2Field2</identifier>
+                <fieldItem>Record.Impact_Level__c</fieldItem>
+                <identifier>RecordImpact_Level_cField</identifier>
             </fieldInstance>
         </itemInstances>
-        
+        <name>Facet-FieldSection-Column1</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Warranty_Decision__c</fieldItem>
+                <identifier>RecordWarranty_Decision_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Coverage_Type__c</fieldItem>
+                <identifier>RecordCoverage_Type_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Warranty_End_Date_At_Request__c</fieldItem>
+                <identifier>RecordWarranty_End_Date_At_Request_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Warranty_Judged_At__c</fieldItem>
+                <identifier>RecordWarranty_Judged_At_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Billable__c</fieldItem>
+                <identifier>RecordBillable_cField</identifier>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-FieldSection-Column2</name>
         <type>Facet</type>
     </flexiPageRegions>
-    
-    <!-- Field Section: Column Facets -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -222,7 +141,6 @@
                 <identifier>flexipage_column1</identifier>
             </componentInstance>
         </itemInstances>
-        
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -233,12 +151,16 @@
                 <identifier>flexipage_column2</identifier>
             </componentInstance>
         </itemInstances>
-        
         <name>Facet-FieldSection-Columns</name>
         <type>Facet</type>
     </flexiPageRegions>
-    <!-- Field Section Component -->
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>t5CaseIntakePanel</componentName>
+                <identifier>c_t5CaseIntakePanel</identifier>
+            </componentInstance>
+        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
@@ -251,7 +173,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>Information</value>
+                    <value>케이스 정보</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
@@ -299,6 +221,20 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>chatHeight</name>
+                    <value>500</value>
+                </componentInstanceProperties>
+                <componentName>runtime_service_livemessage:chatBody</componentName>
+                <identifier>runtime_service_livemessage_chatBody</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Tabs</value>
+                </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>tabs</name>
                     <value>maintabs</value>
@@ -350,6 +286,10 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Tabs</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>tabs</name>
                     <value>sidebartabs</value>
                 </componentInstanceProperties>
@@ -360,7 +300,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <description>진단 화면 — Case에서 적용 리비전·시운전 재시험 이력·점검 추세·미조치 권고·보증 범위를 통합 조회 (T4-09)</description>
     <masterLabel>Case 진단 화면</masterLabel>
     <sobjectType>Case</sobjectType>
     <template>

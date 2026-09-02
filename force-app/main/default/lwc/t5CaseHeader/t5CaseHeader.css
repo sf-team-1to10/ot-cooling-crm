@@ -1,0 +1,219 @@
+/* ── Path 바 (프로토타입 v-case) ── */
+.path {
+    display: flex;
+    background-color: #ffffff;
+    padding: 11px 18px 12px;
+    border-bottom: 1px solid #cfdae5;
+    gap: 0;
+    overflow-x: auto;
+}
+
+.path-step {
+    flex: 1 1 0;
+    min-width: 74px;
+    padding: 7px 6px 7px 19px;
+    background-color: #eaf0f6;
+    color: #6e8599;
+    font-size: 10.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%, 11px 50%);
+    margin-right: -9px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.path-step:first-child {
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%);
+    padding-left: 14px;
+    border-radius: 4px 0 0 4px;
+}
+
+.path-step:last-child {
+    margin-right: 0;
+}
+
+.path-step.done {
+    background-color: #2e8b57;
+    color: #ffffff;
+}
+
+.path-step.on {
+    background-color: #0877d1;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.path-step.done .path-num::before {
+    content: '\2713';
+    font-size: 10px;
+}
+
+.path-step.done .path-num {
+    font-size: 0;
+}
+
+.path-num {
+    opacity: 0.6;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ── 레코드 내 서브탭 ── */
+.subtabs {
+    background-color: #ffffff;
+    display: flex;
+    gap: 2px;
+    padding: 0 18px;
+    border-bottom: 1px solid #cfdae5;
+    font-size: 12.5px;
+    overflow-x: auto;
+}
+
+.subtab {
+    padding: 8px 14px;
+    color: #3d5568;
+    border: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.subtab:hover {
+    color: #0b1f33;
+    background-color: #f4f7fa;
+}
+
+.subtab.on {
+    color: #0877d1;
+    border-bottom-color: #0877d1;
+    font-weight: 600;
+}
+
+/* ── Case 360 헤더 하이라이트 — 프로토타입 4번 장면 hl 스트립 ── */
+.case-hl {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+}
+
+.case-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.case-hl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    background-color: #dd7a01;
+    color: #ffffff;
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+
+.case-hl-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.case-hl-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.case-hl-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.case-hl-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+}
+
+.status-badge {
+    background-color: #fef1e6;
+    color: #a86403;
+    box-shadow: inset 0 0 0 1px #dd7a01;
+}
+
+.case-hl-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.case-hl-f dt {
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.case-hl-f dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.case-hl-f dd.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* 출동 브리핑 Flow 모달 — 회색 backdrop 없이 화면 중앙에 배치, 밖 클릭 시 닫힘 */
+.briefing-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 로딩 중: 배경 박스 없이 스피너만 (spinner 컴포넌트 자체 높이 확보용 최소 크기) */
+.briefing-spinner {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+}
+
+/* 로드 후 카드: 흰 배경 + 그림자로 배경과 구분 */
+.briefing-card {
+    width: 40rem;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* 로딩 중엔 카드를 화면에서 숨기되 Flow는 DOM에 유지(statuschange 수신) */
+.briefing-card_hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    opacity: 0;
+    pointer-events: none;
+}
