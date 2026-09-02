@@ -1,42 +1,30 @@
-import { LightningElement, wire } from 'lwc';
-import {
-    IsConsoleNavigation,
-    getFocusedTabInfo,
-    openSubtab,
-    focusTab
-} from 'lightning/platformWorkspaceApi';
+import { LightningElement } from 'lwc';
 
 export default class OtRenewalTasks extends LightningElement {
+    activeView = 'tasks';
     selectedTask = 'renewal';
+    opportunityCreated = false;
 
-    @wire(IsConsoleNavigation) isConsoleNavigation;
+    get isTasksView() { return this.activeView === 'tasks'; }
+    get isContractView() { return this.activeView === 'contract'; }
 
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
+    get tasksTabClass() { return this.activeView === 'tasks' ? 'subtab on' : 'subtab'; }
+    get contractTabClass() { return this.activeView === 'contract' ? 'subtab on' : 'subtab'; }
+
+    handleShowTasks() { this.activeView = 'tasks'; }
+    handleShowContract() { this.activeView = 'contract'; }
 
     handleSelectTask(event) {
         this.selectedTask = event.currentTarget.dataset.task;
     }
 
-    get isRenewalSelected() {
-        return this.selectedTask === 'renewal';
-    }
+    get isRenewalSelected() { return this.selectedTask === 'renewal'; }
 
     get renewalRowClass() {
         return this.selectedTask === 'renewal' ? 'rl-row rl-row-selected' : 'rl-row';
     }
 
-    async handleOpenContract() {
-        if (this.isConsole) {
-            const focused = await getFocusedTabInfo();
-            const parentTabId = focused.tabId;
-            const pageReference = {
-                type: 'standard__component',
-                attributes: { componentName: 'c__otServiceContractReview' }
-            };
-            const subtabId = await openSubtab({ parentTabId, pageReference, focus: true });
-            await focusTab(subtabId);
-        }
+    handleCreateOpportunity() {
+        this.opportunityCreated = true;
     }
 }
