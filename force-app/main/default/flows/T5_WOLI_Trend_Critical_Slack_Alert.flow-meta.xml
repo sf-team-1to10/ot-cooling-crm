@@ -1,6 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Slack_Create_Case</name>
+        <label>Slack 발신 (Case 없음)</label>
+        <locationX>300</locationX>
+        <locationY>600</locationY>
+        <actionName>SendMessageToSlackChannel</actionName>
+        <actionType>slackFlow</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>channelId</name>
+            <value>
+                <elementReference>Slack_Channel_Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Msg_No_Case</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendMessageToSlackChannel</nameSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Slack_With_Case_Details</name>
+        <label>Slack 발신 (Case 있음)</label>
+        <locationX>50</locationX>
+        <locationY>600</locationY>
+        <actionName>SendMessageToSlackChannel</actionName>
+        <actionType>slackFlow</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>channelId</name>
+            <value>
+                <elementReference>Slack_Channel_Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>message</name>
+            <value>
+                <elementReference>Msg_With_Case</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>SendMessageToSlackChannel</nameSegment>
+    </actionCalls>
     <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <constants>
+        <name>Lightning_Host</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>https://trailsignup-8617b18a6871a9--t1sales.sandbox.lightning.force.com/</stringValue>
+        </value>
+    </constants>
+    <constants>
+        <name>Slack_Channel_Id</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>C0BTGS2BQLW</stringValue>
+        </value>
+    </constants>
+    <decisions>
+        <name>Check_Open_Case_Exists</name>
+        <label>열린 Case 존재 여부</label>
+        <locationX>176</locationX>
+        <locationY>480</locationY>
+        <defaultConnector>
+            <targetReference>Send_Slack_Create_Case</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Case 없음</defaultConnectorLabel>
+        <rules>
+            <name>Open_Case_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Find_Open_Case_For_Asset</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Slack_With_Case_Details</targetReference>
+            </connector>
+            <label>Case 있음</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Slack_Alert_Enabled</name>
+        <label>Slack Alert 활성 확인</label>
+        <locationX>176</locationX>
+        <locationY>240</locationY>
+        <defaultConnectorLabel>Off(종료)</defaultConnectorLabel>
+        <rules>
+            <name>Slack_Alert_On</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Feature_Flag_Setting.Slack_Alert__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Find_Open_Case_For_Asset</targetReference>
+            </connector>
+            <label>Slack Alert On</label>
+        </rules>
+    </decisions>
     <description>Trend_Flag__c가 &apos;이상&apos;(Critical)으로 새로 전환된 WorkOrderLineItem에서 서정비 Slack 채널로 알림 발신. Feature Flag(T5_Feature_Flags__mdt.Default.Slack_Alert__c) Off면 미발신. Asset에 열린 Case가 있으면 Case의 Dispatch_Briefing__c 본문+링크, 없으면 Asset/Trend 상세+Case 생성 딥링크. T5-10. Slack 발신 요소는 Flow 파이프라인 IA가 생성 불가하여 XML 직접 작성(기존 WOLI_Anomaly_To_Case와 동일 우회).</description>
     <environments>Default</environments>
     <interviewLabel>T5 WOLI Trend Critical Slack Alert {!$Flow.CurrentDateTime}</interviewLabel>
@@ -18,48 +124,6 @@
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <start>
-        <locationX>50</locationX>
-        <locationY>0</locationY>
-        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
-        <filterFormula>AND(
-  TEXT({!$Record.Trend_Flag__c}) = &quot;이상&quot;,
-  NOT(ISBLANK({!$Record.AssetId}))
-)</filterFormula>
-        <object>WorkOrderLineItem</object>
-        <recordTriggerType>Update</recordTriggerType>
-        <scheduledPaths>
-            <name>Run_Async_Slack_Callout</name>
-            <connector>
-                <targetReference>Get_Feature_Flag_Setting</targetReference>
-            </connector>
-            <pathType>AsyncAfterCommit</pathType>
-        </scheduledPaths>
-        <triggerType>RecordAfterSave</triggerType>
-    </start>
-    <recordLookups>
-        <name>Get_Feature_Flag_Setting</name>
-        <label>Feature Flag 조회</label>
-        <locationX>176</locationX>
-        <locationY>120</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Check_Slack_Alert_Enabled</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>DeveloperName</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Default</stringValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>T5_Feature_Flags__mdt</object>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>Slack_Alert__c</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
     <recordLookups>
         <name>Find_Open_Case_For_Asset</name>
         <label>열린 Case 조회</label>
@@ -91,53 +155,57 @@
         <queriedFields>Dispatch_Briefing__c</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
-    <decisions>
-        <name>Check_Slack_Alert_Enabled</name>
-        <label>Slack Alert 활성 확인</label>
+    <recordLookups>
+        <name>Get_Feature_Flag_Setting</name>
+        <label>Feature Flag 조회</label>
         <locationX>176</locationX>
-        <locationY>240</locationY>
-        <defaultConnectorLabel>Off(종료)</defaultConnectorLabel>
-        <rules>
-            <name>Slack_Alert_On</name>
-            <label>Slack Alert On</label>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Get_Feature_Flag_Setting.Slack_Alert__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
+        <locationY>120</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Slack_Alert_Enabled</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Default</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>T5_Feature_Flags__mdt</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Slack_Alert__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>AND(
+  TEXT({!$Record.Trend_Flag__c}) = &quot;이상&quot;,
+  NOT(ISBLANK({!$Record.AssetId}))
+)</filterFormula>
+        <object>WorkOrderLineItem</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
             <connector>
-                <targetReference>Find_Open_Case_For_Asset</targetReference>
+                <targetReference>Get_Feature_Flag_Setting</targetReference>
             </connector>
-        </rules>
-    </decisions>
-    <decisions>
-        <name>Check_Open_Case_Exists</name>
-        <label>열린 Case 존재 여부</label>
-        <locationX>176</locationX>
-        <locationY>480</locationY>
-        <defaultConnector>
-            <targetReference>Send_Slack_Create_Case</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Case 없음</defaultConnectorLabel>
-        <rules>
-            <name>Open_Case_Found</name>
-            <label>Case 있음</label>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>Find_Open_Case_For_Asset</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>false</booleanValue>
-                </rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Send_Slack_With_Case_Details</targetReference>
-            </connector>
-        </rules>
-    </decisions>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>Msg_No_Case</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:rotating_light: [Critical 추세이상 - Case 없음] {!$Record.Asset.Name}
+측정항목: {!$Record.Measurement_Item_Code__c}
+측정값: {!$Record.Measured_Value__c} (전회 대비 {!$Record.Delta_From_Previous__c})
+
+Case 생성: {!Lightning_Host}lightning/o/Case/new?defaultFieldValues=AssetId={!$Record.AssetId}</text>
+    </textTemplates>
     <textTemplates>
         <name>Msg_With_Case</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
@@ -150,70 +218,4 @@
 Asset: {!Lightning_Host}lightning/r/Asset/{!$Record.AssetId}/view
 Case: {!Lightning_Host}lightning/r/Case/{!Find_Open_Case_For_Asset.Id}/view</text>
     </textTemplates>
-    <textTemplates>
-        <name>Msg_No_Case</name>
-        <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>:rotating_light: [Critical 추세이상 - Case 없음] {!$Record.Asset.Name}
-측정항목: {!$Record.Measurement_Item_Code__c}
-측정값: {!$Record.Measured_Value__c} (전회 대비 {!$Record.Delta_From_Previous__c})
-
-Case 생성: {!Lightning_Host}lightning/o/Case/new?defaultFieldValues=AssetId={!$Record.AssetId}</text>
-    </textTemplates>
-    <actionCalls>
-        <name>Send_Slack_With_Case_Details</name>
-        <label>Slack 발신 (Case 있음)</label>
-        <locationX>50</locationX>
-        <locationY>600</locationY>
-        <actionName>SendMessageToSlackChannel</actionName>
-        <actionType>slackFlow</actionType>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>channelId</name>
-            <value>
-                <elementReference>Slack_Channel_Id</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>message</name>
-            <value>
-                <elementReference>Msg_With_Case</elementReference>
-            </value>
-        </inputParameters>
-    </actionCalls>
-    <actionCalls>
-        <name>Send_Slack_Create_Case</name>
-        <label>Slack 발신 (Case 없음)</label>
-        <locationX>300</locationX>
-        <locationY>600</locationY>
-        <actionName>SendMessageToSlackChannel</actionName>
-        <actionType>slackFlow</actionType>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>channelId</name>
-            <value>
-                <elementReference>Slack_Channel_Id</elementReference>
-            </value>
-        </inputParameters>
-        <inputParameters>
-            <name>message</name>
-            <value>
-                <elementReference>Msg_No_Case</elementReference>
-            </value>
-        </inputParameters>
-    </actionCalls>
-    <constants>
-        <name>Slack_Channel_Id</name>
-        <dataType>String</dataType>
-        <value>
-            <stringValue>C0BTGS2BQLW</stringValue>
-        </value>
-    </constants>
-    <constants>
-        <name>Lightning_Host</name>
-        <dataType>String</dataType>
-        <value>
-            <stringValue>https://trailsignup-8617b18a6871a9--t1sales.sandbox.lightning.force.com/</stringValue>
-        </value>
-    </constants>
-    <status>Active</status>
 </Flow>

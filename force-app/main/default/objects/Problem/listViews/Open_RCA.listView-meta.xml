@@ -4,6 +4,6 @@
     <filterScope>Everything</filterScope>
     <label>열린 RCA</label>
     <sharedTo>
-        <allInternalUsers/>
+        <allInternalUsers></allInternalUsers>
     </sharedTo>
 </ListView>

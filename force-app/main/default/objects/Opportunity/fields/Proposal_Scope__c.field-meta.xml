@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Proposal_Scope__c</fullName>
+    <description>서비스 계약 갱신 Opportunity의 상업적 제안 범위입니다.</description>
+    <inlineHelpText>단순 갱신, 설비 교체 또는 Hall B 증설 중 이번 제안의 범위를 선택합니다.</inlineHelpText>
+    <label>제안 범위</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>유지보수 갱신</fullName>
+                <default>false</default>
+                <label>유지보수 갱신</label>
+            </value>
+            <value>
+                <fullName>갱신 + 설비 교체</fullName>
+                <default>false</default>
+                <label>갱신 + 설비 교체</label>
+            </value>
+            <value>
+                <fullName>갱신 + Hall B 증설</fullName>
+                <default>false</default>
+                <label>갱신 + Hall B 증설</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

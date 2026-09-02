@@ -1,37 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://soap.sforce.com/2006/04/metadata">
-    <name>워크오더 월별 완료 추이</name>
-    <reportType>WorkOrders_with_Line_Items__c</reportType>
-    <format>Summary</format>
-    <scope>organization</scope>
-    <description>월별 워크오더 완료 건수 추이를 집계해 서비스 처리 역량과 계절성 패턴을 파악한다.</description>
-    <showDetails>false</showDetails>
-    <showGrandTotal>true</showGrandTotal>
-    <showSubTotals>true</showSubTotals>
+    <chart>
+        <backgroundColor1>#FFFFFF</backgroundColor1>
+        <backgroundColor2>#FFFFFF</backgroundColor2>
+        <backgroundFadeDir>Diagonal</backgroundFadeDir>
+        <chartSummaries>
+            <axisBinding>y</axisBinding>
+            <column>RowCount</column>
+        </chartSummaries>
+        <chartType>Line</chartType>
+        <enableHoverLabels>true</enableHoverLabels>
+        <expandOthers>true</expandOthers>
+        <groupingColumn>WorkOrder$CreatedDate</groupingColumn>
+        <location>CHART_TOP</location>
+        <showAxisLabels>false</showAxisLabels>
+        <showPercentage>false</showPercentage>
+        <showTotal>false</showTotal>
+        <showValues>false</showValues>
+        <size>Medium</size>
+        <summaryAxisRange>Auto</summaryAxisRange>
+        <textColor>#000000</textColor>
+        <textSize>12</textSize>
+        <title>월별 워크오더 추이</title>
+        <titleColor>#000000</titleColor>
+        <titleSize>18</titleSize>
+    </chart>
     <columns>
         <field>WorkOrder$Subject</field>
     </columns>
     <columns>
         <field>WorkOrder$Status</field>
     </columns>
+    <description>월별 워크오더 완료 건수 추이를 집계해 서비스 처리 역량과 계절성 패턴을 파악한다.</description>
+    <format>Summary</format>
     <groupingsDown>
-        <field>WorkOrder$CreatedDate</field>
         <dateGranularity>Month</dateGranularity>
+        <field>WorkOrder$CreatedDate</field>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
+    <name>워크오더 월별 완료 추이</name>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>WorkOrders_with_Line_Items__c</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
         <dateColumn>WorkOrder$CreatedDate</dateColumn>
         <interval>INTERVAL_CURY</interval>
     </timeFrameFilter>
-    <chart>
-        <chartType>Line</chartType>
-        <groupingColumn>WorkOrder$CreatedDate</groupingColumn>
-        <chartSummaries>
-            <column>RowCount</column>
-        </chartSummaries>
-        <enableHoverLabels>true</enableHoverLabels>
-        <location>CHART_TOP</location>
-        <size>Medium</size>
-        <title>월별 워크오더 추이</title>
-    </chart>
 </Report>

@@ -4,6 +4,6 @@
     <filterScope>Everything</filterScope>
     <label>장기 미완료 RCA</label>
     <sharedTo>
-        <allInternalUsers/>
+        <allInternalUsers></allInternalUsers>
     </sharedTo>
 </ListView>

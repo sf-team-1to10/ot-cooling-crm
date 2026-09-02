@@ -26,7 +26,7 @@
     <description>Hall B 등 증설(Type=Existing Business) Opportunity가 SELL 단계로 넘어가기 전 내부 추진 승인을 받는다. 승인자(User)는 org마다 다시 지정해야 한다 — User 참조는 배포되지 않는다.</description>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
     <entryCriteria>
-        <formula>AND( ISPICKVAL(Type, "Existing Business"), NOT(ISPICKVAL(Internal_Approval_Status__c, "승인")) )</formula>
+        <formula>AND( ISPICKVAL(Type, &quot;Existing Business&quot;), NOT(ISPICKVAL(Internal_Approval_Status__c, &quot;승인&quot;)) )</formula>
     </entryCriteria>
     <finalApprovalActions>
         <action>

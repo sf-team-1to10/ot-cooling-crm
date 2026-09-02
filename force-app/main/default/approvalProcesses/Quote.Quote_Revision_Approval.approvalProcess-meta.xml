@@ -7,7 +7,6 @@
     </allowedSubmitters>
     <approvalPageFields>
         <field>Name</field>
-        <field>Owner</field>
         <field>Quote_Revision__c</field>
         <field>Delivery_Date__c</field>
         <field>Status</field>
@@ -28,7 +27,7 @@
     <description>Rev.1 이후 재협상 리비전에서 납기가 변경된 견적을 공정 승인 경로로 태운다. 승인자(User)는 org마다 다시 지정해야 한다.</description>
     <enableMobileDeviceAccess>false</enableMobileDeviceAccess>
     <entryCriteria>
-        <formula>AND( ISPICKVAL(Status, "Needs Review"), NOT(ISBLANK(Delivery_Date__c)), Quote_Revision__c &lt;&gt; "Rev.1" )</formula>
+        <formula>AND( ISPICKVAL(Status, &quot;Needs Review&quot;), NOT(ISBLANK(Delivery_Date__c)), Quote_Revision__c &lt;&gt; &quot;Rev.1&quot; )</formula>
     </entryCriteria>
     <finalApprovalActions>
         <action>

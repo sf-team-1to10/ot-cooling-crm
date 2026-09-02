@@ -1,50 +1,21 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>65</apiVersion>
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
-        <locationY>134</locationY>
-        <defaultConnector>
-            <targetReference>Check_Date_Range</targetReference>
-        </defaultConnector>
-        <locationX>176</locationX>
-        <name>Check_Entitlement_Exists</name>
-        <description>Evaluates if the Case has a linked Entitlement to determine warranty decision routing</description>
-        <defaultConnectorLabel>Entitlement Exists</defaultConnectorLabel>
-        <rules>
-            <connector>
-                <targetReference>Set_Warranty_Pending</targetReference>
-            </connector>
-            <name>No_Entitlement</name>
-            <description>Routes to pending status when Case has no linked Entitlement</description>
-            <conditionLogic>and</conditionLogic>
-            <label>No Entitlement</label>
-            <conditions>
-                <leftValueReference>$Record.EntitlementId</leftValueReference>
-                <operator>IsNull</operator>
-                <rightValue>
-                    <booleanValue>true</booleanValue>
-                </rightValue>
-            </conditions>
-        </rules>
-        <label>Check Entitlement Exists</label>
-    </decisions>
-    <decisions>
-        <locationY>242</locationY>
+        <description>Evaluates if the Case CreatedDate is within the Entitlement StartDate and EndDate range to determine warranty decision routing</description>
+        <name>Check_Date_Range</name>
+        <label>Check Date Range</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Set_Warranty_Not_Applied</targetReference>
         </defaultConnector>
-        <locationX>440</locationX>
-        <name>Check_Date_Range</name>
-        <description>Evaluates if the Case CreatedDate is within the Entitlement StartDate and EndDate range to determine warranty decision routing</description>
         <defaultConnectorLabel>Date Outside Range</defaultConnectorLabel>
         <rules>
-            <connector>
-                <targetReference>Set_Warranty_Applied</targetReference>
-            </connector>
-            <name>Date_Within_Range</name>
             <description>Routes to warranty applied when Case CreatedDate is on or after Entitlement StartDate and on or before Entitlement EndDate</description>
+            <name>Date_Within_Range</name>
             <conditionLogic>and</conditionLogic>
-            <label>Date Within Range</label>
             <conditions>
                 <leftValueReference>$Record.CreatedDate</leftValueReference>
                 <operator>GreaterThanOrEqualTo</operator>
@@ -59,15 +30,45 @@
                     <elementReference>$Record.Entitlement.EndDate</elementReference>
                 </rightValue>
             </conditions>
+            <connector>
+                <targetReference>Set_Warranty_Applied</targetReference>
+            </connector>
+            <label>Date Within Range</label>
         </rules>
-        <label>Check Date Range</label>
+    </decisions>
+    <decisions>
+        <description>Evaluates if the Case has a linked Entitlement to determine warranty decision routing</description>
+        <name>Check_Entitlement_Exists</name>
+        <label>Check Entitlement Exists</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Check_Date_Range</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Entitlement Exists</defaultConnectorLabel>
+        <rules>
+            <description>Routes to pending status when Case has no linked Entitlement</description>
+            <name>No_Entitlement</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.EntitlementId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Warranty_Pending</targetReference>
+            </connector>
+            <label>No Entitlement</label>
+        </rules>
     </decisions>
     <environments>Default</environments>
     <formulas>
-        <expression>NOW()</expression>
-        <dataType>DateTime</dataType>
-        <name>Current_DateTime</name>
         <description>Calculates the current datetime using NOW() function to timestamp when the warranty decision was made</description>
+        <name>Current_DateTime</name>
+        <dataType>DateTime</dataType>
+        <expression>NOW()</expression>
     </formulas>
     <interviewLabel>Case_Warranty_Decision_Evaluate</interviewLabel>
     <label>Case_Warranty_Decision_Evaluate</label>
@@ -85,47 +86,31 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordUpdates>
-        <locationY>242</locationY>
+        <description>Updates the triggering Case with applied warranty decision when CreatedDate is within Entitlement date range - sets Warranty_Decision__c to &apos;적용&apos;, copies Asset warranty type, stores Entitlement end date, timestamps the judgment, and marks as non-billable</description>
+        <name>Set_Warranty_Applied</name>
+        <label>Set Warranty Applied</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <filterLogic>1</filterLogic>
-        <locationX>308</locationX>
-        <name>Set_Warranty_Pending</name>
-        <description>Updates the triggering Case with pending warranty decision when no Entitlement is linked - sets Warranty_Decision__c to '판정보류' and marks as billable. Snapshot fields (Coverage_Type__c, Warranty_End_Date_At_Request__c, Warranty_Judged_At__c) are intentionally left blank so the Case stays eligible for re-judgment once an Entitlement is later linked.</description>
-        <label>Set Warranty Pending</label>
         <filters>
             <field>Id</field>
+            <operator>EqualTo</operator>
             <value>
                 <elementReference>$Record.Id</elementReference>
             </value>
-            <operator>EqualTo</operator>
         </filters>
-        <inputAssignments>
-            <field>Warranty_Decision__c</field>
-            <value>
-                <stringValue>판정보류</stringValue>
-            </value>
-        </inputAssignments>
         <inputAssignments>
             <field>Billable__c</field>
             <value>
-                <booleanValue>true</booleanValue>
+                <booleanValue>false</booleanValue>
             </value>
         </inputAssignments>
-        <object>Case</object>
-    </recordUpdates>
-    <recordUpdates>
-        <locationY>350</locationY>
-        <filterLogic>1</filterLogic>
-        <locationX>572</locationX>
-        <name>Set_Warranty_Applied</name>
-        <description>Updates the triggering Case with applied warranty decision when CreatedDate is within Entitlement date range - sets Warranty_Decision__c to '적용', copies Asset warranty type, stores Entitlement end date, timestamps the judgment, and marks as non-billable</description>
-        <label>Set Warranty Applied</label>
-        <filters>
-            <field>Id</field>
+        <inputAssignments>
+            <field>Coverage_Type__c</field>
             <value>
-                <elementReference>$Record.Id</elementReference>
+                <elementReference>$Record.Asset.Warranty_Type__c</elementReference>
             </value>
-            <operator>EqualTo</operator>
-        </filters>
+        </inputAssignments>
         <inputAssignments>
             <field>Warranty_Decision__c</field>
             <value>
@@ -133,12 +118,6 @@
             </value>
         </inputAssignments>
         <inputAssignments>
-            <field>Coverage_Type__c</field>
-            <value>
-                <elementReference>$Record.Asset.Warranty_Type__c</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
             <field>Warranty_End_Date_At_Request__c</field>
             <value>
                 <elementReference>$Record.Entitlement.EndDate</elementReference>
@@ -150,28 +129,34 @@
                 <elementReference>Current_DateTime</elementReference>
             </value>
         </inputAssignments>
-        <inputAssignments>
-            <field>Billable__c</field>
-            <value>
-                <booleanValue>false</booleanValue>
-            </value>
-        </inputAssignments>
         <object>Case</object>
     </recordUpdates>
     <recordUpdates>
-        <locationY>350</locationY>
-        <filterLogic>1</filterLogic>
-        <locationX>704</locationX>
+        <description>Updates the triggering Case with not applied warranty decision when CreatedDate is outside Entitlement date range - sets Warranty_Decision__c to &apos;미적용&apos;, copies Asset warranty type, stores Entitlement end date, timestamps the judgment, and marks as billable</description>
         <name>Set_Warranty_Not_Applied</name>
-        <description>Updates the triggering Case with not applied warranty decision when CreatedDate is outside Entitlement date range - sets Warranty_Decision__c to '미적용', copies Asset warranty type, stores Entitlement end date, timestamps the judgment, and marks as billable</description>
         <label>Set Warranty Not Applied</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>1</filterLogic>
         <filters>
             <field>Id</field>
+            <operator>EqualTo</operator>
             <value>
                 <elementReference>$Record.Id</elementReference>
             </value>
-            <operator>EqualTo</operator>
         </filters>
+        <inputAssignments>
+            <field>Billable__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Coverage_Type__c</field>
+            <value>
+                <elementReference>$Record.Asset.Warranty_Type__c</elementReference>
+            </value>
+        </inputAssignments>
         <inputAssignments>
             <field>Warranty_Decision__c</field>
             <value>
@@ -179,12 +164,6 @@
             </value>
         </inputAssignments>
         <inputAssignments>
-            <field>Coverage_Type__c</field>
-            <value>
-                <elementReference>$Record.Asset.Warranty_Type__c</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
             <field>Warranty_End_Date_At_Request__c</field>
             <value>
                 <elementReference>$Record.Entitlement.EndDate</elementReference>
@@ -196,32 +175,53 @@
                 <elementReference>Current_DateTime</elementReference>
             </value>
         </inputAssignments>
+        <object>Case</object>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Updates the triggering Case with pending warranty decision when no Entitlement is linked - sets Warranty_Decision__c to &apos;판정보류&apos; and marks as billable. Snapshot fields (Coverage_Type__c, Warranty_End_Date_At_Request__c, Warranty_Judged_At__c) are intentionally left blank so the Case stays eligible for re-judgment once an Entitlement is later linked.</description>
+        <name>Set_Warranty_Pending</name>
+        <label>Set Warranty Pending</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
         <inputAssignments>
             <field>Billable__c</field>
             <value>
                 <booleanValue>true</booleanValue>
             </value>
         </inputAssignments>
+        <inputAssignments>
+            <field>Warranty_Decision__c</field>
+            <value>
+                <stringValue>판정보류</stringValue>
+            </value>
+        </inputAssignments>
         <object>Case</object>
     </recordUpdates>
     <start>
-        <locationY>50</locationY>
-        <filterLogic>1</filterLogic>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <connector>
             <targetReference>Check_Entitlement_Exists</targetReference>
         </connector>
-        <locationX>50</locationX>
-        <recordTriggerType>CreateAndUpdate</recordTriggerType>
-        <triggerType>RecordAfterSave</triggerType>
-        <doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>1</filterLogic>
         <filters>
             <field>Warranty_Judged_At__c</field>
+            <operator>IsNull</operator>
             <value>
                 <booleanValue>true</booleanValue>
             </value>
-            <operator>IsNull</operator>
         </filters>
         <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
     </start>
     <status>Active</status>
 </Flow>

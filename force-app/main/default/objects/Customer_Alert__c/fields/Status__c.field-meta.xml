@@ -1,17 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Status__c</fullName>
+    <description>경보 라이프사이클. 고객의 &quot;알람 확인&quot; 버튼은 Unacknowledged→Acknowledged만 바꾼다 — Resolved는 내부 운영자만 처리(이 포털에서는 못 바꿈).</description>
     <label>Status</label>
-    <description>경보 라이프사이클. 고객의 "알람 확인" 버튼은 Unacknowledged→Acknowledged만 바꾼다 — Resolved는 내부 운영자만 처리(이 포털에서는 못 바꿈).</description>
-    <type>Picklist</type>
     <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
-            <value><fullName>Active - Unacknowledged</fullName><default>true</default><label>Active - Unacknowledged</label></value>
-            <value><fullName>Active - Acknowledged</fullName><default>false</default><label>Active - Acknowledged</label></value>
-            <value><fullName>Resolved</fullName><default>false</default><label>Resolved</label></value>
+            <value>
+                <fullName>Active - Unacknowledged</fullName>
+                <default>true</default>
+                <label>Active - Unacknowledged</label>
+            </value>
+            <value>
+                <fullName>Active - Acknowledged</fullName>
+                <default>false</default>
+                <label>Active - Acknowledged</label>
+            </value>
+            <value>
+                <fullName>Resolved</fullName>
+                <default>false</default>
+                <label>Resolved</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

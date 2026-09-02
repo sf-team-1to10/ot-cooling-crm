@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Baseline_Value__c</fullName>
-    <label>기준선 값</label>
     <description>같은 Asset·같은 측정 항목 코드의 D6 시운전 최초 합격값. 추세 판정의 절대 기준선으로 사용하며 Flow가 자동 적재한다.</description>
+    <externalId>false</externalId>
     <inlineHelpText>D6 시운전 최초 합격값이 자동으로 채워집니다. 수동 입력하지 마세요.</inlineHelpText>
+    <label>기준선 값</label>
     <precision>9</precision>
-    <scale>1</scale>
     <required>false</required>
+    <scale>1</scale>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
-    <trackTrending>false</trackTrending>
     <type>Number</type>
+    <unique>false</unique>
 </CustomField>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Delta_From_Previous__c</fullName>
-    <label>직전 대비 변화</label>
     <description>이번 측정값과 직전 측정값의 차이(측정값 - 직전 측정값). 연속 하락 추세 판정의 근거로 Flow가 자동 계산한다.</description>
+    <externalId>false</externalId>
     <inlineHelpText>이번 측정값에서 직전 측정값을 뺀 값이 자동으로 계산됩니다.</inlineHelpText>
+    <label>직전 대비 변화</label>
     <precision>9</precision>
-    <scale>1</scale>
     <required>false</required>
+    <scale>1</scale>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
-    <trackTrending>false</trackTrending>
     <type>Number</type>
+    <unique>false</unique>
 </CustomField>

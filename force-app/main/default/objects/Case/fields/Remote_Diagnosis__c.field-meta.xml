@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Remote_Diagnosis__c</fullName>
-    <label>원격 진단</label>
     <description>서비스 담당자가 현장 방문 전 장비 이력·측정 추세를 근거로 작성하는 원격 진단 소견. Agentforce 진단 브리핑(T4-19)의 초안 대상 필드.</description>
     <inlineHelpText>적용 리비전·시운전 재시험 이력·점검 추세·보증 범위를 근거로 원격 진단 소견을 기록하세요.</inlineHelpText>
+    <label>원격 진단</label>
     <length>32000</length>
-    <required>false</required>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>

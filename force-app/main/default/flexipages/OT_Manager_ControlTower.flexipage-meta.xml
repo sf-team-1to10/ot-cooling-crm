@@ -17,7 +17,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>c:otKpiCard</componentName>
+                <componentName>otKpiCard</componentName>
                 <identifier>c_otKpiCard_manager</identifier>
             </componentInstance>
         </itemInstances>

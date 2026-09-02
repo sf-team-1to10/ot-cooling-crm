@@ -114,6 +114,10 @@
                 <behavior>Edit</behavior>
                 <field>Dispatch_Briefing__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Slack_Collaboration_Summary__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>OneColumn</style>
     </layoutSections>
@@ -184,12 +188,28 @@
         <fields>Priority</fields>
         <fields>Status</fields>
     </miniLayout>
+    <platformActionList>
+        <actionListContext>Record</actionListContext>
+        <platformActionListItems>
+            <actionName>WorkOrder.T5_Repair_Measurement</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>0</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
+            <actionName>NewTask</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>1</sortOrder>
+        </platformActionListItems>
+    </platformActionList>
     <quickActionList>
         <quickActionListItems>
-            <quickActionName>FeedItem.TextPost</quickActionName>
+            <quickActionName>WorkOrder.T5_Mark_Repair_Complete</quickActionName>
         </quickActionListItems>
         <quickActionListItems>
             <quickActionName>FeedItem.ContentPost</quickActionName>
+        </quickActionListItems>
+        <quickActionListItems>
+            <quickActionName>FeedItem.TextPost</quickActionName>
         </quickActionListItems>
         <quickActionListItems>
             <quickActionName>NewTask</quickActionName>
@@ -203,29 +223,16 @@
         <quickActionListItems>
             <quickActionName>NewEvent</quickActionName>
         </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.ContentNote</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.RypplePost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.LinkPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.PollPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.QuestionPost</quickActionName>
-        </quickActionListItems>
     </quickActionList>
     <relatedLists>
         <fields>Name</fields>
         <fields>Description</fields>
+        <fields>Measurement_Point__c</fields>
         <fields>Measurement_Item_Code__c</fields>
         <fields>Spec_Value__c</fields>
         <fields>Threshold_Min__c</fields>
         <fields>Threshold_Max__c</fields>
+        <fields>Previous_Measured_Value__c</fields>
         <fields>Measured_Value__c</fields>
         <fields>Judgement__c</fields>
         <fields>Retest_Round__c</fields>
