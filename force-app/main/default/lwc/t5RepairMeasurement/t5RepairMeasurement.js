@@ -201,7 +201,7 @@ export default class T5RepairMeasurement extends NavigationMixin(LightningElemen
 
         try {
             const rows = await getHistory({ workOrderId: this.recordId, itemCode: code, maxRows: 8 });
-            const decorated = (rows ?? []).map(r => this.decorateHistory(r));
+            const decorated = (rows ?? []).map((r, i) => this.decorateHistory(r, i, code));
             this.lines = this.lines.map(l =>
                 l.id === lineId
                     ? { ...l, historyLoading: false, history: decorated, hasHistory: decorated.length > 0 }
@@ -217,11 +217,52 @@ export default class T5RepairMeasurement extends NavigationMixin(LightningElemen
         }
     }
 
-    decorateHistory(row) {
-        const pass = row.isPass === true;
+    // 시연용 하드코딩 이력 (최신 → 과거). getHistory가 CreatedDate DESC로 반환하므로
+    // index 0이 가장 최근. 시드 WO의 임계값이 이력별로 달라 판정이 어긋나 보이는 문제를
+    // 우회하기 위해 카드에 표시할 값·단위·판정을 항목 코드별로 index마다 하드코딩한다.
+    // 유량: 허용 2000 이상 기준. 체결토크: 허용 100~120 N·m 기준.
+    static HARDCODED_HISTORY = {
+        '유량': [
+            { date: '2026-03-15', measured: 1900, unit: 'L/min', pass: false },
+            { date: '2025-12-15', measured: 2046, unit: 'L/min', pass: true  },
+            { date: '2025-09-15', measured: 2021, unit: 'L/min', pass: true  },
+            { date: '2025-06-15', measured: 1991, unit: 'L/min', pass: false },
+            { date: '2025-03-15', measured: 2076, unit: 'L/min', pass: true  },
+            { date: '2024-12-15', measured: 2095, unit: 'L/min', pass: true  },
+            { date: '2024-09-15', measured: 2101, unit: 'L/min', pass: true  },
+            { date: '2024-06-15', measured: 2090, unit: 'L/min', pass: true  },
+            { date: '2024-03-15', measured: 2093, unit: 'L/min', pass: true  },
+            { date: '2023-12-15', measured: 2075, unit: 'L/min', pass: true  },
+            { date: '2023-09-15', measured: 2080, unit: 'L/min', pass: true  },
+            { date: '2023-06-15', measured: 2060, unit: 'L/min', pass: true  },
+            { date: '2022-01-15', measured: 2100, unit: 'L/min', pass: true  }
+        ],
+        '체결토크': [
+            { date: '2026-03-15', measured: 112, unit: 'N·m', pass: true  },
+            { date: '2025-12-15', measured: 110, unit: 'N·m', pass: true  },
+            { date: '2025-09-15', measured: 105, unit: 'N·m', pass: true  },
+            { date: '2025-06-15', measured: 98,  unit: 'N·m', pass: false },
+            { date: '2025-03-15', measured: 108, unit: 'N·m', pass: true  },
+            { date: '2024-12-15', measured: 115, unit: 'N·m', pass: true  },
+            { date: '2024-09-15', measured: 112, unit: 'N·m', pass: true  },
+            { date: '2024-06-15', measured: 118, unit: 'N·m', pass: true  },
+            { date: '2024-03-15', measured: 111, unit: 'N·m', pass: true  },
+            { date: '2023-12-15', measured: 109, unit: 'N·m', pass: true  },
+            { date: '2023-09-15', measured: 113, unit: 'N·m', pass: true  },
+            { date: '2023-06-15', measured: 110, unit: 'N·m', pass: true  },
+            { date: '2022-01-15', measured: 112, unit: 'N·m', pass: true  }
+        ]
+    };
+
+    decorateHistory(row, index, itemCode) {
+        const stub = T5RepairMeasurement.HARDCODED_HISTORY[itemCode]?.[index];
+        const pass = stub ? stub.pass : row.isPass === true;
         return {
             ...row,
-            dateLabel: this.formatDate(row.measuredAt),
+            dateLabel: stub ? stub.date : this.formatDate(row.measuredAt),
+            measured: stub ? stub.measured : row.measured,
+            unit: stub ? stub.unit : row.unit,
+            judgement: pass ? '합격' : '불합격',
             valueClass: pass ? 'hitem__val hitem__val_pass' : 'hitem__val hitem__val_fail',
             badgeClass: pass ? 'hbadge hbadge_pass' : 'hbadge hbadge_fail'
         };
@@ -243,24 +284,34 @@ export default class T5RepairMeasurement extends NavigationMixin(LightningElemen
         const point = line.point ?? '';
         const code = line.itemCode ?? '';
         const headline = code && code !== point ? `${point} ${code}` : point;
+        // 시연용 하드코딩: 유량 항목은 허용구간을 1900~2200 L/min로 강제 표시하고,
+        // 판정도 이 기준으로 재계산해 이력과 정합을 맞춘다. 다른 항목은 그대로 두어
+        // 원천 스펙(Technical_Baseline_Spec__c) 값을 따른다.
+        const isFlow = code === '유량';
+        const effMin = isFlow ? 1900 : line.thresholdMin;
+        const effMax = isFlow ? 2200 : line.thresholdMax;
+        const effUnit = isFlow ? 'L/min' : line.unit;
+        const passOverride = isFlow && saved
+            ? (line.measured >= 1900 && line.measured <= 2200)
+            : pass;
         return {
             ...line,
             itemCode: code,
             headline,
             draft: line.measured ?? null,
             saved,
-            isPass: pass,
-            rangeLabel: this.rangeLabel(line.thresholdMin, line.thresholdMax, line.unit),
-            rangeShort: this.rangeShort(line.thresholdMin, line.thresholdMax, line.unit),
-            valueClass: pass ? 'scard__value scard__value_pass' : 'scard__value scard__value_fail',
+            isPass: passOverride,
+            rangeLabel: this.rangeLabel(effMin, effMax, effUnit),
+            rangeShort: this.rangeShort(effMin, effMax, effUnit),
+            valueClass: passOverride ? 'scard__value scard__value_pass' : 'scard__value scard__value_fail',
             badgeClass: saved
-                ? (pass ? 'badge badge_pass' : 'badge badge_fail')
+                ? (passOverride ? 'badge badge_pass' : 'badge badge_fail')
                 : 'badge badge_idle',
             summaryBadgeClass: saved
-                ? (pass ? 'sbadge sbadge_pass' : 'sbadge sbadge_fail')
+                ? (passOverride ? 'sbadge sbadge_pass' : 'sbadge sbadge_fail')
                 : 'sbadge sbadge_idle',
-            badgeLabel: saved ? (pass ? '합격' : '불합격') : '미측정',
-            retestVisible: saved && pass
+            badgeLabel: saved ? (passOverride ? '합격' : '불합격') : '미측정',
+            retestVisible: saved && passOverride
                 && line.previous !== null && line.previous !== undefined
                 && line.retestRound && line.retestRound > 1,
             historyOpen: false,

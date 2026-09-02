@@ -182,7 +182,7 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
 
         try {
             const rows = await getHistory({ workOrderId: this.recordId, itemCode: code, maxRows: 8 });
-            const decorated = (rows ?? []).map(r => this.decorateHistory(r));
+            const decorated = (rows ?? []).map((r, i) => this.decorateHistory(r, i));
             this.lines = this.lines.map(l =>
                 l.id === lineId
                     ? { ...l, historyLoading: false, history: decorated, hasHistory: decorated.length > 0 }
@@ -198,11 +198,21 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         }
     }
 
-    decorateHistory(row) {
+    // 시연용 하드코딩 날짜 (최신 → 과거 순). 시드 WO가 전부 오늘 날짜라 실제 시간축
+    // 대신 스토리에 맞는 과거 시점을 카드에 박아 보여준다.
+    static HARDCODED_DATES = [
+        '2026-03-15', '2025-12-15', '2025-09-15', '2025-06-15',
+        '2025-03-15', '2024-12-15', '2024-09-15', '2024-06-15',
+        '2024-03-15', '2023-12-15', '2023-09-15', '2023-06-15',
+        '2022-01-15'
+    ];
+
+    decorateHistory(row, index) {
         const pass = row.isPass === true;
+        const stubDate = T5MeasurementTab.HARDCODED_DATES[index] ?? this.formatDate(row.measuredAt);
         return {
             ...row,
-            dateLabel: this.formatDate(row.measuredAt),
+            dateLabel: stubDate,
             valueClass: pass ? 'hitem__val hitem__val_pass' : 'hitem__val hitem__val_fail',
             badgeClass: pass ? 'hbadge hbadge_pass' : 'hbadge hbadge_fail'
         };
@@ -224,21 +234,29 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         const point = line.point ?? '';
         const code = line.itemCode ?? line.measurementItemCode ?? '';
         const headline = code && code !== point ? `${point} ${code}` : point;
+        // 시연용 하드코딩: 유량은 허용구간 1900~2200 L/min으로 강제.
+        const isFlow = code === '유량';
+        const effMin = isFlow ? 1900 : line.thresholdMin;
+        const effMax = isFlow ? 2200 : line.thresholdMax;
+        const effUnit = isFlow ? 'L/min' : line.unit;
+        const passOverride = isFlow && saved
+            ? (line.measured >= 1900 && line.measured <= 2200)
+            : pass;
         return {
             ...line,
             itemCode: code,
             headline,
             draft: line.measured ?? null,
             saved,
-            isPass: pass,
-            rangeLabel: this.rangeLabel(line.thresholdMin, line.thresholdMax, line.unit),
-            rangeShort: this.rangeShort(line.thresholdMin, line.thresholdMax, line.unit),
-            valueClass: pass ? 'scard__value-num scard__value-num_pass' : 'scard__value-num scard__value-num_fail',
+            isPass: passOverride,
+            rangeLabel: this.rangeLabel(effMin, effMax, effUnit),
+            rangeShort: this.rangeShort(effMin, effMax, effUnit),
+            valueClass: passOverride ? 'scard__value-num scard__value-num_pass' : 'scard__value-num scard__value-num_fail',
             badgeClass: saved
-                ? (pass ? 'badge badge_pass' : 'badge badge_fail')
+                ? (passOverride ? 'badge badge_pass' : 'badge badge_fail')
                 : 'badge badge_idle',
-            badgeLabel: saved ? (pass ? '합격' : '불합격') : '미측정',
-            retestVisible: saved && pass
+            badgeLabel: saved ? (passOverride ? '합격' : '불합격') : '미측정',
+            retestVisible: saved && passOverride
                 && line.previous !== null && line.previous !== undefined
                 && line.retestRound && line.retestRound > 1,
             historyOpen: false,
