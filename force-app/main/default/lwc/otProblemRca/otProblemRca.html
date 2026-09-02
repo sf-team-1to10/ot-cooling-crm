@@ -1,14 +1,7 @@
 <template>
     <div class="slds-p-vertical_x-small">
         <!-- ── Path 바 (path:5 = RCA·예방·지식 on) ── -->
-        <div class="path">
-            <div class="path-step done"><span class="path-num">0</span> 접수</div>
-            <div class="path-step done"><span class="path-num">1</span> 진단·브리핑</div>
-            <div class="path-step done"><span class="path-num">2</span> 담당자 배정</div>
-            <div class="path-step done"><span class="path-num">3</span> 현장 출동</div>
-            <div class="path-step done"><span class="path-num">4</span> 수리·복구</div>
-            <div class="path-step on"><span class="path-num">5</span> RCA·예방·지식</div>
-        </div>
+        <c-ot-case-path record-id={effectiveRecordId}></c-ot-case-path>
 
         <!-- ── 서브탭 (RCA 활성) ── -->
         <div class="subtabs">

@@ -222,6 +222,33 @@ private class T5MeasurementControllerTest {
     }
 
     @isTest
+    static void shouldReturnEmpty_WhenHistoryArgsInvalid() {
+        Test.startTest();
+        List<T5MeasurementController.HistoryEntry> r1 =
+            T5MeasurementController.getHistory(null, '체결토크', 5);
+        List<T5MeasurementController.HistoryEntry> r2 =
+            T5MeasurementController.getHistory(getWorkOrderId(), null, 5);
+        List<T5MeasurementController.HistoryEntry> r3 =
+            T5MeasurementController.getHistory(getWorkOrderId(), '  ', 5);
+        Test.stopTest();
+
+        Assert.areEqual(0, r1.size(), 'null WorkOrderId는 빈 배열');
+        Assert.areEqual(0, r2.size(), 'null itemCode는 빈 배열');
+        Assert.areEqual(0, r3.size(), 'blank itemCode는 빈 배열');
+    }
+
+    @isTest
+    static void shouldReturnEmpty_WhenWorkOrderHasNoAsset() {
+        // setup의 WO는 AssetId 미연결이므로 조회는 항상 빈 리스트
+        Test.startTest();
+        List<T5MeasurementController.HistoryEntry> rows =
+            T5MeasurementController.getHistory(getWorkOrderId(), '체결토크', 5);
+        Test.stopTest();
+
+        Assert.areEqual(0, rows.size(), 'Asset 미연결 WO는 이력 조회가 빈 리스트여야 한다');
+    }
+
+    @isTest
     static void shouldThrow_WhenCompleteWorkOrderIdNull() {
         Test.startTest();
         try {

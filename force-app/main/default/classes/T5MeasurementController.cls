@@ -63,6 +63,7 @@ public with sharing class T5MeasurementController {
         // BeforeSave Flow가 판정을 세팅한 뒤 상태를 되읽는다.
         List<WorkOrderLineItem> items = [
             SELECT Id, WorkOrderId, LineItemNumber, Measurement_Point__c,
+                   Measurement_Item_Code__c,
                    Measured_Value__c, Previous_Measured_Value__c, Baseline_Value__c,
                    Threshold_Min__c, Threshold_Max__c, Unit__c, Judgement__c,
                    Retest_Round__c, Retest_Reason__c
@@ -75,6 +76,52 @@ public with sharing class T5MeasurementController {
             throw new AuraHandledException('측정 항목을 찾을 수 없습니다: ' + lineItemId);
         }
         return toLine(items[0]);
+    }
+
+    /**
+     * 같은 자산·같은 측정 항목 코드의 과거 측정 이력을 최근순으로 반환한다.
+     * 현재 WO 자신의 WOLI는 제외한다. UI의 "이력 보기" 토글에서 사용.
+     */
+    @AuraEnabled(cacheable=true)
+    public static List<HistoryEntry> getHistory(Id workOrderId, String itemCode, Integer maxRows) {
+        if (workOrderId == null || String.isBlank(itemCode)) {
+            return new List<HistoryEntry>();
+        }
+        Integer lim = (maxRows == null || maxRows <= 0) ? 5 : maxRows;
+        List<WorkOrder> owner = [
+            SELECT Id, AssetId FROM WorkOrder WHERE Id = :workOrderId WITH USER_MODE LIMIT 1
+        ];
+        if (owner.isEmpty() || owner[0].AssetId == null) {
+            return new List<HistoryEntry>();
+        }
+        Id assetId = owner[0].AssetId;
+        List<HistoryEntry> out = new List<HistoryEntry>();
+        for (WorkOrderLineItem item : [
+            SELECT Id, WorkOrderId, WorkOrder.WorkOrderNumber, WorkOrder.CreatedDate,
+                   Measured_Value__c, Unit__c, Judgement__c, Retest_Round__c
+            FROM WorkOrderLineItem
+            WHERE WorkOrder.AssetId = :assetId
+              AND Measurement_Item_Code__c = :itemCode
+              AND WorkOrderId != :workOrderId
+              AND Measured_Value__c != null
+              AND Measurement_Point__c != null
+              AND Unit__c != null
+            WITH USER_MODE
+            ORDER BY WorkOrder.CreatedDate DESC
+            LIMIT :lim
+        ]) {
+            HistoryEntry e = new HistoryEntry();
+            e.id = item.Id;
+            e.workOrderNumber = item.WorkOrder.WorkOrderNumber;
+            e.measuredAt = item.WorkOrder.CreatedDate;
+            e.measured = item.Measured_Value__c;
+            e.unit = item.Unit__c;
+            e.judgement = item.Judgement__c;
+            e.isPass = JUDGE_PASS.equals(item.Judgement__c);
+            e.retestRound = item.Retest_Round__c;
+            out.add(e);
+        }
+        return out;
     }
 
     /**
@@ -100,6 +147,7 @@ public with sharing class T5MeasurementController {
         List<MeasurementLine> lines = new List<MeasurementLine>();
         for (WorkOrderLineItem item : [
             SELECT Id, WorkOrderId, LineItemNumber, Measurement_Point__c,
+                   Measurement_Item_Code__c,
                    Measured_Value__c, Previous_Measured_Value__c, Baseline_Value__c,
                    Threshold_Min__c, Threshold_Max__c, Unit__c, Judgement__c,
                    Retest_Round__c, Retest_Reason__c
@@ -140,6 +188,7 @@ public with sharing class T5MeasurementController {
         line.id = item.Id;
         line.lineNumber = item.LineItemNumber;
         line.point = item.Measurement_Point__c;
+        line.itemCode = item.Measurement_Item_Code__c;
         line.measured = item.Measured_Value__c;
         line.previous = item.Previous_Measured_Value__c;
         line.baseline = item.Baseline_Value__c;
@@ -164,6 +213,7 @@ public with sharing class T5MeasurementController {
         @AuraEnabled public Id id;
         @AuraEnabled public String lineNumber;
         @AuraEnabled public String point;
+        @AuraEnabled public String itemCode;
         @AuraEnabled public Decimal measured;
         @AuraEnabled public Decimal previous;
         @AuraEnabled public Decimal baseline;
@@ -174,6 +224,17 @@ public with sharing class T5MeasurementController {
         @AuraEnabled public Decimal retestRound;
         @AuraEnabled public String retestReason;
         @AuraEnabled public Boolean isPass;
+    }
+
+    public class HistoryEntry {
+        @AuraEnabled public Id id;
+        @AuraEnabled public String workOrderNumber;
+        @AuraEnabled public Datetime measuredAt;
+        @AuraEnabled public Decimal measured;
+        @AuraEnabled public String unit;
+        @AuraEnabled public String judgement;
+        @AuraEnabled public Boolean isPass;
+        @AuraEnabled public Decimal retestRound;
     }
 
     public class KnowledgeInfo {

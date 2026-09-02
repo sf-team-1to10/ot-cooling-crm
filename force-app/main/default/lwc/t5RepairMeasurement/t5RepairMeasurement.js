@@ -7,14 +7,14 @@ import saveMeasurement from '@salesforce/apex/T5MeasurementController.saveMeasur
 import completeWork from '@salesforce/apex/T5MeasurementController.completeWork';
 import getHistory from '@salesforce/apex/T5MeasurementController.getHistory';
 
-// T5-31 현장 복구 작업 측정 플로우 (목업 5장 재현).
+// T5-31 현장 복구 작업 측정 플로우 (T5-33에서 홈 화면 개편).
 // 단계: home → knowledge / measure → (측정 완료) → 작업 완료.
 // completeWork 는 WorkOrder.Status=Completed 로 바꿔 T5-29 Slack 발신 Flow를 트리거한다.
 const STEP_HOME = 'home';
 const STEP_KNOWLEDGE = 'knowledge';
 const STEP_MEASURE = 'measure';
 
-export default class T5MeasurementTab extends NavigationMixin(LightningElement) {
+export default class T5RepairMeasurement extends NavigationMixin(LightningElement) {
     @api recordId;
 
     step = STEP_HOME;
@@ -60,9 +60,28 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
 
     get statusSummary() {
         if (!this.hasLines) return '';
+        const total = this.lines.length;
         const saved = this.lines.filter(l => l.saved).length;
         const pass = this.lines.filter(l => l.saved && l.isPass).length;
-        return `${this.lines.length}개 항목 · 측정 ${saved} · 합격 ${pass}`;
+        return `${total}개 항목 · 측정 ${saved} · 합격 ${pass}`;
+    }
+
+    get footLabel() {
+        if (!this.hasLines) return '';
+        if (this.allPassed) {
+            return `${this.lines.length}개 항목 모두 합격 · 자동 판정 (WOLI_Judgement_AutoSet)`;
+        }
+        const remain = this.lines.filter(l => !l.saved).length;
+        const fail = this.lines.filter(l => l.saved && !l.isPass).length;
+        if (fail > 0) return `${fail}개 항목 불합격 · 재시험 필요`;
+        return `${remain}개 항목 측정 대기`;
+    }
+
+    get footDotClass() {
+        if (!this.hasLines) return 'dot dot_idle';
+        if (this.allPassed) return 'dot dot_ok';
+        const fail = this.lines.some(l => l.saved && !l.isPass);
+        return fail ? 'dot dot_fail' : 'dot dot_idle';
     }
 
     // 모든 측정 항목이 저장되고 전부 합격이어야 작업 완료 버튼이 열린다.
@@ -70,7 +89,7 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         return this.hasLines && this.lines.every(line => line.saved && line.isPass);
     }
     get completeDisabled() {
-        return !this.allPassed || this.completing;
+        return !this.allPassed || this.completing || this.completed;
     }
     get completeHint() {
         if (this.completed) {
@@ -182,7 +201,7 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
 
         try {
             const rows = await getHistory({ workOrderId: this.recordId, itemCode: code, maxRows: 8 });
-            const decorated = (rows ?? []).map((r, i) => this.decorateHistory(r, i));
+            const decorated = (rows ?? []).map((r, i) => this.decorateHistory(r, i, code));
             this.lines = this.lines.map(l =>
                 l.id === lineId
                     ? { ...l, historyLoading: false, history: decorated, hasHistory: decorated.length > 0 }
@@ -198,21 +217,52 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         }
     }
 
-    // 시연용 하드코딩 날짜 (최신 → 과거 순). 시드 WO가 전부 오늘 날짜라 실제 시간축
-    // 대신 스토리에 맞는 과거 시점을 카드에 박아 보여준다.
-    static HARDCODED_DATES = [
-        '2026-03-15', '2025-12-15', '2025-09-15', '2025-06-15',
-        '2025-03-15', '2024-12-15', '2024-09-15', '2024-06-15',
-        '2024-03-15', '2023-12-15', '2023-09-15', '2023-06-15',
-        '2022-01-15'
-    ];
+    // 시연용 하드코딩 이력 (최신 → 과거). getHistory가 CreatedDate DESC로 반환하므로
+    // index 0이 가장 최근. 시드 WO의 임계값이 이력별로 달라 판정이 어긋나 보이는 문제를
+    // 우회하기 위해 카드에 표시할 값·단위·판정을 항목 코드별로 index마다 하드코딩한다.
+    // 유량: 허용 2000 이상 기준. 체결토크: 허용 100~120 N·m 기준.
+    static HARDCODED_HISTORY = {
+        '유량': [
+            { date: '2026-03-15', measured: 1900, unit: 'L/min', pass: false },
+            { date: '2025-12-15', measured: 2046, unit: 'L/min', pass: true  },
+            { date: '2025-09-15', measured: 2021, unit: 'L/min', pass: true  },
+            { date: '2025-06-15', measured: 1991, unit: 'L/min', pass: false },
+            { date: '2025-03-15', measured: 2076, unit: 'L/min', pass: true  },
+            { date: '2024-12-15', measured: 2095, unit: 'L/min', pass: true  },
+            { date: '2024-09-15', measured: 2101, unit: 'L/min', pass: true  },
+            { date: '2024-06-15', measured: 2090, unit: 'L/min', pass: true  },
+            { date: '2024-03-15', measured: 2093, unit: 'L/min', pass: true  },
+            { date: '2023-12-15', measured: 2075, unit: 'L/min', pass: true  },
+            { date: '2023-09-15', measured: 2080, unit: 'L/min', pass: true  },
+            { date: '2023-06-15', measured: 2060, unit: 'L/min', pass: true  },
+            { date: '2022-01-15', measured: 2100, unit: 'L/min', pass: true  }
+        ],
+        '체결토크': [
+            { date: '2026-03-15', measured: 112, unit: 'N·m', pass: true  },
+            { date: '2025-12-15', measured: 110, unit: 'N·m', pass: true  },
+            { date: '2025-09-15', measured: 105, unit: 'N·m', pass: true  },
+            { date: '2025-06-15', measured: 98,  unit: 'N·m', pass: false },
+            { date: '2025-03-15', measured: 108, unit: 'N·m', pass: true  },
+            { date: '2024-12-15', measured: 115, unit: 'N·m', pass: true  },
+            { date: '2024-09-15', measured: 112, unit: 'N·m', pass: true  },
+            { date: '2024-06-15', measured: 118, unit: 'N·m', pass: true  },
+            { date: '2024-03-15', measured: 111, unit: 'N·m', pass: true  },
+            { date: '2023-12-15', measured: 109, unit: 'N·m', pass: true  },
+            { date: '2023-09-15', measured: 113, unit: 'N·m', pass: true  },
+            { date: '2023-06-15', measured: 110, unit: 'N·m', pass: true  },
+            { date: '2022-01-15', measured: 112, unit: 'N·m', pass: true  }
+        ]
+    };
 
-    decorateHistory(row, index) {
-        const pass = row.isPass === true;
-        const stubDate = T5MeasurementTab.HARDCODED_DATES[index] ?? this.formatDate(row.measuredAt);
+    decorateHistory(row, index, itemCode) {
+        const stub = T5RepairMeasurement.HARDCODED_HISTORY[itemCode]?.[index];
+        const pass = stub ? stub.pass : row.isPass === true;
         return {
             ...row,
-            dateLabel: stubDate,
+            dateLabel: stub ? stub.date : this.formatDate(row.measuredAt),
+            measured: stub ? stub.measured : row.measured,
+            unit: stub ? stub.unit : row.unit,
+            judgement: pass ? '합격' : '불합격',
             valueClass: pass ? 'hitem__val hitem__val_pass' : 'hitem__val hitem__val_fail',
             badgeClass: pass ? 'hbadge hbadge_pass' : 'hbadge hbadge_fail'
         };
@@ -232,9 +282,11 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         const saved = line.saved === true || (line.measured !== null && line.measured !== undefined);
         const pass = line.isPass === true;
         const point = line.point ?? '';
-        const code = line.itemCode ?? line.measurementItemCode ?? '';
+        const code = line.itemCode ?? '';
         const headline = code && code !== point ? `${point} ${code}` : point;
-        // 시연용 하드코딩: 유량은 허용구간 1900~2200 L/min으로 강제.
+        // 시연용 하드코딩: 유량 항목은 허용구간을 1900~2200 L/min로 강제 표시하고,
+        // 판정도 이 기준으로 재계산해 이력과 정합을 맞춘다. 다른 항목은 그대로 두어
+        // 원천 스펙(Technical_Baseline_Spec__c) 값을 따른다.
         const isFlow = code === '유량';
         const effMin = isFlow ? 1900 : line.thresholdMin;
         const effMax = isFlow ? 2200 : line.thresholdMax;
@@ -251,10 +303,13 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
             isPass: passOverride,
             rangeLabel: this.rangeLabel(effMin, effMax, effUnit),
             rangeShort: this.rangeShort(effMin, effMax, effUnit),
-            valueClass: passOverride ? 'scard__value-num scard__value-num_pass' : 'scard__value-num scard__value-num_fail',
+            valueClass: passOverride ? 'scard__value scard__value_pass' : 'scard__value scard__value_fail',
             badgeClass: saved
                 ? (passOverride ? 'badge badge_pass' : 'badge badge_fail')
                 : 'badge badge_idle',
+            summaryBadgeClass: saved
+                ? (passOverride ? 'sbadge sbadge_pass' : 'sbadge sbadge_fail')
+                : 'sbadge sbadge_idle',
             badgeLabel: saved ? (passOverride ? '합격' : '불합격') : '미측정',
             retestVisible: saved && passOverride
                 && line.previous !== null && line.previous !== undefined
@@ -265,16 +320,6 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
             hasHistory: false,
             historyToggleLabel: '이력 보기'
         };
-    }
-
-    rangeShort(min, max, unit) {
-        const u = unit ?? '';
-        if (min !== null && min !== undefined && max !== null && max !== undefined) {
-            return `허용 ${min}~${max} ${u}`;
-        }
-        if (min !== null && min !== undefined) return `허용 ${min} 이상 ${u}`;
-        if (max !== null && max !== undefined) return `허용 ${max} 이하 ${u}`;
-        return '';
     }
 
     rangeLabel(min, max, unit) {
@@ -289,6 +334,16 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
             return `허용 상한 ${max} ${u} 이하`;
         }
         return '허용구간 미설정';
+    }
+
+    rangeShort(min, max, unit) {
+        const u = unit ?? '';
+        if (min !== null && min !== undefined && max !== null && max !== undefined) {
+            return `허용 ${min}~${max} ${u}`;
+        }
+        if (min !== null && min !== undefined) return `허용 ${min} 이상 ${u}`;
+        if (max !== null && max !== undefined) return `허용 ${max} 이하 ${u}`;
+        return '';
     }
 
     errText(e) {

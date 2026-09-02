@@ -1,0 +1,9 @@
+<template>
+    <div class="path">
+        <template for:each={steps} for:item="s">
+            <div key={s.key} class={s.cls}>
+                <span class="path-num">{s.num}</span> {s.label}
+            </div>
+        </template>
+    </div>
+</template>
