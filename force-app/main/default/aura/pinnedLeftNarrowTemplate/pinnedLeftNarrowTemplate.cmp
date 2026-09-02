@@ -1,0 +1,9 @@
+<aura:component implements="lightning:recordHomeTemplate" description="Pinned Left Narrow (20/80) template">
+    <aura:attribute name="left" type="Aura.Component[]" />
+    <aura:attribute name="main" type="Aura.Component[]" />
+
+    <div class="container">
+        <div class="pinned-left">{!v.left}</div>
+        <div class="content-main">{!v.main}</div>
+    </div>
+</aura:component>
