@@ -7,14 +7,14 @@ import saveMeasurement from '@salesforce/apex/T5MeasurementController.saveMeasur
 import completeWork from '@salesforce/apex/T5MeasurementController.completeWork';
 import getHistory from '@salesforce/apex/T5MeasurementController.getHistory';
 
-// T5-31 현장 복구 작업 측정 플로우 (목업 5장 재현).
+// T5-31 현장 복구 작업 측정 플로우 (T5-33에서 홈 화면 개편).
 // 단계: home → knowledge / measure → (측정 완료) → 작업 완료.
 // completeWork 는 WorkOrder.Status=Completed 로 바꿔 T5-29 Slack 발신 Flow를 트리거한다.
 const STEP_HOME = 'home';
 const STEP_KNOWLEDGE = 'knowledge';
 const STEP_MEASURE = 'measure';
 
-export default class T5MeasurementTab extends NavigationMixin(LightningElement) {
+export default class T5RepairMeasurement extends NavigationMixin(LightningElement) {
     @api recordId;
 
     step = STEP_HOME;
@@ -60,9 +60,28 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
 
     get statusSummary() {
         if (!this.hasLines) return '';
+        const total = this.lines.length;
         const saved = this.lines.filter(l => l.saved).length;
         const pass = this.lines.filter(l => l.saved && l.isPass).length;
-        return `${this.lines.length}개 항목 · 측정 ${saved} · 합격 ${pass}`;
+        return `${total}개 항목 · 측정 ${saved} · 합격 ${pass}`;
+    }
+
+    get footLabel() {
+        if (!this.hasLines) return '';
+        if (this.allPassed) {
+            return `${this.lines.length}개 항목 모두 합격 · 자동 판정 (WOLI_Judgement_AutoSet)`;
+        }
+        const remain = this.lines.filter(l => !l.saved).length;
+        const fail = this.lines.filter(l => l.saved && !l.isPass).length;
+        if (fail > 0) return `${fail}개 항목 불합격 · 재시험 필요`;
+        return `${remain}개 항목 측정 대기`;
+    }
+
+    get footDotClass() {
+        if (!this.hasLines) return 'dot dot_idle';
+        if (this.allPassed) return 'dot dot_ok';
+        const fail = this.lines.some(l => l.saved && !l.isPass);
+        return fail ? 'dot dot_fail' : 'dot dot_idle';
     }
 
     // 모든 측정 항목이 저장되고 전부 합격이어야 작업 완료 버튼이 열린다.
@@ -70,7 +89,7 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         return this.hasLines && this.lines.every(line => line.saved && line.isPass);
     }
     get completeDisabled() {
-        return !this.allPassed || this.completing;
+        return !this.allPassed || this.completing || this.completed;
     }
     get completeHint() {
         if (this.completed) {
@@ -222,7 +241,7 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         const saved = line.saved === true || (line.measured !== null && line.measured !== undefined);
         const pass = line.isPass === true;
         const point = line.point ?? '';
-        const code = line.itemCode ?? line.measurementItemCode ?? '';
+        const code = line.itemCode ?? '';
         const headline = code && code !== point ? `${point} ${code}` : point;
         return {
             ...line,
@@ -233,10 +252,13 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
             isPass: pass,
             rangeLabel: this.rangeLabel(line.thresholdMin, line.thresholdMax, line.unit),
             rangeShort: this.rangeShort(line.thresholdMin, line.thresholdMax, line.unit),
-            valueClass: pass ? 'scard__value-num scard__value-num_pass' : 'scard__value-num scard__value-num_fail',
+            valueClass: pass ? 'scard__value scard__value_pass' : 'scard__value scard__value_fail',
             badgeClass: saved
                 ? (pass ? 'badge badge_pass' : 'badge badge_fail')
                 : 'badge badge_idle',
+            summaryBadgeClass: saved
+                ? (pass ? 'sbadge sbadge_pass' : 'sbadge sbadge_fail')
+                : 'sbadge sbadge_idle',
             badgeLabel: saved ? (pass ? '합격' : '불합격') : '미측정',
             retestVisible: saved && pass
                 && line.previous !== null && line.previous !== undefined
@@ -247,16 +269,6 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
             hasHistory: false,
             historyToggleLabel: '이력 보기'
         };
-    }
-
-    rangeShort(min, max, unit) {
-        const u = unit ?? '';
-        if (min !== null && min !== undefined && max !== null && max !== undefined) {
-            return `허용 ${min}~${max} ${u}`;
-        }
-        if (min !== null && min !== undefined) return `허용 ${min} 이상 ${u}`;
-        if (max !== null && max !== undefined) return `허용 ${max} 이하 ${u}`;
-        return '';
     }
 
     rangeLabel(min, max, unit) {
@@ -271,6 +283,16 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
             return `허용 상한 ${max} ${u} 이하`;
         }
         return '허용구간 미설정';
+    }
+
+    rangeShort(min, max, unit) {
+        const u = unit ?? '';
+        if (min !== null && min !== undefined && max !== null && max !== undefined) {
+            return `허용 ${min}~${max} ${u}`;
+        }
+        if (min !== null && min !== undefined) return `허용 ${min} 이상 ${u}`;
+        if (max !== null && max !== undefined) return `허용 ${max} 이하 ${u}`;
+        return '';
     }
 
     errText(e) {
