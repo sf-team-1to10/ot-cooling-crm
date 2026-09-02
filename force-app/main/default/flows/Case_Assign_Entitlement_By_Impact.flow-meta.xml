@@ -3,7 +3,31 @@
     <apiVersion>65.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
-        <description>Assigns the Entitlement record&apos;s Id to the triggering Case record&apos;s EntitlementId field in a Before-Save flow, allowing the Entitlement to be associated with the Case before it is saved to the database</description>
+        <description>유효 후보를 순회하며 건수를 세고 마지막으로 확인한 Entitlement Id를 보관한다. 최종 할당은 후보가 정확히 1건일 때만 하므로, 여기서 보관한 값은 그 1건의 Id가 된다.</description>
+        <name>Count_Entitlement</name>
+        <label>후보 Entitlement 카운트</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varEntitlementCount</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varEntitlementId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Entitlements.Id</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Entitlements</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Assigns the Entitlement record&apos;s Id to the triggering Case record&apos;s EntitlementId field in a Before-Save flow. 유효 후보가 정확히 1건일 때만 실행된다.</description>
         <name>Assign_Entitlement_To_Case</name>
         <label>Assign Entitlement To Case</label>
         <locationX>0</locationX>
@@ -12,37 +36,87 @@
             <assignToReference>$Record.EntitlementId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>Get_Entitlement_By_Account.Id</elementReference>
+                <elementReference>varEntitlementId</elementReference>
             </value>
         </assignmentItems>
     </assignments>
     <decisions>
-        <description>Checks if an Entitlement record was found by evaluating whether the Get_Entitlement_By_Account variable&apos;s Id field is not null, routing to &apos;Found&apos; outcome if Entitlement exists, otherwise ending flow with no changes</description>
-        <name>Entitlement_Exists</name>
-        <label>Entitlement Exists</label>
+        <description>Case에 Asset이 지정돼 있으면 Entitlement.AssetId가 정확히 일치하는 후보만 센다. Case에 Asset이 없으면 Account의 유효 후보를 전부 센다. Asset이 지정된 Case에서 Asset이 비어 있는 Entitlement는 일치로 보지 않는다.</description>
+        <name>Asset_Match_Required</name>
+        <label>Asset 일치 확인</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <defaultConnector>
+            <targetReference>Loop_Entitlements</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Asset 불일치 · 후보에서 제외</defaultConnectorLabel>
         <rules>
-            <description>Routes flow to assignment when an Entitlement record is found for the Case&apos;s Account</description>
-            <name>Found</name>
-            <conditionLogic>1</conditionLogic>
+            <description>Case에 Asset이 없거나(=Account 기준 판정), Entitlement의 Asset이 Case의 Asset과 정확히 같으면 후보로 센다.</description>
+            <name>Asset_Matches_Or_Not_Specified</name>
+            <conditionLogic>1 OR 2</conditionLogic>
             <conditions>
-                <leftValueReference>Get_Entitlement_By_Account.Id</leftValueReference>
+                <leftValueReference>$Record.AssetId</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
-                    <booleanValue>false</booleanValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>Loop_Entitlements.AssetId</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <elementReference>$Record.AssetId</elementReference>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Count_Entitlement</targetReference>
+            </connector>
+            <label>후보로 인정</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>유효 후보가 정확히 1건일 때만 할당한다. 0건이면 근거가 없고, 2건 이상이면 어느 Entitlement가 맞는지 판단할 수 없으므로 임의로 첫 번째를 고르지 않고 비워 둔다. 비워 두면 후속 Case_Assign_Service_Contract Flow도 계약을 연결하지 않는다.</description>
+        <name>Exactly_One_Entitlement</name>
+        <label>후보 정확히 1건</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>0건 또는 2건 이상 · 빈 값 유지</defaultConnectorLabel>
+        <rules>
+            <description>후보 건수가 1이면 할당한다.</description>
+            <name>Single_Entitlement</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>varEntitlementCount</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <numberValue>1.0</numberValue>
                 </rightValue>
             </conditions>
             <connector>
                 <targetReference>Assign_Entitlement_To_Case</targetReference>
             </connector>
-            <label>Found</label>
+            <label>1건</label>
         </rules>
     </decisions>
+    <description>S2 중요 Case 생성 시 Entitlement를 자동 할당한다. 진입 조건에 EntitlementId IsNull이 있어 사용자가 직접 지정한 Entitlement는 절대 덮어쓰지 않는다. 판정 기준: Account 일치 + 유효기간(StartDate&lt;=오늘, EndDate 없음 또는 &gt;=오늘) + Case에 Asset이 있으면 Entitlement.AssetId 정확 일치. 후보가 정확히 1건일 때만 할당하고 0건이나 2건 이상이면 비워 둔다. Account만 같다는 이유로 임의의 Entitlement를 고르던 getFirstRecordOnly 로직은 제거했다. triggerOrder 10으로 후속 Case_Assign_Service_Contract(20)보다 먼저 실행된다.</description>
     <environments>Default</environments>
     <interviewLabel>Case Impact S2 Trigger</interviewLabel>
     <label>Case Impact S2 Trigger</label>
+    <loops>
+        <description>Account 기준 유효 Entitlement를 순회하며 Asset 일치 여부로 후보를 선별한다. Before-Save라 DML이 없고 전부 메모리 연산이라 대량 처리에서도 부담이 없다.</description>
+        <name>Loop_Entitlements</name>
+        <label>유효 Entitlement 순회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <collectionReference>Get_Valid_Entitlements</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Asset_Match_Required</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Exactly_One_Entitlement</targetReference>
+        </noMoreValuesConnector>
+    </loops>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -57,16 +131,16 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordLookups>
-        <description>Retrieves the first Entitlement record associated with the Case&apos;s Account to determine if an Entitlement exists for assignment</description>
-        <name>Get_Entitlement_By_Account</name>
-        <label>Get Entitlement By Account</label>
+        <description>Case의 Account에 속한 유효기간 내 Entitlement를 전부 조회한다. getFirstRecordOnly=false로 전체를 받아 건수를 세고, Asset 일치 여부는 Loop 안에서 판정한다. Entitlement.Status는 파생 필드라 필터에 쓰지 않고 결과가 동일한 StartDate/EndDate 조건으로 판정한다. AccountId가 비어 있으면 결과가 없어 자연히 할당되지 않는다.</description>
+        <name>Get_Valid_Entitlements</name>
+        <label>Account 기준 유효 Entitlement 조회</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Entitlement_Exists</targetReference>
+            <targetReference>Loop_Entitlements</targetReference>
         </connector>
-        <filterLogic>1</filterLogic>
+        <filterLogic>1 AND 2 AND (3 OR 4)</filterLogic>
         <filters>
             <field>AccountId</field>
             <operator>EqualTo</operator>
@@ -74,19 +148,41 @@
                 <elementReference>$Record.AccountId</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <filters>
+            <field>StartDate</field>
+            <operator>LessThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>GreaterThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
         <object>Entitlement</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>AccountId</queriedFields>
+        <queriedFields>AssetId</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Get_Entitlement_By_Account</targetReference>
+            <targetReference>Get_Valid_Entitlements</targetReference>
         </connector>
-        <filterLogic>1</filterLogic>
+        <filterLogic>1 AND 2</filterLogic>
         <filters>
             <field>Impact_Level__c</field>
             <operator>EqualTo</operator>
@@ -94,9 +190,37 @@
                 <stringValue>S2 중요</stringValue>
             </value>
         </filters>
+        <filters>
+            <field>EntitlementId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
         <object>Case</object>
         <recordTriggerType>Create</recordTriggerType>
         <triggerType>RecordBeforeSave</triggerType>
     </start>
     <status>Active</status>
+    <triggerOrder>10</triggerOrder>
+    <variables>
+        <description>Asset 일치까지 통과한 유효 Entitlement 후보 건수. 1일 때만 할당한다.</description>
+        <name>varEntitlementCount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <description>마지막으로 확인한 후보 Entitlement의 Id. 후보가 1건일 때만 사용한다.</description>
+        <name>varEntitlementId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
 </Flow>

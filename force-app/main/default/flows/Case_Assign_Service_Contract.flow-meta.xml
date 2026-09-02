@@ -208,7 +208,7 @@
             <label>유효</label>
         </rules>
     </decisions>
-    <description>Case 생성·수정 시 적절한 Service Contract를 Case.ServiceContractId에 자동 배정한다. 진입 조건이 ServiceContractId IsNull이라 사용자가 직접 입력한 값은 절대 덮어쓰지 않는다. 우선순위: (1) EntitlementId가 있으면 그 Entitlement의 계약, (2) EntitlementId가 없고 AssetId가 있으면 정확한 AssetId 기준 유효 Entitlement 탐색. Entitlement와 Service Contract 모두 날짜상 유효해야 하고, 후보가 정확히 1건일 때만 배정한다. Account만 같다는 이유로 계약을 고르지 않는다. triggerOrder 1010은 값이 없는 기존 Case before-save Flow(Case_Assign_Entitlement_By_Impact)보다 뒤에 실행시키기 위한 값이다. 순서 규칙: 1~1000 → 순서값 없음 → 1001~2000.</description>
+    <description>Case 생성·수정 시 적절한 Service Contract를 Case.ServiceContractId에 자동 배정한다. 진입 조건이 ServiceContractId IsNull이라 사용자가 직접 입력한 값은 절대 덮어쓰지 않는다. 우선순위: (1) EntitlementId가 있으면 그 Entitlement의 계약, (2) EntitlementId가 없고 AssetId가 있으면 정확한 AssetId 기준 유효 Entitlement 탐색. Entitlement와 Service Contract 모두 날짜상 유효해야 하고, 후보가 정확히 1건일 때만 배정한다. Account만 같다는 이유로 계약을 고르지 않는다. triggerOrder 20으로 선행 Case_Assign_Entitlement_By_Impact(10) 다음에 실행된다. 선행 Flow가 유효 후보 정확히 1건일 때만 EntitlementId를 채우므로, 이 Flow가 EntitlementId를 신뢰해도 임의 계약이 붙지 않는다.</description>
     <environments>Default</environments>
     <interviewLabel>Case Service Contract Auto Match</interviewLabel>
     <label>Case Service Contract 자동 연결</label>
@@ -458,7 +458,7 @@
         <triggerType>RecordBeforeSave</triggerType>
     </start>
     <status>Draft</status>
-    <triggerOrder>1010</triggerOrder>
+    <triggerOrder>20</triggerOrder>
     <variables>
         <description>Asset 기준 유효 Entitlement 후보 건수. 1일 때만 배정한다.</description>
         <name>varCandidateCount</name>
