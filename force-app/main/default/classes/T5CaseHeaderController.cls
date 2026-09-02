@@ -44,10 +44,10 @@ public with sharing class T5CaseHeaderController {
         h.agentFirstResponseAt = times.get('first');
         h.agentHandoffAt = times.get('handoff');
 
-        // 응답·복구 SLA — CaseMilestone duration(분)에서 도출
+        // 응답·복구 SLA — CaseMilestone duration(분)에서 도출. 없으면 기본값.
         Map<String, String> sla = getSlaTargets(current.Id);
-        h.responseSla = sla.get('응답');
-        h.recoverySla = sla.get('복구');
+        h.responseSla = sla.containsKey('응답') ? sla.get('응답') : '30분';
+        h.recoverySla = sla.containsKey('복구') ? sla.get('복구') : '8시간';
 
         return h;
     }
