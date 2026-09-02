@@ -20,7 +20,7 @@
                     <span class="ren-hl-icon">R</span>
                     <div class="ren-hl-title">
                         <p class="ren-hl-eyebrow">Renewal Flow 생성 · 2026-07-31</p>
-                        <h1 class="ren-hl-name">서비스 결과는 계약 운영 성과로 누적됩니다</h1>
+                        <h1 class="ren-hl-name">아이온데이터 CDU SLA 보증 계약 갱신 검토</h1>
                     </div>
                     <span class="slds-badge ren-badge-rule">Renewal Flow 생성</span>
                 </div>
@@ -74,10 +74,6 @@
                                     <div class="kv-row"><dt>계약 종료일</dt><dd class="num">2026-09-30</dd></div>
                                     <div class="kv-row"><dt>Related To</dt><dd>SC-2022-0114</dd></div>
                                 </dl>
-                                <div class="callout co-blue slds-m-top_small">
-                                    <span class="co-ico">&#x21A6;</span>
-                                    <div>계약 종료일과 최근 서비스 운영 성과를 확인한 뒤 갱신 진행 여부를 결정하세요.</div>
-                                </div>
                                 <button class="btn-go slds-m-top_small" onclick={handleShowContract}>Service Contract 열기</button>
                             </div>
                         </lightning-card>
@@ -93,7 +89,7 @@
                     <span class="sc-hl-icon">SC</span>
                     <div class="sc-hl-title">
                         <p class="sc-hl-eyebrow">Service Contract · 아이온데이터</p>
-                        <h1 class="sc-hl-name">아이온데이터 유지보수 계약</h1>
+                        <h1 class="sc-hl-name">아이온데이터 CDU SLA 보증 계약</h1>
                     </div>
                     <div class="sc-hl-actions">
                         <template lwc:if={opportunityCreated}>
@@ -146,11 +142,6 @@
                         </div>
                     </lightning-card>
 
-                    <div class="callout co-blue slds-m-top_small">
-                        <span class="co-ico">&#x25C6;</span>
-                        <div>계약 정보와 최근 서비스 성과를 함께 검토해 갱신 진행 여부를 판단합니다.</div>
-                    </div>
-
                     <template lwc:if={opportunityCreated}>
                         <div class="callout co-green slds-m-top_small">
                             <span class="co-ico">&#x2713;</span>
@@ -176,16 +167,6 @@
                         </div>
                     </lightning-card>
 
-                    <div class="callout co-blue slds-m-top_small">
-                        <span class="co-ico">&#x25C6;</span>
-                        <div><strong>자동화와 사람의 경계</strong>
-                            <p class="boundary-text">
-                                Flow는 갱신 검토 <b>Task까지만</b> 생성합니다.<br/>
-                                나세일이 계약·성과를 <b>검토</b>합니다.<br/>
-                                <b>Opportunity 생성은 영업 담당자가 직접 실행</b>합니다.
-                            </p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </template>

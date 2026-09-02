@@ -1,0 +1,65 @@
+<template>
+    <div class="home">
+        <header class="hero">
+            <p class="hero__brand">OT전자 영업</p>
+            <h1 class="hero__greeting">{greetingLine}</h1>
+            <p class="hero__subtitle">오늘의 영업 현황입니다</p>
+            <div class="summary-row">
+                <div class="summary">
+                    <p class="summary__label">미완료 Task</p>
+                    <p class="summary__count">{taskCount}건</p>
+                </div>
+                <div class="summary">
+                    <p class="summary__label">진행 중 Opportunity</p>
+                    <p class="summary__count">{oppCount}건</p>
+                </div>
+            </div>
+        </header>
+
+        <section class="section">
+            <h2 class="section__title">My Tasks</h2>
+            <template lwc:if={hasTasks}>
+                <ul class="list">
+                    <template for:each={tasks} for:item="t">
+                        <li key={t.id} class="card">
+                            <div class="card__btn" role="button" tabindex="0"
+                                data-id={t.id} onclick={handleOpenRecord}>
+                                <div class="card__row">
+                                    <span class="card__subject">{t.subject}</span>
+                                    <span class="badge badge_planned">{t.status}</span>
+                                </div>
+                                <p class="card__meta">Due {t.dueDate} · {t.relatedTo}</p>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <p class="empty">미완료 Task가 없습니다.</p>
+            </template>
+        </section>
+
+        <section class="section">
+            <h2 class="section__title">진행 중 Opportunity</h2>
+            <template lwc:if={hasOpportunities}>
+                <ul class="list">
+                    <template for:each={opportunities} for:item="o">
+                        <li key={o.id} class="card card--opp">
+                            <div class="card__btn" role="button" tabindex="0"
+                                data-id={o.id} onclick={handleOpenRecord}>
+                                <div class="card__row">
+                                    <span class="card__subject">{o.name}</span>
+                                    <span class="badge badge_stage">{o.stage}</span>
+                                </div>
+                                <p class="card__meta">{o.account} · {o.amountFormatted} · Close {o.closeDate}</p>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <p class="empty">진행 중 Opportunity가 없습니다.</p>
+            </template>
+        </section>
+    </div>
+</template>
