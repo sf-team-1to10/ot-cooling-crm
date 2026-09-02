@@ -53,8 +53,7 @@
     <tabs>standard-WorkOrder</tabs>
     <tabs>standard-Case</tabs>
     <tabs>standard-Problem</tabs>
-    <tabs>Dispatch_Briefing_Workbench</tabs>
-    <tabs>Renewal_Tasks</tabs>
+    <tabs>standard-ServiceContract</tabs>
     <tabs>Sales_Dashboard</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>OT_Cooling_Continuity_UtilityBar</utilityBar>
@@ -63,10 +62,7 @@
             <tab>Customer_Commitment__c</tab>
         </mappings>
         <mappings>
-            <tab>Dispatch_Briefing_Workbench</tab>
-        </mappings>
-        <mappings>
-            <tab>Renewal_Tasks</tab>
+            <tab>standard-ServiceContract</tab>
         </mappings>
         <mappings>
             <tab>Sales_Dashboard</tab>

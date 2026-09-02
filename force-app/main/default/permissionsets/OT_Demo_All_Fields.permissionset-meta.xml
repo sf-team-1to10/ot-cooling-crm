@@ -1084,10 +1084,6 @@
     <hasActivationRequired>false</hasActivationRequired>
     <label>OT Demo All Fields</label>
     <tabSettings>
-        <tab>Renewal_Tasks</tab>
-        <visibility>Visible</visibility>
-    </tabSettings>
-    <tabSettings>
         <tab>Sales_Dashboard</tab>
         <visibility>Visible</visibility>
     </tabSettings>

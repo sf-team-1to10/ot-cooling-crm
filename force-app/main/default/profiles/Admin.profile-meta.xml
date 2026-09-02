@@ -70,14 +70,6 @@
         <readable>true</readable>
         <editable>true</editable>
     </fieldPermissions>
-    <tabVisibilities>
-        <tab>Dispatch_Briefing_Workbench</tab>
-        <visibility>DefaultOn</visibility>
-    </tabVisibilities>
-    <tabVisibilities>
-        <tab>Renewal_Tasks</tab>
-        <visibility>DefaultOn</visibility>
-    </tabVisibilities>
     <fieldPermissions>
         <editable>true</editable>
         <field>WorkOrderLineItem.Baseline_Value__c</field>
