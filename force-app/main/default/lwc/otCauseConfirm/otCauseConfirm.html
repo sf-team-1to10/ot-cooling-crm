@@ -22,96 +22,66 @@
             <button class="subtab">협업 로그</button>
         </div>
 
-        <!-- ── 하이라이트 ── -->
-        <div class="rca-hl">
-            <div class="rca-hl-head">
-                <span class="rca-hl-icon icon-green">→</span>
-                <div class="rca-hl-title">
-                    <!-- 도메인: Problem은 WO의 자식이 아니라 Case 라인(CaseRelatedIssue)에 붙는다. -->
-                    <p class="rca-hl-eyebrow">Case 00001042 · 원인 확정 → Problem 승격</p>
-                    <h1 class="rca-hl-name">현장에서 확정된 원인을 Problem으로 넘깁니다</h1>
-                </div>
-                <div class="rca-hl-actions">
-                    <template lwc:if={problemCreated}>
-                        <button type="button" class="rca-done" disabled>PRB-0091 생성됨</button>
-                        <lightning-button label="RCA 검토 →" variant="brand"
-                            onclick={handleGoRca}></lightning-button>
-                    </template>
-                    <template lwc:else>
-                        <lightning-button label="Problem 생성 · RCA 기록" variant="brand"
-                            onclick={handleCreateProblem}></lightning-button>
-                    </template>
-                </div>
-            </div>
-            <dl class="rca-hl-fields">
-                <div class="rca-hl-f"><dt>연결 Case</dt><dd class="num">00001042</dd></div>
-                <div class="rca-hl-f"><dt>현장 근거 WO</dt><dd class="num">00000318</dd></div>
-                <div class="rca-hl-f"><dt>측정 위치</dt><dd>F-07</dd></div>
-                <div class="rca-hl-f"><dt>작업 완료</dt><dd class="num">04-08 05:30</dd></div>
-                <template lwc:if={problemCreated}>
-                    <div class="rca-hl-f"><dt>생성된 Problem</dt><dd class="num">PRB-0091</dd></div>
-                </template>
-            </dl>
-        </div>
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
 
-        <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
-            <!-- 중앙: 가설 → 원인 확정 타임라인 -->
-            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
-                <lightning-card>
-                    <span slot="title" class="slds-text-heading_small">가설이 원인으로 확정된 경로</span>
-                    <span slot="actions" class="slds-badge rca-badge-human">현장 측정으로 확정</span>
-                    <div class="slds-p-horizontal_medium slds-p-bottom_medium">
-                        <div class="tl">
-                            <div class="tl-node">
-                                <div class="tl-dot"></div>
-                                <div class="tl-when">02:40 · 출동 브리핑</div>
-                                <div class="tl-what">가설 — F-07 체결 상태 저하</div>
-                                <div class="tl-detail">Rev.B 변경 구간 · 2022년 동일 위치 불합격 이력
-                                    <span class="slds-badge rca-badge-agent">Agent 제안</span></div>
-                            </div>
-                            <div class="tl-node hit">
-                                <div class="tl-dot"></div>
-                                <div class="tl-when">03:55 · 현장 최초 측정</div>
-                                <div class="tl-what">F-07 <span class="num crit">71 N·m</span> — 불합격</div>
-                                <div class="tl-detail">허용 99–121 밖. <b>가설이 측정으로 확인된 지점입니다.</b></div>
-                            </div>
-                            <div class="tl-node ok">
-                                <div class="tl-dot"></div>
-                                <div class="tl-when">05:30 · 재조임 후 재시험</div>
-                                <div class="tl-what">F-07 <span class="num green">111 N·m</span> · 유량 <span class="num green">2,080</span></div>
-                                <div class="tl-detail">체결값 회복과 함께 유량도 정상 범위로 돌아왔습니다. <b>인과가 닫혔습니다.</b></div>
-                            </div>
-                            <div class="tl-node ok">
-                                <div class="tl-dot"></div>
-                                <div class="tl-when">06:24 · 고객 복구 확인</div>
-                                <div class="tl-what">직접 원인 확정</div>
-                                <div class="tl-detail">이제 이 원인을 <b>Problem 레코드</b>로 남겨야 12대 전체의 예방으로 확장됩니다.</div>
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template lwc:if={evidence}>
+            <!-- ── 하이라이트 ── -->
+            <div class="rca-hl">
+                <div class="rca-hl-head">
+                    <span class="rca-hl-icon icon-green">→</span>
+                    <div class="rca-hl-title">
+                        <p class="rca-hl-eyebrow">Case {caseNumber} · 원인 확정 → Problem 승격</p>
+                        <h1 class="rca-hl-name">현장에서 확정된 원인을 Problem으로 넘깁니다</h1>
+                    </div>
+                    <div class="rca-hl-actions">
+                        <template lwc:if={problemCreated}>
+                            <button type="button" class="rca-done" disabled>Problem 생성됨</button>
+                            <lightning-button label="RCA 검토 →" variant="brand"
+                                onclick={handleGoRca}></lightning-button>
+                        </template>
+                        <template lwc:else>
+                            <lightning-button label="Problem 생성 · RCA 기록" variant="brand"
+                                onclick={handleCreateProblem}></lightning-button>
+                        </template>
+                    </div>
+                </div>
+                <dl class="rca-hl-fields">
+                    <div class="rca-hl-f"><dt>Asset</dt><dd>{assetName}</dd></div>
+                    <div class="rca-hl-f"><dt>Revision</dt><dd>{revisionText}</dd></div>
+                    <div class="rca-hl-f"><dt>최초 불합격</dt><dd class="num">{firstFailValue}</dd></div>
+                    <div class="rca-hl-f"><dt>재시험 합격</dt><dd class="num">{retestPassValue}</dd></div>
+                </dl>
+            </div>
+
+            <!-- ── 타임라인 ── -->
+            <template lwc:if={hasTimeline}>
+                <div class="slds-m-top_small">
+                    <lightning-card>
+                        <span slot="title" class="slds-text-heading_small">가설이 원인으로 확정된 경로</span>
+                        <span slot="actions" class="slds-badge rca-badge-human">현장 측정으로 확정</span>
+                        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                            <div class="tl">
+                                <template for:each={timeline} for:item="node">
+                                    <div key={node.key} class={node.nodeClass}>
+                                        <div class="tl-dot"></div>
+                                        <div class="tl-when">{node.whenText}</div>
+                                        <div class="tl-what">{node.what}</div>
+                                        <div class="tl-detail">{node.detail}</div>
+                                    </div>
+                                </template>
                             </div>
                         </div>
-                    </div>
-                </lightning-card>
-            </div>
-
-            <!-- 우측: Problem으로 넘어가는 필드 매핑 -->
-            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
-                <lightning-card>
-                    <span slot="title" class="slds-text-heading_small">Problem으로 넘어가는 것</span>
-                    <span slot="actions" class="slds-badge rca-badge-neutral">필드 매핑</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
-                        <table class="tbl">
-                            <thead><tr><th>출처</th><th>값</th><th>→ Problem</th></tr></thead>
-                            <tbody>
-                                <tr><td>WOLI 최초</td><td class="num">71 N·m 불합격</td><td>RootCauseSummary</td></tr>
-                                <tr><td>WOLI 재시험</td><td class="num">111 N·m 합격</td><td>ResolutionSummary</td></tr>
-                                <tr><td>측정 위치</td><td>F-07</td><td>RootCauseSummary</td></tr>
-                                <tr><td>Asset Revision</td><td>Rev.B</td><td>Category</td></tr>
-                                <tr><td>WO 잠정 원인</td><td>체결 상태 저하</td><td>RootCauseSummary</td></tr>
-                                <tr><td>Case</td><td class="num">00001042</td><td>연결 Case</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </lightning-card>
-            </div>
-        </div>
+                    </lightning-card>
+                </div>
+            </template>
+        </template>
     </div>
 </template>

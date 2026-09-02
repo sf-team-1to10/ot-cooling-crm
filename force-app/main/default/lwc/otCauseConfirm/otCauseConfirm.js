@@ -7,15 +7,14 @@ import {
     IsConsoleNavigation
 } from 'lightning/platformWorkspaceApi';
 import { openOrFocusSubtab } from 'c/otConsoleNav';
+import getEvidence from '@salesforce/apex/T5AssetEvidenceController.getEvidence';
 
-// 프로토타입 v-cause(19) — 현장 근거로 확정된 원인을 Case의 Problem으로 승격.
 export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     @api recordId;
     _stateRecordId;
     _tabId;
     _tabLabeled = false;
 
-    // "Problem 생성·RCA 기록" 클릭 시 같은 화면에서 생성 상태로 전환(프로토타입 applyCause).
     problemCreated = false;
 
     @wire(CurrentPageReference)
@@ -49,18 +48,66 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
         await setTabIcon(this._tabId, 'standard:incident');
     }
 
+    evidence;
+    error;
+
+    @wire(getEvidence, { caseId: '$effectiveRecordId' })
+    wiredEvidence({ data, error }) {
+        if (data) {
+            this.evidence = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.evidence = undefined;
+        }
+    }
+
+    get isLoading() {
+        return !this.evidence && !this.error;
+    }
+
+    get errorMessage() {
+        return this.error?.body?.message || '원인확정 데이터를 불러오지 못했습니다.';
+    }
+
+    get caseNumber() {
+        return this.evidence?.caseNumber || '';
+    }
+
+    get assetName() {
+        return this.evidence?.assetName || '';
+    }
+
+    get revisionText() {
+        return this.evidence?.summary?.revisionText || '';
+    }
+
+    get firstFailValue() {
+        return this.evidence?.summary?.firstFailValue || '—';
+    }
+
+    get retestPassValue() {
+        return this.evidence?.summary?.retestPassValue || '—';
+    }
+
+    get timeline() {
+        return this.evidence?.timeline || [];
+    }
+
+    get hasTimeline() {
+        return this.timeline.length > 0;
+    }
+
     handleCreateProblem() {
         this.problemCreated = true;
     }
 
-    // "RCA 검토 →" — 20번(otProblemRca) 탭으로 진행.
     handleGoRca() {
         this.navigate('c__otProblemRca');
     }
 
     async handleSubtab(event) {
-        const target = event.currentTarget.dataset.goto;
-        this.navigate(target);
+        this.navigate(event.currentTarget.dataset.goto);
     }
 
     async navigate(target) {

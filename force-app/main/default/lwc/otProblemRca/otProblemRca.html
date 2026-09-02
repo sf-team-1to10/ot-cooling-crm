@@ -22,70 +22,52 @@
             <button class="subtab">협업 로그</button>
         </div>
 
-        <!-- ── 하이라이트 ── -->
-        <div class="rca-hl">
-            <div class="rca-hl-head">
-                <span class="rca-hl-icon icon-crit">P</span>
-                <div class="rca-hl-title">
-                    <p class="rca-hl-eyebrow">Problem PRB-0091 · Case 00001042에서 생성</p>
-                    <h1 class="rca-hl-name">A-07만 고치면 끝인가</h1>
-                </div>
-                <div class="rca-hl-actions">
-                    <lightning-button label="RCA·범위 확정 저장" variant="brand"
-                        onclick={handleSaveRca}></lightning-button>
-                </div>
-            </div>
-            <dl class="rca-hl-fields">
-                <div class="rca-hl-f"><dt>현장 근거</dt><dd class="num">F-07 · 71 → 111</dd></div>
-                <div class="rca-hl-f"><dt>연결 Case</dt><dd class="num">00001042</dd></div>
-                <div class="rca-hl-f"><dt>저장 시 실행</dt><dd><span class="slds-badge rca-badge-rule">PRI_ Flow</span></dd></div>
-            </dl>
-        </div>
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
 
-        <div class="slds-m-top_small">
-            <lightning-card>
-                <span slot="title" class="slds-text-heading_small">원인 구분</span>
-                <span slot="actions" class="slds-badge rca-badge-human">담당자 확정</span>
-                <div class="slds-p-horizontal_medium slds-p-bottom_medium co-stack">
-                    <div class="callout co-crit">
-                        <span class="co-ico">→</span>
-                        <div><strong>직접 원인</strong>CDU-A-07 Rev.B 변경 구간 F-07의 체결 상태 저하 재발
-                            <div class="co-sub">근거 — 현장 측정 <span class="num">71 N·m 불합격</span> → 재조임
-                                <span class="num">111 N·m 합격</span> · 유량 <span class="num">1,961 → 2,080</span>
-                                <span class="slds-badge rca-badge-human">WO 00000318에서 확정</span></div>
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template lwc:if={rca}>
+            <!-- ── 하이라이트 ── -->
+            <div class="rca-hl">
+                <div class="rca-hl-head">
+                    <span class="rca-hl-icon icon-crit">P</span>
+                    <div class="rca-hl-title">
+                        <p class="rca-hl-eyebrow">Problem {problemNumber} · Case {caseNumber}에서 생성</p>
+                        <h1 class="rca-hl-name">{rcaSubject}</h1>
+                    </div>
+                    <div class="rca-hl-actions">
+                        <lightning-button label="RCA·범위 확정 저장" variant="brand"
+                            onclick={handleSaveRca}></lightning-button>
+                    </div>
+                </div>
+                <dl class="rca-hl-fields">
+                    <div class="rca-hl-f"><dt>시정조치</dt><dd class="num">{correctiveCount}건</dd></div>
+                    <div class="rca-hl-f"><dt>예방확인</dt><dd class="num">{preventiveCount}건</dd></div>
+                </dl>
+            </div>
+
+            <div class="slds-m-top_small">
+                <lightning-card>
+                    <span slot="title" class="slds-text-heading_small">원인 구분</span>
+                    <span slot="actions" class="slds-badge rca-badge-human">담당자 확정</span>
+                    <div class="slds-p-horizontal_medium slds-p-bottom_medium co-stack">
+                        <div class="callout co-crit">
+                            <span class="co-ico">→</span>
+                            <div><strong>직접 원인</strong>{directCause}</div>
+                        </div>
+                        <div class="callout co-warn">
+                            <span class="co-ico">⚑</span>
+                            <div><strong>조직 차원의 근본원인</strong>{rootCause}</div>
                         </div>
                     </div>
-                    <div class="callout co-warn">
-                        <span class="co-ico">⚑</span>
-                        <div><strong>조직 차원의 근본원인</strong>재조임 후 합격으로 종료하고, 변경·재작업 위치를
-                            이후 점검에서 재확인하는 기준을 만들지 않음</div>
-                    </div>
-                </div>
-            </lightning-card>
-
-            <lightning-card class="slds-m-top_small">
-                <span slot="title" class="slds-text-heading_small">특수 조건과 공통 조건은 다른 질문에 답합니다</span>
-                <span slot="actions" class="slds-badge rca-badge-agent">Agent 제안</span>
-                <div class="slds-p-horizontal_small slds-p-bottom_small">
-                    <table class="tbl">
-                        <thead><tr><th>판단 단위</th><th>근거</th><th>답하는 질문</th><th>범위 후보</th></tr></thead>
-                        <tbody>
-                            <tr>
-                                <td><b>A-07만의 특수 조건</b></td>
-                                <td>Rev.B · F-07 · 과거 동일 위치 불합격</td>
-                                <td>장애 원인을 어디서 찾을까</td>
-                                <td><span class="slds-badge rca-badge-crit">시정조치 1건</span></td>
-                            </tr>
-                            <tr>
-                                <td><b>12대의 공통 조건</b></td>
-                                <td>같은 프로젝트 · 설치 기간 · 시공업체 · 연결부 규격 · 점검 기준 누락</td>
-                                <td>예방 범위를 어디까지 볼까</td>
-                                <td><span class="slds-badge rca-badge-warn">예방확인 11건</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </lightning-card>
-        </div>
+                </lightning-card>
+            </div>
+        </template>
     </div>
 </template>
