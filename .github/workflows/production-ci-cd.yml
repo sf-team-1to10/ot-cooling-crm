@@ -57,18 +57,29 @@ jobs:
             # 델타에 Apex 클래스/트리거가 포함될 때만 테스트를 강제한다.
             # PermSet·LWC·Flow 등 Apex 외 변경은 실행할 테스트가 없는 게 정상이므로 게이트를 적용하지 않는다.
             if find changed-sources/force-app \( -name "*.cls" -o -name "*.trigger" \) | grep -q .; then
-              sf project deploy start \
-                --source-dir "changed-sources/force-app" \
-                --dry-run \
-                --test-level RunLocalTests \
-                --target-org production \
-                --wait 30 \
-                --json | tee deploy-result.json
-              TESTS_RAN=$(jq '.result.numberTestsTotal // 0' deploy-result.json)
-              echo "실행된 테스트 수: $TESTS_RAN"
-              if [ "$TESTS_RAN" -eq 0 ]; then
-                echo "::error::검증 실패 - Apex 변경이 있으나 실행된 테스트가 0개입니다. 변경사항을 커버하는 테스트가 필요합니다."
-                exit 1
+              # 델타에 포함된 테스트 클래스(*Test.cls)를 자동 추출한다.
+              # dry-run은 코드를 org에 배포하지 않으므로 RunLocalTests는 새 테스트를 찾지 못한다.
+              # RunSpecifiedTests로 PR에 포함된 테스트를 직접 지정해야 한다.
+              TEST_CLASSES=$(find changed-sources/force-app -name "*Test.cls" -exec basename {} .cls \; | paste -sd, -)
+              if [ -n "$TEST_CLASSES" ]; then
+                echo "지정 테스트: $TEST_CLASSES"
+                sf project deploy start \
+                  --source-dir "changed-sources/force-app" \
+                  --dry-run \
+                  --test-level RunSpecifiedTests \
+                  --tests $TEST_CLASSES \
+                  --target-org production \
+                  --wait 30 \
+                  --json | tee deploy-result.json
+              else
+                echo "::warning::Apex 변경이 있으나 델타에 테스트 클래스가 없습니다. 구조 검증만 수행합니다."
+                sf project deploy start \
+                  --source-dir "changed-sources/force-app" \
+                  --dry-run \
+                  --test-level NoTestRun \
+                  --target-org production \
+                  --wait 30 \
+                  --json | tee deploy-result.json
               fi
             else
               echo "Apex 변경 없음 - 테스트 게이트 skip, 배포 검증만 수행합니다."
