@@ -1,83 +1,193 @@
 <template>
     <div class="renewal-wrap">
-        <!-- 시간 전환 배너 -->
-        <div class="notify">
-            <span class="notify-ico">&#x1F4C5;</span>
-            <div class="notify-body">
-                <b>계약 갱신 검토 구간 진입 · D-61</b> · 2026-07-31 — 갱신 검토를 연 것은 Case 종결이 아니라 계약 종료일(2026-09-30)입니다
-            </div>
+        <!-- ── 서브탭 바 ── -->
+        <div class="subtabs">
+            <button class={tasksTabClass} onclick={handleShowTasks}>My Tasks</button>
+            <button class={contractTabClass} onclick={handleShowContract}>Service Contract</button>
         </div>
 
-        <!-- 헤더 -->
-        <div class="ren-hl">
-            <div class="ren-hl-head">
-                <span class="ren-hl-icon">R</span>
-                <div class="ren-hl-title">
-                    <p class="ren-hl-eyebrow">Renewal Flow 생성 · 2026-07-31</p>
-                    <h1 class="ren-hl-name">서비스 결과는 계약 운영 성과로 누적됩니다</h1>
+        <!-- ═══ VIEW 1: My Tasks ═══ -->
+        <template lwc:if={isTasksView}>
+            <div class="notify">
+                <span class="notify-ico">&#x1F4C5;</span>
+                <div class="notify-body">
+                    <b>계약 갱신 검토 구간 진입 · D-61</b> · 2026-07-31 — 갱신 검토를 연 것은 Case 종결이 아니라 계약 종료일(2026-09-30)입니다
                 </div>
-                <span class="slds-badge ren-badge-rule">Renewal Flow 생성</span>
             </div>
-        </div>
 
-        <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
-            <!-- My Tasks 목록 -->
-            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
-                <lightning-card>
-                    <span slot="title" class="slds-text-heading_small">My Tasks</span>
-                    <span slot="actions" class="slds-badge ren-badge-neutral">3건</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
-                        <div class="rl">
-                            <div class={renewalRowClass} data-task="renewal" onclick={handleSelectTask}>
-                                <span class="slds-badge ren-badge-warn">미착수</span>
-                                <div class="rl-main">
-                                    <div class="rl-t">아이온데이터 유지보수 계약 갱신 검토</div>
-                                    <div class="rl-s">Due 2026-08-01 · Renewal Flow 생성 · Related To SC-2022-0114</div>
-                                </div>
-                            </div>
-                            <div class="rl-row" data-task="quote" onclick={handleSelectTask}>
-                                <span class="slds-badge ren-badge-neutral">미착수</span>
-                                <div class="rl-main">
-                                    <div class="rl-t">세종클라우드 2기 견적 회신</div>
-                                    <div class="rl-s">Due 2026-08-03</div>
-                                </div>
-                            </div>
-                            <div class="rl-row" data-task="schedule" onclick={handleSelectTask}>
-                                <span class="slds-badge ren-badge-neutral">미착수</span>
-                                <div class="rl-main">
-                                    <div class="rl-t">대덕리서치 CDU 교체 일정 조율</div>
-                                    <div class="rl-s">Due 2026-08-05</div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="ren-hl">
+                <div class="ren-hl-head">
+                    <span class="ren-hl-icon">R</span>
+                    <div class="ren-hl-title">
+                        <p class="ren-hl-eyebrow">Renewal Flow 생성 · 2026-07-31</p>
+                        <h1 class="ren-hl-name">서비스 결과는 계약 운영 성과로 누적됩니다</h1>
                     </div>
-                </lightning-card>
+                    <span class="slds-badge ren-badge-rule">Renewal Flow 생성</span>
+                </div>
             </div>
 
-            <!-- Task 상세 사이드 패널 -->
-            <template lwc:if={isRenewalSelected}>
-                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+            <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
                     <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">Task 상세</span>
-                        <span slot="actions" class="slds-badge ren-badge-rule">Renewal Flow</span>
+                        <span slot="title" class="slds-text-heading_small">My Tasks</span>
+                        <span slot="actions" class="slds-badge ren-badge-neutral">3건</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <dl class="kv">
-                                <div class="kv-row"><dt>Subject</dt><dd>아이온데이터 유지보수 계약 갱신 검토</dd></div>
-                                <div class="kv-row"><dt>Assigned To</dt><dd>나세일</dd></div>
-                                <div class="kv-row"><dt>Status</dt><dd><span class="slds-badge ren-badge-warn">미착수</span></dd></div>
-                                <div class="kv-row"><dt>Due Date</dt><dd class="num">2026-08-01</dd></div>
-                                <div class="kv-row"><dt>Account</dt><dd>아이온데이터</dd></div>
-                                <div class="kv-row"><dt>계약 종료일</dt><dd class="num">2026-09-30</dd></div>
-                                <div class="kv-row"><dt>Related To</dt><dd>SC-2022-0114</dd></div>
-                            </dl>
-                            <div class="callout co-blue slds-m-top_small">
-                                <span class="co-ico">&#x21A6;</span>
-                                <div>계약 종료일과 최근 서비스 운영 성과를 확인한 뒤 갱신 진행 여부를 결정하세요.</div>
+                            <div class="rl">
+                                <div class={renewalRowClass} data-task="renewal" onclick={handleSelectTask}>
+                                    <span class="slds-badge ren-badge-warn">미착수</span>
+                                    <div class="rl-main">
+                                        <div class="rl-t">아이온데이터 유지보수 계약 갱신 검토</div>
+                                        <div class="rl-s">Due 2026-08-01 · Renewal Flow 생성 · Related To SC-2022-0114</div>
+                                    </div>
+                                </div>
+                                <div class="rl-row" data-task="quote" onclick={handleSelectTask}>
+                                    <span class="slds-badge ren-badge-neutral">미착수</span>
+                                    <div class="rl-main">
+                                        <div class="rl-t">세종클라우드 2기 견적 회신</div>
+                                        <div class="rl-s">Due 2026-08-03</div>
+                                    </div>
+                                </div>
+                                <div class="rl-row" data-task="schedule" onclick={handleSelectTask}>
+                                    <span class="slds-badge ren-badge-neutral">미착수</span>
+                                    <div class="rl-main">
+                                        <div class="rl-t">대덕리서치 CDU 교체 일정 조율</div>
+                                        <div class="rl-s">Due 2026-08-05</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </lightning-card>
                 </div>
-            </template>
-        </div>
+
+                <template lwc:if={isRenewalSelected}>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                        <lightning-card>
+                            <span slot="title" class="slds-text-heading_small">Task 상세</span>
+                            <span slot="actions" class="slds-badge ren-badge-rule">Renewal Flow</span>
+                            <div class="slds-p-horizontal_small slds-p-bottom_small">
+                                <dl class="kv">
+                                    <div class="kv-row"><dt>Subject</dt><dd>아이온데이터 유지보수 계약 갱신 검토</dd></div>
+                                    <div class="kv-row"><dt>Assigned To</dt><dd>나세일</dd></div>
+                                    <div class="kv-row"><dt>Status</dt><dd><span class="slds-badge ren-badge-warn">미착수</span></dd></div>
+                                    <div class="kv-row"><dt>Due Date</dt><dd class="num">2026-08-01</dd></div>
+                                    <div class="kv-row"><dt>Account</dt><dd>아이온데이터</dd></div>
+                                    <div class="kv-row"><dt>계약 종료일</dt><dd class="num">2026-09-30</dd></div>
+                                    <div class="kv-row"><dt>Related To</dt><dd>SC-2022-0114</dd></div>
+                                </dl>
+                                <div class="callout co-blue slds-m-top_small">
+                                    <span class="co-ico">&#x21A6;</span>
+                                    <div>계약 종료일과 최근 서비스 운영 성과를 확인한 뒤 갱신 진행 여부를 결정하세요.</div>
+                                </div>
+                                <button class="btn-go slds-m-top_small" onclick={handleShowContract}>Service Contract 열기</button>
+                            </div>
+                        </lightning-card>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ═══ VIEW 2: Service Contract ═══ -->
+        <template lwc:if={isContractView}>
+            <div class="sc-hl">
+                <div class="sc-hl-head">
+                    <span class="sc-hl-icon">SC</span>
+                    <div class="sc-hl-title">
+                        <p class="sc-hl-eyebrow">Service Contract · 아이온데이터</p>
+                        <h1 class="sc-hl-name">아이온데이터 유지보수 계약</h1>
+                    </div>
+                    <div class="sc-hl-actions">
+                        <template lwc:if={opportunityCreated}>
+                            <button type="button" class="renew-done" disabled>갱신 Opportunity 생성됨</button>
+                        </template>
+                        <template lwc:else>
+                            <button class="btn-go" onclick={handleCreateOpportunity}>갱신 Opportunity 생성</button>
+                        </template>
+                    </div>
+                </div>
+                <dl class="sc-hl-fields">
+                    <div class="sc-hl-f"><dt>상태</dt><dd><span class="slds-badge sc-badge-ok">Active</span></dd></div>
+                    <div class="sc-hl-f"><dt>계약 종료일</dt><dd class="num">2026-09-30</dd></div>
+                    <div class="sc-hl-f"><dt>갱신까지</dt><dd class="num sc-warn">D-61</dd></div>
+                    <div class="sc-hl-f"><dt>담당자</dt><dd>나세일</dd></div>
+                </dl>
+            </div>
+
+            <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                    <lightning-card>
+                        <span slot="title" class="slds-text-heading_small">계약 정보</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <dl class="kv">
+                                <div class="kv-row"><dt>계약 시작일</dt><dd class="num">2022-06-09</dd></div>
+                                <div class="kv-row"><dt>계약 종료일</dt><dd class="num">2026-09-30</dd></div>
+                                <div class="kv-row"><dt>계약 범위</dt><dd>유지보수 · SLA 보증</dd></div>
+                                <div class="kv-row"><dt>대상 장비</dt><dd>CDU 12대 + CX 4대 · 16대</dd></div>
+                                <div class="kv-row"><dt>응답 SLA</dt><dd class="num">30분</dd></div>
+                                <div class="kv-row"><dt>복구 SLA</dt><dd class="num">8시간</dd></div>
+                                <div class="kv-row"><dt>계약 금액</dt><dd class="num">0.9억/년</dd></div>
+                                <div class="kv-row"><dt>계약 상태</dt><dd><span class="slds-badge sc-badge-ok">Active</span></dd></div>
+                            </dl>
+                        </div>
+                    </lightning-card>
+
+                    <lightning-card class="slds-m-top_small sc-perf-card">
+                        <span slot="title" class="slds-text-heading_small">서비스 운영 성과</span>
+                        <span slot="actions" class="slds-badge sc-badge-agent">앞 장면 데이터</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <dl class="kv">
+                                <div class="kv-row"><dt>최근 Case</dt><dd class="num">00001042</dd></div>
+                                <div class="kv-row"><dt>최근 복구시간</dt><dd class="num">4시간 10분</dd></div>
+                                <div class="kv-row"><dt>기존 대비</dt><dd class="num sc-green">39% 단축</dd></div>
+                                <div class="kv-row"><dt>RCA</dt><dd><span class="slds-badge sc-badge-ok">완료</span> PRB-0091</dd></div>
+                                <div class="kv-row"><dt>시정조치</dt><dd class="num">1건</dd></div>
+                                <div class="kv-row"><dt>예방점검</dt><dd class="num">11건 생성/완료</dd></div>
+                                <div class="kv-row"><dt>미해결 중대 Case</dt><dd class="num sc-green">0건</dd></div>
+                            </dl>
+                        </div>
+                    </lightning-card>
+
+                    <div class="callout co-blue slds-m-top_small">
+                        <span class="co-ico">&#x25C6;</span>
+                        <div>계약 정보와 최근 서비스 성과를 함께 검토해 갱신 진행 여부를 판단합니다.</div>
+                    </div>
+
+                    <template lwc:if={opportunityCreated}>
+                        <div class="callout co-green slds-m-top_small">
+                            <span class="co-ico">&#x2713;</span>
+                            <div><strong>갱신 Opportunity가 생성되었습니다</strong>
+                                계약과 최근 서비스 성과가 영업 검토 근거로 연결되었습니다. Task 상태가 <b>완료</b>로 바뀌었습니다.</div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <lightning-card>
+                        <span slot="title" class="slds-text-heading_small">추가 성장 신호</span>
+                        <span slot="actions" class="slds-badge sc-badge-neutral">참고</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <div class="rl">
+                                <div class="rl-row">
+                                    <div class="rl-main">
+                                        <div class="rl-t">Hall B 확장 문의</div>
+                                        <div class="rl-s">2026-03-04 · 갱신 협의 시 확장 계획 확인 필요</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </lightning-card>
+
+                    <div class="callout co-blue slds-m-top_small">
+                        <span class="co-ico">&#x25C6;</span>
+                        <div><strong>자동화와 사람의 경계</strong>
+                            <p class="boundary-text">
+                                Flow는 갱신 검토 <b>Task까지만</b> 생성합니다.<br/>
+                                나세일이 계약·성과를 <b>검토</b>합니다.<br/>
+                                <b>Opportunity 생성은 영업 담당자가 직접 실행</b>합니다.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
     </div>
 </template>

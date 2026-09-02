@@ -54,6 +54,7 @@
     <tabs>standard-Case</tabs>
     <tabs>standard-Problem</tabs>
     <tabs>Dispatch_Briefing_Workbench</tabs>
+    <tabs>Renewal_Tasks</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>OT_Cooling_Continuity_UtilityBar</utilityBar>
     <workspaceConfig>
@@ -62,6 +63,9 @@
         </mappings>
         <mappings>
             <tab>Dispatch_Briefing_Workbench</tab>
+        </mappings>
+        <mappings>
+            <tab>Renewal_Tasks</tab>
         </mappings>
         <mappings>
             <tab>Technical_Baseline_Spec__c</tab>
