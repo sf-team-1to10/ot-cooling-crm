@@ -22,117 +22,117 @@
             <button class="subtab">협업 로그</button>
         </div>
 
-        <!-- ── 하이라이트 ── -->
-        <div class="action-hl">
-            <div class="action-hl-head">
-                <span class="action-hl-icon">✓</span>
-                <div class="action-hl-title">
-                    <p class="action-hl-eyebrow">승인 범위로 작업 생성됨 · Problem PRB-0091</p>
-                    <h1 class="action-hl-name">시정 1건 · 예방 11건 · 합계 12건</h1>
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
+
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template lwc:if={actions}>
+            <!-- ── 하이라이트 ── -->
+            <div class="action-hl">
+                <div class="action-hl-head">
+                    <span class="action-hl-icon">✓</span>
+                    <div class="action-hl-title">
+                        <p class="action-hl-eyebrow">승인 범위로 작업 생성됨 · Problem {problemNumber}</p>
+                        <h1 class="action-hl-name">시정 {correctiveCount}건 · 예방 {preventiveCount}건 · 합계 {totalCount}건</h1>
+                    </div>
+                </div>
+                <dl class="action-hl-fields">
+                    <div class="action-hl-f"><dt>시정조치</dt><dd class="num">{correctiveCount}건</dd></div>
+                    <div class="action-hl-f"><dt>예방확인</dt><dd class="num">{preventiveCount}건</dd></div>
+                    <div class="action-hl-f"><dt>합계</dt><dd class="num">{totalCount}건</dd></div>
+                </dl>
+            </div>
+
+            <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+                <!-- 중앙: 생성된 WO + 점검표 개정 -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                    <lightning-card>
+                        <span slot="title" class="slds-text-heading_small">생성된 Work Order</span>
+                        <span slot="actions" class="slds-badge rca-badge-rule">PRI_ Flow</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <template lwc:if={hasWorkOrders}>
+                                <div class="rl">
+                                    <template for:each={workOrders} for:item="wo">
+                                        <div key={wo.workOrderNumber} class="rl-row">
+                                            <span class={wo.badgeClass}>{wo.badgeLabel}</span>
+                                            <div class="rl-main">
+                                                <div class="rl-t">{wo.workOrderNumber} · {wo.subject}</div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template lwc:else>
+                                <p class="slds-text-body_small slds-text-color_weak">생성된 Work Order가 없습니다.</p>
+                            </template>
+                        </div>
+                    </lightning-card>
+
+                    <lightning-card class="slds-m-top_small">
+                        <span slot="title" class="slds-text-heading_small">점검표 개정</span>
+                        <span slot="actions" class="slds-badge scope-preventive">Rev.2 → Rev.3</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>점검 항목</th>
+                                        <th>Rev.2</th>
+                                        <th>Rev.3</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={checklistRows} for:item="row">
+                                        <tr key={row.key}>
+                                            <td><b>{row.item}</b></td>
+                                            <td>{row.rev2}</td>
+                                            <td>
+                                                <template lwc:if={row.isNew}>
+                                                    <span class="slds-badge scope-new">{row.rev3}</span>
+                                                </template>
+                                                <template lwc:else>
+                                                    {row.rev3}
+                                                </template>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <!-- 우측: Knowledge 초안 -->
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <lightning-card class="kb-card">
+                        <span slot="title" class="slds-text-heading_small">Knowledge 초안</span>
+                        <span slot="actions" class="slds-badge rca-badge-agent">Agent 제안</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <p class="kb-lead">이번 해결 내용은 기존 Knowledge와 완전히 같은 사례가 아니었습니다.</p>
+
+                            <div class="kb-inner">
+                                <dl class="kb-kv">
+                                    <div><dt>근거</dt><dd>{evidenceSource}</dd></div>
+                                    <div><dt>원기록</dt><dd class="num">{commissionText}</dd></div>
+                                    <div><dt>측정</dt><dd class="num">{recoveryText}</dd></div>
+                                    <div><dt>공개 범위</dt><dd><span class="slds-badge">검토 필요</span></dd></div>
+                                </dl>
+                            </div>
+
+                            <div class="kb-actions">
+                                <lightning-button label="등록 검토" variant="brand"></lightning-button>
+                                <lightning-button label="보류"></lightning-button>
+                            </div>
+                            <p class="kb-note">자동으로 게시하지 않습니다. 최종 판단은 담당자에게 남깁니다.</p>
+                        </div>
+                    </lightning-card>
                 </div>
             </div>
-            <dl class="action-hl-fields">
-                <div class="action-hl-f"><dt>시정조치</dt><dd class="num">1건</dd></div>
-                <div class="action-hl-f"><dt>예방확인</dt><dd class="num">11건</dd></div>
-                <div class="action-hl-f"><dt>합계</dt><dd class="num">12건</dd></div>
-            </dl>
-        </div>
-
-        <!-- ── 결과 카운트 ── -->
-        <div class="res-grid slds-m-top_small">
-            <div class="res"><div class="res-n green">1</div><div class="res-l">시정조치</div></div>
-            <div class="res"><div class="res-n warn">11</div><div class="res-l">예방확인</div></div>
-            <div class="res"><div class="res-n">12</div><div class="res-l">합계</div></div>
-        </div>
-
-        <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
-            <!-- 중앙: 자동 생성 WO + 점검표 개정 -->
-            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
-                <lightning-card>
-                    <span slot="title" class="slds-text-heading_small">자동 생성된 Work Order</span>
-                    <span slot="actions" class="slds-badge rca-badge-rule">PRI_ Flow</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
-                        <div class="rl">
-                            <div class="rl-row">
-                                <span class="slds-badge scope-corrective">시정</span>
-                                <div class="rl-main">
-                                    <div class="rl-t">WO-00000319 · CDU-A-07 F-07 재점검</div>
-                                    <div class="rl-s">강시공 · 2026-04-15 예정</div>
-                                </div>
-                            </div>
-                            <div class="rl-row">
-                                <span class="slds-badge scope-preventive">예방</span>
-                                <div class="rl-main">
-                                    <div class="rl-t">WO-00000320~330 · Hall A 나머지 11대 점검</div>
-                                    <div class="rl-s">배정 미정 · 2026-04-22 예정 (SLA 계산 기반)</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </lightning-card>
-
-                <lightning-card class="slds-m-top_small">
-                    <span slot="title" class="slds-text-heading_small">점검표 개정</span>
-                    <span slot="actions" class="slds-badge scope-preventive">Rev.2 → Rev.3</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
-                        <table class="tbl">
-                            <thead>
-                                <tr>
-                                    <th>점검 항목</th>
-                                    <th>Rev.2</th>
-                                    <th>Rev.3</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template for:each={checklistRows} for:item="row">
-                                    <tr key={row.key}>
-                                        <td><b>{row.item}</b></td>
-                                        <td>{row.rev2}</td>
-                                        <td>
-                                            <template lwc:if={row.isNew}>
-                                                <span class="slds-badge scope-new">{row.rev3}</span>
-                                            </template>
-                                            <template lwc:else>
-                                                {row.rev3}
-                                            </template>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </div>
-                </lightning-card>
-            </div>
-
-            <!-- 우측: T5-22 Knowledge 초안 -->
-            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
-                <lightning-card class="kb-card">
-                    <span slot="title" class="slds-text-heading_small">T5-22 Knowledge 초안</span>
-                    <span slot="actions" class="slds-badge rca-badge-agent">Agent 제안</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
-                        <p class="kb-lead">이번 해결 내용은 기존 Knowledge와 완전히 같은 사례가 아니었습니다. Case와 RCA를 비교해 신규 사례 가능성을 감지했습니다.</p>
-
-                        <div class="kb-inner">
-                            <p class="mini-label">RCA에서 추출</p>
-                            <div class="kb-quote">변경·재작업 위치에 대한 체결 상태 재확인 기준이 없어 같은 위치에서 반복 불합격이 발생했습니다.</div>
-                            <div class="kb-arrow">↓</div>
-                            <p class="kb-title">변경 적용 구간의 체결 상태 재발 — 확인 순서와 재점검 기준</p>
-                            <dl class="kb-kv">
-                                <div><dt>2022 원기록</dt><dd class="num">68 → 112</dd></div>
-                                <div><dt>2026 측정</dt><dd class="num">71 → 111</dd></div>
-                                <div><dt>근거</dt><dd>Case 00001042 · PRB-0091</dd></div>
-                                <div><dt>공개 범위</dt><dd><span class="slds-badge">검토 필요</span></dd></div>
-                            </dl>
-                        </div>
-
-                        <div class="kb-actions">
-                            <lightning-button label="등록 검토" variant="brand"></lightning-button>
-                            <lightning-button label="보류"></lightning-button>
-                        </div>
-                        <p class="kb-note">자동으로 게시하지 않습니다. 등록 누락을 줄이고 최종 판단은 담당자에게 남깁니다.</p>
-                    </div>
-                </lightning-card>
-            </div>
-        </div>
+        </template>
     </div>
 </template>
