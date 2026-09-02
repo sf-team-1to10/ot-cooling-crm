@@ -169,7 +169,17 @@ public with sharing class T5DispatchBriefingController {
             ORDER BY CreatedDate DESC
         ]) {
             Id aid = w.WorkOrder.AssetId;
-            Boolean isAbnormal = w.Trend_Flag__c == TREND_ABNORMAL || w.Trend_Flag__c == TREND_WARNING;
+            Decimal drift = w.Drift_From_Baseline__c;
+            if (drift == null && w.Baseline_Value__c != null && w.Baseline_Value__c != 0) {
+                drift = ((w.Measured_Value__c - w.Baseline_Value__c) / w.Baseline_Value__c * 100).setScale(2);
+                w.Drift_From_Baseline__c = drift;
+            }
+            String trend = w.Trend_Flag__c;
+            if (trend == null && drift != null) {
+                trend = drift <= -5 ? TREND_ABNORMAL : (drift <= -2 ? TREND_WARNING : '정상');
+                w.Trend_Flag__c = trend;
+            }
+            Boolean isAbnormal = trend == TREND_ABNORMAL || trend == TREND_WARNING;
             if (isAbnormal) {
                 if (!abnormalByAsset.containsKey(aid)) {
                     abnormalByAsset.put(aid, w);

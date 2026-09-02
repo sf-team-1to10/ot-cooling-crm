@@ -1,8 +1,5 @@
 <template>
     <div class="slds-p-vertical_x-small">
-        <!-- ── Path 바 (path:5 = RCA·예방·지식 on) ── -->
-        <c-ot-case-path record-id={effectiveRecordId}></c-ot-case-path>
-
         <template lwc:if={isLoading}>
             <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
         </template>

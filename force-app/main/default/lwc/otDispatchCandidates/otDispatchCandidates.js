@@ -14,6 +14,7 @@ export default class OtDispatchCandidates extends LightningElement {
     _tabLabeled = false;
 
     isAssigned = false;
+    selectedCand = 'kang';
 
     @wire(CurrentPageReference)
     setPageRef(pageRef) {
@@ -83,8 +84,30 @@ export default class OtDispatchCandidates extends LightningElement {
         return [acct, loc].filter(Boolean).join(' ');
     }
 
-    get cand1Class() {
-        return this.isAssigned ? 'cand-item picked' : 'cand-item top';
+    get selectedName() {
+        const map = { kang: '강시공', lim: '임수리', jeon: '전배관' };
+        return map[this.selectedCand] || '';
+    }
+
+    candClass(key, extra) {
+        if (this.isAssigned) {
+            return this.selectedCand === key ? 'cand-item picked' : 'cand-item out';
+        }
+        const base = this.selectedCand === key ? 'cand-item selected' : 'cand-item';
+        return extra ? `${base} ${extra}` : base;
+    }
+
+    get cand1Class() { return this.candClass('kang', ''); }
+    get cand2Class() { return this.candClass('lim', ''); }
+    get cand3Class() { return this.candClass('jeon', ''); }
+
+    handleSelectCand(event) {
+        if (this.isAssigned) return;
+        this.selectedCand = event.currentTarget.dataset.cand;
+    }
+
+    get assignButtonLabel() {
+        return `${this.selectedName} 확정`;
     }
 
     handleAssign() {

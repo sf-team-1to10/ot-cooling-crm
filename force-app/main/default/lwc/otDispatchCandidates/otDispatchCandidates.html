@@ -1,8 +1,5 @@
 <template>
     <div class="slds-p-vertical_x-small">
-        <!-- ── Path 바 (프로토타입 v-candidates, 담당자 배정 단계) ── -->
-        <c-ot-case-path record-id={effectiveRecordId}></c-ot-case-path>
-
         <template lwc:if={isLoading}>
             <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
         </template>
@@ -25,10 +22,10 @@
                 <div class="cand-hl-actions">
                     <span class="slds-badge cand-badge-rule">스케줄링 정책 · 긴급</span>
                     <template lwc:if={isAssigned}>
-                        <button type="button" class="assign-done" disabled>확정됨 · 강시공</button>
+                        <button type="button" class="assign-done" disabled>확정됨 · {selectedName}</button>
                     </template>
                     <template lwc:else>
-                        <lightning-button label="강시공 확정" variant="brand"
+                        <lightning-button label={assignButtonLabel} variant="brand"
                             onclick={handleAssign}></lightning-button>
                     </template>
                 </div>
@@ -38,7 +35,7 @@
                 <div class="cand-hl-f"><dt>복구 SLA</dt><dd class="num">8시간 · 잔여 7시간 26분</dd></div>
                 <div class="cand-hl-f"><dt>현장</dt><dd>{siteLocation}</dd></div>
                 <template lwc:if={isAssigned}>
-                    <div class="cand-hl-f"><dt>배정</dt><dd>강시공 · <span class="num">02:46</span></dd></div>
+                    <div class="cand-hl-f"><dt>배정</dt><dd>{selectedName} · <span class="num">02:46</span></dd></div>
                 </template>
             </dl>
         </div>
@@ -52,7 +49,7 @@
                     <span slot="actions" class="slds-badge cand-badge-rule">규칙 산정</span>
                     <div class="slds-p-horizontal_small slds-p-bottom_small">
                         <div class="cand">
-                            <div class={cand1Class}>
+                            <div class={cand1Class} data-cand="kang" onclick={handleSelectCand}>
                                 <div class="cand-av cand-av-green">강</div>
                                 <div class="cand-body">
                                     <div class="cand-name">강시공
@@ -65,7 +62,7 @@
                                 <div class="cand-eta"><div class="t cand-t-green">03:30</div><div class="l">도착 예정</div></div>
                             </div>
 
-                            <div class="cand-item">
+                            <div class={cand2Class} data-cand="lim" onclick={handleSelectCand}>
                                 <div class="cand-av cand-av-warn">임</div>
                                 <div class="cand-body">
                                     <div class="cand-name">임수리 <span class="slds-badge cand-badge-neutral">2순위</span></div>
@@ -75,7 +72,7 @@
                                 <div class="cand-eta"><div class="t cand-t-warn">04:40</div><div class="l">도착 예정</div></div>
                             </div>
 
-                            <div class="cand-item out">
+                            <div class={cand3Class} data-cand="jeon" onclick={handleSelectCand}>
                                 <div class="cand-av cand-av-muted">전</div>
                                 <div class="cand-body">
                                     <div class="cand-name">전배관 <span class="slds-badge cand-badge-crit">SLA 초과</span></div>

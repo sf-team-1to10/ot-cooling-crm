@@ -6,11 +6,22 @@ public with sharing class T5DispatchCandidatesController {
             throw new AuraHandledException('Case Id가 필요합니다.');
         }
 
+        Id resolvedCaseId = caseId;
+        if (caseId.getSObjectType() == WorkOrder.SObjectType) {
+            List<WorkOrder> wos = [
+                SELECT CaseId FROM WorkOrder WHERE Id = :caseId WITH USER_MODE LIMIT 1
+            ];
+            if (wos.isEmpty() || wos[0].CaseId == null) {
+                throw new AuraHandledException('WorkOrder에 연결된 Case가 없습니다.');
+            }
+            resolvedCaseId = wos[0].CaseId;
+        }
+
         List<Case> cases = [
             SELECT Id, CaseNumber, Account.Name, Asset.Name,
                    Asset.Site_Location__c
             FROM Case
-            WHERE Id = :caseId
+            WHERE Id = :resolvedCaseId
             WITH USER_MODE
             LIMIT 1
         ];
@@ -28,7 +39,7 @@ public with sharing class T5DispatchCandidatesController {
         List<ServiceAppointment> sas = [
             SELECT AppointmentNumber
             FROM ServiceAppointment
-            WHERE ParentRecordId = :caseId
+            WHERE ParentRecordId IN (:resolvedCaseId, :caseId)
             WITH USER_MODE
             ORDER BY CreatedDate DESC
             LIMIT 1

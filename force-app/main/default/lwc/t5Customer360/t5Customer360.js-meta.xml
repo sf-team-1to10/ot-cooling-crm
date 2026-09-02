@@ -13,6 +13,7 @@
         <targetConfig targets="lightning__RecordPage">
             <objects>
                 <object>Case</object>
+                <object>Account</object>
             </objects>
         </targetConfig>
     </targetConfigs>

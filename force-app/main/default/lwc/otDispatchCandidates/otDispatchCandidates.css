@@ -160,6 +160,12 @@
     box-shadow: 0 0 0 1px #2e8b57;
 }
 
+.cand-item.selected {
+    border-color: #0877d1;
+    box-shadow: 0 0 0 1px #0877d1;
+    cursor: pointer;
+}
+
 .cand-item.picked {
     border-color: #2e8b57;
     background-color: #e6f2eb;
