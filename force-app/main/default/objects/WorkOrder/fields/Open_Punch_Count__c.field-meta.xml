@@ -5,8 +5,9 @@
     <externalId>false</externalId>
     <label>미조치 Punch 수</label>
     <precision>18</precision>
-    <scale>0</scale>
     <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
     <type>Number</type>
     <unique>false</unique>

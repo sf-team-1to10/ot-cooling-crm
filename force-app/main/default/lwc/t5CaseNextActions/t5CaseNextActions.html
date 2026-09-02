@@ -1,0 +1,59 @@
+<template>
+    <div class="slds-p-around_x-small">
+        <!-- ── 다음 행동 추천 (Agent 제안) ── -->
+        <lightning-card class="agent-panel">
+            <span slot="title" class="slds-text-heading_small">다음 행동 추천</span>
+            <span slot="actions" class="slds-badge source-agent">Agent 제안</span>
+
+            <div class="slds-p-horizontal_small slds-p-bottom_small">
+                <div class="nba">
+                    <div class="nba-item">
+                        <div class="nba-rank">1</div>
+                        <div class="nba-body">
+                            <div class="nba-t">추천 Knowledge 확인</div>
+                            <div class="nba-why">증상 분류 「유량저하」에 맞는 문서 3건</div>
+                            <div class="nba-src">↗ CDU 유량 저하 1차 확인 가이드</div>
+                        </div>
+                    </div>
+                    <div class="nba-item">
+                        <div class="nba-rank">2</div>
+                        <div class="nba-body">
+                            <div class="nba-t">유사사례 조회</div>
+                            <div class="nba-why">동종 CDU-1700의 과거 해결 사례를 함께 봅니다</div>
+                            <div class="nba-src">↗ 전사 Knowledge</div>
+                        </div>
+                    </div>
+                    <div class="nba-item">
+                        <div class="nba-rank">3</div>
+                        <div class="nba-body">
+                            <div class="nba-t">출동 브리핑 생성</div>
+                            <div class="nba-why">자가조치 미해결 · 현장 방문 필요로 표시됨</div>
+                            <div class="nba-src">↗ Case 00001042</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </lightning-card>
+
+        <!-- ── Knowledge 추천 (증상 기반) ── -->
+        <lightning-card class="slds-m-top_small">
+            <span slot="title" class="slds-text-heading_small">Knowledge 추천</span>
+            <span slot="actions" class="slds-badge source-agent">증상 기반</span>
+
+            <div class="kb-list">
+                <div class="kb-item">
+                    <div class="kb-t">CDU 유량 저하 — 1차 현장 확인 가이드</div>
+                    <div class="kb-m"><span class="slds-badge kb-badge-ok">고객 공개</span> <span>Agent가 유신님께 안내한 문서</span></div>
+                </div>
+                <div class="kb-item">
+                    <div class="kb-t">CDU 체결 이완 — 과거 사례 및 재발 방지</div>
+                    <div class="kb-m"><span class="slds-badge kb-badge-neutral">내부</span> <span>동종 CDU-1700 · 참조 3회</span></div>
+                </div>
+                <div class="kb-item">
+                    <div class="kb-t">CDU 냉각수 필터 차압 상승 — 진단 및 교체 기준</div>
+                    <div class="kb-m"><span class="slds-badge kb-badge-neutral">내부</span> <span>대안 가설</span></div>
+                </div>
+            </div>
+        </lightning-card>
+    </div>
+</template>

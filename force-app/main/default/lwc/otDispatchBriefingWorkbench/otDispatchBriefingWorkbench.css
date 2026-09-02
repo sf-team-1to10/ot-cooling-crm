@@ -80,9 +80,154 @@
     font-weight: 600;
 }
 
-.rationale-callout {
-    background-color: #f3f9fd;
-    border-left: 3px solid #16b8c8;
+/* ── Path 바 (프로토타입 v-briefing) ── */
+.path {
+    display: flex;
+    background-color: #ffffff;
+    padding: 11px 18px 12px;
+    border-bottom: 1px solid #cfdae5;
+    gap: 0;
+    overflow-x: auto;
+}
+
+.path-step {
+    flex: 1 1 0;
+    min-width: 74px;
+    padding: 7px 6px 7px 19px;
+    background-color: #eaf0f6;
+    color: #6e8599;
+    font-size: 10.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%, 11px 50%);
+    margin-right: -9px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.path-step:first-child {
+    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%);
+    padding-left: 14px;
+    border-radius: 4px 0 0 4px;
+}
+
+.path-step:last-child {
+    margin-right: 0;
+}
+
+.path-step.done {
+    background-color: #2e8b57;
+    color: #ffffff;
+}
+
+.path-step.on {
+    background-color: #0877d1;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.path-num {
+    opacity: 0.6;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ── 서브탭 ── */
+.subtabs {
+    background-color: #ffffff;
+    display: flex;
+    gap: 2px;
+    padding: 0 18px;
+    border-bottom: 1px solid #cfdae5;
+    font-size: 12.5px;
+    overflow-x: auto;
+}
+
+.subtab {
+    padding: 8px 14px;
+    color: #3d5568;
+    border: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.subtab:hover {
+    color: #0b1f33;
+    background-color: #f4f7fa;
+}
+
+.subtab.on {
+    color: #0877d1;
+    border-bottom-color: #0877d1;
+    font-weight: 600;
+}
+
+/* ── 실시간 Trend 게이지 ── */
+.gauge {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.gauge-top {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.gauge-val {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -1px;
+    line-height: 1;
+    color: #c87913;
+}
+
+.gauge-unit {
+    font-size: 12px;
+    color: #6e8599;
+}
+
+.gauge-bar {
+    height: 7px;
+    border-radius: 4px;
+    background-color: #eaf0f6;
+    position: relative;
+    overflow: hidden;
+}
+
+.gauge-fill {
+    height: 100%;
+    border-radius: 4px;
+    width: 62%;
+    background-color: #c87913;
+}
+
+.gauge-mark {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    left: 84%;
+    width: 2px;
+    background-color: #3d5568;
+    opacity: 0.55;
+}
+
+.gauge-scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #6e8599;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+.trend-badge-warn {
+    background-color: #fbf1e1;
+    color: #c87913;
 }
 
 /* 우선 점검 후보·전사 유사사례 — '■' 섹션 문단 구분 (문단 간 한 줄 추가) */

@@ -1,152 +1,72 @@
-/* ── Highlights 헤더 — 기존 화면과 동일 골격(prefix action, 완료=초록 아이콘) ── */
-.action-hl {
-    background-color: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 0.25rem;
-    padding: 0.75rem 1rem;
-}
+/* ── Path 바 ── */
+.path { display:flex; background:#fff; padding:11px 18px 12px; border-bottom:1px solid #cfdae5; gap:0; overflow-x:auto; }
+.path-step { flex:1 1 0; min-width:74px; padding:7px 6px 7px 19px; background:#eaf0f6; color:#6e8599; font-size:10.5px; font-weight:500; white-space:nowrap; clip-path:polygon(0 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,0 100%,11px 50%); margin-right:-9px; display:flex; align-items:center; gap:5px; }
+.path-step:first-child { clip-path:polygon(0 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,0 100%); padding-left:14px; border-radius:4px 0 0 4px; }
+.path-step:last-child { margin-right:0; }
+.path-step.done { background:#2e8b57; color:#fff; }
+.path-step.on { background:#0877d1; color:#fff; font-weight:700; }
+.path-num { opacity:.6; font-family:'IBM Plex Mono',ui-monospace,monospace; }
 
-.action-hl-head {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-}
+/* ── 서브탭 ── */
+.subtabs { background:#fff; display:flex; gap:2px; padding:0 18px; border-bottom:1px solid #cfdae5; font-size:12.5px; overflow-x:auto; }
+.subtab { padding:8px 14px; color:#3d5568; border:none; border-bottom:2px solid transparent; white-space:nowrap; background:none; cursor:pointer; font-family:inherit; }
+.subtab:hover { color:#0b1f33; background:#f4f7fa; }
+.subtab.on { color:#0877d1; border-bottom-color:#0877d1; font-weight:600; }
 
-.action-hl-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.25rem;
-    background-color: #2e844a;
-    flex: 0 0 auto;
-}
+/* ── 하이라이트 ── */
+.action-hl { background:#fff; border-bottom:1px solid #cfdae5; padding:14px 18px; }
+.action-hl-head { display:flex; align-items:flex-start; gap:14px; }
+.action-hl-icon { width:38px; height:38px; border-radius:7px; flex:0 0 auto; display:grid; place-items:center; font-size:17px; font-weight:700; color:#fff; background:#2e8b57; }
+.action-hl-title { flex:1 1 auto; min-width:180px; }
+.action-hl-eyebrow { margin:0; font-size:11px; color:#6e8599; letter-spacing:.3px; }
+.action-hl-name { margin:0; font-size:19px; font-weight:600; letter-spacing:-.3px; line-height:1.25; }
+.action-hl-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:2px 20px; border-top:1px solid #e3eaf1; padding-top:11px; margin:12px 0 0; }
+.action-hl-f dt { font-size:10.5px; color:#6e8599; margin-bottom:2px; }
+.action-hl-f dd { margin:0; font-size:13px; font-weight:500; }
 
-.action-hl-title {
-    flex: 1 1 auto;
-    min-width: 0;
-}
+/* ── 결과 카운트 ── */
+.res-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.res { background:#fff; border:1px solid #cfdae5; border-radius:9px; padding:14px 12px; text-align:center; }
+.res-n { font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:30px; font-weight:700; line-height:1; color:#0b1f33; }
+.res-n.green { color:#2e8b57; }
+.res-n.warn { color:#c87913; }
+.res-l { font-size:11px; color:#6e8599; margin-top:6px; }
 
-.action-hl-eyebrow {
-    margin: 0;
-    font-size: 0.75rem;
-    color: #5c5c5c;
-}
+/* ── 관련 목록 행 ── */
+.rl { display:flex; flex-direction:column; }
+.rl-row { display:flex; gap:11px; align-items:flex-start; padding:11px 4px; border-bottom:1px solid #e3eaf1; }
+.rl-row:last-child { border-bottom:none; }
+.rl-main { flex:1 1 auto; min-width:0; }
+.rl-t { font-size:13px; font-weight:600; }
+.rl-s { font-size:11.5px; color:#6e8599; margin-top:2px; }
 
-.action-hl-name {
-    margin: 0;
-    font-size: 1.125rem;
-    font-weight: 700;
-    line-height: 1.25;
-}
+/* ── T5-22 Knowledge 카드 ── */
+.kb-card { --slds-c-card-color-border:#0877d1; }
+.kb-lead { font-size:12.5px; line-height:1.65; margin:0 0 11px; }
+.kb-inner { background:#f4f7fa; border:1px solid #e3eaf1; border-radius:8px; padding:11px; }
+.mini-label { font-size:10px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; color:#6e8599; margin-bottom:5px; }
+.kb-quote { font-size:11.5px; color:#3d5568; line-height:1.6; padding:8px 10px; background:#fff; border-radius:6px; border-left:2.5px solid #6e8599; }
+.kb-arrow { text-align:center; font-size:16px; color:#0877d1; margin:7px 0 5px; }
+.kb-title { font-size:13px; font-weight:600; margin-bottom:7px; }
+.kb-kv { display:grid; grid-template-columns:1fr 1fr; gap:4px 10px; margin:0; font-size:11.5px; }
+.kb-kv > div { display:flex; justify-content:space-between; gap:8px; }
+.kb-kv dt { color:#6e8599; }
+.kb-kv dd { margin:0; font-weight:500; }
+.kb-actions { display:flex; gap:7px; margin-top:11px; flex-wrap:wrap; }
+.kb-note { font-size:11.5px; color:#6e8599; margin:9px 0 0; line-height:1.55; }
 
-.action-hl-fields {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #f0f0f0;
-}
-
-.action-hl-f dt {
-    font-size: 0.75rem;
-    color: #5c5c5c;
-}
-
-.action-hl-f dd {
-    margin: 0;
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-.action-hl-f dd.num {
-    font-variant-numeric: tabular-nums;
-}
+/* ── 테이블 ── */
+.tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
+.tbl th { text-align:left; padding:8px 11px; font-size:10.5px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:#6e8599; border-bottom:1px solid #cfdae5; background:#f4f7fa; white-space:nowrap; }
+.tbl td { padding:8px 11px; border-bottom:1px solid #e3eaf1; vertical-align:top; }
+.tbl tr:last-child td { border-bottom:none; }
 
 /* ── 배지 ── */
-.source-human {
-    background-color: #747474;
-    color: #ffffff;
-}
+.scope-corrective { background:#c43d4b; color:#fff; }
+.scope-preventive { background:#c87913; color:#fff; }
+.scope-new { background:#2e8b57; color:#fff; }
+.rca-badge-rule { background:#e2f6f8; color:#0f8a97; }
+.rca-badge-agent { background:#e2eefb; color:#1a5fb4; }
 
-.source-agent {
-    background-color: #0877d1;
-    color: #ffffff;
-}
-
-.scope-corrective {
-    background-color: #ba0517;
-    color: #ffffff;
-}
-
-.scope-preventive {
-    background-color: #dd7a01;
-    color: #ffffff;
-}
-
-.scope-new {
-    background-color: #2e844a;
-    color: #ffffff;
-}
-
-/* ── 신규사례 Article 카드 ── */
-.article-card {
-    --slds-c-card-color-border: #0877d1;
-}
-
-.article-detect {
-    line-height: 1.6;
-    color: #444444;
-}
-
-.article-draft {
-    background-color: #f3f9fd;
-    border-radius: 0.25rem;
-}
-
-.mini-label {
-    margin: 0 0 0.25rem;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    color: #5c5c5c;
-    text-transform: uppercase;
-}
-
-.article-title {
-    margin: 0 0 0.5rem;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    line-height: 1.4;
-}
-
-.article-kv-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    padding: 0.1875rem 0;
-}
-
-.article-kv-row dt {
-    color: #5c5c5c;
-    flex: 0 0 auto;
-}
-
-.article-kv-row dd {
-    margin: 0;
-    text-align: right;
-    font-weight: 600;
-}
-
-.article-kv-row dd.num {
-    font-variant-numeric: tabular-nums;
-}
-
-.article-note {
-    font-size: 0.6875rem;
-    color: #747474;
-    line-height: 1.5;
-}
+/* ── 숫자 유틸 ── */
+.num { font-variant-numeric:tabular-nums; }

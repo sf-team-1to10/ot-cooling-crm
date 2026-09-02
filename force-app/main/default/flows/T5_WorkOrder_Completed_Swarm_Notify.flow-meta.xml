@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <constants>
+        <name>Fallback_Channel_Id</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>D0BUF2AUW80</stringValue>
+        </value>
+    </constants>
+    <constants>
+        <name>Lightning_Host</name>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>https://trailsignup-8617b18a6871a9.lightning.force.com/</stringValue>
+        </value>
+    </constants>
+    <decisions>
+        <name>Check_Slack_Alert_Enabled</name>
+        <label>Slack Alert 활성 확인</label>
+        <locationX>176</locationX>
+        <locationY>240</locationY>
+        <defaultConnectorLabel>Off(종료)</defaultConnectorLabel>
+        <rules>
+            <name>Slack_Alert_On</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Feature_Flag_Setting.Slack_Alert__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Swarm_For_Case</targetReference>
+            </connector>
+            <label>Slack Alert On</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Check_Swarm_Channel_Found</name>
+        <label>Swarm 채널 존재 확인</label>
+        <locationX>176</locationX>
+        <locationY>480</locationY>
+        <defaultConnector>
+            <targetReference>Send_Fallback_DM_Alert</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>없음(담당자 DM 폴백)</defaultConnectorLabel>
+        <rules>
+            <name>Swarm_Channel_Exists</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Swarm_For_Case.CollaborationUrl</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Swarm_Completion_Alert</targetReference>
+            </connector>
+            <label>Swarm 채널 있음</label>
+        </rules>
+    </decisions>
+    <description>복구 WorkOrder가 완료(Status=Completed)되면 해당 Case의 Swarm 채널로 완료 보고를 발신. Feature Flag(T5_Feature_Flags__mdt.Default.Slack_Alert__c) Off면 미발신. CaseId 있는 WO만 대상. Swarm(RelatedRecordId=CaseId, Status!=Closed)의 CollaborationUrl에서 Slack 채널 ID 추출 후 T5_Send_Slack_Channel_Message subflow 재사용해 발신. Swarm 없으면 담당 엔지니어 DM 폴백. Case는 닫지 않음(고객 복구 확인·RCA 별도). Slack 콜아웃은 Record-Triggered 즉시 경로 불가로 AsyncAfterCommit 경로 실행. WorkOrder에 쓰기 없음(순수 알림). T5-29.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>Swarm_Channel_Id</name>
+        <dataType>String</dataType>
+        <expression>IF(
+  FIND(&apos;/archives/&apos;, {!Get_Swarm_For_Case.CollaborationUrl}) &gt; 0,
+  LEFT(
+    MID( {!Get_Swarm_For_Case.CollaborationUrl}, FIND(&apos;/archives/&apos;, {!Get_Swarm_For_Case.CollaborationUrl}) + 10, 255 ),
+    FIND(&apos;/&apos;, MID( {!Get_Swarm_For_Case.CollaborationUrl}, FIND(&apos;/archives/&apos;, {!Get_Swarm_For_Case.CollaborationUrl}) + 10, 255 ) &amp; &apos;/&apos;) - 1
+  ),
+  MID(
+    {!Get_Swarm_For_Case.CollaborationUrl},
+    FIND(&apos;/client/&apos;, {!Get_Swarm_For_Case.CollaborationUrl}) + 9 + FIND(&apos;/&apos;, MID({!Get_Swarm_For_Case.CollaborationUrl}, FIND(&apos;/client/&apos;, {!Get_Swarm_For_Case.CollaborationUrl}) + 9, 255)),
+    255
+  )
+)</expression>
+    </formulas>
+    <interviewLabel>T5 WorkOrder Completed Swarm Notify {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>T5 WorkOrder Completed Swarm Notify</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Feature_Flag_Setting</name>
+        <label>Feature Flag 조회</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Slack_Alert_Enabled</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Default</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>T5_Feature_Flags__mdt</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Slack_Alert__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Swarm_For_Case</name>
+        <label>Case의 Swarm 조회</label>
+        <locationX>176</locationX>
+        <locationY>360</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Swarm_Channel_Found</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>RelatedRecordId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.CaseId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Closed</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Swarm</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>CollaborationUrl</queriedFields>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterFormula>AND( ISPICKVAL({!$Record.Status}, &apos;Completed&apos;), NOT(ISBLANK({!$Record.CaseId})) )</filterFormula>
+        <object>WorkOrder</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <scheduledPaths>
+            <connector>
+                <targetReference>Get_Feature_Flag_Setting</targetReference>
+            </connector>
+            <pathType>AsyncAfterCommit</pathType>
+        </scheduledPaths>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Send_Fallback_DM_Alert</name>
+        <label>Slack 발신 (담당자 DM 폴백)</label>
+        <locationX>300</locationX>
+        <locationY>600</locationY>
+        <flowName>T5_Send_Slack_Channel_Message</flowName>
+        <inputAssignments>
+            <name>channelId</name>
+            <value>
+                <elementReference>Fallback_Channel_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>messageText</name>
+            <value>
+                <elementReference>Msg_WO_Completed</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <subflows>
+        <name>Send_Swarm_Completion_Alert</name>
+        <label>Slack 발신 (Swarm 채널)</label>
+        <locationX>50</locationX>
+        <locationY>600</locationY>
+        <flowName>T5_Send_Slack_Channel_Message</flowName>
+        <inputAssignments>
+            <name>channelId</name>
+            <value>
+                <elementReference>Swarm_Channel_Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>messageText</name>
+            <value>
+                <elementReference>Msg_WO_Completed</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <textTemplates>
+        <name>Msg_WO_Completed</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>:white_check_mark: [복구 작업 완료 보고] {!$Record.Subject}
+작업지시: {!$Record.WorkOrderNumber}
+자산: {!$Record.Asset.Name}
+완료 시각: {!$Record.LastModifiedDate}
+연결 Case: {!$Record.Case.CaseNumber}
+
+조치 내용: {!$Record.Action_Taken__c}
+복구 결과: {!$Record.Repair_Result__c}
+
+:warning: 이 완료 알림만으로 Case를 종결하지 않습니다. 고객 복구 확인과 RCA가 남아 있습니다.
+WorkOrder: {!Lightning_Host}lightning/r/WorkOrder/{!$Record.Id}/view</text>
+    </textTemplates>
+</Flow>

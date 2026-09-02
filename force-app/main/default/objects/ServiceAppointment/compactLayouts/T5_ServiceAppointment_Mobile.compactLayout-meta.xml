@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>T5_ServiceAppointment_Mobile</fullName>
+    <fields>Subject</fields>
+    <fields>SchedStartTime</fields>
+    <fields>ParentRecordId</fields>
+    <fields>Status</fields>
+    <label>T5 Service Appointment Mobile</label>
+</CompactLayout>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Previous_Measured_Value__c</fullName>
-    <label>직전 측정값</label>
     <description>같은 Asset·같은 측정 항목 코드에서 직전에 존재하는 회차의 측정값. 결번(측정 누락)이 있어도 직전 존재값을 찾아 Flow가 자동 적재한다.</description>
+    <externalId>false</externalId>
     <inlineHelpText>직전 회차의 측정값이 자동으로 채워집니다. 수동 입력하지 마세요.</inlineHelpText>
+    <label>직전 측정값</label>
     <precision>9</precision>
-    <scale>1</scale>
     <required>false</required>
+    <scale>1</scale>
     <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
-    <trackTrending>false</trackTrending>
     <type>Number</type>
+    <unique>false</unique>
 </CustomField>

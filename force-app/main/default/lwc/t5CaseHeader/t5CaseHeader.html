@@ -1,59 +1,68 @@
 <template>
     <div class="slds-p-vertical_x-small">
-        <template lwc:if={isLoading}>
-            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
-        </template>
+        <!-- ── Path 바 (프로토타입 v-case, path:0 = 접수 on) ── -->
+        <div class="path">
+            <div class="path-step on"><span class="path-num">0</span> 접수</div>
+            <div class="path-step"><span class="path-num">1</span> 진단·브리핑</div>
+            <div class="path-step"><span class="path-num">2</span> 담당자 배정</div>
+            <div class="path-step"><span class="path-num">3</span> 현장 출동</div>
+            <div class="path-step"><span class="path-num">4</span> 수리·복구</div>
+            <div class="path-step"><span class="path-num">5</span> RCA·예방·지식</div>
+        </div>
 
-        <template lwc:if={error}>
-            <div class="slds-text-color_error slds-p-around_small" role="alert">
-                {errorMessage}
-            </div>
-        </template>
+        <!-- ── 서브탭 ── -->
+        <div class="subtabs">
+            <button class="subtab on">Case</button>
+            <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
+            <button class="subtab" data-goto="c__otDispatchBriefingWorkbench" onclick={handleSubtab}>출동 브리핑</button>
+            <button class="subtab" data-goto="c__otDispatchCandidates" onclick={handleSubtab}>담당자 확정</button>
+            <button class="subtab" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
+            <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
+            <button class="subtab" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
+            <button class="subtab">협업 로그</button>
+        </div>
 
-        <template lwc:if={header}>
-            <div class="case-hl">
-                <div class="case-hl-head">
-                    <span class="case-hl-icon">C</span>
-                    <div class="case-hl-title">
-                        <p class="case-hl-eyebrow">Case · {accountName}</p>
-                        <h1 class="case-hl-name">{headerTitle}</h1>
-                    </div>
-                    <div class="case-hl-actions">
-                        <span class="slds-badge status-badge">{status}</span>
-                        <lightning-button label="출동 브리핑 생성" variant="brand"
-                            onclick={handleBriefing} class="slds-m-left_xx-small"></lightning-button>
-                        <lightning-button label="Problem/RCA 검토"
-                            onclick={handleProblemRca} class="slds-m-left_xx-small"></lightning-button>
-                    </div>
+        <!-- ── 하이라이트 스트립 ── -->
+        <div class="case-hl">
+            <div class="case-hl-head">
+                <span class="case-hl-icon">C</span>
+                <div class="case-hl-title">
+                    <p class="case-hl-eyebrow">Case · 아이온데이터</p>
+                    <h1 class="case-hl-name">CDU-A-07 유량 저하</h1>
                 </div>
-                <dl class="case-hl-fields">
-                    <div class="case-hl-f">
-                        <dt>Case 번호</dt>
-                        <dd class="num">{caseNumber}</dd>
-                    </div>
-                    <div class="case-hl-f">
-                        <dt>Asset</dt>
-                        <dd>{assetName}</dd>
-                    </div>
-                    <div class="case-hl-f">
-                        <dt>Agent 최초 응답</dt>
-                        <dd class="num">{agentFirstResponseText}</dd>
-                    </div>
-                    <div class="case-hl-f">
-                        <dt>상담사 인수</dt>
-                        <dd class="num">{agentHandoffText}</dd>
-                    </div>
-                    <div class="case-hl-f">
-                        <dt>응답 SLA</dt>
-                        <dd class="num">{responseSla}</dd>
-                    </div>
-                    <div class="case-hl-f">
-                        <dt>복구 SLA</dt>
-                        <dd class="num">{recoverySla}</dd>
-                    </div>
-                </dl>
+                <div class="case-hl-actions">
+                    <span class="slds-badge status-badge">상담 중</span>
+                    <lightning-button label="출동 브리핑 생성" variant="brand"
+                        onclick={handleBriefing} class="slds-m-left_xx-small"></lightning-button>
+                </div>
             </div>
-        </template>
+            <dl class="case-hl-fields">
+                <div class="case-hl-f">
+                    <dt>Case 번호</dt>
+                    <dd class="num">00001042</dd>
+                </div>
+                <div class="case-hl-f">
+                    <dt>Asset</dt>
+                    <dd>CDU-A-07</dd>
+                </div>
+                <div class="case-hl-f">
+                    <dt>Agent 최초 응답</dt>
+                    <dd class="num">02:14</dd>
+                </div>
+                <div class="case-hl-f">
+                    <dt>상담사 인수</dt>
+                    <dd class="num">02:38</dd>
+                </div>
+                <div class="case-hl-f">
+                    <dt>응답 SLA</dt>
+                    <dd class="num">30분</dd>
+                </div>
+                <div class="case-hl-f">
+                    <dt>복구 SLA</dt>
+                    <dd class="num">8시간</dd>
+                </div>
+            </dl>
+        </div>
 
         <!-- 출동 브리핑 생성 Flow 모달 — 회색 backdrop 없이, 밖을 클릭하면 닫힘 -->
         <template lwc:if={showBriefingFlow}>

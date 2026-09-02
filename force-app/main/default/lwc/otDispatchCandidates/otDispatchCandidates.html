@@ -1,0 +1,120 @@
+<template>
+    <div class="slds-p-vertical_x-small">
+        <!-- ── Path 바 (프로토타입 v-candidates, 담당자 배정 단계) ── -->
+        <div class="path">
+            <div class="path-step done"><span class="path-num">0</span> 접수</div>
+            <div class="path-step done"><span class="path-num">1</span> 진단·브리핑</div>
+            <div class="path-step on"><span class="path-num">2</span> 담당자 배정</div>
+            <div class="path-step"><span class="path-num">3</span> 현장 출동</div>
+            <div class="path-step"><span class="path-num">4</span> 수리·복구</div>
+            <div class="path-step"><span class="path-num">5</span> RCA·예방·지식</div>
+        </div>
+
+        <!-- ── 서브탭 (담당자 확정 활성) ── -->
+        <div class="subtabs">
+            <button class="subtab" data-goto="case" onclick={handleSubtab}>Case</button>
+            <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
+            <button class="subtab" data-goto="c__otDispatchBriefingWorkbench" onclick={handleSubtab}>출동 브리핑</button>
+            <button class="subtab on">담당자 확정</button>
+            <button class="subtab" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
+            <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
+            <button class="subtab" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
+            <button class="subtab">협업 로그</button>
+        </div>
+
+        <!-- ── 하이라이트 ── -->
+        <div class="cand-hl">
+            <div class="cand-hl-head">
+                <span class="cand-hl-icon">SA</span>
+                <div class="cand-hl-title">
+                    <p class="cand-hl-eyebrow">담당자 확정 · Case 00001042 · SA-2026-0408</p>
+                    <h1 class="cand-hl-name">담당자 배정</h1>
+                </div>
+                <div class="cand-hl-actions">
+                    <span class="slds-badge cand-badge-rule">스케줄링 정책 · 긴급</span>
+                    <template lwc:if={isAssigned}>
+                        <button type="button" class="assign-done" disabled>확정됨 · 강시공</button>
+                    </template>
+                    <template lwc:else>
+                        <lightning-button label="강시공 확정" variant="brand"
+                            onclick={handleAssign}></lightning-button>
+                    </template>
+                </div>
+            </div>
+            <dl class="cand-hl-fields">
+                <div class="cand-hl-f"><dt>필요 스킬</dt><dd>CDU-1700 · 배관 체결</dd></div>
+                <div class="cand-hl-f"><dt>복구 SLA</dt><dd class="num">8시간 · 잔여 7시간 26분</dd></div>
+                <div class="cand-hl-f"><dt>현장</dt><dd>아이온데이터 Hall A</dd></div>
+                <template lwc:if={isAssigned}>
+                    <div class="cand-hl-f"><dt>배정</dt><dd>강시공 · <span class="num">02:46</span></dd></div>
+                </template>
+            </dl>
+        </div>
+
+        <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+            <!-- ── 중앙: 후보 3명 ── -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+                <lightning-card>
+                    <span slot="title" class="slds-text-heading_small">후보 3명 — 정책이 랭킹한 순서</span>
+                    <span slot="actions" class="slds-badge cand-badge-rule">규칙 산정</span>
+                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+                        <div class="cand">
+                            <div class={cand1Class}>
+                                <div class="cand-av cand-av-green">강</div>
+                                <div class="cand-body">
+                                    <div class="cand-name">강시공
+                                        <span class="slds-badge cand-badge-ok">1순위</span>
+                                        <span class="slds-badge cand-badge-neutral">야간 온콜</span>
+                                    </div>
+                                    <div class="cand-skills"><i class="ok-i">✓ CDU-1700</i> <i class="ok-i">✓ 배관 체결</i></div>
+                                    <div class="cand-sched">현재 대기 중 · 이동 45분</div>
+                                </div>
+                                <div class="cand-eta"><div class="t cand-t-green">03:30</div><div class="l">도착 예정</div></div>
+                            </div>
+
+                            <div class="cand-item">
+                                <div class="cand-av cand-av-warn">임</div>
+                                <div class="cand-body">
+                                    <div class="cand-name">임수리 <span class="slds-badge cand-badge-neutral">2순위</span></div>
+                                    <div class="cand-skills"><i class="ok-i">✓ CDU-1700</i> <i class="no-i">— 배관 체결</i></div>
+                                    <div class="cand-sched">타 현장 작업 중 · 종료 후 이동</div>
+                                </div>
+                                <div class="cand-eta"><div class="t cand-t-warn">04:40</div><div class="l">도착 예정</div></div>
+                            </div>
+
+                            <div class="cand-item out">
+                                <div class="cand-av cand-av-muted">전</div>
+                                <div class="cand-body">
+                                    <div class="cand-name">전배관 <span class="slds-badge cand-badge-crit">SLA 초과</span></div>
+                                    <div class="cand-skills"><i class="no-i">— CDU-1700</i> <i class="ok-i">✓ 배관 체결</i></div>
+                                    <div class="cand-sched">주간조 · 다음 가용 09:00</div>
+                                </div>
+                                <div class="cand-eta"><div class="t cand-t-muted">09:00</div><div class="l">복구 SLA 초과</div></div>
+                            </div>
+                        </div>
+                    </div>
+                </lightning-card>
+            </div>
+
+            <!-- ── 우측 레일: 랭킹 근거 ── -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                <lightning-card>
+                    <span slot="title" class="slds-text-heading_small">랭킹 근거</span>
+                    <span slot="actions" class="slds-badge cand-badge-rule">규칙 산정</span>
+                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+                        <table class="tbl">
+                            <thead><tr><th>인자</th><th>강시공</th><th>임수리</th><th>전배관</th></tr></thead>
+                            <tbody>
+                                <tr><td>CDU-1700 스킬</td><td class="ok-i">✓</td><td class="ok-i">✓</td><td class="no-i">—</td></tr>
+                                <tr><td>배관 체결 스킬</td><td class="ok-i">✓</td><td class="no-i">—</td><td class="ok-i">✓</td></tr>
+                                <tr><td>현재 가용</td><td>대기</td><td>작업 중</td><td>주간조</td></tr>
+                                <tr class="flag"><td>예상 도착</td><td class="num">03:30</td><td class="num">04:40</td><td class="num">09:00</td></tr>
+                                <tr><td>SLA 충족</td><td class="ok-i">✓</td><td class="ok-i">✓</td><td class="cand-x">✗</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </lightning-card>
+            </div>
+        </div>
+    </div>
+</template>

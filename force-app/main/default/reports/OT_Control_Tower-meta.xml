@@ -3,7 +3,7 @@
     <folderShares>
         <accessLevel>Manage</accessLevel>
         <sharedTo>AllInternalUsers</sharedTo>
-        <sharedToType>Group</sharedToType>
+        <sharedToType>Organization</sharedToType>
     </folderShares>
     <name>관리자 컨트롤 타워</name>
 </ReportFolder>

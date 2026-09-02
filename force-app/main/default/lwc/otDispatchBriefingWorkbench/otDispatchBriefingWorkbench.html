@@ -11,6 +11,28 @@
         </template>
 
         <template lwc:if={briefing}>
+            <!-- ── Path 바 (프로토타입 v-briefing, 진단·브리핑 단계) ── -->
+            <div class="path">
+                <div class="path-step done"><span class="path-num">0</span> 접수</div>
+                <div class="path-step on"><span class="path-num">1</span> 진단·브리핑</div>
+                <div class="path-step"><span class="path-num">2</span> 담당자 배정</div>
+                <div class="path-step"><span class="path-num">3</span> 현장 출동</div>
+                <div class="path-step"><span class="path-num">4</span> 수리·복구</div>
+                <div class="path-step"><span class="path-num">5</span> RCA·예방·지식</div>
+            </div>
+
+            <!-- ── 서브탭 (출동 브리핑 활성) ── -->
+            <div class="subtabs">
+                <button class="subtab" data-goto="case" onclick={handleSubtab}>Case</button>
+                <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
+                <button class="subtab on">출동 브리핑</button>
+                <button class="subtab" data-goto="c__otDispatchCandidates" onclick={handleSubtab}>담당자 확정</button>
+                <button class="subtab" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
+                <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
+                <button class="subtab" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
+                <button class="subtab">협업 로그</button>
+            </div>
+
             <!-- ── Highlights 헤더 ── -->
             <div class="briefing-hl">
                 <div class="briefing-hl-head">
@@ -24,10 +46,6 @@
                     </div>
                     <div class="briefing-hl-actions">
                         <span class={priorityBadgeClass}>{priorityBadgeText}</span>
-                        <lightning-button label="2022년 원기록 확인" onclick={handleEvidence}
-                            class="slds-m-left_xx-small"></lightning-button>
-                        <lightning-button label="Slack 인계" onclick={handleSlack}
-                            class="slds-m-left_xx-small"></lightning-button>
                         <template lwc:if={isApproved}>
                             <button type="button" class="approve-done slds-m-left_xx-small" disabled>
                                 {approveButtonLabel}
@@ -88,17 +106,6 @@
                                     </template>
                                 </tbody>
                             </table>
-                            <div class="rationale-callout slds-box slds-box_x-small slds-m-top_small">
-                                <p class="slds-text-body_small">
-                                    <strong>Priority {priority}</strong> — 유량 하락 폭이 12대 중 최대이고 동일 위치 과거 실패 이력이 있어
-                                    상향했습니다. 전체 냉각 상실은 아니므로 <strong>Critical은 아닙니다.</strong>
-                                </p>
-                                <div class="slds-m-top_xx-small">
-                                    <span class="slds-badge source-rule">규칙 산정</span>
-                                    <span class="slds-badge source-agent slds-m-left_xx-small">Agent 설명</span>
-                                    <span class="slds-badge slds-m-left_xx-small">담당자 승인 대기</span>
-                                </div>
-                            </div>
                         </div>
                     </lightning-card>
 
@@ -175,6 +182,29 @@
                             <template lwc:else>
                                 <p class="slds-text-body_small slds-text-color_weak">유사사례 요약이 아직 없습니다.</p>
                             </template>
+                        </div>
+                    </lightning-card>
+
+                    <!-- 실시간 Trend (프로토타입 v-briefing 우측 게이지) -->
+                    <lightning-card class="slds-m-top_small">
+                        <span slot="title" class="slds-text-heading_small">실시간 Trend</span>
+                        <span slot="actions" class="slds-badge trend-badge-warn">주의</span>
+                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                            <div class="gauge">
+                                <div class="gauge-top">
+                                    <span class="gauge-val">1,961</span>
+                                    <span class="gauge-unit">L/min</span>
+                                </div>
+                                <div class="gauge-bar">
+                                    <div class="gauge-fill"></div>
+                                    <div class="gauge-mark"></div>
+                                </div>
+                                <div class="gauge-scale">
+                                    <span>1,900</span>
+                                    <span>기준선 2,100</span>
+                                    <span>2,200</span>
+                                </div>
+                            </div>
                         </div>
                     </lightning-card>
                 </div>

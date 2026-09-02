@@ -106,12 +106,9 @@
     <apiVersion>67.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
-        <!-- T5-23: Parameter Mapping으로 넘어온 AssetId가 있을 때만
-             MessagingSession.Asset_Id__c를 갱신한다 — 값이 비어있는 채로
-             덮어써서 이전에 정상적으로 채워진 값을 지우는 사고를 막는다. -->
         <name>Has_Asset_Id</name>
         <label>Has Asset Id?</label>
-        <locationX>176</locationX>
+        <locationX>0</locationX>
         <locationY>0</locationY>
         <defaultConnector>
             <targetReference>Route_to_Messaging_Queue</targetReference>
@@ -158,11 +155,12 @@
     <recordUpdates>
         <name>Update_Asset_Context</name>
         <label>Update Asset Context</label>
-        <locationX>176</locationX>
-        <locationY>108</locationY>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
         <connector>
             <targetReference>Route_to_Messaging_Queue</targetReference>
         </connector>
+        <filterLogic>and</filterLogic>
         <filters>
             <field>Id</field>
             <operator>EqualTo</operator>
@@ -187,14 +185,14 @@
     </start>
     <status>Active</status>
     <variables>
-        <name>recordId</name>
+        <name>AssetId</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
     </variables>
     <variables>
-        <name>AssetId</name>
+        <name>recordId</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>

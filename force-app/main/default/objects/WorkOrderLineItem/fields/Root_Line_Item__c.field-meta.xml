@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Root_Line_Item__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
     <label>최초 측정 항목</label>
     <referenceTo>WorkOrderLineItem</referenceTo>
     <relationshipLabel>파생 재시험 항목</relationshipLabel>

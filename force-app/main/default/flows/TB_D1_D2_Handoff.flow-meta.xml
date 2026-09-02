@@ -1,44 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
-    <description>Technical Baseline 필수 조건 완비 시 Handoff_Status__c를 READY로 전환한다. ACCEPTED는 사람이 직접 설정하며 Flow가 덮어쓰지 않는다.</description>
-    <interviewLabel>TB_D1_D2_Handoff {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>TB D1→D2 Handoff 게이트</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processMetadataValues>
-        <name>CanvasMode</name>
-        <value>
-            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
-        </value>
-    </processMetadataValues>
-    <processType>AutoLaunchedFlow</processType>
-    <decisions>
-        <name>Check_Already_Accepted</name>
-        <label>이미 ACCEPTED 여부</label>
-        <locationX>176</locationX>
-        <locationY>167</locationY>
-        <defaultConnector>
-            <targetReference>Check_All_Required_Fields</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>ACCEPTED 아님 — 조건 확인</defaultConnectorLabel>
-        <rules>
-            <name>Is_Accepted</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Handoff_Status__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>ACCEPTED</stringValue>
-                </rightValue>
-            </conditions>
-            <label>이미 ACCEPTED — 덮어쓰지 않음</label>
-        </rules>
-    </decisions>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <decisions>
         <name>Check_All_Required_Fields</name>
         <label>필수 조건 완비 여부 확인</label>
@@ -92,19 +55,44 @@
             <label>모든 필수 조건 충족 — READY</label>
         </rules>
     </decisions>
-    <recordUpdates>
-        <name>Set_READY</name>
-        <label>READY로 설정</label>
-        <locationX>50</locationX>
-        <locationY>407</locationY>
-        <inputAssignments>
-            <field>Handoff_Status__c</field>
-            <value>
-                <stringValue>READY</stringValue>
-            </value>
-        </inputAssignments>
-        <inputReference>$Record</inputReference>
-    </recordUpdates>
+    <decisions>
+        <name>Check_Already_Accepted</name>
+        <label>이미 ACCEPTED 여부</label>
+        <locationX>176</locationX>
+        <locationY>167</locationY>
+        <defaultConnector>
+            <targetReference>Check_All_Required_Fields</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>ACCEPTED 아님 — 조건 확인</defaultConnectorLabel>
+        <rules>
+            <name>Is_Accepted</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Handoff_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>ACCEPTED</stringValue>
+                </rightValue>
+            </conditions>
+            <label>이미 ACCEPTED — 덮어쓰지 않음</label>
+        </rules>
+    </decisions>
+    <description>Technical Baseline 필수 조건 완비 시 Handoff_Status__c를 READY로 전환한다. ACCEPTED는 사람이 직접 설정하며 Flow가 덮어쓰지 않는다.</description>
+    <interviewLabel>TB_D1_D2_Handoff {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>TB D1→D2 Handoff 게이트</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
     <recordUpdates>
         <name>Set_NOT_READY</name>
         <label>NOT_READY로 설정</label>
@@ -118,13 +106,25 @@
         </inputAssignments>
         <inputReference>$Record</inputReference>
     </recordUpdates>
+    <recordUpdates>
+        <name>Set_READY</name>
+        <label>READY로 설정</label>
+        <locationX>50</locationX>
+        <locationY>407</locationY>
+        <inputAssignments>
+            <field>Handoff_Status__c</field>
+            <value>
+                <stringValue>READY</stringValue>
+            </value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
             <targetReference>Check_Already_Accepted</targetReference>
         </connector>
-        <doesRequireRecordChangedToMeetCriteria>false</doesRequireRecordChangedToMeetCriteria>
         <object>Technical_Baseline__c</object>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordBeforeSave</triggerType>

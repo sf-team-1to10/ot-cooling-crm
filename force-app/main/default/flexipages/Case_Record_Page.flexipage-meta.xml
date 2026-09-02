@@ -3,7 +3,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:t5CaseHeader</componentName>
+                <componentName>t5CaseHeader</componentName>
                 <identifier>c_t5CaseHeader_header</identifier>
             </componentInstance>
         </itemInstances>
@@ -157,7 +157,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:t5CaseIntakePanel</componentName>
+                <componentName>t5CaseIntakePanel</componentName>
                 <identifier>c_t5CaseIntakePanel</identifier>
             </componentInstance>
         </itemInstances>
@@ -222,6 +222,16 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
+                    <name>chatHeight</name>
+                    <value>500</value>
+                </componentInstanceProperties>
+                <componentName>runtime_service_livemessage:chatBody</componentName>
+                <identifier>runtime_service_livemessage_chatBody</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
                     <name>label</name>
                     <value>Tabs</value>
                 </componentInstanceProperties>
@@ -273,12 +283,6 @@
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>t5Customer360</componentName>
-                <identifier>c_t5Customer360</identifier>
-            </componentInstance>
-        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>

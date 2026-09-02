@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Criticality__c</fullName>
-    <label>중요도</label>
-    <description>Asset이 냉각 계통에서 차지하는 중요도. 출동 브리핑의 Priority 산정에서 "Asset 중요도" 인자로 사용한다(핵심&gt;중요&gt;일반).</description>
+    <description>Asset이 냉각 계통에서 차지하는 중요도. 출동 브리핑의 Priority 산정에서 &quot;Asset 중요도&quot; 인자로 사용한다(핵심&gt;중요&gt;일반).</description>
     <inlineHelpText>이 장비가 냉각 계통에서 차지하는 중요도를 선택하세요(핵심/중요/일반).</inlineHelpText>
+    <label>중요도</label>
     <required>false</required>
-    <trackFeedHistory>false</trackFeedHistory>
     <trackHistory>false</trackHistory>
-    <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
         <restricted>true</restricted>

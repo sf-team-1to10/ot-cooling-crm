@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Slack_Collaboration_Summary__c</fullName>
+    <description>배정 후 열린 Swarm 채널(#swarm-...)에서 오간 협업 내용의 요약. 현장 기술자가 도착 전에 추가 자재 필요 여부·과거 원기록 대조 결과를 모바일에서 확인하기 위한 필드. 출동 브리핑(Dispatch_Briefing__c)과는 출처가 다르므로 별도 필드로 둔다. T5-31.</description>
+    <label>협업 요약 (Slack)</label>
+    <length>32768</length>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>LongTextArea</type>
+    <visibleLines>6</visibleLines>
+</CustomField>

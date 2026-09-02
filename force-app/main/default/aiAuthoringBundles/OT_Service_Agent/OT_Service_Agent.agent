@@ -10,7 +10,7 @@ config:
     description: "OT전자 고객 포털 서비스 에이전트 — 증상 상담을 통한 Case 접수"
 
 access:
-    default_agent_user: "aaa01077583303+crm@gmail.com"
+    default_agent_user: "ot.service.agent@otcooling.prod"
 
 connection messaging:
     escalation_message: "상담사에게 연결 중입니다. 잠시만 기다려 주세요."

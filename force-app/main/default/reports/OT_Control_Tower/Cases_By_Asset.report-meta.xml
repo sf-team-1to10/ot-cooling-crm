@@ -1,42 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Report xmlns="http://soap.sforce.com/2006/04/metadata">
-    <name>케이스 발생 현황 (거래처별)</name>
-    <reportType>CaseList</reportType>
-    <format>Summary</format>
-    <scope>organization</scope>
-    <description>거래처·우선순위별 케이스 발생 건수를 집계해 반복 장애 고객을 식별한다. 교체·PM 우선순위 결정에 활용한다.</description>
-    <showDetails>false</showDetails>
-    <showGrandTotal>true</showGrandTotal>
-    <showSubTotals>true</showSubTotals>
+    <chart>
+        <backgroundColor1>#FFFFFF</backgroundColor1>
+        <backgroundColor2>#FFFFFF</backgroundColor2>
+        <backgroundFadeDir>Diagonal</backgroundFadeDir>
+        <chartSummaries>
+            <axisBinding>y</axisBinding>
+            <column>RowCount</column>
+        </chartSummaries>
+        <chartType>HorizontalBar</chartType>
+        <enableHoverLabels>true</enableHoverLabels>
+        <expandOthers>true</expandOthers>
+        <groupingColumn>OWNER</groupingColumn>
+        <location>CHART_TOP</location>
+        <showAxisLabels>false</showAxisLabels>
+        <showPercentage>false</showPercentage>
+        <showTotal>false</showTotal>
+        <showValues>false</showValues>
+        <size>Medium</size>
+        <summaryAxisRange>Auto</summaryAxisRange>
+        <textColor>#000000</textColor>
+        <textSize>12</textSize>
+        <title>거래처별 케이스 발생 건수 (올해)</title>
+        <titleColor>#000000</titleColor>
+        <titleSize>18</titleSize>
+    </chart>
     <columns>
         <field>CASE_NUMBER</field>
     </columns>
     <columns>
         <field>STATUS</field>
     </columns>
+    <description>거래처·우선순위별 케이스 발생 건수를 집계해 반복 장애 고객을 식별한다. 교체·PM 우선순위 결정에 활용한다.</description>
+    <format>Summary</format>
     <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
         <field>OWNER</field>
-        <dateGranularity>None</dateGranularity>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
     <groupingsDown>
+        <dateGranularity>Day</dateGranularity>
         <field>PRIORITY</field>
-        <dateGranularity>None</dateGranularity>
         <sortOrder>Asc</sortOrder>
     </groupingsDown>
+    <name>케이스 발생 현황 (거래처별)</name>
+    <params>
+        <name>units</name>
+        <value>m</value>
+    </params>
+    <params>
+        <name>co</name>
+        <value>1</value>
+    </params>
+    <reportType>CaseList</reportType>
+    <scope>organization</scope>
+    <showDetails>false</showDetails>
+    <showGrandTotal>true</showGrandTotal>
+    <showSubTotals>true</showSubTotals>
     <timeFrameFilter>
         <dateColumn>CREATED_DATE</dateColumn>
         <interval>INTERVAL_CURY</interval>
     </timeFrameFilter>
-    <chart>
-        <chartType>HorizontalBar</chartType>
-        <groupingColumn>OWNER</groupingColumn>
-        <chartSummaries>
-            <column>RowCount</column>
-        </chartSummaries>
-        <enableHoverLabels>true</enableHoverLabels>
-        <location>CHART_TOP</location>
-        <size>Medium</size>
-        <title>거래처별 케이스 발생 건수 (올해)</title>
-    </chart>
 </Report>

@@ -4,6 +4,6 @@
     <filterScope>Everything</filterScope>
     <label>보증 만료 예정 자산</label>
     <sharedTo>
-        <allInternalUsers/>
+        <allInternalUsers></allInternalUsers>
     </sharedTo>
 </ListView>

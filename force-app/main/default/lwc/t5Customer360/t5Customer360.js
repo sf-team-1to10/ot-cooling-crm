@@ -1,82 +1,119 @@
 import { LightningElement, api, wire } from 'lwc';
-import getCustomer360 from '@salesforce/apex/T5Customer360Controller.getCustomer360';
+import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import {
+    EnclosingTabId,
+    setTabLabel,
+    setTabIcon,
+    IsConsoleNavigation
+} from 'lightning/platformWorkspaceApi';
+import { openOrFocusSubtab } from 'c/otConsoleNav';
 
-export default class T5Customer360 extends LightningElement {
-    @api recordId;
+export default class T5Customer360 extends NavigationMixin(LightningElement) {
+    @api recordId; // Record page에 직접 놓일 때 플랫폼 주입
+    _stateRecordId; // 서브탭(UrlAddressable)로 열릴 때 URL state에서 해석
+    _tabId;
+    _tabLabeled = false;
 
-    data;
-    error;
+    @wire(CurrentPageReference)
+    setPageRef(pageRef) {
+        this._stateRecordId =
+            pageRef?.state?.c__recordId || pageRef?.attributes?.recordId || undefined;
+    }
 
-    @wire(getCustomer360, { caseId: '$recordId' })
-    wiredData({ data, error }) {
-        if (data) {
-            this.data = data;
-            this.error = undefined;
-        } else if (error) {
-            this.error = error;
-            this.data = undefined;
+    get effectiveRecordId() {
+        return this.recordId || this._stateRecordId || undefined;
+    }
+
+    // standard__component 서브탭은 로드 완료 시 라벨을 'Loading...'으로 덮으므로,
+    // 이 wire(=로드 후)로 tabId를 받아 라벨/아이콘을 다시 설정해 최종 고정한다.
+    @wire(EnclosingTabId)
+    setTabId(tabId) {
+        this._tabId = tabId;
+        this.labelEnclosingTab();
+    }
+
+    async labelEnclosingTab() {
+        if (this._tabLabeled || !this._tabId) {
+            return;
         }
+        this._tabLabeled = true;
+        await setTabLabel(this._tabId, 'Customer 360');
+        // standard: 계열 아이콘이 다른 콘솔 탭과 크기가 맞는다.
+        await setTabIcon(this._tabId, 'standard:contact');
     }
 
-    get isLoading() {
-        return !this.data && !this.error;
+    // 하단 탭 전환 상태 (프로토타입 c360-tabbtn)
+    activeTab = 'contract';
+
+    get isContract() {
+        return this.activeTab === 'contract';
+    }
+    get isProduct() {
+        return this.activeTab === 'product';
+    }
+    get isProblem() {
+        return this.activeTab === 'problem';
+    }
+    get isSales() {
+        return this.activeTab === 'sales';
     }
 
-    get errorMessage() {
-        if (!this.error) {
-            return '';
+    get contractTabClass() {
+        return this.tabClass('contract');
+    }
+    get productTabClass() {
+        return this.tabClass('product');
+    }
+    get problemTabClass() {
+        return this.tabClass('problem');
+    }
+    get salesTabClass() {
+        return this.tabClass('sales');
+    }
+
+    tabClass(key) {
+        return this.activeTab === key ? 'c360-tabbtn on' : 'c360-tabbtn';
+    }
+
+    handleC360Tab(event) {
+        this.activeTab = event.currentTarget.dataset.c360;
+    }
+
+    @wire(IsConsoleNavigation) isConsoleNavigation;
+
+    get isConsole() {
+        return this.isConsoleNavigation?.data === true;
+    }
+
+    // 서브탭 클릭 → 다른 장면으로 이동.
+    // Case는 레코드 페이지로, 나머지는 UrlAddressable 컴포넌트를 콘솔 서브탭(전체폭)으로 연다.
+    async handleSubtab(event) {
+        const target = event.currentTarget.dataset.goto;
+        const rid = this.effectiveRecordId;
+        if (!target || !rid) {
+            return;
         }
-        return this.error.body?.message || 'Customer 360 데이터를 불러오지 못했습니다.';
-    }
 
-    get accountName() {
-        return this.data?.accountName || '고객사 정보 없음';
-    }
+        if (target === 'case') {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: {
+                    recordId: rid,
+                    objectApiName: 'Case',
+                    actionName: 'view'
+                }
+            });
+            return;
+        }
 
-    get contracts() {
-        return (this.data?.contracts || []).map((c) => ({
-            ...c,
-            itemClass: c.isCurrent
-                ? 'slds-item section-row is-current'
-                : 'slds-item section-row',
-            badgeLabel: c.isExpired ? '만료' : '유효',
-            badgeClass: c.isExpired
-                ? 'slds-badge slds-theme_error'
-                : 'slds-badge slds-theme_success'
-        }));
-    }
-
-    get assets() {
-        return this.data?.assets || [];
-    }
-
-    get pastCases() {
-        return this.data?.pastCases || [];
-    }
-
-    get opportunities() {
-        return (this.data?.opportunities || []).map((o) => ({
-            ...o,
-            badgeLabel: o.isWon ? '수주' : o.stageName,
-            badgeClass: o.isWon
-                ? 'slds-badge slds-theme_success'
-                : 'slds-badge'
-        }));
-    }
-
-    get hasContracts() {
-        return this.contracts.length > 0;
-    }
-
-    get hasAssets() {
-        return this.assets.length > 0;
-    }
-
-    get hasPastCases() {
-        return this.pastCases.length > 0;
-    }
-
-    get hasOpportunities() {
-        return this.opportunities.length > 0;
+        if (this.isConsole) {
+            await openOrFocusSubtab(target, rid);
+        } else {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__component',
+                attributes: { componentName: target },
+                state: { c__recordId: rid }
+            });
+        }
     }
 }

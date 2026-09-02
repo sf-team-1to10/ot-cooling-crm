@@ -1,0 +1,118 @@
+<template>
+    <div class="flow">
+
+        <!-- ① 홈: 큰 버튼 2개 -->
+        <template lwc:if={isHome}>
+            <div class="hero">
+                <p class="hero__eyebrow">복구 작업</p>
+                <h1 class="hero__title">작업을 시작하세요</h1>
+                <p class="hero__sub">유사사례를 확인하거나 바로 측정을 시작할 수 있습니다.</p>
+            </div>
+            <div class="actions">
+                <button class="bigbtn bigbtn_ghost" onclick={goKnowledge}>
+                    <span class="bigbtn__title">Knowledge 보기</span>
+                    <span class="bigbtn__desc">타 고객사 유사사례 확인</span>
+                </button>
+                <button class="bigbtn bigbtn_primary" onclick={goMeasure}>
+                    <span class="bigbtn__title">측정 시작</span>
+                    <span class="bigbtn__desc">측정값 입력 및 판정</span>
+                </button>
+            </div>
+        </template>
+
+        <!-- ② Knowledge: 유사사례 목록 + 측정 시작 -->
+        <template lwc:if={isKnowledge}>
+            <div class="topbar">
+                <button class="linkbtn" onclick={goHome}>← 뒤로</button>
+                <span class="topbar__title">Knowledge · 유사사례</span>
+            </div>
+            <template lwc:if={hasArticles}>
+                <ul class="klist">
+                    <template for:each={articles} for:item="art">
+                        <li key={art.id} class="kcard" data-id={art.id} onclick={openArticle}>
+                            <p class="kcard__title">{art.title}</p>
+                            <template lwc:if={art.summary}>
+                                <p class="kcard__summary">{art.summary}</p>
+                            </template>
+                            <span class="kcard__go">열기 →</span>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <p class="empty">등록된 유사사례가 없습니다.</p>
+            </template>
+            <div class="actions actions_sticky">
+                <button class="bigbtn bigbtn_primary" onclick={goMeasure}>
+                    <span class="bigbtn__title">측정 시작</span>
+                </button>
+            </div>
+        </template>
+
+        <!-- ③ 측정: 값 입력 / 판정 / 작업 완료 게이트 -->
+        <template lwc:if={isMeasure}>
+            <div class="topbar">
+                <button class="linkbtn" onclick={goHome}>← 처음으로</button>
+                <span class="topbar__title">측정</span>
+            </div>
+
+            <template lwc:if={hasLines}>
+                <ul class="list">
+                    <template for:each={lines} for:item="line">
+                        <li key={line.id} class="card">
+                            <div class="card__head">
+                                <div class="card__point">
+                                    <span class="card__point-label">측정 포인트</span>
+                                    <span class="card__point-value">{line.point}</span>
+                                </div>
+                                <span class={line.badgeClass}>{line.badgeLabel}</span>
+                            </div>
+
+                            <p class="card__range">{line.rangeLabel}</p>
+
+                            <template lwc:if={line.baseline}>
+                                <p class="card__ref">기준값 {line.baseline} {line.unit}
+                                    <template lwc:if={line.previous}> · 직전값 {line.previous} {line.unit}</template>
+                                </p>
+                            </template>
+
+                            <div class="entry">
+                                <lightning-input
+                                    type="number"
+                                    label="측정값"
+                                    variant="label-hidden"
+                                    value={line.draft}
+                                    data-id={line.id}
+                                    onchange={handleInput}
+                                    step="any"
+                                    class="entry__input">
+                                </lightning-input>
+                                <span class="entry__unit">{line.unit}</span>
+                                <button
+                                    class="savebtn"
+                                    data-id={line.id}
+                                    onclick={handleSave}
+                                    disabled={saving}>저장</button>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <p class="empty">이 작업지시에 등록된 측정 항목이 없습니다.</p>
+            </template>
+
+            <!-- ④ 작업 완료 게이트: 전부 합격해야 활성화 -->
+            <div class="complete">
+                <p class="complete__hint">{completeHint}</p>
+                <button
+                    class="bigbtn bigbtn_complete"
+                    onclick={handleComplete}
+                    disabled={completeDisabled}>
+                    <span class="bigbtn__title">작업 완료</span>
+                </button>
+            </div>
+        </template>
+
+    </div>
+</template>

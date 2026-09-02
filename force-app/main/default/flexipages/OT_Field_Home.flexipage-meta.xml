@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>강시공 현장 담당 홈 — 오늘 예정/대기 Service Appointment, 내 Work Order</description>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -17,7 +18,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>c:otKpiCard</componentName>
+                <componentName>otKpiCard</componentName>
                 <identifier>c_otKpiCard_field</identifier>
             </componentInstance>
         </itemInstances>
@@ -108,7 +109,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <description>강시공 현장 담당 홈 — 오늘 예정/대기 Service Appointment, 내 Work Order</description>
     <masterLabel>OT 현장 홈</masterLabel>
     <template>
         <name>home:desktopTemplate</name>
