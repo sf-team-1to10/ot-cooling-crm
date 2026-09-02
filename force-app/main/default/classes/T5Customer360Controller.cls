@@ -25,6 +25,7 @@ public with sharing class T5Customer360Controller {
             return result;
         }
 
+        result.profile = buildProfile(current);
         result.contracts = buildContracts(accountId, current.EntitlementId);
         result.assets = buildAssets(accountId);
         result.pastCases = buildPastCases(accountId, caseId);
@@ -36,7 +37,10 @@ public with sharing class T5Customer360Controller {
 
     private static Case getCurrentCase(Id caseId) {
         List<Case> cases = [
-            SELECT Id, AccountId, Account.Name, AssetId, EntitlementId
+            SELECT Id, AccountId, Account.Name, Account.Industry, Account.Owner.Name,
+                   AssetId, EntitlementId,
+                   ContactId, Contact.Name, Contact.Title, Contact.Phone, Contact.Email,
+                   Contact.MailingCity, Contact.MailingStreet
             FROM Case
             WHERE Id = :caseId
             WITH USER_MODE
@@ -46,6 +50,34 @@ public with sharing class T5Customer360Controller {
             throw new AuraHandledException('Case not found: ' + caseId);
         }
         return cases[0];
+    }
+
+    private static ProfileInfo buildProfile(Case current) {
+        ProfileInfo p = new ProfileInfo();
+        p.industry = current.Account?.Industry;
+        p.ownerName = current.Account?.Owner?.Name;
+        p.contactName = current.Contact?.Name;
+        p.contactTitle = current.Contact?.Title;
+        p.contactPhone = current.Contact?.Phone;
+        p.contactEmail = current.Contact?.Email;
+        String street = current.Contact?.MailingStreet;
+        String city = current.Contact?.MailingCity;
+        if (String.isNotBlank(city) || String.isNotBlank(street)) {
+            p.contactAddress = (city == null ? '' : city) +
+                (String.isNotBlank(city) && String.isNotBlank(street) ? ' ' : '') +
+                (street == null ? '' : street);
+        }
+
+        p.contactInitial = '';
+        if (String.isNotBlank(p.contactName)) {
+            p.contactInitial = p.contactName.substring(0, 1);
+        }
+        p.contactRole = p.contactTitle;
+        if (current.Account?.Name != null) {
+            p.contactRole = (p.contactRole == null ? '' : p.contactRole + ' · ') + current.Account.Name;
+        }
+
+        return p;
     }
 
     /**
@@ -159,10 +191,23 @@ public with sharing class T5Customer360Controller {
     public class Customer360 {
         @AuraEnabled public String accountName;
         @AuraEnabled public Id currentEntitlementId;
+        @AuraEnabled public ProfileInfo profile;
         @AuraEnabled public List<ContractInfo> contracts = new List<ContractInfo>();
         @AuraEnabled public List<AssetInfo> assets = new List<AssetInfo>();
         @AuraEnabled public List<CaseInfo> pastCases = new List<CaseInfo>();
         @AuraEnabled public List<OpportunityInfo> opportunities = new List<OpportunityInfo>();
+    }
+
+    public class ProfileInfo {
+        @AuraEnabled public String industry;
+        @AuraEnabled public String ownerName;
+        @AuraEnabled public String contactName;
+        @AuraEnabled public String contactInitial;
+        @AuraEnabled public String contactRole;
+        @AuraEnabled public String contactTitle;
+        @AuraEnabled public String contactPhone;
+        @AuraEnabled public String contactEmail;
+        @AuraEnabled public String contactAddress;
     }
 
     public class ContractInfo {

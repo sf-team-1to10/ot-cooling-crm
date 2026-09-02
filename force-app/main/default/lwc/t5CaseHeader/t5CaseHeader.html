@@ -94,6 +94,11 @@
                 <div class={cardClass} onclick={stopPropagation}
                     role="dialog" aria-modal="true" aria-label="출동 브리핑 생성">
                     <div class="slds-p-around_medium briefing-card-content">
+                        <template lwc:if={flowError}>
+                            <div class="slds-text-color_error slds-p-around_medium">
+                                Flow를 실행할 수 없습니다. Case 데이터를 확인해 주세요.
+                            </div>
+                        </template>
                         <lightning-flow flow-api-name="Case_Dispatch_Briefing_Generate"
                             flow-input-variables={flowInputVariables}
                             onstatuschange={handleFlowStatusChange}></lightning-flow>

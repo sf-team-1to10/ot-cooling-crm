@@ -48,134 +48,149 @@
                 </div>
             </div>
 
-            <!-- ── 탭바 ── -->
-            <div class="c360-tabbar">
-                <button class={contractTabClass} data-c360="contract" onclick={handleC360Tab}>계약</button>
-                <button class={productTabClass} data-c360="product" onclick={handleC360Tab}>제품</button>
-                <button class={problemTabClass} data-c360="problem" onclick={handleC360Tab}>문제 이력</button>
-                <button class={salesTabClass} data-c360="sales" onclick={handleC360Tab}>영업 이력</button>
-            </div>
-
-            <!-- 계약 -->
-            <template lwc:if={isContract}>
-                <div class="c360-panel-single">
-                    <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">계약</span>
-                        <div class="slds-p-horizontal_small">
-                            <template lwc:if={hasContracts}>
-                                <ul class="slds-has-dividers_bottom-space">
-                                    <template for:each={contracts} for:item="c">
-                                        <li key={c.id} class={c.itemClass}>
-                                            <div class="slds-grid slds-grid_align-spread">
-                                                <span class="slds-truncate" title={c.name}>{c.name}</span>
-                                                <span class={c.badgeClass}>{c.badgeLabel}</span>
-                                            </div>
-                                            <div class="slds-text-body_small slds-text-color_weak">
-                                                <lightning-formatted-text value={c.status}></lightning-formatted-text>
-                                                &middot; 만료
-                                                <lightning-formatted-date-time value={c.endDate}></lightning-formatted-date-time>
-                                            </div>
-                                        </li>
-                                    </template>
-                                </ul>
-                            </template>
-                            <template lwc:else>
-                                <p class="slds-text-color_weak slds-p-vertical_x-small">계약 데이터 없음</p>
-                            </template>
-                        </div>
-                    </lightning-card>
+            <!-- ── 프로필 ── -->
+            <template lwc:if={profile}>
+                <div class="c360-profile">
+                    <div class="c360-av">{profile.contactInitial}</div>
+                    <div class="c360-id">
+                        <div class="c360-name">{profile.contactName}</div>
+                        <div class="c360-role">{profile.contactRole}</div>
+                    </div>
+                    <dl class="c360-contact">
+                        <div><dt>Email</dt><dd>{contactEmail}</dd></div>
+                        <div><dt>Phone</dt><dd class="num">{contactPhone}</dd></div>
+                        <div><dt>Address</dt><dd>{contactAddress}</dd></div>
+                        <div><dt>Industry</dt><dd>{contactIndustry}</dd></div>
+                    </dl>
+                    <div class="c360-actions">
+                        <lightning-button label="편집"></lightning-button>
+                        <lightning-button label="일정 예약" variant="brand"></lightning-button>
+                    </div>
                 </div>
             </template>
 
-            <!-- 제품 -->
+            <!-- ── 고객 인사이트 KPI ── -->
+            <div class="mini-label">고객 인사이트</div>
+            <div class="c360-kpi">
+                <div class="c360-kpi-card"><div class="c360-kpi-v c360-kpi-good">{kpiCsat}</div><div class="c360-kpi-l">CSAT</div></div>
+                <div class="c360-kpi-card"><div class="c360-kpi-v">{kpiResponseSla}</div><div class="c360-kpi-l">응답 SLA</div></div>
+                <div class="c360-kpi-card"><div class="c360-kpi-v c360-kpi-sm">{kpiContractType}</div><div class="c360-kpi-l">계약 유형</div></div>
+                <div class="c360-kpi-card"><div class={kpiContractStatusClass}>{kpiContractStatus}</div><div class="c360-kpi-l">{kpiContractExpiry}</div></div>
+            </div>
+
+            <!-- ── 탭바 ── -->
+            <div class="c360-tabbar">
+                <button class={contractTabClass} data-c360="contract" onclick={handleC360Tab}>계약 정보</button>
+                <button class={productTabClass} data-c360="product" onclick={handleC360Tab}>제품 이력</button>
+                <button class={problemTabClass} data-c360="problem" onclick={handleC360Tab}>문제 이력</button>
+                <button class={salesTabClass} data-c360="sales" onclick={handleC360Tab}>Sales History</button>
+            </div>
+
+            <!-- 계약 정보 -->
+            <template lwc:if={isContract}>
+                <div class="c360-panel-single">
+                    <div class="card">
+                        <div class="card-head"><h3>계약 이력</h3></div>
+                        <div class="card-body-tight">
+                            <div class="rl">
+                                <template lwc:if={hasContracts}>
+                                    <template for:each={contracts} for:item="c">
+                                        <div key={c.id} class="rl-row">
+                                            <div class="rl-main">
+                                                <div class="rl-t">{c.name}</div>
+                                                <div class="rl-s">{c.status} &middot; 만료 {c.endDateFormatted}</div>
+                                            </div>
+                                            <span class={c.badgeClass}>{c.badgeLabel}</span>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template lwc:else>
+                                    <div class="rl-row"><div class="rl-main"><div class="rl-s">계약 데이터 없음</div></div></div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- 제품 이력 -->
             <template lwc:if={isProduct}>
                 <div class="c360-panel-single">
-                    <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">제품</span>
-                        <div class="slds-p-horizontal_small">
-                            <template lwc:if={hasAssets}>
-                                <ul class="slds-has-dividers_bottom-space">
+                    <div class="card">
+                        <div class="card-head"><h3>제품 이력</h3></div>
+                        <div class="card-body-tight">
+                            <div class="rl">
+                                <template lwc:if={hasAssets}>
                                     <template for:each={assets} for:item="a">
-                                        <li key={a.id} class="slds-item section-row">
-                                            <div class="slds-grid slds-grid_align-spread">
-                                                <span class="slds-truncate" title={a.name}>{a.name}</span>
-                                                <span class="slds-text-body_small">{a.status}</span>
+                                        <div key={a.id} class="rl-row">
+                                            <div class="rl-main">
+                                                <div class="rl-t">{a.name}</div>
+                                                <div class="rl-s">S/N {a.serialNumber} &middot; {a.status}</div>
                                             </div>
-                                            <div class="slds-text-body_small slds-text-color_weak">
-                                                S/N {a.serialNumber}
-                                            </div>
-                                        </li>
+                                        </div>
                                     </template>
-                                </ul>
-                            </template>
-                            <template lwc:else>
-                                <p class="slds-text-color_weak slds-p-vertical_x-small">제품 데이터 없음</p>
-                            </template>
+                                </template>
+                                <template lwc:else>
+                                    <div class="rl-row"><div class="rl-main"><div class="rl-s">제품 데이터 없음</div></div></div>
+                                </template>
+                            </div>
                         </div>
-                    </lightning-card>
+                    </div>
                 </div>
             </template>
 
             <!-- 문제 이력 -->
             <template lwc:if={isProblem}>
                 <div class="c360-panel-single">
-                    <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">문제 이력</span>
-                        <div class="slds-p-horizontal_small">
-                            <template lwc:if={hasPastCases}>
-                                <ul class="slds-has-dividers_bottom-space">
+                    <div class="card">
+                        <div class="card-head"><h3>문제 이력</h3></div>
+                        <div class="card-body-tight">
+                            <div class="rl">
+                                <template lwc:if={hasPastCases}>
                                     <template for:each={pastCases} for:item="pc">
-                                        <li key={pc.id} class="slds-item section-row">
-                                            <div class="slds-grid slds-grid_align-spread">
-                                                <span class="slds-truncate" title={pc.subject}>
-                                                    {pc.caseNumber} &middot; {pc.subject}
-                                                </span>
-                                                <span class="slds-text-body_small">{pc.status}</span>
+                                        <div key={pc.id} class="rl-row">
+                                            <div class="rl-main">
+                                                <div class="rl-t">{pc.caseNumber} &middot; {pc.subject}</div>
+                                                <div class="rl-s">{pc.status}</div>
                                             </div>
-                                        </li>
+                                        </div>
                                     </template>
-                                </ul>
-                            </template>
-                            <template lwc:else>
-                                <p class="slds-text-color_weak slds-p-vertical_x-small">과거 문제 이력 없음</p>
-                            </template>
+                                </template>
+                                <template lwc:else>
+                                    <div class="rl-row"><div class="rl-main"><div class="rl-s">과거 문제 이력 없음</div></div></div>
+                                </template>
+                            </div>
                         </div>
-                    </lightning-card>
+                    </div>
                 </div>
             </template>
 
-            <!-- 영업 이력 -->
+            <!-- Sales History -->
             <template lwc:if={isSales}>
                 <div class="c360-panel-single">
-                    <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">영업 이력</span>
-                        <div class="slds-p-horizontal_small">
-                            <template lwc:if={hasOpportunities}>
-                                <ul class="slds-has-dividers_bottom-space">
+                    <div class="card">
+                        <div class="card-head"><h3>Sales History</h3></div>
+                        <div class="card-body-tight">
+                            <div class="rl">
+                                <template lwc:if={hasOpportunities}>
                                     <template for:each={opportunities} for:item="o">
-                                        <li key={o.id} class="slds-item section-row">
-                                            <div class="slds-grid slds-grid_align-spread">
-                                                <span class="slds-truncate" title={o.name}>{o.name}</span>
-                                                <span class={o.badgeClass}>{o.badgeLabel}</span>
+                                        <div key={o.id} class="rl-row">
+                                            <div class="rl-main">
+                                                <div class="rl-t">{o.name}</div>
+                                                <div class="rl-s">
+                                                    {o.amountFormatted} &middot; {o.closeDateFormatted}
+                                                </div>
                                             </div>
-                                            <div class="slds-text-body_small slds-text-color_weak">
-                                                <lightning-formatted-number
-                                                    value={o.amount}
-                                                    format-style="currency"
-                                                    currency-code="KRW">
-                                                </lightning-formatted-number>
-                                                &middot;
-                                                <lightning-formatted-date-time value={o.closeDate}></lightning-formatted-date-time>
-                                            </div>
-                                        </li>
+                                            <span class={o.badgeClass}>{o.badgeLabel}</span>
+                                        </div>
                                     </template>
-                                </ul>
-                            </template>
-                            <template lwc:else>
-                                <p class="slds-text-color_weak slds-p-vertical_x-small">영업 이력 없음</p>
-                            </template>
+                                </template>
+                                <template lwc:else>
+                                    <div class="rl-row"><div class="rl-main"><div class="rl-s">영업 이력 없음</div></div></div>
+                                </template>
+                            </div>
                         </div>
-                    </lightning-card>
+                    </div>
                 </div>
             </template>
         </template>
