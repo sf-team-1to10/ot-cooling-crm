@@ -153,7 +153,7 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>Private</externalSharingModel>
-    <label>Technical Review</label>
+    <label>기술 검토</label>
     <nameField>
         <label>Technical Review Name</label>
         <type>Text</type>

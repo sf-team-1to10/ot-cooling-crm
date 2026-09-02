@@ -1,0 +1,71 @@
+<template>
+    <nav class="sidebar">
+        <ul class="menu">
+            <li>
+                <button
+                    class={overviewClass}
+                    data-page="overview"
+                    onclick={handleNav}
+                >
+                    <span class="icon">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M3 4a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm0 8a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H4a1 1 0 01-1-1v-4zm8-8a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V4zm0 8a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
+                    </span>
+                    <span class="label">개요</span>
+                </button>
+            </li>
+            <li>
+                <button
+                    class={assetsClass}
+                    data-page="assets"
+                    onclick={handleNav}
+                >
+                    <span class="icon">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm2 1v8h10V6H5zm2 2h6v2H7V8zm0 3h4v2H7v-2z" clip-rule="evenodd"/></svg>
+                    </span>
+                    <span class="label">내 자산</span>
+                    <template lwc:if={hasAttention}>
+                        <span class="badge">{attentionCount}</span>
+                    </template>
+                </button>
+            </li>
+            <li>
+                <button
+                    class={intakeClass}
+                    data-page="intake"
+                    onclick={handleNav}
+                >
+                    <span class="icon">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                    </span>
+                    <span class="label">장애 신고</span>
+                </button>
+            </li>
+            <li>
+                <button
+                    class={changeClass}
+                    data-page="change"
+                    onclick={handleNav}
+                >
+                    <span class="icon">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>
+                    </span>
+                    <span class="label">변경 요청</span>
+                    <span class="soon">준비중</span>
+                </button>
+            </li>
+            <li>
+                <button
+                    class={maintenanceClass}
+                    data-page="maintenance"
+                    onclick={handleNav}
+                >
+                    <span class="icon">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/></svg>
+                    </span>
+                    <span class="label">정비 현황</span>
+                    <span class="soon">준비중</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+</template>

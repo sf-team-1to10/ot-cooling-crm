@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Status__c</fullName>
     <description>경보 라이프사이클. 고객의 &quot;알람 확인&quot; 버튼은 Unacknowledged→Acknowledged만 바꾼다 — Resolved는 내부 운영자만 처리(이 포털에서는 못 바꿈).</description>
-    <label>Status</label>
+    <label>상태</label>
     <required>true</required>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

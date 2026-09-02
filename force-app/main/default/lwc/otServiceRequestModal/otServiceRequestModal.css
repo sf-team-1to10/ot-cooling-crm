@@ -1,40 +1,60 @@
+:host {
+    --ot-navy: #0b1f33;
+    --ot-navy-hover: #163b5d;
+    --ot-cyan: #16b8c8;
+    --ot-surface: #ffffff;
+    --ot-surface-subtle: #f8fafc;
+    --ot-border: #e9e9ea;
+    --ot-ink: #1d1f20;
+    --ot-muted: #5c6a72;
+    --ot-focus-ring: 0 0 0 3px rgba(22, 184, 200, 0.28);
+    --ot-font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, "Apple SD Gothic Neo", sans-serif;
+    font-family: var(--ot-font-sans);
+}
+
 .ovl {
     position: fixed; inset: 0;
-    background: rgba(20,30,55,.4);
+    background: rgba(11, 31, 51, 0.45);
     backdrop-filter: blur(2px);
     display: grid; place-items: center; z-index: 60;
 }
 .modal {
-    background: #fff; border-radius: 12px; width: 400px; max-width: 92vw;
-    box-shadow: 0 24px 60px rgba(20,35,63,.3); overflow: hidden;
+    background: var(--ot-surface);
+    border-radius: 6px;
+    width: 400px; max-width: 92vw;
+    box-shadow: 0 8px 32px rgba(11, 31, 51, 0.2);
+    overflow: hidden;
+    font-family: var(--ot-font-sans);
 }
 .mh {
     display: flex; align-items: center; gap: 9px; padding: 15px 18px;
-    border-bottom: 1px solid #E4E9F3;
+    border-bottom: 1px solid var(--ot-border);
 }
-.mh b { font-size: 14px; color: #1A2540; font-weight: 700; }
+.mh b { font-size: 14px; color: var(--ot-ink); font-weight: 700; }
 .x {
-    margin-left: auto; width: 28px; height: 28px; border-radius: 7px;
-    display: grid; place-items: center; color: #6B7896;
+    margin-left: auto; width: 28px; height: 28px; border-radius: 4px;
+    display: grid; place-items: center; color: var(--ot-muted);
     background: none; border: 0; cursor: pointer;
 }
-.x:hover { background: #F4F6FB; }
+.x:hover { background: var(--ot-surface-subtle); }
 .x svg { width: 16px; height: 16px; }
-.mb { padding: 18px; font-size: 12.5px; color: #3D4A63; line-height: 1.6; }
+.mb { padding: 18px; font-size: 12.5px; color: var(--ot-muted); line-height: 1.6; }
 .mf {
     display: flex; justify-content: flex-end; gap: 8px; padding: 13px 18px;
-    border-top: 1px solid #E4E9F3; background: #FBFCFE;
+    border-top: 1px solid var(--ot-border); background: var(--ot-surface-subtle);
 }
 .btn {
     display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px;
-    border-radius: 8px; font-size: 12.5px; font-weight: 600;
-    background: #2E6BE6; color: #fff; border: 0; cursor: pointer;
-    box-shadow: 0 1px 3px rgba(46,107,230,.3);
+    border-radius: 4px; font-size: 12.5px; font-weight: 600;
+    background: var(--ot-navy); color: var(--ot-surface); border: 0; cursor: pointer;
+    font-family: inherit;
 }
-.btn:hover { background: #1F52BE; }
+.btn:hover { background: var(--ot-navy-hover); }
+.btn:focus { outline: none; box-shadow: var(--ot-focus-ring); }
 .btn.ghost {
-    background: #fff; color: #3D4A63; border: 1px solid #D5DDEC;
-    box-shadow: 0 1px 2px rgba(20,35,63,.06);
+    background: var(--ot-surface); color: var(--ot-ink);
+    border: 1px solid var(--ot-border);
 }
-.btn.ghost:hover { background: #F4F6FB; }
+.btn.ghost:hover { background: var(--ot-surface-subtle); }
 .btn.sm { padding: 6px 11px; font-size: 11.5px; }

@@ -154,10 +154,10 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <externalSharingModel>Private</externalSharingModel>
-    <label>Customer Alert</label>
+    <label>고객 알림</label>
     <nameField>
         <displayFormat>CA-{0000}</displayFormat>
-        <label>Alert Number</label>
+        <label>알림 번호</label>
         <type>AutoNumber</type>
     </nameField>
     <searchLayouts></searchLayouts>

@@ -2,7 +2,7 @@
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Priority__c</fullName>
     <description>P1(가장 심각) ~ P4. 고객 포털 배너의 &quot;P3&quot; 같은 태그로 그대로 노출된다.</description>
-    <label>Priority</label>
+    <label>우선순위</label>
     <required>true</required>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

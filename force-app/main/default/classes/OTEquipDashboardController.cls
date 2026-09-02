@@ -119,6 +119,7 @@ public with sharing class OTEquipDashboardController {
             result.meta = (result.assetType != null ? result.assetType : '') +
                 ' · ' + (result.family != null ? result.family : '') +
                 ' · ' + (result.location != null ? result.location : '');
+            result.imageUrl = resolveImageUrl(assetId);
 
             return result;
         } catch (AuraHandledException ae) {
@@ -155,6 +156,41 @@ public with sharing class OTEquipDashboardController {
         } catch (Exception e) {
             throw new AuraHandledException('위치 정보를 불러오는 중 오류가 발생했습니다.');
         }
+    }
+
+    private static final Set<String> IMAGE_EXTS = new Set<String>{ 'png', 'jpg', 'jpeg', 'webp', 'gif' };
+
+    private static String resolveImageUrl(Id assetId) {
+        // 이미지 파일(PNG/JPG 등)만 필터링 — PDF·도면 등 비이미지 파일은 제외
+        List<ContentDocumentLink> links = [
+            SELECT ContentDocument.LatestPublishedVersionId,
+                   ContentDocument.FileExtension,
+                   ContentDocument.Title
+            FROM ContentDocumentLink
+            WHERE LinkedEntityId = :assetId
+            WITH USER_MODE
+            ORDER BY ContentDocument.CreatedDate ASC
+        ];
+        if (links.isEmpty()) return null;
+        // 제품/설치 사진 우선 (설치 현장, 제품 등 키워드 포함된 이미지)
+        for (ContentDocumentLink l : links) {
+            if (l.ContentDocument == null) continue;
+            String ext = (l.ContentDocument.FileExtension ?? '').toLowerCase();
+            String title = (l.ContentDocument.Title ?? '').toLowerCase();
+            if (!IMAGE_EXTS.contains(ext)) continue;
+            if (title.contains('설치') || title.contains('제품') || title.contains('product') || title.contains('installed')) {
+                return '/sfc/servlet.shepherd/version/download/' + l.ContentDocument.LatestPublishedVersionId;
+            }
+        }
+        // 키워드 없으면 첫 번째 이미지 파일 반환
+        for (ContentDocumentLink l : links) {
+            if (l.ContentDocument == null) continue;
+            String ext = (l.ContentDocument.FileExtension ?? '').toLowerCase();
+            if (IMAGE_EXTS.contains(ext)) {
+                return '/sfc/servlet.shepherd/version/download/' + l.ContentDocument.LatestPublishedVersionId;
+            }
+        }
+        return null;
     }
 
     private static Id resolveRunningUserAccountId() {
@@ -238,6 +274,7 @@ public with sharing class OTEquipDashboardController {
         @AuraEnabled public String warrantyType { get; set; }
         @AuraEnabled public Decimal openItemsSummary { get; set; }
         @AuraEnabled public String gaugesJson { get; set; }
+        @AuraEnabled public String imageUrl { get; set; }
     }
 
     public class LocationView {

@@ -1,32 +1,64 @@
 <template>
-    <c-ot-portal-header
-        active-page={activePage}
-        onnavigate={handleNavigate}
-    ></c-ot-portal-header>
+    <!-- 상단 헤더 -->
+    <c-t5-portal-site-header></c-t5-portal-site-header>
 
-    <template lwc:if={showList}>
-        <c-ot-my-assets oncontact={handleContact}></c-ot-my-assets>
-    </template>
+    <!-- 사이드바 + 콘텐츠 -->
+    <div class="shell">
+        <c-ot-portal-sidebar
+            active-page={activePage}
+            attention-count={attentionCount}
+            onnavigate={handleNavigate}
+        ></c-ot-portal-sidebar>
 
-    <template lwc:elseif={showDetail}>
-        <div class="detail-wrap">
-            <button class="back-link" onclick={handleBackToList}>
-                ← 내 자산
-            </button>
-            <c-ot-trend-alert-card
-                asset-id={selectedAssetId}
-            ></c-ot-trend-alert-card>
-            <button class="report-cta" onclick={handleOpenReport}>
-                이 장비 장애 신고
-            </button>
-        </div>
-    </template>
+        <main class="content">
 
-    <template lwc:else>
-        <c-ot-report-fault
-            asset-id={selectedAssetId}
-            asset-name={selectedAssetName}
-            onback={handleBackFromReport}
-        ></c-ot-report-fault>
-    </template>
+            <!-- 개요 (Phase 2에서 otPortalOverview로 교체 예정) -->
+            <template lwc:if={showOverview}>
+                <div class="coming-soon">
+                    <div class="cs-icon">
+                        <svg viewBox="0 0 48 48" fill="none">
+                            <rect width="48" height="48" rx="12" fill="rgba(22,184,200,0.08)"/>
+                            <path d="M12 16h8v8h-8zM28 16h8v8h-8zM12 28h8v8h-8zM28 28h8v8h-8z" fill="#16b8c8" opacity=".6"/>
+                        </svg>
+                    </div>
+                    <div class="cs-title">대시보드 준비 중</div>
+                    <div class="cs-sub">개요 화면은 곧 업데이트됩니다.<br/>지금은 내 자산을 먼저 확인해 보세요.</div>
+                    <button class="cs-btn" onclick={handleGoAssets}>내 자산 보기</button>
+                </div>
+            </template>
+
+            <!-- 내 자산 목록 -->
+            <template lwc:if={showList}>
+                <c-ot-my-assets
+                    oncontact={handleContact}
+                    onattentioncount={handleAttentionCount}
+                ></c-ot-my-assets>
+            </template>
+
+            <!-- 자산 상세 -->
+            <template lwc:if={showDetail}>
+                <div class="detail-wrap">
+                    <button class="back-link" onclick={handleBackToList}>
+                        ← 내 자산
+                    </button>
+                    <c-ot-trend-alert-card
+                        asset-id={selectedAssetId}
+                    ></c-ot-trend-alert-card>
+                    <button class="report-cta" onclick={handleOpenReport}>
+                        이 장비 장애 신고
+                    </button>
+                </div>
+            </template>
+
+            <!-- 장애 신고 -->
+            <template lwc:if={showIntake}>
+                <c-ot-report-fault
+                    asset-id={selectedAssetId}
+                    asset-name={selectedAssetName}
+                    onback={handleBackFromReport}
+                ></c-ot-report-fault>
+            </template>
+
+        </main>
+    </div>
 </template>

@@ -3,6 +3,7 @@ import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
 import USER_ID from '@salesforce/user/Id';
 import NAME_FIELD from '@salesforce/schema/User.Name';
 import ACCOUNT_NAME_FIELD from '@salesforce/schema/User.Contact.Account.Name';
+import OT_LOGO_NAVY from '@salesforce/resourceUrl/OT_Logo_Square_Navy';
 
 /**
  * 사이트 전역 헤더(Experience Builder Header 영역 전용, 2026-08-30 신설).
@@ -14,6 +15,7 @@ import ACCOUNT_NAME_FIELD from '@salesforce/schema/User.Contact.Account.Name';
  * 중복 없이 생략했다.
  */
 export default class T5PortalSiteHeader extends LightningElement {
+    logoUrl = OT_LOGO_NAVY;
     userName;
     accountName;
 
