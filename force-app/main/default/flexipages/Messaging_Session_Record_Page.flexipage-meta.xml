@@ -102,8 +102,14 @@
                 <identifier>scrt_conversationBody</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>t5ServiceReplies</componentName>
+                <identifier>c_t5ServiceReplies</identifier>
+            </componentInstance>
+        </itemInstances>
         <mode>Replace</mode>
-        <name>pinnedLeft</name>
+        <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -157,19 +163,19 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>c:otCaseSubtabOpener</componentName>
+                <componentName>otCaseSubtabOpener</componentName>
                 <identifier>otCaseSubtabOpener</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
-        <name>main</name>
+        <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>Messaging Session Record Page</masterLabel>
     <parentFlexiPage>runtime_service_livemessage__MS_rec_L</parentFlexiPage>
     <sobjectType>MessagingSession</sobjectType>
     <template>
-        <name>flexipage:recordHomePinnedLeftSidebarTemplateDesktop</name>
+        <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
 </FlexiPage>
