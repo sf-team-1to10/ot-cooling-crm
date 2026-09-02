@@ -7,8 +7,8 @@
                     <name>uiBehavior</name>
                     <value>required</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.AppointmentNumber</fieldItem>
-                <identifier>RecordAppointmentNumberPrimaryField</identifier>
+                <fieldItem>Record.ContractNumber</fieldItem>
+                <identifier>RecordContractNumberPrimaryField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-PrimaryFields</name>
@@ -31,8 +31,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.SchedStartTime</fieldItem>
-                <identifier>RecordSchedStartTimeSecondaryField1</identifier>
+                <fieldItem>Record.StartDate</fieldItem>
+                <identifier>RecordStartDateSecondaryField1</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -41,18 +41,8 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.SchedEndTime</fieldItem>
-                <identifier>RecordSchedEndTimeSecondaryField2</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ServiceTerritoryId</fieldItem>
-                <identifier>RecordServiceTerritoryIdSecondaryField3</identifier>
+                <fieldItem>Record.EndDate</fieldItem>
+                <identifier>RecordEndDateSecondaryField2</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-SecondaryFields</name>
@@ -115,150 +105,10 @@
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>required</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.AppointmentNumber</fieldItem>
-                <identifier>RecordAppointmentNumberColumn1Field0</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>required</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Status</fieldItem>
-                <identifier>RecordStatusColumn1Field1</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.SchedStartTime</fieldItem>
-                <identifier>RecordSchedStartTimeColumn1Field2</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.SchedEndTime</fieldItem>
-                <identifier>RecordSchedEndTimeColumn1Field3</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ActualStartTime</fieldItem>
-                <identifier>RecordActualStartTimeColumn1Field4</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-FieldSection-Column1</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ActualEndTime</fieldItem>
-                <identifier>RecordActualEndTimeColumn2Field0</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>required</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ParentRecordId</fieldItem>
-                <identifier>RecordParentRecordIdColumn2Field1</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.ServiceTerritoryId</fieldItem>
-                <identifier>RecordServiceTerritoryIdColumn2Field2</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Duration</fieldItem>
-                <identifier>RecordDurationColumn2Field3</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <itemInstances>
-            <fieldInstance>
-                <fieldInstanceProperties>
-                    <name>uiBehavior</name>
-                    <value>none</value>
-                </fieldInstanceProperties>
-                <fieldItem>Record.Description</fieldItem>
-                <identifier>RecordDescriptionColumn2Field4</identifier>
-            </fieldInstance>
-        </itemInstances>
-        <name>Facet-FieldSection-Column2</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-FieldSection-Column1</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_column1</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-FieldSection-Column2</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:column</componentName>
-                <identifier>flexipage_column2</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-FieldSection-Columns</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>columns</name>
-                    <value>Facet-FieldSection-Columns</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>horizontalAlignment</name>
-                    <value>false</value>
-                </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>label</name>
-                    <value>예약 정보</value>
+                    <value>계약 정보</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
                 <identifier>flexipage_fieldSection</identifier>
@@ -270,11 +120,21 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>otDispatchCandidates</componentName>
-                <identifier>c_otDispatchCandidates_sa</identifier>
+                <componentName>otRenewalTasks</componentName>
+                <identifier>c_otRenewalTasks_sc</identifier>
             </componentInstance>
         </itemInstances>
-        <name>assignTabContent</name>
+        <name>renewalTabContent</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>otServiceContractReview</componentName>
+                <identifier>c_otServiceContractReview_sc</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>contractReviewTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -300,14 +160,28 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>assignTabContent</value>
+                    <value>renewalTabContent</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>배정</value>
+                    <value>갱신 검토</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>assignTab</identifier>
+                <identifier>renewalTab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>contractReviewTabContent</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>운영 성과</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>contractReviewTab</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -399,8 +273,8 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>서비스 예약</masterLabel>
-    <sobjectType>ServiceAppointment</sobjectType>
+    <masterLabel>계약 갱신 검토</masterLabel>
+    <sobjectType>ServiceContract</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>

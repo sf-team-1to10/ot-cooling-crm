@@ -1,15 +1,13 @@
 import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import { CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    IsConsoleNavigation
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
 import getHeader from '@salesforce/apex/T5DispatchCandidatesController.getHeader';
 
-export default class OtDispatchCandidates extends NavigationMixin(LightningElement) {
+export default class OtDispatchCandidates extends LightningElement {
     @api recordId;
     _stateRecordId;
     _tabId;
@@ -25,12 +23,6 @@ export default class OtDispatchCandidates extends NavigationMixin(LightningEleme
 
     get effectiveRecordId() {
         return this.recordId || this._stateRecordId || undefined;
-    }
-
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
     }
 
     @wire(EnclosingTabId)
@@ -99,29 +91,4 @@ export default class OtDispatchCandidates extends NavigationMixin(LightningEleme
         this.isAssigned = true;
     }
 
-    async handleSubtab(event) {
-        const target = event.currentTarget.dataset.goto;
-        const rid = this.effectiveRecordId;
-        if (!target || !rid) {
-            return;
-        }
-
-        if (target === 'case') {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: { recordId: rid, objectApiName: 'Case', actionName: 'view' }
-            });
-            return;
-        }
-
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, rid);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: rid }
-            });
-        }
-    }
 }

@@ -10,18 +10,6 @@
             <div class="path-step"><span class="path-num">5</span> RCA·예방·지식</div>
         </div>
 
-        <!-- ── 서브탭 (Customer 360 활성) ── -->
-        <div class="subtabs">
-            <button class="subtab" data-goto="case" onclick={handleSubtab}>Case</button>
-            <button class="subtab on">Customer 360</button>
-            <button class="subtab" data-goto="c__otDispatchBriefingWorkbench" onclick={handleSubtab}>출동 브리핑</button>
-            <button class="subtab" data-goto="c__otDispatchCandidates" onclick={handleSubtab}>담당자 확정</button>
-            <button class="subtab" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
-            <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
-            <button class="subtab" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
-            <button class="subtab">협업 로그</button>
-        </div>
-
         <template lwc:if={isLoading}>
             <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
         </template>
@@ -42,8 +30,6 @@
                         <h1 class="c360-hl-name">고객 360 개요</h1>
                     </div>
                     <div class="c360-hl-actions">
-                        <lightning-button label="Case로 돌아가기" variant="brand"
-                            data-goto="case" onclick={handleSubtab}></lightning-button>
                     </div>
                 </div>
             </div>

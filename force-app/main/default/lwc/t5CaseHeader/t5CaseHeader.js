@@ -1,19 +1,10 @@
 import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin } from 'lightning/navigation';
-import { IsConsoleNavigation } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { getRecordNotifyChange } from 'lightning/uiRecordApi';
 import getHeader from '@salesforce/apex/T5CaseHeaderController.getHeader';
 
-export default class T5CaseHeader extends NavigationMixin(LightningElement) {
+export default class T5CaseHeader extends LightningElement {
     @api recordId;
-
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
 
     header;
     error;
@@ -104,26 +95,6 @@ export default class T5CaseHeader extends NavigationMixin(LightningElement) {
         this.flowLoaded = false;
         this.flowError = false;
         this.showBriefingFlow = true;
-    }
-
-    async handleSubtab(event) {
-        const componentName = event.currentTarget.dataset.goto;
-        this.navigate(componentName);
-    }
-
-    async navigate(target) {
-        if (!target || !this.recordId) {
-            return;
-        }
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, this.recordId);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: this.recordId }
-            });
-        }
     }
 
     closeBriefingFlow() {

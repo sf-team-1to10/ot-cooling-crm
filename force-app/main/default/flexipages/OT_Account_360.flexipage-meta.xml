@@ -87,6 +87,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>t5Customer360</componentName>
+                <identifier>c_t5Customer360_account</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>customerInsightTabContent</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
@@ -101,6 +111,20 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>detailTab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>customerInsightTabContent</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>고객 현황</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>customerInsightTab</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>

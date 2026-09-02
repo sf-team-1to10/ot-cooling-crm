@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>66.0</apiVersion>
-    <isExposed>false</isExposed>
-    <description>서브탭 이동 공용 유틸 — 중복 탭 방지(open-or-focus). UI 없이 함수만 export.</description>
-</LightningComponentBundle>

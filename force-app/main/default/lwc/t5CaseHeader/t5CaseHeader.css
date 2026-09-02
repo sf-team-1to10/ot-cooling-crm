@@ -59,42 +59,6 @@
     font-family: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
-/* ── 레코드 내 서브탭 ── */
-.subtabs {
-    background-color: #ffffff;
-    display: flex;
-    gap: 2px;
-    padding: 0 18px;
-    border-bottom: 1px solid #cfdae5;
-    font-size: 12.5px;
-    overflow-x: auto;
-}
-
-.subtab {
-    padding: 8px 14px;
-    color: #3d5568;
-    border: none;
-    border-bottom: 2px solid transparent;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: none;
-    cursor: pointer;
-    font-family: inherit;
-}
-
-.subtab:hover {
-    color: #0b1f33;
-    background-color: #f4f7fa;
-}
-
-.subtab.on {
-    color: #0877d1;
-    border-bottom-color: #0877d1;
-    font-weight: 600;
-}
-
 /* ── Case 360 헤더 하이라이트 — 프로토타입 4번 장면 hl 스트립 ── */
 .case-hl {
     background-color: #ffffff;

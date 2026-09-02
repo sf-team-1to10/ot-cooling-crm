@@ -1,10 +1,7 @@
 import { LightningElement, api, wire } from 'lwc';
-import { IsConsoleNavigation } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
-import { NavigationMixin } from 'lightning/navigation';
 import getCaseId from '@salesforce/apex/OTMsSessionResolver.getCaseId';
 
-export default class OtMsHybridConsole extends NavigationMixin(LightningElement) {
+export default class OtMsHybridConsole extends LightningElement {
     @api recordId;
 
     caseId;
@@ -53,23 +50,4 @@ export default class OtMsHybridConsole extends NavigationMixin(LightningElement)
         this.activeTab = event.currentTarget.dataset.tab;
     }
 
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
-
-    async handleSubtab(event) {
-        const target = event.currentTarget.dataset.goto;
-        if (!target || !this.caseId) return;
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, this.caseId);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: this.caseId }
-            });
-        }
-    }
 }

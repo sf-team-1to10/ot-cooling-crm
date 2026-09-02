@@ -260,6 +260,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>otCauseConfirm</componentName>
+                <identifier>c_otCauseConfirm_wo</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>causeConfirmTabContent</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>active</name>
                     <value>true</value>
@@ -284,10 +294,24 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>측정 F-07</value>
+                    <value>현장 측정</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>measurementTab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>causeConfirmTabContent</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>현장 확인</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>causeConfirmTab</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>

@@ -1,15 +1,13 @@
 import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import { CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    IsConsoleNavigation
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
 import getEvidence from '@salesforce/apex/T5AssetEvidenceController.getEvidence';
 
-export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
+export default class OtCauseConfirm extends LightningElement {
     @api recordId;
     _stateRecordId;
     _tabId;
@@ -25,12 +23,6 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
 
     get effectiveRecordId() {
         return this.recordId || this._stateRecordId || undefined;
-    }
-
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
     }
 
     @wire(EnclosingTabId)
@@ -103,35 +95,5 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     }
 
     handleGoRca() {
-        this.navigate('c__otProblemRca');
-    }
-
-    async handleSubtab(event) {
-        this.navigate(event.currentTarget.dataset.goto);
-    }
-
-    async navigate(target) {
-        const rid = this.effectiveRecordId;
-        if (!target || !rid) {
-            return;
-        }
-
-        if (target === 'case') {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: { recordId: rid, objectApiName: 'Case', actionName: 'view' }
-            });
-            return;
-        }
-
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, rid);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: rid }
-            });
-        }
     }
 }

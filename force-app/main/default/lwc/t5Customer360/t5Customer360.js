@@ -1,15 +1,13 @@
 import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import { CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    IsConsoleNavigation
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
 import getCustomer360 from '@salesforce/apex/T5Customer360Controller.getCustomer360';
 
-export default class T5Customer360 extends NavigationMixin(LightningElement) {
+export default class T5Customer360 extends LightningElement {
     @api recordId;
     _stateRecordId;
     _tabId;
@@ -192,35 +190,4 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         this.activeTab = event.currentTarget.dataset.c360;
     }
 
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
-
-    async handleSubtab(event) {
-        const target = event.currentTarget.dataset.goto;
-        const rid = this.effectiveRecordId;
-        if (!target || !rid) {
-            return;
-        }
-
-        if (target === 'case') {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: { recordId: rid, objectApiName: 'Case', actionName: 'view' }
-            });
-            return;
-        }
-
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, rid);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: rid }
-            });
-        }
-    }
 }
