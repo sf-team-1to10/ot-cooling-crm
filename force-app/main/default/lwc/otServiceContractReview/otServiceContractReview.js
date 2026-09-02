@@ -2,7 +2,10 @@ import { LightningElement, wire } from 'lwc';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon
+    setTabIcon,
+    getFocusedTabInfo,
+    getTabInfo,
+    focusTab
 } from 'lightning/platformWorkspaceApi';
 
 export default class OtServiceContractReview extends LightningElement {
@@ -27,5 +30,13 @@ export default class OtServiceContractReview extends LightningElement {
 
     handleCreateOpportunity() {
         this.opportunityCreated = true;
+    }
+
+    async handleBackToTasks() {
+        const focused = await getFocusedTabInfo();
+        const parentTabId = focused.parentTabId || focused.tabId;
+        if (parentTabId) {
+            await focusTab(parentTabId);
+        }
     }
 }

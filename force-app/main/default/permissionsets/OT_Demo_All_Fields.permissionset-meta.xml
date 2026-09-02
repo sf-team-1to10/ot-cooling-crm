@@ -1078,4 +1078,8 @@
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>OT Demo All Fields</label>
+    <tabSettings>
+        <tab>Renewal_Tasks</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

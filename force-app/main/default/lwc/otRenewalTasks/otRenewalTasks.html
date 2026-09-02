@@ -1,5 +1,11 @@
 <template>
     <div class="renewal-wrap">
+        <!-- ── 서브탭 (My Tasks 활성) ── -->
+        <div class="subtabs">
+            <button class="subtab on">My Tasks</button>
+            <button class="subtab" onclick={handleOpenContract}>Service Contract</button>
+        </div>
+
         <!-- 시간 전환 배너 -->
         <div class="notify">
             <span class="notify-ico">&#x1F4C5;</span>

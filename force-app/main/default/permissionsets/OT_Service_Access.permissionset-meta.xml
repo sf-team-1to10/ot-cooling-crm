@@ -403,6 +403,10 @@
         <visibility>Visible</visibility>
     </tabSettings>
     <tabSettings>
+        <tab>Renewal_Tasks</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>standard-Asset</tab>
         <visibility>Visible</visibility>
     </tabSettings>
