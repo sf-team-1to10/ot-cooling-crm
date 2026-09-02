@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
     <description>현장 기술자가 수리 완료 시 WorkOrder를 Completed로 전환하는 완료 버튼. FSM 모바일 노출용. 완료 시 Slack 완료보고 발신 로직(T5-29) 연동. fieldOverride로 Status를 Completed로 사전 채움(§6-A).</description>
-    <label>수리 완료</label>
     <fieldOverrides>
         <field>Status</field>
         <formula>&quot;Completed&quot;</formula>
     </fieldOverrides>
+    <label>수리 완료</label>
     <optionsCreateFeedItem>false</optionsCreateFeedItem>
     <quickActionLayout>
         <layoutSectionStyle>TwoColumnsLeftToRight</layoutSectionStyle>

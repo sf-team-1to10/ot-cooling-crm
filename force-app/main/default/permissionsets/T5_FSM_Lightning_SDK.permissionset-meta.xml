@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label>T5 FSM Lightning SDK</label>
     <description>Field Service 모바일 앱에서 LWC를 개발·사용하기 위한 권한. LightningOnFSMobile은 Lightning SDK for Field Service Mobile(앱 안에서 LWC 렌더링), CustomAppsOnFSMobile은 Field Service Mobile App Builder로 만든 커스텀 앱 사용에 필요하다. 두 권한이 없으면 lightning__ECSFSApp 타겟 LWC가 모바일 앱에 나타나지 않는다. T5-31.</description>
     <hasActivationRequired>false</hasActivationRequired>
-    <userPermissions>
-        <enabled>true</enabled>
-        <name>LightningOnFSMobile</name>
-    </userPermissions>
+    <label>T5 FSM Lightning SDK</label>
     <userPermissions>
         <enabled>true</enabled>
         <name>CustomAppsOnFSMobile</name>
+    </userPermissions>
+    <userPermissions>
+        <enabled>true</enabled>
+        <name>LightningOnFSMobile</name>
     </userPermissions>
 </PermissionSet>

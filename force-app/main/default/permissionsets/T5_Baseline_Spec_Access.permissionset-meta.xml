@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <label>T5 Baseline Spec Access</label>
     <description>Technical Baseline / Baseline Spec 접근 권한. WOLI_Judgement_AutoSet Flow는 WorkOrder.Technical_Baseline__c와 WOLI.Measurement_Item_Code__c로 Technical_Baseline_Spec__c를 조회해 Threshold_Min/Max와 대조하는데, 이 필드들에 FLS가 없어 조회가 실패하면 모든 측정이 불합격으로 판정된다. T5-31.</description>
-    <hasActivationRequired>false</hasActivationRequired>
-    <objectPermissions>
-        <object>Technical_Baseline__c</object>
-        <allowCreate>true</allowCreate>
-        <allowDelete>false</allowDelete>
-        <allowEdit>true</allowEdit>
-        <allowRead>true</allowRead>
-        <modifyAllRecords>false</modifyAllRecords>
-        <viewAllRecords>true</viewAllRecords>
-    </objectPermissions>
-    <objectPermissions>
-        <object>Technical_Baseline_Spec__c</object>
-        <allowCreate>true</allowCreate>
-        <allowDelete>true</allowDelete>
-        <allowEdit>true</allowEdit>
-        <allowRead>true</allowRead>
-        <modifyAllRecords>true</modifyAllRecords>
-        <viewAllRecords>true</viewAllRecords>
-    </objectPermissions>
-    <!-- Technical_Baseline_Spec__c.Technical_Baseline__c 은 필수(마스터-디테일) 필드라
-         FLS를 지정할 수 없다. 오브젝트 권한만으로 접근된다. -->
     <fieldPermissions>
         <editable>true</editable>
         <field>Technical_Baseline_Spec__c.Measurement_Item_Code__c</field>
@@ -58,4 +36,26 @@
         <field>WorkOrder.Technical_Baseline__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>T5 Baseline Spec Access</label>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>true</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>true</modifyAllRecords>
+        <object>Technical_Baseline_Spec__c</object>
+        <viewAllFields>false</viewAllFields>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
+    <objectPermissions>
+        <allowCreate>true</allowCreate>
+        <allowDelete>false</allowDelete>
+        <allowEdit>true</allowEdit>
+        <allowRead>true</allowRead>
+        <modifyAllRecords>false</modifyAllRecords>
+        <object>Technical_Baseline__c</object>
+        <viewAllFields>false</viewAllFields>
+        <viewAllRecords>true</viewAllRecords>
+    </objectPermissions>
 </PermissionSet>
