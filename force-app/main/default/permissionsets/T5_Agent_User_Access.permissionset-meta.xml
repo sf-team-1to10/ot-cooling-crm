@@ -161,6 +161,11 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <field>Case.ServiceContractId</field>
+        <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <field>Case.Warranty_Decision__c</field>
         <editable>false</editable>
         <readable>true</readable>
