@@ -7,6 +7,7 @@ import {
     IsConsoleNavigation
 } from 'lightning/platformWorkspaceApi';
 import { openOrFocusSubtab } from 'c/otConsoleNav';
+import getHeader from '@salesforce/apex/T5DispatchCandidatesController.getHeader';
 
 export default class OtDispatchCandidates extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -32,8 +33,6 @@ export default class OtDispatchCandidates extends NavigationMixin(LightningEleme
         return this.isConsoleNavigation?.data === true;
     }
 
-    // standard__component 서브탭은 로드 완료 시 라벨을 'Loading...'으로 덮으므로,
-    // EnclosingTabId wire(=로드 후)로 tabId를 받아 라벨/아이콘을 다시 설정한다.
     @wire(EnclosingTabId)
     setTabId(tabId) {
         this._tabId = tabId;
@@ -49,17 +48,57 @@ export default class OtDispatchCandidates extends NavigationMixin(LightningEleme
         await setTabIcon(this._tabId, 'standard:service_resource');
     }
 
-    // 1순위 후보 카드 — 확정 시 picked 상태로 전환
+    header;
+    error;
+
+    @wire(getHeader, { caseId: '$effectiveRecordId' })
+    wiredHeader({ data, error }) {
+        if (data) {
+            this.header = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.header = undefined;
+        }
+    }
+
+    get isLoading() {
+        return !this.header && !this.error;
+    }
+
+    get errorMessage() {
+        return this.error?.body?.message || '담당자 확정 데이터를 불러오지 못했습니다.';
+    }
+
+    get caseNumber() {
+        return this.header?.caseNumber || '';
+    }
+
+    get appointmentNumber() {
+        return this.header?.appointmentNumber || '';
+    }
+
+    get eyebrowText() {
+        const parts = ['담당자 확정'];
+        if (this.caseNumber) parts.push(`Case ${this.caseNumber}`);
+        if (this.appointmentNumber) parts.push(this.appointmentNumber);
+        return parts.join(' · ');
+    }
+
+    get siteLocation() {
+        const acct = this.header?.accountName || '';
+        const loc = this.header?.siteLocation || '';
+        return [acct, loc].filter(Boolean).join(' ');
+    }
+
     get cand1Class() {
         return this.isAssigned ? 'cand-item picked' : 'cand-item top';
     }
 
-    // 강시공 확정 — 프로토타입 applyAssign(배지·버튼·배정 필드 전환). 시스템이 아니라 사람이 선택.
     handleAssign() {
         this.isAssigned = true;
     }
 
-    // 서브탭 클릭 → 다른 장면으로 이동.
     async handleSubtab(event) {
         const target = event.currentTarget.dataset.goto;
         const rid = this.effectiveRecordId;

@@ -22,12 +22,23 @@
             <button class="subtab">협업 로그</button>
         </div>
 
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
+
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
+            </div>
+        </template>
+
         <!-- ── 하이라이트 ── -->
+        <template lwc:if={header}>
         <div class="cand-hl">
             <div class="cand-hl-head">
                 <span class="cand-hl-icon">SA</span>
                 <div class="cand-hl-title">
-                    <p class="cand-hl-eyebrow">담당자 확정 · Case 00001042 · SA-2026-0408</p>
+                    <p class="cand-hl-eyebrow">{eyebrowText}</p>
                     <h1 class="cand-hl-name">담당자 배정</h1>
                 </div>
                 <div class="cand-hl-actions">
@@ -44,12 +55,13 @@
             <dl class="cand-hl-fields">
                 <div class="cand-hl-f"><dt>필요 스킬</dt><dd>CDU-1700 · 배관 체결</dd></div>
                 <div class="cand-hl-f"><dt>복구 SLA</dt><dd class="num">8시간 · 잔여 7시간 26분</dd></div>
-                <div class="cand-hl-f"><dt>현장</dt><dd>아이온데이터 Hall A</dd></div>
+                <div class="cand-hl-f"><dt>현장</dt><dd>{siteLocation}</dd></div>
                 <template lwc:if={isAssigned}>
                     <div class="cand-hl-f"><dt>배정</dt><dd>강시공 · <span class="num">02:46</span></dd></div>
                 </template>
             </dl>
         </div>
+        </template>
 
         <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
             <!-- ── 중앙: 후보 3명 ── -->
