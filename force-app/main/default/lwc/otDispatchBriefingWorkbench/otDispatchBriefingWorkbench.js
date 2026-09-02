@@ -15,7 +15,6 @@ import approveDispatch from '@salesforce/apex/T5DispatchBriefingController.appro
 export default class OtDispatchBriefingWorkbench extends NavigationMixin(LightningElement) {
     // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
     @api recordId;
-    @api caseId;
     _stateRecordId;
     _tabId;
     _tabLabeled = false;
@@ -73,7 +72,7 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
 
     get effectiveRecordId() {
         // undefined를 반환해야 wire가 실행되지 않는다(null이면 Apex가 예외를 던짐).
-        return this.caseId || this.recordId || this._stateRecordId || undefined;
+        return this.recordId || this._stateRecordId || undefined;
     }
 
     briefing;
