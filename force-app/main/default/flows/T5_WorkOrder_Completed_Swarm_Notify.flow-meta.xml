@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <name>Append_Measurement_Line</name>
+        <label>측정 라인 텍스트 누적</label>
+        <locationX>176</locationX>
+        <locationY>600</locationY>
+        <assignmentItems>
+            <assignToReference>Measurement_Summary</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Line_Text</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Measurements</targetReference>
+        </connector>
+    </assignments>
     <constants>
         <name>Fallback_Channel_Id</name>
         <dataType>String</dataType>
         <value>
-            <stringValue>D0BUF2AUW80</stringValue>
+            <stringValue>C0BTGS2BQLW</stringValue>
         </value>
     </constants>
     <constants>
@@ -33,7 +48,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Get_Swarm_For_Case</targetReference>
+                <targetReference>Get_Measurement_Lines</targetReference>
             </connector>
             <label>Slack Alert On</label>
         </rules>
@@ -42,11 +57,11 @@
         <name>Check_Swarm_Channel_Found</name>
         <label>Swarm 채널 존재 확인</label>
         <locationX>176</locationX>
-        <locationY>480</locationY>
+        <locationY>840</locationY>
         <defaultConnector>
             <targetReference>Send_Fallback_DM_Alert</targetReference>
         </defaultConnector>
-        <defaultConnectorLabel>없음(담당자 DM 폴백)</defaultConnectorLabel>
+        <defaultConnectorLabel>없음(임시 채널 폴백)</defaultConnectorLabel>
         <rules>
             <name>Swarm_Channel_Exists</name>
             <conditionLogic>and</conditionLogic>
@@ -63,8 +78,13 @@
             <label>Swarm 채널 있음</label>
         </rules>
     </decisions>
-    <description>복구 WorkOrder가 완료(Status=Completed)되면 해당 Case의 Swarm 채널로 완료 보고를 발신. Feature Flag(T5_Feature_Flags__mdt.Default.Slack_Alert__c) Off면 미발신. CaseId 있는 WO만 대상. Swarm(RelatedRecordId=CaseId, Status!=Closed)의 CollaborationUrl에서 Slack 채널 ID 추출 후 T5_Send_Slack_Channel_Message subflow 재사용해 발신. Swarm 없으면 담당 엔지니어 DM 폴백. Case는 닫지 않음(고객 복구 확인·RCA 별도). Slack 콜아웃은 Record-Triggered 즉시 경로 불가로 AsyncAfterCommit 경로 실행. WorkOrder에 쓰기 없음(순수 알림). T5-29.</description>
+    <description>복구 WorkOrder가 완료(Status=Completed)되면 해당 Case의 Swarm 채널로 완료 보고를 발신. Feature Flag(T5_Feature_Flags__mdt.Default.Slack_Alert__c) Off면 미발신. CaseId 있는 WO만 대상. WOLI에서 측정 결과(포인트·측정값·단위·판정)를 조립해 메시지 본문에 포함. Swarm(RelatedRecordId=CaseId, Status!=Closed)의 CollaborationUrl에서 Slack 채널 ID 추출 후 T5_Send_Slack_Channel_Message subflow 재사용해 발신. Swarm 없으면 임시 채널(Fallback_Channel_Id) 폴백. Case는 닫지 않음(고객 복구 확인·RCA 별도). Slack 콜아웃은 Record-Triggered 즉시 경로 불가로 AsyncAfterCommit 경로 실행. WorkOrder에 쓰기 없음(순수 알림). T5-29 / T5-33.</description>
     <environments>Default</environments>
+    <formulas>
+        <name>Line_Text</name>
+        <dataType>String</dataType>
+        <expression>BR() &amp; &quot;• &quot; &amp; IF(ISBLANK({!Loop_Measurements.Measurement_Point__c}), &quot;-&quot;, {!Loop_Measurements.Measurement_Point__c}) &amp; &quot; : &quot; &amp; IF(ISBLANK({!Loop_Measurements.Measured_Value__c}), &quot;-&quot;, TEXT({!Loop_Measurements.Measured_Value__c})) &amp; &quot; &quot; &amp; IF(ISBLANK({!Loop_Measurements.Unit__c}), &quot;&quot;, {!Loop_Measurements.Unit__c}) &amp; &quot; → &quot; &amp; IF(ISBLANK(TEXT({!Loop_Measurements.Judgement__c})), &quot;-&quot;, TEXT({!Loop_Measurements.Judgement__c}))</expression>
+    </formulas>
     <formulas>
         <name>Swarm_Channel_Id</name>
         <dataType>String</dataType>
@@ -83,6 +103,20 @@
     </formulas>
     <interviewLabel>T5 WorkOrder Completed Swarm Notify {!$Flow.CurrentDateTime}</interviewLabel>
     <label>T5 WorkOrder Completed Swarm Notify</label>
+    <loops>
+        <name>Loop_Measurements</name>
+        <label>측정 항목 순회</label>
+        <locationX>176</locationX>
+        <locationY>480</locationY>
+        <collectionReference>Get_Measurement_Lines</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Append_Measurement_Line</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Get_Swarm_For_Case</targetReference>
+        </noMoreValuesConnector>
+    </loops>
     <processMetadataValues>
         <name>BuilderType</name>
         <value>
@@ -120,10 +154,46 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
+        <name>Get_Measurement_Lines</name>
+        <label>측정 항목(WOLI) 조회</label>
+        <locationX>176</locationX>
+        <locationY>360</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Measurements</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>WorkOrderId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Measurement_Point__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>WorkOrderLineItem</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>LineItemNumber</queriedFields>
+        <queriedFields>Measurement_Point__c</queriedFields>
+        <queriedFields>Measured_Value__c</queriedFields>
+        <queriedFields>Unit__c</queriedFields>
+        <queriedFields>Judgement__c</queriedFields>
+        <sortField>LineItemNumber</sortField>
+        <sortOrder>Asc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
         <name>Get_Swarm_For_Case</name>
         <label>Case의 Swarm 조회</label>
         <locationX>176</locationX>
-        <locationY>360</locationY>
+        <locationY>720</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Check_Swarm_Channel_Found</targetReference>
@@ -151,6 +221,37 @@
         <sortOrder>Desc</sortOrder>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
+    <recordUpdates>
+        <name>Update_Case_Stage</name>
+        <label>Case 진행 단계를 RCA·예방·지식으로</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <connector>
+            <targetReference>Get_Feature_Flag_Setting</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.CaseId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Stage__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>5 RCA·예방·지식</stringValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Stage__c</field>
+            <value>
+                <stringValue>5 RCA·예방·지식</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Case</object>
+    </recordUpdates>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
@@ -160,7 +261,7 @@
         <recordTriggerType>Update</recordTriggerType>
         <scheduledPaths>
             <connector>
-                <targetReference>Get_Feature_Flag_Setting</targetReference>
+                <targetReference>Update_Case_Stage</targetReference>
             </connector>
             <pathType>AsyncAfterCommit</pathType>
         </scheduledPaths>
@@ -169,9 +270,9 @@
     <status>Active</status>
     <subflows>
         <name>Send_Fallback_DM_Alert</name>
-        <label>Slack 발신 (담당자 DM 폴백)</label>
+        <label>Slack 발신 (임시 채널 폴백)</label>
         <locationX>300</locationX>
-        <locationY>600</locationY>
+        <locationY>960</locationY>
         <flowName>T5_Send_Slack_Channel_Message</flowName>
         <inputAssignments>
             <name>channelId</name>
@@ -190,7 +291,7 @@
         <name>Send_Swarm_Completion_Alert</name>
         <label>Slack 발신 (Swarm 채널)</label>
         <locationX>50</locationX>
-        <locationY>600</locationY>
+        <locationY>960</locationY>
         <flowName>T5_Send_Slack_Channel_Message</flowName>
         <inputAssignments>
             <name>channelId</name>
@@ -217,7 +318,19 @@
 조치 내용: {!$Record.Action_Taken__c}
 복구 결과: {!$Record.Repair_Result__c}
 
+:bar_chart: 측정 결과{!Measurement_Summary}
+
 :warning: 이 완료 알림만으로 Case를 종결하지 않습니다. 고객 복구 확인과 RCA가 남아 있습니다.
 WorkOrder: {!Lightning_Host}lightning/r/WorkOrder/{!$Record.Id}/view</text>
     </textTemplates>
+    <variables>
+        <name>Measurement_Summary</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
 </Flow>
