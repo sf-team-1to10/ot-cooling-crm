@@ -22,116 +22,177 @@
             <button class="subtab">협업 로그</button>
         </div>
 
-        <!-- ── 하이라이트 ── -->
-        <div class="c360-hl">
-            <div class="c360-hl-head">
-                <span class="c360-hl-icon">아</span>
-                <div class="c360-hl-title">
-                    <p class="c360-hl-eyebrow">Customer 360 · 아이온데이터</p>
-                    <h1 class="c360-hl-name">고객 360 개요</h1>
-                </div>
-                <div class="c360-hl-actions">
-                    <lightning-button label="Case로 돌아가기" variant="brand"
-                        data-goto="case" onclick={handleSubtab}></lightning-button>
-                </div>
-            </div>
-        </div>
+        <template lwc:if={isLoading}>
+            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+        </template>
 
-        <!-- ── 프로필 ── -->
-        <div class="c360-profile">
-            <div class="c360-av">유</div>
-            <div class="c360-id">
-                <div class="c360-name">유신</div>
-                <div class="c360-role">고객 설비운영 담당자 · 아이온데이터</div>
-            </div>
-            <dl class="c360-contact">
-                <div><dt>Customer ID</dt><dd class="num">AC-100482</dd></div>
-                <div><dt>Email</dt><dd>yushin@iondata.example</dd></div>
-                <div><dt>Phone</dt><dd class="num">010-2881-1830</dd></div>
-                <div><dt>Address</dt><dd>대전 유성구 대덕대로 XX</dd></div>
-            </dl>
-            <div class="c360-actions">
-                <lightning-button label="편집"></lightning-button>
-                <lightning-button label="일정 예약" variant="brand"></lightning-button>
-            </div>
-        </div>
-
-        <!-- ── 고객 인사이트 KPI ── -->
-        <div class="mini-label">고객 인사이트</div>
-        <div class="c360-kpi">
-            <div class="c360-kpi-card"><div class="c360-kpi-v c360-kpi-good">96</div><div class="c360-kpi-l">CSAT</div></div>
-            <div class="c360-kpi-card"><div class="c360-kpi-v">30분</div><div class="c360-kpi-l">응답 SLA</div></div>
-            <div class="c360-kpi-card"><div class="c360-kpi-v c360-kpi-sm">연장보증</div><div class="c360-kpi-l">계약 유형</div></div>
-            <div class="c360-kpi-card"><div class="c360-kpi-v c360-kpi-good c360-kpi-sm">계약 유효</div><div class="c360-kpi-l">계약 만료 2026-09-30</div></div>
-        </div>
-
-        <!-- ── 탭바 ── -->
-        <div class="c360-tabbar">
-            <button class={contractTabClass} data-c360="contract" onclick={handleC360Tab}>계약 정보</button>
-            <button class={productTabClass} data-c360="product" onclick={handleC360Tab}>제품 이력</button>
-            <button class={problemTabClass} data-c360="problem" onclick={handleC360Tab}>문제 이력</button>
-            <button class={salesTabClass} data-c360="sales" onclick={handleC360Tab}>Sales History</button>
-        </div>
-
-        <!-- 계약 정보 -->
-        <template lwc:if={isContract}>
-            <div class="c360-panel-single">
-                <div class="card">
-                    <div class="card-head"><h3>계약 이력</h3></div>
-                    <div class="card-body-tight">
-                        <div class="rl">
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">SC-2022-0114 · 연장보증</div><div class="rl-s">2022-06-09 ~ 2026-09-30</div></div><span class="slds-badge c360-badge-ok">계약 유효</span></div>
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">Hall A 냉각 공급계약</div><div class="rl-s">2021-11 수주 · CDU 12대 + CX 4대</div></div><span class="slds-badge c360-badge-ok">이행</span></div>
-                        </div>
-                    </div>
-                </div>
+        <template lwc:if={error}>
+            <div class="slds-text-color_error slds-p-around_small" role="alert">
+                {errorMessage}
             </div>
         </template>
 
-        <!-- 제품 이력 -->
-        <template lwc:if={isProduct}>
-            <div class="c360-panel-single">
-                <div class="card">
-                    <div class="card-head"><h3>제품 이력</h3></div>
-                    <div class="card-body-tight">
-                        <div class="rl">
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">CDU-A-07 · ColdFlow CDU-1700</div><div class="rl-s">설치 2022-02-18 · 인수 2022-06-09 조건부</div></div></div>
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">Rev.B 적용 · 위치 F-07</div><div class="rl-s">2022-02-24 · 12대 중 A-07만 해당</div></div><span class="slds-badge c360-badge-neutral">변경</span></div>
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">CDU-A-01 ~ A-12 · CX-01 ~ 04</div><div class="rl-s">Hall A 설치 자산 16대</div></div></div>
-                        </div>
+        <template lwc:if={data}>
+            <!-- ── 하이라이트 ── -->
+            <div class="c360-hl">
+                <div class="c360-hl-head">
+                    <span class="c360-hl-icon">아</span>
+                    <div class="c360-hl-title">
+                        <p class="c360-hl-eyebrow">Customer 360 · {accountName}</p>
+                        <h1 class="c360-hl-name">고객 360 개요</h1>
+                    </div>
+                    <div class="c360-hl-actions">
+                        <lightning-button label="Case로 돌아가기" variant="brand"
+                            data-goto="case" onclick={handleSubtab}></lightning-button>
                     </div>
                 </div>
             </div>
-        </template>
 
-        <!-- 문제 이력 -->
-        <template lwc:if={isProblem}>
-            <div class="c360-panel-single">
-                <div class="card">
-                    <div class="card-head"><h3>문제 이력</h3></div>
-                    <div class="card-body-tight">
-                        <div class="rl">
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">유량 추세 확인 필요</div><div class="rl-s">2026-03-12 정기점검</div></div><span class="slds-badge c360-badge-warn">주의</span></div>
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">정밀점검 권고</div><div class="rl-s">2025-09-15 · 조치중</div></div><span class="slds-badge c360-badge-warn">미조치</span></div>
-                        </div>
+            <!-- ── 프로필 ── -->
+            <template lwc:if={profile}>
+                <div class="c360-profile">
+                    <div class="c360-av">{profile.contactInitial}</div>
+                    <div class="c360-id">
+                        <div class="c360-name">{profile.contactName}</div>
+                        <div class="c360-role">{profile.contactRole}</div>
+                    </div>
+                    <dl class="c360-contact">
+                        <div><dt>Email</dt><dd>{contactEmail}</dd></div>
+                        <div><dt>Phone</dt><dd class="num">{contactPhone}</dd></div>
+                        <div><dt>Address</dt><dd>{contactAddress}</dd></div>
+                        <div><dt>Industry</dt><dd>{contactIndustry}</dd></div>
+                    </dl>
+                    <div class="c360-actions">
+                        <lightning-button label="편집"></lightning-button>
+                        <lightning-button label="일정 예약" variant="brand"></lightning-button>
                     </div>
                 </div>
-            </div>
-        </template>
+            </template>
 
-        <!-- Sales History -->
-        <template lwc:if={isSales}>
-            <div class="c360-panel-single">
-                <div class="card">
-                    <div class="card-head"><h3>Sales History</h3></div>
-                    <div class="card-body-tight">
-                        <div class="rl">
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">Hall B 확장 문의</div><div class="rl-s">2026-03-04 · 나세일</div></div><span class="slds-badge c360-badge-neutral">미평가</span></div>
-                            <div class="rl-row"><div class="rl-main"><div class="rl-t">Hall A 12대 수주</div><div class="rl-s">2021-11-22 · Closed Won</div></div></div>
+            <!-- ── 고객 인사이트 KPI ── -->
+            <div class="mini-label">고객 인사이트</div>
+            <div class="c360-kpi">
+                <div class="c360-kpi-card"><div class="c360-kpi-v c360-kpi-good">{kpiCsat}</div><div class="c360-kpi-l">CSAT</div></div>
+                <div class="c360-kpi-card"><div class="c360-kpi-v">{kpiResponseSla}</div><div class="c360-kpi-l">응답 SLA</div></div>
+                <div class="c360-kpi-card"><div class="c360-kpi-v c360-kpi-sm">{kpiContractType}</div><div class="c360-kpi-l">계약 유형</div></div>
+                <div class="c360-kpi-card"><div class={kpiContractStatusClass}>{kpiContractStatus}</div><div class="c360-kpi-l">{kpiContractExpiry}</div></div>
+            </div>
+
+            <!-- ── 탭바 ── -->
+            <div class="c360-tabbar">
+                <button class={contractTabClass} data-c360="contract" onclick={handleC360Tab}>계약 정보</button>
+                <button class={productTabClass} data-c360="product" onclick={handleC360Tab}>제품 이력</button>
+                <button class={problemTabClass} data-c360="problem" onclick={handleC360Tab}>문제 이력</button>
+                <button class={salesTabClass} data-c360="sales" onclick={handleC360Tab}>Sales History</button>
+            </div>
+
+            <!-- 계약 정보 -->
+            <template lwc:if={isContract}>
+                <div class="c360-panel-single">
+                    <div class="card">
+                        <div class="card-head"><h3>계약 이력</h3></div>
+                        <div class="card-body-tight">
+                            <div class="rl">
+                                <template lwc:if={hasContracts}>
+                                    <template for:each={contracts} for:item="c">
+                                        <div key={c.id} class="rl-row">
+                                            <div class="rl-main">
+                                                <div class="rl-t">{c.name}</div>
+                                                <div class="rl-s">{c.status} &middot; 만료 {c.endDateFormatted}</div>
+                                            </div>
+                                            <span class={c.badgeClass}>{c.badgeLabel}</span>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template lwc:else>
+                                    <div class="rl-row"><div class="rl-main"><div class="rl-s">계약 데이터 없음</div></div></div>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </template>
+
+            <!-- 제품 이력 -->
+            <template lwc:if={isProduct}>
+                <div class="c360-panel-single">
+                    <div class="card">
+                        <div class="card-head"><h3>제품 이력</h3></div>
+                        <div class="card-body-tight">
+                            <div class="rl">
+                                <template lwc:if={hasAssets}>
+                                    <template for:each={assets} for:item="a">
+                                        <div key={a.id} class="rl-row">
+                                            <div class="rl-main">
+                                                <div class="rl-t">{a.name}</div>
+                                                <div class="rl-s">S/N {a.serialNumber} &middot; {a.status}</div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template lwc:else>
+                                    <div class="rl-row"><div class="rl-main"><div class="rl-s">제품 데이터 없음</div></div></div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- 문제 이력 -->
+            <template lwc:if={isProblem}>
+                <div class="c360-panel-single">
+                    <div class="card">
+                        <div class="card-head"><h3>문제 이력</h3></div>
+                        <div class="card-body-tight">
+                            <div class="rl">
+                                <template lwc:if={hasPastCases}>
+                                    <template for:each={pastCases} for:item="pc">
+                                        <div key={pc.id} class="rl-row">
+                                            <div class="rl-main">
+                                                <div class="rl-t">{pc.caseNumber} &middot; {pc.subject}</div>
+                                                <div class="rl-s">{pc.status}</div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template lwc:else>
+                                    <div class="rl-row"><div class="rl-main"><div class="rl-s">과거 문제 이력 없음</div></div></div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Sales History -->
+            <template lwc:if={isSales}>
+                <div class="c360-panel-single">
+                    <div class="card">
+                        <div class="card-head"><h3>Sales History</h3></div>
+                        <div class="card-body-tight">
+                            <div class="rl">
+                                <template lwc:if={hasOpportunities}>
+                                    <template for:each={opportunities} for:item="o">
+                                        <div key={o.id} class="rl-row">
+                                            <div class="rl-main">
+                                                <div class="rl-t">{o.name}</div>
+                                                <div class="rl-s">
+                                                    {o.amountFormatted} &middot; {o.closeDateFormatted}
+                                                </div>
+                                            </div>
+                                            <span class={o.badgeClass}>{o.badgeLabel}</span>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template lwc:else>
+                                    <div class="rl-row"><div class="rl-main"><div class="rl-s">영업 이력 없음</div></div></div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </template>
     </div>
 </template>

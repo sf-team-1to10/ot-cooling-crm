@@ -138,6 +138,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Case.Stage__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Case.Knowledge_No_Match_At_Intake__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -1078,4 +1083,12 @@
     </fieldPermissions>
     <hasActivationRequired>false</hasActivationRequired>
     <label>OT Demo All Fields</label>
+    <tabSettings>
+        <tab>Renewal_Tasks</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
+        <tab>Sales_Dashboard</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

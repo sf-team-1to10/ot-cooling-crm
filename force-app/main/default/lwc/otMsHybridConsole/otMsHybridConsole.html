@@ -1,0 +1,51 @@
+<template>
+    <template lwc:if={isResolving}>
+        <lightning-spinner alternative-text="Case 연결 중" size="medium"></lightning-spinner>
+    </template>
+
+    <template lwc:if={resolveError}>
+        <div class="slds-text-color_error slds-p-around_medium" role="alert">
+            {resolveErrorMessage}
+        </div>
+    </template>
+
+    <template lwc:if={isResolved}>
+        <div class="ms-layout">
+            <!-- 왼쪽: 채팅 (표준 scrt:conversationBody는 FlexiPage에서 별도 영역) -->
+            <!-- 이 wrapper는 오른쪽 콘텐츠 영역만 관리 -->
+
+            <!-- ── 내부 탭바 ── -->
+            <div class="ms-tabbar">
+                <button class={caseTabClass} data-tab="case" onclick={handleTabSwitch}>접수</button>
+                <button class={customer360TabClass} data-tab="customer360" onclick={handleTabSwitch}>Customer 360</button>
+                <button class={briefingTabClass} data-tab="briefing" onclick={handleTabSwitch}>출동 브리핑</button>
+                <button class={candidatesTabClass} data-tab="candidates" onclick={handleTabSwitch}>담당자 확정</button>
+                <span class="ms-tab-sep"></span>
+                <button class="ms-tab ms-tab-sub" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
+                <button class="ms-tab ms-tab-sub" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
+                <button class="ms-tab ms-tab-sub" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
+            </div>
+
+            <!-- ── 탭 콘텐츠 ── -->
+            <div class="ms-content">
+                <template lwc:if={isCaseTab}>
+                    <c-t5-case-header case-id={caseId}></c-t5-case-header>
+                    <c-t5-case-intake-panel case-id={caseId}></c-t5-case-intake-panel>
+                    <c-t5-case-next-actions case-id={caseId}></c-t5-case-next-actions>
+                </template>
+
+                <template lwc:if={isCustomer360Tab}>
+                    <c-t5-customer360 case-id={caseId}></c-t5-customer360>
+                </template>
+
+                <template lwc:if={isBriefingTab}>
+                    <c-ot-dispatch-briefing-workbench case-id={caseId}></c-ot-dispatch-briefing-workbench>
+                </template>
+
+                <template lwc:if={isCandidatesTab}>
+                    <c-ot-dispatch-candidates case-id={caseId}></c-ot-dispatch-candidates>
+                </template>
+            </div>
+        </div>
+    </template>
+</template>

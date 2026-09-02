@@ -11,6 +11,10 @@
     padding: 1.25rem 1rem 1.5rem;
 }
 
+.hero_slim {
+    padding: 0.75rem 1rem 0.875rem;
+}
+
 .hero__eyebrow {
     margin: 0 0 0.25rem;
     font-size: 0.8125rem;
@@ -27,6 +31,226 @@
     margin: 0;
     font-size: 0.875rem;
     color: #d5deeb;
+}
+
+.hero__meta {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: #d5deeb;
+}
+
+/* ── 측정 현황 섹션 ── */
+.status {
+    padding: 1rem 1rem 0.5rem;
+}
+
+.status__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin: 0 0 0.625rem;
+}
+
+.status__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #16325c;
+}
+
+.status__count {
+    font-size: 0.75rem;
+    color: #5c6b82;
+}
+
+.statuslist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.scard {
+    background: #ffffff;
+    border-radius: 0.625rem;
+    padding: 0.875rem 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.scard__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.scard__point-label {
+    display: block;
+    font-size: 0.6875rem;
+    color: #5c6b82;
+    margin-bottom: 0.125rem;
+}
+
+.scard__point-value {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: #16325c;
+}
+
+.scard__value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+    flex-wrap: wrap;
+    padding: 0.125rem 0 0.375rem;
+}
+
+.scard__value-num {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.scard__value-num_pass {
+    color: #2e844a;
+}
+
+.scard__value-num_fail {
+    color: #ba0517;
+}
+
+.scard__value-empty {
+    font-size: 1rem;
+    color: #8a95a6;
+    font-weight: 600;
+}
+
+.scard__unit {
+    font-size: 0.875rem;
+    color: #5c6b82;
+    font-weight: 600;
+}
+
+.scard__range {
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: #5c6b82;
+}
+
+.scard__retest {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.scard__retest-old {
+    color: #ba0517;
+}
+
+.scard__retest-arrow {
+    color: #5c6b82;
+    margin: 0 0.125rem;
+}
+
+.scard__retest-new {
+    color: #2e844a;
+}
+
+.scard__toggle {
+    background: none;
+    border: none;
+    padding: 0.25rem 0;
+    color: #1b365d;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ── 과거 이력 리스트 ── */
+.hlist {
+    list-style: none;
+    margin: 0.375rem 0 0;
+    padding: 0.5rem 0 0;
+    border-top: 1px solid #eef1f6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.hitem {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+}
+
+.hitem__date {
+    color: #5c6b82;
+    font-variant-numeric: tabular-nums;
+}
+
+.hitem__wo {
+    color: #16325c;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hitem__val {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+}
+
+.hitem__val_pass {
+    color: #2e844a;
+}
+
+.hitem__val_fail {
+    color: #ba0517;
+}
+
+.hbadge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    border-radius: 0.25rem;
+    padding: 0.0625rem 0.375rem;
+}
+
+.hbadge_pass {
+    background: #ddf1e3;
+    color: #2e844a;
+}
+
+.hbadge_fail {
+    background: #fddde3;
+    color: #ba0517;
+}
+
+.hlist__empty {
+    margin: 0.375rem 0 0;
+    padding: 0.5rem 0 0;
+    border-top: 1px solid #eef1f6;
+    font-size: 0.75rem;
+    color: #5c6b82;
+    text-align: center;
+}
+
+/* ── 얇은 링크형 버튼 (Knowledge) ── */
+.linkline {
+    background: #ffffff;
+    border: 1px solid #d8dee9;
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    color: #1b365d;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
 }
 
 /* ── 큰 버튼 ── */

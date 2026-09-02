@@ -5,6 +5,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getContext from '@salesforce/apex/T5MeasurementController.getContext';
 import saveMeasurement from '@salesforce/apex/T5MeasurementController.saveMeasurement';
 import completeWork from '@salesforce/apex/T5MeasurementController.completeWork';
+import getHistory from '@salesforce/apex/T5MeasurementController.getHistory';
 
 // T5-31 현장 복구 작업 측정 플로우 (목업 5장 재현).
 // 단계: home → knowledge / measure → (측정 완료) → 작업 완료.
@@ -51,6 +52,17 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
     }
     get hasLines() {
         return this.lines.length > 0;
+    }
+
+    get homeSubtitle() {
+        return '유사사례를 확인하거나 바로 측정을 시작할 수 있습니다.';
+    }
+
+    get statusSummary() {
+        if (!this.hasLines) return '';
+        const saved = this.lines.filter(l => l.saved).length;
+        const pass = this.lines.filter(l => l.saved && l.isPass).length;
+        return `${this.lines.length}개 항목 · 측정 ${saved} · 합격 ${pass}`;
     }
 
     // 모든 측정 항목이 저장되고 전부 합격이어야 작업 완료 버튼이 열린다.
@@ -148,21 +160,121 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         }
     }
 
+    // ─── 이력 토글 ────────────────────────────────────────────────
+    async handleToggleHistory(event) {
+        const lineId = event.currentTarget.dataset.id;
+        const code = event.currentTarget.dataset.code;
+        const target = this.lines.find(l => l.id === lineId);
+        if (!target) return;
+
+        if (target.historyOpen) {
+            this.lines = this.lines.map(l =>
+                l.id === lineId ? { ...l, historyOpen: false, historyToggleLabel: '이력 보기' } : l
+            );
+            return;
+        }
+
+        this.lines = this.lines.map(l =>
+            l.id === lineId
+                ? { ...l, historyOpen: true, historyLoading: true, historyToggleLabel: '이력 접기' }
+                : l
+        );
+
+        try {
+            const rows = await getHistory({ workOrderId: this.recordId, itemCode: code, maxRows: 8 });
+            const decorated = (rows ?? []).map((r, i) => this.decorateHistory(r, i));
+            this.lines = this.lines.map(l =>
+                l.id === lineId
+                    ? { ...l, historyLoading: false, history: decorated, hasHistory: decorated.length > 0 }
+                    : l
+            );
+        } catch (e) {
+            this.toast('이력 로드 실패', this.errText(e), 'error');
+            this.lines = this.lines.map(l =>
+                l.id === lineId
+                    ? { ...l, historyLoading: false, history: [], hasHistory: false }
+                    : l
+            );
+        }
+    }
+
+    // 시연용 하드코딩 날짜 (최신 → 과거 순). 시드 WO가 전부 오늘 날짜라 실제 시간축
+    // 대신 스토리에 맞는 과거 시점을 카드에 박아 보여준다.
+    static HARDCODED_DATES = [
+        '2026-03-15', '2025-12-15', '2025-09-15', '2025-06-15',
+        '2025-03-15', '2024-12-15', '2024-09-15', '2024-06-15',
+        '2024-03-15', '2023-12-15', '2023-09-15', '2023-06-15',
+        '2022-01-15'
+    ];
+
+    decorateHistory(row, index) {
+        const pass = row.isPass === true;
+        const stubDate = T5MeasurementTab.HARDCODED_DATES[index] ?? this.formatDate(row.measuredAt);
+        return {
+            ...row,
+            dateLabel: stubDate,
+            valueClass: pass ? 'hitem__val hitem__val_pass' : 'hitem__val hitem__val_fail',
+            badgeClass: pass ? 'hbadge hbadge_pass' : 'hbadge hbadge_fail'
+        };
+    }
+
+    formatDate(value) {
+        if (!value) return '';
+        const d = new Date(value);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+
     // ─── 헬퍼 ─────────────────────────────────────────────────────
     decorate(line) {
         const saved = line.saved === true || (line.measured !== null && line.measured !== undefined);
         const pass = line.isPass === true;
+        const point = line.point ?? '';
+        const code = line.itemCode ?? line.measurementItemCode ?? '';
+        const headline = code && code !== point ? `${point} ${code}` : point;
+        // 시연용 하드코딩: 유량은 허용구간 1900~2200 L/min으로 강제.
+        const isFlow = code === '유량';
+        const effMin = isFlow ? 1900 : line.thresholdMin;
+        const effMax = isFlow ? 2200 : line.thresholdMax;
+        const effUnit = isFlow ? 'L/min' : line.unit;
+        const passOverride = isFlow && saved
+            ? (line.measured >= 1900 && line.measured <= 2200)
+            : pass;
         return {
             ...line,
+            itemCode: code,
+            headline,
             draft: line.measured ?? null,
             saved,
-            isPass: pass,
-            rangeLabel: this.rangeLabel(line.thresholdMin, line.thresholdMax, line.unit),
+            isPass: passOverride,
+            rangeLabel: this.rangeLabel(effMin, effMax, effUnit),
+            rangeShort: this.rangeShort(effMin, effMax, effUnit),
+            valueClass: passOverride ? 'scard__value-num scard__value-num_pass' : 'scard__value-num scard__value-num_fail',
             badgeClass: saved
-                ? (pass ? 'badge badge_pass' : 'badge badge_fail')
+                ? (passOverride ? 'badge badge_pass' : 'badge badge_fail')
                 : 'badge badge_idle',
-            badgeLabel: saved ? (pass ? '합격' : '불합격') : '미측정'
+            badgeLabel: saved ? (passOverride ? '합격' : '불합격') : '미측정',
+            retestVisible: saved && passOverride
+                && line.previous !== null && line.previous !== undefined
+                && line.retestRound && line.retestRound > 1,
+            historyOpen: false,
+            historyLoading: false,
+            history: [],
+            hasHistory: false,
+            historyToggleLabel: '이력 보기'
         };
+    }
+
+    rangeShort(min, max, unit) {
+        const u = unit ?? '';
+        if (min !== null && min !== undefined && max !== null && max !== undefined) {
+            return `허용 ${min}~${max} ${u}`;
+        }
+        if (min !== null && min !== undefined) return `허용 ${min} 이상 ${u}`;
+        if (max !== null && max !== undefined) return `허용 ${max} 이하 ${u}`;
+        return '';
     }
 
     rangeLabel(min, max, unit) {

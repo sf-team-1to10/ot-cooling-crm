@@ -1,83 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionCalls>
-        <description>Calls the Dispatch_Briefing_Generator prompt template with the assembled measurement history, equipment name, and the current reading</description>
+        <description>Calls OTDispatchBriefingPrompt Apex to invoke the Dispatch_Briefing_Generator prompt template via ConnectApi</description>
         <name>Call_Prompt</name>
         <label>Call Prompt</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <actionName>Dispatch_Briefing_Generator</actionName>
-        <actionType>generatePromptResponse</actionType>
+        <actionName>OTDispatchBriefingPrompt</actionName>
+        <actionType>apex</actionType>
         <connector>
             <targetReference>Save_Briefing</targetReference>
         </connector>
+        <faultConnector>
+            <targetReference>Show_Error</targetReference>
+        </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
-            <name>Input:Measurement_History</name>
+            <name>measurementHistory</name>
             <value>
                 <elementReference>varHistory</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
-            <name>Input:Equipment_Name</name>
+            <name>equipmentName</name>
             <value>
                 <elementReference>Get_This_Case.Subject</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
-            <name>Input:Current_Reading</name>
+            <name>currentReading</name>
             <value>
                 <elementReference>varCurrentReading</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
-            <name>Input:Peer_Comparison</name>
+            <name>peerComparison</name>
             <value>
                 <elementReference>varPeerComparison</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
-            <name>Input:Similar_Cases_Summary</name>
+            <name>similarCasesSummary</name>
             <value>
                 <elementReference>varSimilarSummary</elementReference>
             </value>
         </inputParameters>
-        <nameSegment>Dispatch_Briefing_Generator</nameSegment>
+        <nameSegment>OTDispatchBriefingPrompt</nameSegment>
         <offset>0</offset>
         <outputParameters>
             <assignToReference>varBriefing</assignToReference>
-            <name>promptResponse</name>
+            <name>briefing</name>
         </outputParameters>
     </actionCalls>
     <actionCalls>
-        <description>Calls the Similar_Case_Search prompt template with the current case summary and the assembled list of past closed cases</description>
+        <description>Calls OTSimilarCasePrompt Apex to invoke the Similar_Case_Search prompt template via ConnectApi</description>
         <name>Call_Similar_Prompt</name>
         <label>Call Similar Prompt</label>
         <locationX>0</locationX>
         <locationY>0</locationY>
-        <actionName>Similar_Case_Search</actionName>
-        <actionType>generatePromptResponse</actionType>
+        <actionName>OTSimilarCasePrompt</actionName>
+        <actionType>apex</actionType>
         <connector>
             <targetReference>Save_Similar_Summary</targetReference>
         </connector>
+        <faultConnector>
+            <targetReference>Show_Error</targetReference>
+        </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
-            <name>Input:Current_Case</name>
+            <name>currentCase</name>
             <value>
                 <elementReference>Current_Case_Line</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
-            <name>Input:Similar_Cases</name>
+            <name>similarCases</name>
             <value>
                 <elementReference>Search_Similar_Cases.similarCases</elementReference>
             </value>
         </inputParameters>
-        <nameSegment>Similar_Case_Search</nameSegment>
+        <nameSegment>OTSimilarCasePrompt</nameSegment>
         <offset>0</offset>
         <outputParameters>
             <assignToReference>varSimilarSummary</assignToReference>
-            <name>promptResponse</name>
+            <name>summary</name>
         </outputParameters>
     </actionCalls>
     <actionCalls>
@@ -91,6 +97,9 @@
         <connector>
             <targetReference>Check_Similar</targetReference>
         </connector>
+        <faultConnector>
+            <targetReference>Show_Error</targetReference>
+        </faultConnector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>caseId</name>
@@ -203,6 +212,32 @@
         </rules>
     </decisions>
     <decisions>
+        <description>Guards against calling the prompt with empty history — if no measurement data was collected, shows an informational screen instead of failing</description>
+        <name>Check_History</name>
+        <label>Check History</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Show_No_Data</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No History</defaultConnectorLabel>
+        <rules>
+            <name>Has_History</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varHistory</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Search_Similar_Cases</targetReference>
+            </connector>
+            <label>Has History</label>
+        </rules>
+    </decisions>
+    <decisions>
         <description>Routes to the similar-case prompt only when past closed cases were found; otherwise skips straight to the briefing so cases with no history still generate normally</description>
         <name>Check_Similar</name>
         <label>Check Similar</label>
@@ -270,7 +305,7 @@
             <targetReference>Build_Peer</targetReference>
         </nextValueConnector>
         <noMoreValuesConnector>
-            <targetReference>Search_Similar_Cases</targetReference>
+            <targetReference>Check_History</targetReference>
         </noMoreValuesConnector>
     </loops>
     <loops>
@@ -504,6 +539,40 @@
         </inputAssignments>
         <object>Case</object>
     </recordUpdates>
+    <screens>
+        <description>Shown when no measurement history was found for the asset — the prompt cannot run without data</description>
+        <name>Show_No_Data</name>
+        <label>Show No Data</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>noDataDisplay</name>
+            <fieldText>&lt;p&gt;이 Case의 장비에 측정 이력이 없어 브리핑을 생성할 수 없습니다.&lt;/p&gt;&lt;p&gt;WorkOrder에 측정 데이터(Measured_Value)가 입력되었는지 확인해 주세요.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <description>Displays fault details when any step in the flow fails</description>
+        <name>Show_Error</name>
+        <label>Show Error</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>errorDisplay</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;오류 발생&lt;/b&gt;&lt;/p&gt;&lt;p&gt;{!$Flow.FaultMessage}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
     <screens>
         <description>Displays the generated dispatch briefing to the user</description>
         <name>Show_History</name>

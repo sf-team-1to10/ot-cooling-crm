@@ -7,10 +7,11 @@ import {
     IsConsoleNavigation
 } from 'lightning/platformWorkspaceApi';
 import { openOrFocusSubtab } from 'c/otConsoleNav';
+import getCustomer360 from '@salesforce/apex/T5Customer360Controller.getCustomer360';
 
 export default class T5Customer360 extends NavigationMixin(LightningElement) {
-    @api recordId; // Record page에 직접 놓일 때 플랫폼 주입
-    _stateRecordId; // 서브탭(UrlAddressable)로 열릴 때 URL state에서 해석
+    @api recordId;
+    _stateRecordId;
     _tabId;
     _tabLabeled = false;
 
@@ -24,8 +25,6 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         return this.recordId || this._stateRecordId || undefined;
     }
 
-    // standard__component 서브탭은 로드 완료 시 라벨을 'Loading...'으로 덮으므로,
-    // 이 wire(=로드 후)로 tabId를 받아 라벨/아이콘을 다시 설정해 최종 고정한다.
     @wire(EnclosingTabId)
     setTabId(tabId) {
         this._tabId = tabId;
@@ -38,38 +37,152 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         }
         this._tabLabeled = true;
         await setTabLabel(this._tabId, 'Customer 360');
-        // standard: 계열 아이콘이 다른 콘솔 탭과 크기가 맞는다.
         await setTabIcon(this._tabId, 'standard:contact');
     }
 
-    // 하단 탭 전환 상태 (프로토타입 c360-tabbtn)
+    data;
+    error;
+
+    @wire(getCustomer360, { caseId: '$effectiveRecordId' })
+    wiredData({ data, error }) {
+        if (data) {
+            this.data = data;
+            this.error = undefined;
+        } else if (error) {
+            this.error = error;
+            this.data = undefined;
+        }
+    }
+
+    get isLoading() {
+        return !this.data && !this.error;
+    }
+
+    get errorMessage() {
+        return this.error?.body?.message || 'Customer 360을 불러오지 못했습니다.';
+    }
+
+    get accountName() {
+        return this.data?.accountName || '';
+    }
+
+    get profile() {
+        return this.data?.profile;
+    }
+
+    get contactEmail() {
+        return this.data?.profile?.contactEmail || '—';
+    }
+
+    get contactPhone() {
+        return this.data?.profile?.contactPhone || '—';
+    }
+
+    get contactAddress() {
+        return this.data?.profile?.contactAddress || '—';
+    }
+
+    get contactIndustry() {
+        return this.data?.profile?.industry || '—';
+    }
+
+    get kpiCsat() {
+        return '96';
+    }
+
+    get kpiResponseSla() {
+        return '30분';
+    }
+
+    get kpiContractType() {
+        const c = this.currentContract;
+        return c ? c.name?.replace(/.*?(보증|계약).*/, '$1') || '—' : '—';
+    }
+
+    get kpiContractStatus() {
+        const c = this.currentContract;
+        return c ? (c.isExpired ? '만료' : '계약 유효') : '—';
+    }
+
+    get kpiContractStatusClass() {
+        const c = this.currentContract;
+        const ok = c && !c.isExpired;
+        return ok ? 'c360-kpi-v c360-kpi-good c360-kpi-sm' : 'c360-kpi-v c360-kpi-sm';
+    }
+
+    get kpiContractExpiry() {
+        const c = this.currentContract;
+        if (!c?.endDate) return '—';
+        return '계약 만료 ' + c.endDate;
+    }
+
+    get currentContract() {
+        const contracts = this.data?.contracts || [];
+        return contracts.find(c => c.isCurrent) || contracts[0] || null;
+    }
+
+    get hasContracts() {
+        return this.data?.contracts?.length > 0;
+    }
+
+    get contracts() {
+        return (this.data?.contracts || []).map((c) => ({
+            ...c,
+            badgeLabel: c.isExpired ? '만료' : c.isCurrent ? '계약 유효' : c.status,
+            badgeClass: c.isExpired
+                ? 'slds-badge c360-badge-warn'
+                : c.isCurrent
+                    ? 'slds-badge c360-badge-ok'
+                    : 'slds-badge c360-badge-neutral',
+            endDateFormatted: c.endDate || '—'
+        }));
+    }
+
+    get hasAssets() {
+        return this.data?.assets?.length > 0;
+    }
+
+    get assets() {
+        return this.data?.assets || [];
+    }
+
+    get hasPastCases() {
+        return this.data?.pastCases?.length > 0;
+    }
+
+    get pastCases() {
+        return this.data?.pastCases || [];
+    }
+
+    get hasOpportunities() {
+        return this.data?.opportunities?.length > 0;
+    }
+
+    get opportunities() {
+        return (this.data?.opportunities || []).map((o) => ({
+            ...o,
+            badgeLabel: o.stageName || '',
+            badgeClass: o.isWon
+                ? 'slds-badge c360-badge-ok'
+                : o.isClosed
+                    ? 'slds-badge c360-badge-warn'
+                    : 'slds-badge c360-badge-neutral',
+            amountFormatted: o.amount != null ? new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(o.amount) : '—',
+            closeDateFormatted: o.closeDate || '—'
+        }));
+    }
+
     activeTab = 'contract';
 
-    get isContract() {
-        return this.activeTab === 'contract';
-    }
-    get isProduct() {
-        return this.activeTab === 'product';
-    }
-    get isProblem() {
-        return this.activeTab === 'problem';
-    }
-    get isSales() {
-        return this.activeTab === 'sales';
-    }
+    get isContract() { return this.activeTab === 'contract'; }
+    get isProduct() { return this.activeTab === 'product'; }
+    get isProblem() { return this.activeTab === 'problem'; }
+    get isSales() { return this.activeTab === 'sales'; }
 
-    get contractTabClass() {
-        return this.tabClass('contract');
-    }
-    get productTabClass() {
-        return this.tabClass('product');
-    }
-    get problemTabClass() {
-        return this.tabClass('problem');
-    }
-    get salesTabClass() {
-        return this.tabClass('sales');
-    }
+    get contractTabClass() { return this.tabClass('contract'); }
+    get productTabClass() { return this.tabClass('product'); }
+    get problemTabClass() { return this.tabClass('problem'); }
+    get salesTabClass() { return this.tabClass('sales'); }
 
     tabClass(key) {
         return this.activeTab === key ? 'c360-tabbtn on' : 'c360-tabbtn';
@@ -85,8 +198,6 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         return this.isConsoleNavigation?.data === true;
     }
 
-    // 서브탭 클릭 → 다른 장면으로 이동.
-    // Case는 레코드 페이지로, 나머지는 UrlAddressable 컴포넌트를 콘솔 서브탭(전체폭)으로 연다.
     async handleSubtab(event) {
         const target = event.currentTarget.dataset.goto;
         const rid = this.effectiveRecordId;
@@ -97,11 +208,7 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         if (target === 'case') {
             this[NavigationMixin.Navigate]({
                 type: 'standard__recordPage',
-                attributes: {
-                    recordId: rid,
-                    objectApiName: 'Case',
-                    actionName: 'view'
-                }
+                attributes: { recordId: rid, objectApiName: 'Case', actionName: 'view' }
             });
             return;
         }

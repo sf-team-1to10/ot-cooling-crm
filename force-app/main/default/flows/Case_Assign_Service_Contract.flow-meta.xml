@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <assignments>
+        <description>Asset 기준 후보를 순회하면서 건수를 세고, 마지막으로 확인한 후보의 ServiceContractId를 보관한다. 최종 배정은 후보가 정확히 1건일 때만 하므로, 여기서 보관한 값은 그 1건의 계약 Id가 된다.</description>
+        <name>Count_Candidate</name>
+        <label>후보 계약 카운트</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>varCandidateCount</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varCandidateContractId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Loop_Asset_Entitlements.ServiceContractId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Asset_Entitlements</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Asset 기준 경로: 유효 Entitlement가 정확히 1건이고 그 계약도 날짜상 유효할 때만 Case.ServiceContractId에 배정한다.</description>
+        <name>Assign_Contract_From_Asset</name>
+        <label>Asset 기준 계약 배정</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.ServiceContractId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Asset_Contract.Id</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <description>Entitlement 기준 경로: Case에 이미 지정된 Entitlement의 계약이 날짜상 유효할 때 Case.ServiceContractId에 배정한다.</description>
+        <name>Assign_Contract_From_Entitlement</name>
+        <label>Entitlement 기준 계약 배정</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.ServiceContractId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Get_Entitlement_Contract.Id</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <description>매칭 우선순위 분기. EntitlementId가 있으면 그 Entitlement의 계약만 사용한다. EntitlementId가 없을 때만 Asset 기준 탐색으로 내려간다. Entitlement 경로가 실패해도 Asset 경로로 넘어가지 않는다(우선순위 2가 3보다 강하다).</description>
+        <name>Route_By_Entitlement</name>
+        <label>Entitlement 지정 여부</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Route_By_Asset</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Entitlement 없음</defaultConnectorLabel>
+        <rules>
+            <description>Case.EntitlementId가 채워져 있으면 Entitlement 기준 경로로 보낸다.</description>
+            <name>Entitlement_Specified</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.EntitlementId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Case_Entitlement</targetReference>
+            </connector>
+            <label>Entitlement 있음</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Case에 지정된 Entitlement가 날짜상 유효하고 ServiceContractId를 가지고 있는지 확인한다. 아니면 아무것도 하지 않고 종료한다.</description>
+        <name>Entitlement_Has_Contract</name>
+        <label>Entitlement에 계약 있음</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>계약 없음 · 빈 값 유지</defaultConnectorLabel>
+        <rules>
+            <description>유효한 Entitlement가 조회됐고 ServiceContractId가 있으면 계약 유효성 확인으로 진행한다.</description>
+            <name>Entitlement_Contract_Present</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Case_Entitlement.ServiceContractId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Entitlement_Contract</targetReference>
+            </connector>
+            <label>계약 있음</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Entitlement가 가리키는 Service Contract가 날짜상 유효한지 확인한다. 만료 계약이면 배정하지 않는다.</description>
+        <name>Entitlement_Contract_Valid</name>
+        <label>Entitlement 계약 유효</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>계약 만료 · 빈 값 유지</defaultConnectorLabel>
+        <rules>
+            <description>유효 기간 조건을 통과한 계약이 조회되면 배정한다.</description>
+            <name>Entitlement_Contract_In_Range</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Entitlement_Contract.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Contract_From_Entitlement</targetReference>
+            </connector>
+            <label>유효</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>Asset 기준 탐색 전제 조건. Case에 AssetId와 AccountId가 모두 있어야 한다. Account 일치는 유효 Entitlement 기준의 일부이므로 AccountId가 비어 있으면 탐색하지 않는다. Account만 같다는 이유로 계약을 고르는 경로는 이 Flow에 존재하지 않는다.</description>
+        <name>Route_By_Asset</name>
+        <label>Asset·Account 지정 여부</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>Asset 또는 Account 없음 · 빈 값 유지</defaultConnectorLabel>
+        <rules>
+            <description>AssetId와 AccountId가 모두 있을 때만 Asset 기준 후보를 조회한다.</description>
+            <name>Asset_And_Account_Present</name>
+            <conditionLogic>1 AND 2</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.AssetId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.AccountId</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Asset_Entitlements</targetReference>
+            </connector>
+            <label>Asset·Account 있음</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>유효 후보가 정확히 1건일 때만 진행한다. 0건이면 연결할 근거가 없고, 2건 이상이면 어느 계약이 맞는지 판단할 수 없으므로 임의로 첫 번째를 고르지 않고 빈 값으로 둔다.</description>
+        <name>Exactly_One_Candidate</name>
+        <label>후보 정확히 1건</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>0건 또는 2건 이상 · 빈 값 유지</defaultConnectorLabel>
+        <rules>
+            <description>후보 건수가 1이면 계약 유효성 확인으로 진행한다.</description>
+            <name>Single_Candidate</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>varCandidateCount</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <numberValue>1.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Asset_Contract</targetReference>
+            </connector>
+            <label>1건</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <description>단일 후보 Entitlement가 가리키는 Service Contract가 날짜상 유효한지 확인한다. 만료 계약이면 배정하지 않는다.</description>
+        <name>Asset_Contract_Valid</name>
+        <label>Asset 후보 계약 유효</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>계약 만료 · 빈 값 유지</defaultConnectorLabel>
+        <rules>
+            <description>유효 기간 조건을 통과한 계약이 조회되면 배정한다.</description>
+            <name>Asset_Contract_In_Range</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Asset_Contract.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Contract_From_Asset</targetReference>
+            </connector>
+            <label>유효</label>
+        </rules>
+    </decisions>
+    <description>Case 생성·수정 시 적절한 Service Contract를 Case.ServiceContractId에 자동 배정한다. 진입 조건이 ServiceContractId IsNull이라 사용자가 직접 입력한 값은 절대 덮어쓰지 않는다. 우선순위: (1) EntitlementId가 있으면 그 Entitlement의 계약, (2) EntitlementId가 없고 AssetId가 있으면 정확한 AssetId 기준 유효 Entitlement 탐색. Entitlement와 Service Contract 모두 날짜상 유효해야 하고, 후보가 정확히 1건일 때만 배정한다. Account만 같다는 이유로 계약을 고르지 않는다. triggerOrder 20으로 선행 Case_Assign_Entitlement_By_Impact(10) 다음에 실행된다. 선행 Flow가 유효 후보 정확히 1건일 때만 EntitlementId를 채우므로, 이 Flow가 EntitlementId를 신뢰해도 임의 계약이 붙지 않는다.</description>
+    <environments>Default</environments>
+    <interviewLabel>Case Service Contract Auto Match</interviewLabel>
+    <label>Case Service Contract 자동 연결</label>
+    <loops>
+        <description>Asset 기준 유효 Entitlement 후보를 순회한다. before-save Flow라 DML이 없고 전부 메모리 연산이므로 대량 처리에서도 governor 부담이 없다.</description>
+        <name>Loop_Asset_Entitlements</name>
+        <label>Asset 후보 순회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <collectionReference>Get_Asset_Entitlements</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector>
+            <targetReference>Count_Candidate</targetReference>
+        </nextValueConnector>
+        <noMoreValuesConnector>
+            <targetReference>Exactly_One_Candidate</targetReference>
+        </noMoreValuesConnector>
+    </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>Case에 지정된 Entitlement를 Id로 다시 조회한다. 날짜상 유효하고 ServiceContractId를 가진 경우에만 결과가 나온다. Entitlement.Status는 파생 필드라 필터에 쓰지 않고, 결과가 동일한 StartDate/EndDate 조건으로 판정한다.</description>
+        <name>Get_Case_Entitlement</name>
+        <label>Case Entitlement 조회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Entitlement_Has_Contract</targetReference>
+        </connector>
+        <filterLogic>1 AND 2 AND 3 AND (4 OR 5)</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.EntitlementId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>ServiceContractId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StartDate</field>
+            <operator>LessThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>GreaterThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Entitlement</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>ServiceContractId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Entitlement가 가리키는 Service Contract가 날짜상 유효한지 확인한다. ServiceContract.Status도 파생 필드라 StartDate/EndDate로 판정한다.</description>
+        <name>Get_Entitlement_Contract</name>
+        <label>Entitlement 계약 조회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Entitlement_Contract_Valid</targetReference>
+        </connector>
+        <filterLogic>1 AND 2 AND (3 OR 4)</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Case_Entitlement.ServiceContractId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>StartDate</field>
+            <operator>LessThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>GreaterThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>ServiceContract</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>Case의 정확한 AssetId를 기준으로 유효 Entitlement 후보를 모두 조회한다. Asset 이름이 아니라 AssetId로 매칭한다(org에 동명 Asset이 여러 건 존재). Account 일치, ServiceContractId 존재, 날짜 유효를 모두 요구한다. getFirstRecordOnly=false로 전체를 받아 건수를 세고, 1건일 때만 배정한다.</description>
+        <name>Get_Asset_Entitlements</name>
+        <label>Asset 기준 유효 Entitlement 조회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Loop_Asset_Entitlements</targetReference>
+        </connector>
+        <filterLogic>1 AND 2 AND 3 AND 4 AND (5 OR 6)</filterLogic>
+        <filters>
+            <field>AccountId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.AccountId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>AssetId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.AssetId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>ServiceContractId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>StartDate</field>
+            <operator>LessThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>GreaterThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Entitlement</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>ServiceContractId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <description>단일 후보 Entitlement가 가리키는 Service Contract의 날짜 유효성을 확인한다.</description>
+        <name>Get_Asset_Contract</name>
+        <label>Asset 후보 계약 조회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Asset_Contract_Valid</targetReference>
+        </connector>
+        <filterLogic>1 AND 2 AND (3 OR 4)</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varCandidateContractId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>StartDate</field>
+            <operator>LessThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>EndDate</field>
+            <operator>GreaterThanOrEqualTo</operator>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>ServiceContract</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Route_By_Entitlement</targetReference>
+        </connector>
+        <filterLogic>1</filterLogic>
+        <filters>
+            <field>ServiceContractId</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Draft</status>
+    <triggerOrder>20</triggerOrder>
+    <variables>
+        <description>Asset 기준 유효 Entitlement 후보 건수. 1일 때만 배정한다.</description>
+        <name>varCandidateCount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+        <value>
+            <numberValue>0.0</numberValue>
+        </value>
+    </variables>
+    <variables>
+        <description>마지막으로 확인한 후보 Entitlement의 ServiceContractId. 후보가 1건일 때만 사용한다.</description>
+        <name>varCandidateContractId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

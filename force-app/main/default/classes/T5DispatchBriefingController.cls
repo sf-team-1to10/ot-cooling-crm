@@ -340,7 +340,10 @@ public with sharing class T5DispatchBriefingController {
             LIMIT 1
         ];
         if (ms.isEmpty() || ms[0].TargetDate == null) {
-            return null;
+            RecoverySla fallback = new RecoverySla();
+            fallback.display = '8시간';
+            fallback.contribution = '보통';
+            return fallback;
         }
         RecoverySla sla = new RecoverySla();
         Long remainMin = (ms[0].TargetDate.getTime() - Datetime.now().getTime()) / 60000;

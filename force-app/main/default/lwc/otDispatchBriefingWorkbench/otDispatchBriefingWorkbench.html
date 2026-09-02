@@ -11,15 +11,8 @@
         </template>
 
         <template lwc:if={briefing}>
-            <!-- ── Path 바 (프로토타입 v-briefing, 진단·브리핑 단계) ── -->
-            <div class="path">
-                <div class="path-step done"><span class="path-num">0</span> 접수</div>
-                <div class="path-step on"><span class="path-num">1</span> 진단·브리핑</div>
-                <div class="path-step"><span class="path-num">2</span> 담당자 배정</div>
-                <div class="path-step"><span class="path-num">3</span> 현장 출동</div>
-                <div class="path-step"><span class="path-num">4</span> 수리·복구</div>
-                <div class="path-step"><span class="path-num">5</span> RCA·예방·지식</div>
-            </div>
+            <!-- ── Path 바 — Case.Stage__c 값을 실시간 반영 (otCasePath 공통 컴포넌트) ── -->
+            <c-ot-case-path record-id={effectiveRecordId}></c-ot-case-path>
 
             <!-- ── 서브탭 (출동 브리핑 활성) ── -->
             <div class="subtabs">
