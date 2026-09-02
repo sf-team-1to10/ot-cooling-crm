@@ -9,6 +9,7 @@
             "backgroundImageConfig" : "",
             "backgroundImageOverlay" : "rgba(0,0,0,0)",
             "componentSpacerSize" : "",
+            "dxpStyle" : { },
             "layoutDirectionDesktop" : "row",
             "layoutDirectionMobile" : "column",
             "layoutDirectionTablet" : "column",
@@ -20,12 +21,9 @@
           },
           "children" : [ {
             "children" : [ {
-              "attributes" : {
-                "imageInfos" : "",
-                "richTextValue" : "<div style=\"display: flex; justify-content: center; align-items: center; margin: 50px 0; flex-direction: column; text-align: center;\"><div style=\"background-image: url(assets/img/desert.svg) !important; background-size: cover; background-position: center; height: 300px; width: 100%; max-width: 600px; min-width: 300px;\"></div><h1 class=\"slds-text-heading_medium slds-p-bottom_x-small\">Start Building Your Page</h1> <div>Drag and drop a component into the content slots.</div></div>"
-              },
-              "definition" : "community_builder:htmlEditor",
-              "id" : "338490e6-0b50-49ca-b641-7da74313d261",
+              "attributes" : { },
+              "definition" : "c:otEquipDashboard",
+              "id" : "83f4e324-a89f-438f-a2a1-da4f8005ff67",
               "type" : "component"
             } ],
             "id" : "badc05a9-64c8-418f-894f-7370b63b469e",
@@ -46,6 +44,7 @@
           "attributes" : {
             "customHeadTags" : "",
             "description" : "",
+            "dxpStyle" : { },
             "pageTitle" : "Home",
             "recordId" : "{!recordId}"
           },

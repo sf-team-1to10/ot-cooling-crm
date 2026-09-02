@@ -7,11 +7,26 @@
     <template lwc:if={showList}>
         <c-ot-my-assets oncontact={handleContact}></c-ot-my-assets>
     </template>
+
+    <template lwc:elseif={showDetail}>
+        <div class="detail-wrap">
+            <button class="back-link" onclick={handleBackToList}>
+                ← 내 자산
+            </button>
+            <c-ot-trend-alert-card
+                asset-id={selectedAssetId}
+            ></c-ot-trend-alert-card>
+            <button class="report-cta" onclick={handleOpenReport}>
+                이 장비 장애 신고
+            </button>
+        </div>
+    </template>
+
     <template lwc:else>
         <c-ot-report-fault
             asset-id={selectedAssetId}
             asset-name={selectedAssetName}
-            onback={handleBack}
+            onback={handleBackFromReport}
         ></c-ot-report-fault>
     </template>
 </template>

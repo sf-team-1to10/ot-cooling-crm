@@ -34,13 +34,15 @@ export default class OtMyAssets extends LightningElement {
         }
     }
 
-    // Presentation-only view models. Alert level is derived from the real
-    // Open_Items_Summary__c value already returned by the controller — no new
-    // query or field is introduced.
+    // Presentation-only view models. Alert level follows Latest_Trend_Flag__c
+    // (2026-08-30 변경 — 이전엔 Open_Items_Summary__c > 0을 썼는데, 상세
+    // 화면(otTrendAlertCard)의 게이지는 Trend_Flag__c 기준이라 같은 자산이
+    // 목록엔 "정상", 상세엔 "주의"로 다르게 보이는 모순이 있었다. 두 화면이
+    // 같은 신호를 쓰도록 통일).
     get decoratedAssets() {
         return this.assets.map((a) => {
-            const open = Number(a.openItemsSummary) || 0;
-            const attention = open > 0;
+            const attention =
+                a.trendFlag === '주의' || a.trendFlag === '이상';
             return {
                 ...a,
                 attention,

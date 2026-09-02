@@ -5,6 +5,71 @@
         <default>true</default>
         <visible>true</visible>
     </applicationVisibilities>
+    <fieldPermissions>
+        <field>Asset.Site_Location__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Product2.Asset_Type_Label__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Product2.Asset_Category__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Category_Label__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Alarm_Tag__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Message__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Current_Value_Text__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Normal_Range_Text__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Current_Value__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Envelope_Min__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Envelope_Max__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Acknowledged_At__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Customer_Alert__c.Recommended_Action__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
     <tabVisibilities>
         <tab>Dispatch_Briefing_Workbench</tab>
         <visibility>DefaultOn</visibility>

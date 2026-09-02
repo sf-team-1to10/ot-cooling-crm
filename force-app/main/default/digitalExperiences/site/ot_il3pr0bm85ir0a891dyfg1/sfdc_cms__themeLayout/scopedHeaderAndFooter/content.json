@@ -14,6 +14,7 @@
             "backgroundImageConfig" : "",
             "backgroundImageOverlay" : "rgba(0,0,0,0)",
             "componentSpacerSize" : "",
+            "dxpStyle" : { },
             "layoutDirectionDesktop" : "row",
             "layoutDirectionMobile" : "column",
             "layoutDirectionTablet" : "column",
@@ -24,98 +25,6 @@
             "sectionVerticalAlign" : "flex-start"
           },
           "children" : [ {
-            "children" : [ {
-              "attributes" : {
-                "dxpStyle" : {
-                  "padding" : {
-                    "bottom" : "5px",
-                    "left" : "5px",
-                    "right" : "5px",
-                    "top" : "5px"
-                  }
-                }
-              },
-              "children" : [ {
-                "children" : [ {
-                  "attributes" : {
-                    "activeLineWeight" : "3px",
-                    "backgroundColor" : "rgba(255, 255, 255, 0)",
-                    "dropdownAccordionIconSize" : "xx-small",
-                    "dropdownActiveLineWeight" : "5px",
-                    "dropdownBackgroundActiveColor" : "rgba(0, 0, 0, 0)",
-                    "dropdownBackgroundColor" : "",
-                    "dropdownBackgroundHoverColor" : "",
-                    "dropdownBottomBorderRadius" : "5px",
-                    "dropdownFontSizeOverride" : "",
-                    "dropdownFontWeightOverride" : "300",
-                    "dropdownItemPadding" : "{\"top\":\"10px\",\"right\":\"10px\",\"bottom\":\"10px\",\"left\":\"10px\"}",
-                    "dropdownLineHeightOverride" : "",
-                    "dropdownMenuPadding" : "{\"top\":\"0px\",\"right\":\"0px\",\"bottom\":\"0px\",\"left\":\"0px\"}",
-                    "dropdownOverrideTextStyle" : true,
-                    "dropdownShowDividerLines" : false,
-                    "dropdownTextDecorationOverride" : "",
-                    "dropdownTextStyle" : "body-regular",
-                    "dropdownTopBorderRadius" : "5px",
-                    "fontSizeOverride" : "",
-                    "fontWeightOverride" : "",
-                    "iconSize" : "xx-small",
-                    "itemBackgroundActiveColor" : "rgba(255, 255, 255, 0)",
-                    "itemBackgroundHoverColor" : "rgba(255, 255, 255, 0)",
-                    "lineHeightOverride" : "",
-                    "menuHorizontalAlignment" : "left",
-                    "navigationMenuEditor" : "Default_Navigation",
-                    "overrideTextStyle" : false,
-                    "showHomeLink" : true,
-                    "showParentMenuIcon" : true,
-                    "spaceBetweenMenuItems" : "30px",
-                    "textDecorationOverride" : "",
-                    "textStyle" : "body-regular"
-                  },
-                  "definition" : "community_navigation:customizableNavigationBarContainer",
-                  "id" : "ae41befe-d92a-4697-a2d0-df911f389108",
-                  "type" : "component"
-                } ],
-                "id" : "72963798-178e-40be-b0f3-fa5e0b360244",
-                "name" : "desktop",
-                "title" : "Desktop View",
-                "type" : "region"
-              }, {
-                "children" : [ {
-                  "attributes" : {
-                    "burgerIconHorizontalAlignment" : "left",
-                    "modalAccordionIconSize" : "xx-small",
-                    "modalActiveBackgroundColor" : "rgba(255, 255, 255, 0)",
-                    "modalActiveLineWeight" : "5px",
-                    "modalFontSizeOverride" : "",
-                    "modalFontWeightOverride" : "",
-                    "modalItemPadding" : "{\"top\":\"10px\",\"right\":\"10px\",\"bottom\":\"10px\",\"left\":\"15px\"}",
-                    "modalLineHeightOverride" : "",
-                    "modalMenuPadding" : "{\"top\":\"0px\",\"right\":\"0px\",\"bottom\":\"0px\",\"left\":\"0px\"}",
-                    "modalOverrideTextStyle" : false,
-                    "modalShowDividerLines" : true,
-                    "modalSubmenuFontSizeOverride" : "",
-                    "modalSubmenuFontWeightOverride" : "300",
-                    "modalSubmenuLineHeightOverride" : "",
-                    "modalSubmenuOverrideTextStyle" : true,
-                    "modalSubmenuTextDecorationOverride" : "",
-                    "modalSubmenuTextStyle" : "body-regular",
-                    "modalTextDecorationOverride" : "",
-                    "modalTextStyle" : "body-regular",
-                    "showHomeLink" : true
-                  },
-                  "definition" : "community_navigation:customizableNavigationHamburgerMenuContainer",
-                  "id" : "956281fe-7886-4114-b464-82234c96d071",
-                  "type" : "component"
-                } ],
-                "id" : "c500033f-9cbe-4fd9-baf1-1ac98e2e4062",
-                "name" : "mobile",
-                "title" : "Mobile View",
-                "type" : "region"
-              } ],
-              "definition" : "community_navigation:customizableNavigationMenu",
-              "id" : "3b7007f4-f71c-40f0-b148-833672d0793d",
-              "type" : "component"
-            } ],
             "id" : "0063910e-c282-4fea-96d5-755c5b710f8c",
             "name" : "headerSection",
             "title" : "Theme Header",
@@ -135,6 +44,7 @@
             "backgroundImageConfig" : "",
             "backgroundImageOverlay" : "rgba(0,0,0,0)",
             "componentSpacerSize" : "",
+            "dxpStyle" : { },
             "layoutDirectionDesktop" : "row",
             "layoutDirectionMobile" : "column",
             "layoutDirectionTablet" : "column",

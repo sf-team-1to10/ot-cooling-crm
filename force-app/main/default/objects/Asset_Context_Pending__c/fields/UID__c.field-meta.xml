@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>UID__c</fullName>
+    <label>UID</label>
+    <description>MIAW visitor UID parsed from the messaging JWT sub (the uid: segment). Serves as the upsert key linking a pending asset-context row to the MessagingEndUser.MessagingPlatformKey, so the session-create trigger can find the pending Asset regardless of arrival order.</description>
+    <inlineHelpText>Visitor UID from the MIAW JWT (matches MessagingEndUser.MessagingPlatformKey after the uid: prefix).</inlineHelpText>
+    <type>Text</type>
+    <length>255</length>
+    <externalId>true</externalId>
+    <unique>true</unique>
+    <required>true</required>
+</CustomField>

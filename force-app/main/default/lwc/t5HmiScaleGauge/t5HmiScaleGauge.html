@@ -1,0 +1,33 @@
+<template>
+    <div class={cardClass}>
+        <div class="gc-head">
+            <span class="gc-title">{gaugeTitle}</span>
+            <span class={badgeClass}>{badge}</span>
+        </div>
+        <!-- SVG gauge rendered via lwc:dom="manual" -->
+        <div class="gauge-container" lwc:dom="manual"></div>
+        <!-- Process value -->
+        <div class="gauge-pv">
+            <span class="pv-value">{formattedValue}</span>
+            <span class="pv-unit">{unit}</span>
+        </div>
+        <!-- Explanation -->
+        <template lwc:if={explain}>
+            <div class="gc-explain">{explain}</div>
+        </template>
+        <!-- Extra note (e.g. torque) -->
+        <template lwc:if={extraNote}>
+            <div class="extra-note" lwc:dom="manual"></div>
+        </template>
+        <!-- Sparkline trend box -->
+        <template lwc:if={hasSparkData}>
+            <div class="trend-box">
+                <div class="tb-cap">
+                    <span>{sparkLabel}</span>
+                    <span>{sparkRef}</span>
+                </div>
+                <div class="spark-container" lwc:dom="manual"></div>
+            </div>
+        </template>
+    </div>
+</template>

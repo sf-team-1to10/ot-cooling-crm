@@ -1,0 +1,360 @@
+<template>
+<div class="hmi-root" onkeydown={handleKeydown}>
+
+    <!-- 1. Top Header -->
+    <header class="app-header">
+        <div class="brand">
+            <b>OT전자</b>
+            <span class="bsep"></span>
+            <span class="bsub">고객 포털</span>
+            <span class="bbadge">Experience Cloud</span>
+        </div>
+        <div class="site-ctx">마이클라우드 데이터센터 · Hall A</div>
+        <div class="header-right">
+            <template lwc:if={hasActiveAlert}>
+                <button class="alarm-pill" type="button" onclick={handleOpenDrawer} aria-label="활성 경보 열기">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path></svg>
+                    활성 경보 <span class="mono">{activeAlertCount}</span>
+                </button>
+            </template>
+            <div class="user-chip">
+                <span class="avatar">유</span>
+                <span>유신 · 아이언데이터</span>
+            </div>
+            <button class="exit-btn" type="button">홈페이지 나가기</button>
+        </div>
+    </header>
+
+    <!-- 1b. Shell: sidebar + content -->
+    <div class="shell">
+        <nav class="sidebar" aria-label="주요 메뉴">
+            <div class="side-group">자산 운영</div>
+            <a class="side-link active" aria-current="page">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>내 자산</span>
+            </a>
+            <a class="side-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+                <span>장애 신고</span>
+            </a>
+            <a class="side-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>
+                <span>변경 요청</span>
+            </a>
+            <a class="side-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                <span>인수 현황</span>
+            </a>
+            <a class="side-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2Z"></path></svg>
+                <span>정비 현황</span>
+            </a>
+            <div class="side-foot">고객사 · 아이언데이터<br/>사이트 · 마이클라우드 DC / Hall A</div>
+        </nav>
+
+        <main class="content">
+            <div class="page-title">
+                <div class="eyebrow">Asset Inventory</div>
+                <h1>내 자산 <span class="count">냉각 자산 {homeData.totalCount}대 · {homeData.siteLabel}</span></h1>
+            </div>
+
+            <!-- 2. Advisory Alert Banner -->
+            <template lwc:if={hasActiveAlert}>
+                <div class="alert" role="alert" aria-label="자산 주의 알림">
+            <div class="ai" aria-hidden="true">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+            </div>
+            <div class="abody">
+                <div class="atop">
+                    <span class="atitle">자산 주의</span>
+                    <span class="prio">{activeAlert.priority} ADVISORY</span>
+                </div>
+                <div class="aident">
+                    <span class="aid">{activeAlert.assetName}</span>
+                    <span class="sep"></span>{activeAlert.assetType}
+                    <span class="sep"></span>{activeAlert.assetLoc}
+                </div>
+                <div class="adesc">{activeAlert.message}</div>
+            </div>
+            <div class="aacts">
+                <div class="amoment">감지 시작 {alertStartTimeText} · {alertDurationText} 지속</div>
+                <div class="arow">
+                    <button class="btn sm" type="button" onclick={handleOpenDrawer}>상세 보기</button>
+                    <button class="btn sm primary" type="button" onclick={handleAcknowledge} disabled={isAlertAcknowledged}>{ackButtonLabel}</button>
+                </div>
+            </div>
+        </div>
+            </template>
+
+            <!-- 3. Fleet Operations Summary -->
+            <section class="panel" aria-label="설치 자산 운영 요약">
+            <div class="panel-h">
+                <h2>운영 요약 · {homeData.siteLabel}</h2>
+                <span class="pmeta">마지막 수신 {homeData.lastUpdatedText}</span>
+            </div>
+            <div class="panel-b">
+                <div class="so-strip">
+                    <div class="so-fleet">
+                        <div class="fl-eyebrow">Fleet Status</div>
+                        <div class="fl-state">
+                            <template lwc:if={hasAdvisory}>
+                                <span class="fl-led adv"></span>
+                                <span class="fl-word adv">주의</span>
+                            </template>
+                            <template lwc:else>
+                                <span class="fl-led ok"></span>
+                                <span class="fl-word ok">정상</span>
+                            </template>
+                        </div>
+                        <div class="fl-metric">가용 <b>{availableCount}</b><span class="sep-char">/</span>{homeData.totalCount}<span class="mid">·</span>주의 <b>{homeData.advisoryCount}</b>건</div>
+                        <div class="fl-meter" aria-hidden="true">
+                            <template for:each={meterSegments} for:item="seg">
+                                <i key={seg.key} class={seg.cls}></i>
+                            </template>
+                        </div>
+                    </div>
+                    <button class={kpiNormalClass} type="button" data-kpi="정상" aria-label="정상 자산만 보기" onclick={handleKpiClick}>
+                        <span class={kpiNormalNumClass}><span class="mono">{homeData.normalCount}</span></span>
+                        <span class="k-lbl">정상 운영</span>
+                    </button>
+                    <button class={kpiAdvisoryClass} type="button" data-kpi="주의" aria-label="주의 자산만 보기" onclick={handleKpiClick}>
+                        <span class={kpiAdvisoryNumClass}><span class="mono">{homeData.advisoryCount}</span></span>
+                        <span class="k-lbl">주의</span>
+                    </button>
+                    <button class={kpiMaintenanceClass} type="button" data-kpi="점검 중" aria-label="정비 중 자산만 보기" onclick={handleKpiClick}>
+                        <span class="k-num"><span class="mono">{homeData.maintenanceCount}</span></span>
+                        <span class="k-lbl">정비 중</span>
+                    </button>
+                    <div class="so-kpi mut">
+                        <span class="k-num"><span class="mono">{homeData.offlineCount}</span></span>
+                        <span class="k-lbl">통신 불가</span>
+                    </div>
+                    <button class={kpiServiceClass} type="button" data-kpi="서비스 진행 중" aria-label="서비스 진행 중 자산만 보기" onclick={handleKpiClick}>
+                        <span class="k-num"><span class="mono">{homeData.serviceCount}</span></span>
+                        <span class="k-lbl">서비스 요청</span>
+                    </button>
+                    <div class="so-next">
+                        <div class="micro">다음 정기점검</div>
+                        <div class="n-date mono">{nextMaintenanceDateGlobal}</div>
+                        <div class="n-sub">냉각 자산 {homeData.totalCount}대 대상</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4-5. Asset Panel: filter tools + carousel / data grid -->
+        <section class="panel" aria-label="설치 자산">
+            <div class="panel-h">
+                <h2>설치 자산</h2>
+                <span class="pcount">전체 <span class="mono">{homeData.totalCount}</span> · 주의 <span class="mono">{homeData.advisoryCount}</span></span>
+            </div>
+
+            <div class="panel-toolbar ptools" role="search">
+                <div class="tb-search">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                    <input type="search" placeholder="Asset ID · 위치 검색" aria-label="자산 검색" value={searchQuery} oninput={handleSearchInput} />
+                </div>
+                <div class="tb-field">
+                    <label>유형</label>
+                    <select onchange={handleTypeChange}>
+                        <template for:each={typeOptions} for:item="opt">
+                            <option key={opt} value={opt}>{opt}</option>
+                        </template>
+                    </select>
+                </div>
+                <div class="tb-field">
+                    <label>상태</label>
+                    <select onchange={handleStatusChange}>
+                        <template for:each={statusOptions} for:item="opt">
+                            <option key={opt} value={opt}>{opt}</option>
+                        </template>
+                    </select>
+                </div>
+                <div class="tb-field">
+                    <label>정렬</label>
+                    <select onchange={handleSortChange}>
+                        <template for:each={sortOptions} for:item="opt">
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                        </template>
+                    </select>
+                </div>
+                <div class="tb-view" role="group" aria-label="보기 전환">
+                    <button type="button" aria-pressed={viewCardPressed} aria-label="카드 보기" title="카드 보기" onclick={handleViewCard}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    </button>
+                    <button type="button" aria-pressed={viewListPressed} aria-label="목록 보기" title="목록 보기" onclick={handleViewList}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-b">
+                <section class="carousel-region" aria-label="자산 탐색">
+                    <div class="carousel-head">
+                        <h2>자산 카드</h2>
+                        <span class="car-pos"><span class="mono">{posNow}</span> / <span class="mono">{posTotal}</span></span>
+                        <template lwc:if={isCardView}>
+                            <div class="car-nav">
+                                <button class="nav-btn" type="button" aria-label="이전 자산" disabled={isPrevDisabled} onclick={handlePrev}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg>
+                                </button>
+                                <button class="nav-btn" type="button" aria-label="다음 자산" disabled={isNextDisabled} onclick={handleNext}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+
+                    <template lwc:if={isLoading}>
+                        <div class="empty">불러오는 중…</div>
+                    </template>
+
+                    <template lwc:elseif={loadError}>
+                        <div class="empty">{loadError}</div>
+                    </template>
+
+                    <template lwc:elseif={isCardView}>
+                        <div class="track" tabindex="0" aria-label="좌우로 스와이프하여 자산 선택" ontouchstart={handleTouchStart} ontouchend={handleTouchEnd}>
+                            <template for:each={decoratedAssets} for:item="a">
+                                <article
+                                    key={a.assetId}
+                                    class={a.cardClass}
+                                    data-id={a.assetId}
+                                    tabindex="0"
+                                    aria-label={a.name}
+                                    onclick={handleCardClick}
+                                    onkeydown={handleCardKeydown}
+                                >
+                                    <div class="card-img">
+                                        <c-t5-hmi-asset-thumb image-url={a.imageUrl} alt={a.name}></c-t5-hmi-asset-thumb>
+                                    </div>
+                                    <template lwc:if={a.advisory}>
+                                        <span class="ind advisory">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"></path><path d="M12 10v4"></path><path d="M12 17h.01"></path></svg>
+                                            P3 · 주의
+                                        </span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="ind normal"><span class="led"></span>정상</span>
+                                    </template>
+                                    <div class="asset-id">{a.name}</div>
+                                    <div class="asset-type">{a.type}</div>
+                                    <div class="asset-loc"><span class="led"></span>{a.loc}</div>
+                                    <div class="ccond">{a.cond}</div>
+                                    <div class="cdates">
+                                        <div class="row"><span>최근 정비</span><b>{a.lastMaintenanceText}</b></div>
+                                        <div class="row"><span>다음 정비</span><b>{a.nextMaintenanceText}</b></div>
+                                    </div>
+                                    <div class="card-cta">
+                                        <button class="btn primary" type="button" data-action="detail" data-id={a.assetId} onclick={handleDetailClick}>상세 확인</button>
+                                        <template lwc:if={a.advisory}>
+                                            <button class="btn advisory" type="button" data-action="service" data-id={a.assetId} onclick={handleOpenService}>장애 신고</button>
+                                        </template>
+                                    </div>
+                                </article>
+                            </template>
+                        </div>
+                        <div class="dots" aria-hidden="true">
+                            <template for:each={decoratedAssets} for:item="a">
+                                <button key={a.assetId} class={a.dotClass} data-id={a.assetId} aria-label={a.name} onclick={handleDotClick}></button>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template lwc:else>
+                        <div class="listview">
+                            <div class="lv-row head">
+                                <div></div><div>상태</div><div>Asset ID</div><div>위치</div><div>최근 정비</div><div>다음 정비</div><div></div>
+                            </div>
+                            <template for:each={decoratedAssets} for:item="a">
+                                <div key={a.assetId} class={a.lvRowClass} data-id={a.assetId} onclick={handleListRowClick}>
+                                    <div class="lv-th">
+                                        <c-t5-hmi-asset-thumb image-url={a.imageUrl} alt={a.name}></c-t5-hmi-asset-thumb>
+                                    </div>
+                                    <div>
+                                        <template lwc:if={a.advisory}>
+                                            <span class="schip advisory"><span class="led"></span>주의</span>
+                                        </template>
+                                        <template lwc:else>
+                                            <span class="schip normal"><span class="led"></span>정상</span>
+                                        </template>
+                                    </div>
+                                    <div class="lv-id">{a.name}<small>{a.type}</small></div>
+                                    <div class="lv-loc">{a.loc}</div>
+                                    <div class="lv-date">최근 {a.lastMaintenanceText}</div>
+                                    <div class="lv-date">다음 {a.nextMaintenanceText}</div>
+                                    <button class="btn" type="button" data-id={a.assetId} onclick={handleDetailClick}>상세 확인</button>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template lwc:if={showEmptyState}>
+                        <div class="empty">선택한 조건에 해당하는 자산이 없습니다.</div>
+                    </template>
+                </section>
+            </div>
+        </section>
+        </main>
+    </div>
+
+    <!-- Scrim + Alarm Drawer -->
+    <div class={scrimClass} onclick={handleCloseAll}></div>
+    <template lwc:if={hasActiveAlert}>
+        <aside class={drawerClass} role="dialog" aria-modal="true">
+            <div class="drawer-head">
+                <span class="prio-tag">{activeAlert.priority}</span>
+                <h3>Advisory · {activeAlert.assetName}</h3>
+                <button class="x" type="button" aria-label="닫기" onclick={handleCloseAll}>×</button>
+            </div>
+            <div class="drawer-body">
+                <div class="kv"><span class="k">Asset</span><span class="v">{activeAlert.assetName} · {activeAlert.assetType}</span></div>
+                <div class="kv"><span class="k">위치</span><span class="v">{activeAlert.assetLoc}</span></div>
+                <div class="kv"><span class="k">Alarm tag</span><span class="v mono">{activeAlert.alarmTag}</span></div>
+                <div class="kv"><span class="k">우선순위 / 분류</span><span class="v">{activeAlert.priority} · {activeAlert.categoryLabel}</span></div>
+                <div class="kv"><span class="k">Current PV</span><span class="v mono">{activeAlert.currentValueText}</span></div>
+                <div class="kv"><span class="k">Normal operating envelope</span><span class="v mono">{activeAlert.normalRangeText}</span></div>
+                <div class="kv"><span class="k">발생 / 지속</span><span class="v">{alertStartTimeText} 발생 · {alertDurationText} 지속</span></div>
+                <div class="kv"><span class="k">Lifecycle</span><span class="v">{lifecycleLabel}</span></div>
+
+                <div class="envelope">
+                    <div class="envelope-title">{activeAlert.alarmTag} — 정상 범위 대비 현재값</div>
+                    <div class="bar"><span class="pv" style={alertMarkerStyle}></span></div>
+                    <div class="bar-legend mono"><span>≤ {activeAlert.envelopeMin} 낮음</span><span>정상</span><span>≥ {activeAlert.envelopeMax} 높음</span></div>
+                </div>
+
+                <div class="rec"><strong>권장 행동</strong><br />{activeAlert.recommendedAction}</div>
+                <p class="note">본 경보는 조기 확인 신호이며, 장애 원인이나 자동 출동을 확정하지 않습니다.</p>
+            </div>
+            <div class="drawer-actions">
+                <button class="btn primary" type="button" data-id={activeAlert.assetId} onclick={handleDetailClick}>상세 보기</button>
+                <button class="btn advisory" type="button" onclick={handleAcknowledge} disabled={isAlertAcknowledged}>{ackButtonLabel}</button>
+                <button class="btn" type="button" onclick={handleOpenService}>서비스 요청</button>
+            </div>
+        </aside>
+    </template>
+
+    <!-- Service Request Modal -->
+    <div class={modalClass} role="dialog" aria-modal="true">
+        <h3>서비스 요청 — 신규 Case</h3>
+        <div class="mbody">
+            <div class="field"><label>대상 자산 (자동 선택)</label><input class="locked" value={serviceModalAssetLabel} readonly /></div>
+            <div class="field"><label>관련 경보</label><input class="locked" value={activeAlertCategoryLabelSafe} readonly /></div>
+            <div class="field"><label>요청 유형</label>
+                <select><option>점검 요청 (추세 확인)</option><option>현장 방문 요청</option><option>원격 진단 요청</option></select>
+            </div>
+            <div class="field"><label>우선순위</label>
+                <select><option>표준 (P3 대응)</option><option>낮음</option></select>
+            </div>
+            <div class="field"><label>증상 설명</label><textarea placeholder="예: CHW Flow가 기준선 이하로 지속. 육안 이상 없음."></textarea></div>
+            <p class="note">전송 시 Salesforce Case가 생성되고 해당 Asset·Work Order와 연계됩니다. (데모에서는 실제 생성되지 않음)</p>
+        </div>
+        <div class="mfoot">
+            <button class="btn" type="button" onclick={handleCloseAll}>취소</button>
+            <button class="btn primary" type="button" onclick={handleServiceSubmit}>요청 전송</button>
+        </div>
+    </div>
+
+    <div class={toastClass}>{toastMessage}</div>
+</div>
+</template>

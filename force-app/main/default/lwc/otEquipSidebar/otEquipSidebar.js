@@ -1,7 +1,7 @@
 import { LightningElement, api } from 'lwc';
 
 export default class OtEquipSidebar extends LightningElement {
-    @api activeNav = 'assets';
+    @api activeNav = 'equipment';
     @api customerName = '';
     @api contactName = '';
     @api contactRole = '';
@@ -10,32 +10,16 @@ export default class OtEquipSidebar extends LightningElement {
         return !!this.customerName;
     }
 
-    get overviewClass() {
-        return this.activeNav === 'overview' ? 'nav-item nav-item--active' : 'nav-item';
-    }
+    get overviewClass()    { return this.navClass('overview'); }
+    get equipmentClass()   { return this.navClass('equipment'); }
+    get alarmsClass()      { return this.navClass('alarms'); }
+    get analyticsClass()   { return this.navClass('analytics'); }
+    get reportsClass()     { return this.navClass('reports'); }
+    get maintenanceClass() { return this.navClass('maintenance'); }
+    get settingsClass()    { return this.navClass('settings'); }
 
-    get assetsClass() {
-        return this.activeNav === 'assets' ? 'nav-item nav-item--active' : 'nav-item';
-    }
-
-    get faultsClass() {
-        return this.activeNav === 'faults' ? 'nav-item nav-item--active' : 'nav-item';
-    }
-
-    get changesClass() {
-        return this.activeNav === 'changes' ? 'nav-item nav-item--active' : 'nav-item';
-    }
-
-    get acceptanceClass() {
-        return this.activeNav === 'acceptance' ? 'nav-item nav-item--active' : 'nav-item';
-    }
-
-    get maintenanceClass() {
-        return this.activeNav === 'maintenance' ? 'nav-item nav-item--active' : 'nav-item';
-    }
-
-    get settingsClass() {
-        return this.activeNav === 'settings' ? 'nav-item nav-item--active' : 'nav-item';
+    navClass(key) {
+        return this.activeNav === key ? 'nav-item nav-item--active' : 'nav-item';
     }
 
     handleNavClick(event) {
