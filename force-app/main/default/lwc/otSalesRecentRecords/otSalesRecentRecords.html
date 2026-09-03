@@ -1,0 +1,27 @@
+<template>
+    <div class="card-container">
+        <div class="card-header">
+            <lightning-icon icon-name="standard:recent" size="small"></lightning-icon>
+            <span class="card-title">최근 기록</span>
+        </div>
+        <div class="card-body">
+            <template lwc:if={hasRecords}>
+                <template for:each={records} for:item="r">
+                    <div key={r.id} class="record-item">
+                        <lightning-icon icon-name={r.icon} size="small"></lightning-icon>
+                        <div class="record-info">
+                            <a class="record-name" data-id={r.id} onclick={handleNavigate}>{r.name}</a>
+                            <span class="record-type">{r.objType}</span>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template lwc:else>
+                <p class="empty-msg">최근 레코드가 없습니다.</p>
+            </template>
+        </div>
+        <div class="card-footer">
+            <a class="view-all" onclick={handleViewAll}>모두 보기</a>
+        </div>
+    </div>
+</template>

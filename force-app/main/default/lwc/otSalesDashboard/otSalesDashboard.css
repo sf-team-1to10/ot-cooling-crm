@@ -1,0 +1,77 @@
+:host {
+    display: block;
+}
+
+.slds-text-heading_small {
+    font-weight: 700;
+}
+
+/* Achievement rate colors */
+.rate-green {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2e844a;
+}
+
+.rate-blue {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0070d2;
+}
+
+.rate-red {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #c23934;
+}
+
+/* Quota progress bar */
+.progress-track {
+    height: 8px;
+    background: #e5e5e5;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #546e7a;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+/* Pipeline bars */
+.stage-label {
+    display: block;
+    text-align: right;
+}
+
+.bar-track {
+    height: 22px;
+    background: #f3f3f3;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+/* Links in tables */
+a {
+    color: #0070d2;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Active status badge */
+.slds-badge_success {
+    background: #2e844a;
+    color: #fff;
+}

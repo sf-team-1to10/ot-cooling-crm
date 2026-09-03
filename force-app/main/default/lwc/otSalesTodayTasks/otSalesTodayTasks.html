@@ -1,0 +1,39 @@
+<template>
+    <div class="card-container">
+        <div class="card-header">
+            <lightning-icon icon-name="standard:task" size="small"></lightning-icon>
+            <span class="card-title">오늘의 할 일</span>
+        </div>
+        <div class="card-body">
+            <template lwc:if={hasTasks}>
+                <template for:each={tasks} for:item="t">
+                    <div key={t.id} class="task-item">
+                        <div class="task-checkbox"></div>
+                        <div class="task-content">
+                            <a class="task-subject" data-id={t.id} onclick={handleNavigate}>{t.subject}</a>
+                            <div class="task-meta">
+                                <template lwc:if={t.dueDate}>
+                                    <span>Due {t.dueDate}</span>
+                                    <span class="separator"> · </span>
+                                </template>
+                                <span>Priority {t.priority}</span>
+                            </div>
+                            <template lwc:if={t.relatedTo}>
+                                <div class="task-related">
+                                    <span class="related-label">Related To: </span>
+                                    <a class="link" data-id={t.relatedId} onclick={handleNavigate}>{t.relatedTo}</a>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template lwc:else>
+                <p class="empty-msg">오늘의 Task가 없습니다.</p>
+            </template>
+        </div>
+        <div class="card-footer">
+            <a class="view-all" onclick={handleViewAllTasks}>모두 보기</a>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,145 @@
+<template>
+    <!-- Header: matches standard Home greeting style -->
+    <div class="slds-p-horizontal_medium slds-p-top_medium slds-p-bottom_x-small">
+        <h1 class="slds-text-heading_medium slds-text-color_default">OT전자 영업 홈</h1>
+        <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">{greeting}</p>
+    </div>
+
+    <template lwc:if={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <template lwc:else>
+        <!-- Quarterly Performance -->
+        <div class="slds-p-horizontal_medium slds-p-bottom_small">
+            <lightning-card title="Quarterly Performance" icon-name="standard:performance">
+                <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <div class="slds-col slds-size_1-of-4">
+                            <p class="slds-text-title slds-m-bottom_xx-small">Closed</p>
+                            <p class="slds-text-heading_small">{closedFormatted}</p>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <p class="slds-text-title slds-m-bottom_xx-small">Open (&gt;70%)</p>
+                            <p class="slds-text-heading_small">{openHighProbFormatted}</p>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <p class="slds-text-title slds-m-bottom_xx-small">Goal</p>
+                            <p class="slds-text-heading_small">{goalFormatted}</p>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <p class="slds-text-title slds-m-bottom_xx-small">달성률</p>
+                            <p class={achievementRateClass}>{achievementRate}</p>
+                        </div>
+                    </div>
+                    <!-- Simple bar visualization -->
+                    <div class="slds-m-top_medium">
+                        <p class="slds-text-title slds-m-bottom_xx-small">Quota 진행</p>
+                        <div class="progress-track">
+                            <div class="progress-fill" style={progressStyle}></div>
+                        </div>
+                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small slds-text-align_right">이번 분기 누적 · 실적(진회색) / 예상(연회색)</p>
+                    </div>
+                </div>
+            </lightning-card>
+        </div>
+
+        <!-- Key Deals + Pipeline row -->
+        <div class="slds-p-horizontal_medium slds-p-bottom_small">
+            <div class="slds-grid slds-gutters_small">
+                <!-- Key Deals -->
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-card title="Key Deals" icon-name="standard:opportunity">
+                        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                            <template lwc:if={hasKeyDeals}>
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th scope="col"><div class="slds-truncate">Opportunity</div></th>
+                                            <th scope="col"><div class="slds-truncate">Amount</div></th>
+                                            <th scope="col"><div class="slds-truncate">Stage</div></th>
+                                            <th scope="col"><div class="slds-truncate">Close</div></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={keyDeals} for:item="deal">
+                                            <tr key={deal.id}>
+                                                <td><a data-id={deal.id} onclick={handleNavigate}>{deal.name}</a></td>
+                                                <td>{deal.amountFormatted}</td>
+                                                <td><span class="slds-badge">{deal.stage}</span></td>
+                                                <td>{deal.closeDateFormatted}</td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+                            <template lwc:else>
+                                <p class="slds-text-body_small slds-text-color_weak slds-align_absolute-center slds-p-around_medium">진행 중 Opportunity가 없습니다.</p>
+                            </template>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <!-- Pipeline Chart -->
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-card title="파이프라인 — Stage별 금액" icon-name="standard:report">
+                        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                            <template lwc:if={hasPipeline}>
+                                <template for:each={pipelineStages} for:item="s">
+                                    <div key={s.stage} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                        <div class="slds-col slds-size_3-of-12">
+                                            <span class="slds-text-body_small slds-text-align_right slds-truncate stage-label">{s.stage}</span>
+                                        </div>
+                                        <div class="slds-col slds-size_9-of-12 slds-p-left_small">
+                                            <div class="bar-track">
+                                                <div class="bar-fill" style={s.barStyle}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </template>
+                            <template lwc:else>
+                                <p class="slds-text-body_small slds-text-color_weak slds-align_absolute-center slds-p-around_medium">파이프라인 데이터가 없습니다.</p>
+                            </template>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Contracts -->
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <lightning-card title="담당 서비스 계약 — 만료일 순" icon-name="standard:service_contract">
+                <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                    <template lwc:if={hasContracts}>
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col"><div class="slds-truncate">계약명</div></th>
+                                    <th scope="col"><div class="slds-truncate">Account</div></th>
+                                    <th scope="col"><div class="slds-truncate">End Date</div></th>
+                                    <th scope="col"><div class="slds-truncate">Status</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={contracts} for:item="c">
+                                    <tr key={c.id}>
+                                        <td><a data-id={c.id} onclick={handleNavigate}>{c.name}</a></td>
+                                        <td>{c.account}</td>
+                                        <td class="slds-text-font_monospace">{c.endDate}</td>
+                                        <td><span class="slds-badge slds-badge_success">{c.status}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template lwc:else>
+                        <p class="slds-text-body_small slds-text-color_weak slds-align_absolute-center slds-p-around_medium">담당 서비스 계약이 없습니다.</p>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+    </template>
+</template>

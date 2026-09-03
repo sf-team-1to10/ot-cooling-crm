@@ -1,0 +1,66 @@
+<template>
+    <!-- Today's Tasks -->
+    <lightning-card title="Today's Tasks" icon-name="standard:task">
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <template lwc:if={hasTasks}>
+                <ul class="slds-has-dividers_bottom-space">
+                    <template for:each={tasks} for:item="t">
+                        <li key={t.id} class="slds-item slds-p-vertical_x-small">
+                            <div class="slds-grid slds-grid_vertical">
+                                <div class="slds-grid slds-grid_align-spread">
+                                    <a class="slds-text-link task-subject slds-truncate" data-id={t.id} onclick={handleNavigate}>{t.subject}</a>
+                                </div>
+                                <div class="slds-text-body_small slds-text-color_weak slds-m-top_xxx-small">
+                                    <template lwc:if={t.dueDate}>
+                                        <span>Due {t.dueDate}</span>
+                                        <span> · </span>
+                                    </template>
+                                    <span>Priority {t.priority}</span>
+                                </div>
+                                <template lwc:if={t.relatedTo}>
+                                    <div class="slds-text-body_small slds-m-top_xxx-small">
+                                        <span class="slds-text-color_weak">Related To: </span>
+                                        <a class="slds-text-link" data-id={t.relatedId} onclick={handleNavigate}>{t.relatedTo}</a>
+                                    </div>
+                                </template>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <p class="slds-text-body_small slds-text-color_weak slds-p-vertical_small slds-text-align_center">오늘의 Task가 없습니다.</p>
+            </template>
+        </div>
+        <div slot="footer">
+            <a class="slds-text-link" onclick={handleViewAllTasks}>View All</a>
+        </div>
+    </lightning-card>
+
+    <!-- Today's Events -->
+    <div class="slds-m-top_small">
+        <lightning-card title="Today's Events" icon-name="standard:event">
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+                <template lwc:if={hasEvents}>
+                    <ul class="slds-has-dividers_bottom-space">
+                        <template for:each={events} for:item="e">
+                            <li key={e.id} class="slds-item slds-p-vertical_x-small">
+                                <div class="slds-grid slds-gutters_x-small slds-grid_vertical-align-center">
+                                    <div class="slds-col slds-size_2-of-12">
+                                        <span class="slds-text-body_small slds-text-color_weak event-time">{e.time}</span>
+                                    </div>
+                                    <div class="slds-col slds-size_10-of-12">
+                                        <a class="slds-text-link slds-truncate" data-id={e.id} onclick={handleNavigate}>{e.subject}</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+                <template lwc:else>
+                    <p class="slds-text-body_small slds-text-color_weak slds-p-vertical_small slds-text-align_center">오늘의 일정이 없습니다.</p>
+                </template>
+            </div>
+        </lightning-card>
+    </div>
+</template>

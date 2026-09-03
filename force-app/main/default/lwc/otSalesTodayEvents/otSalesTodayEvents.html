@@ -1,0 +1,24 @@
+<template>
+    <div class="card-container">
+        <div class="card-header">
+            <lightning-icon icon-name="standard:event" size="small"></lightning-icon>
+            <span class="card-title">오늘의 일정</span>
+        </div>
+        <div class="card-body">
+            <template lwc:if={hasEvents}>
+                <template for:each={events} for:item="e">
+                    <div key={e.id} class="event-item">
+                        <span class="event-time">{e.time}</span>
+                        <a class="event-subject" data-id={e.id} onclick={handleNavigate}>{e.subject}</a>
+                    </div>
+                </template>
+            </template>
+            <template lwc:else>
+                <p class="empty-msg">오늘의 일정이 없습니다.</p>
+            </template>
+        </div>
+        <div class="card-footer">
+            <a class="view-all" onclick={handleViewAll}>모두 보기</a>
+        </div>
+    </div>
+</template>

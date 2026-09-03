@@ -1,0 +1,31 @@
+<template>
+    <div class="card-container">
+        <div class="card-header">
+            <div class="header-left">
+                <lightning-icon icon-name="standard:opportunity" size="small"></lightning-icon>
+                <span class="card-title">파이프라인 — Stage별 금액</span>
+            </div>
+            <span class="header-filter">전체</span>
+        </div>
+        <div class="card-body">
+            <template lwc:if={hasStages}>
+                <template for:each={stages} for:item="s">
+                    <div key={s.stage} class="pipeline-row">
+                        <span class="stage-name">{s.stage}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill" style={s.barStyle}></div>
+                        </div>
+                        <span class="stage-amount">{s.amountFormatted} ({s.pct}%)</span>
+                    </div>
+                </template>
+                <div class="total-row">
+                    <span class="total-label">합계</span>
+                    <span class="total-value">{totalFormatted}</span>
+                </div>
+            </template>
+            <template lwc:else>
+                <p class="empty-msg">파이프라인 데이터가 없습니다.</p>
+            </template>
+        </div>
+    </div>
+</template>

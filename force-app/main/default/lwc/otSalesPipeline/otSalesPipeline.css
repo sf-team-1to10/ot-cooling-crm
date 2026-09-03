@@ -1,0 +1,104 @@
+:host { display: block; }
+
+.card-container {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    height: 100%;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.header-filter {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    cursor: default;
+}
+
+.pipeline-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.pipeline-row:last-of-type {
+    margin-bottom: 0;
+}
+
+.stage-name {
+    flex: 0 0 100px;
+    font-size: 0.8125rem;
+    color: #374151;
+    text-align: right;
+}
+
+.bar-track {
+    flex: 1;
+    height: 24px;
+    background: #f3f4f6;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.4s ease;
+}
+
+.stage-amount {
+    flex: 0 0 180px;
+    font-size: 0.8125rem;
+    color: #374151;
+    text-align: right;
+}
+
+.total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    margin-top: 1rem;
+    border-top: 1px solid #e5e5e5;
+}
+
+.total-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.total-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #9ca3af;
+    padding: 2rem;
+    font-size: 0.875rem;
+}
