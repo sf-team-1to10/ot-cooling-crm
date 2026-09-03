@@ -428,6 +428,10 @@ public with sharing class T5AssetEvidenceController {
         );
         insert as user link;
 
+        // T5ProblemRcaController가 Case.Problem__c로 참조하므로 함께 세팅
+        Case c = new Case(Id = caseId, Problem__c = p.Id);
+        update as user c;
+
         return p.Id;
     }
 

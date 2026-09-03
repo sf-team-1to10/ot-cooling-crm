@@ -30,11 +30,10 @@ export default class OtActionResults extends LightningElement {
     }
 
     async labelEnclosingTab() {
-        if (!this._tabId) return;
-        const short = String(this.problemNumber || '').replace(/^0+/, '').slice(-4);
-        const label = short ? `시정·예방 · ${short}` : '시정·예방';
+        if (this._tabLabeled || !this._tabId || !this.caseNumber) return;
+        this._tabLabeled = true;
         try {
-            await setTabLabel(this._tabId, label);
+            await setTabLabel(this._tabId, `시정·예방 · Case ${this.caseNumber}`);
             await setTabIcon(this._tabId, 'standard:problem');
         } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
@@ -62,6 +61,10 @@ export default class OtActionResults extends LightningElement {
         return this.error?.body?.message || '조치 결과를 불러오지 못했습니다.';
     }
 
+    get caseNumber() {
+        return this.actions?.caseNumber || '';
+    }
+
     get problemNumber() {
         return this.actions?.problemNumber || '';
     }
@@ -78,12 +81,23 @@ export default class OtActionResults extends LightningElement {
         return this.actions?.totalCount ?? 0;
     }
 
+    get isApproved() {
+        return this.totalCount > 0;
+    }
+
+    get approvalStatus() {
+        return this.isApproved ? '승인 완료' : '승인 대기';
+    }
+
+    get approvalStatusClass() {
+        return this.isApproved ? 'chip chip--pos' : 'chip chip--warn';
+    }
+
     get workOrders() {
         return (this.actions?.workOrders || []).map((wo) => ({
             ...wo,
-            badgeClass: wo.isCorrective
-                ? 'slds-badge scope-corrective'
-                : 'slds-badge scope-preventive',
+            rowClass: wo.isCorrective ? 'wo-row wo-row--corr' : 'wo-row wo-row--prev',
+            badgeClass: wo.isCorrective ? 'chip chip--neg' : 'chip chip--warn',
             badgeLabel: wo.isCorrective ? '시정' : '예방'
         }));
     }
@@ -99,31 +113,4 @@ export default class OtActionResults extends LightningElement {
             { key: 'refit', item: '변경·재작업 위치 체결 상태 재확인', rev2: '없음', rev3: '신규 추가', isNew: true }
         ];
     }
-
-    get articleEvidence() {
-        return this.actions?.articleEvidence;
-    }
-
-    get commissionText() {
-        const e = this.articleEvidence;
-        return e?.commissionFail != null && e?.commissionPass != null
-            ? `${e.commissionFail} → ${e.commissionPass}`
-            : '—';
-    }
-
-    get recoveryText() {
-        const e = this.articleEvidence;
-        return e?.recoveryFail != null && e?.recoveryPass != null
-            ? `${e.recoveryFail} → ${e.recoveryPass}`
-            : '—';
-    }
-
-    get evidenceSource() {
-        const e = this.articleEvidence;
-        const parts = [];
-        if (e?.caseNumber) parts.push(`Case ${e.caseNumber}`);
-        if (e?.problemNumber) parts.push(e.problemNumber);
-        return parts.length ? parts.join(' · ') : '—';
-    }
-
 }

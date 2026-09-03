@@ -1,65 +1,98 @@
 <template>
-    <div class="slds-p-vertical_x-small">
+    <div class="wb">
         <template lwc:if={isLoading}>
-            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            <div class="loading">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
         </template>
 
         <template lwc:if={error}>
-            <div class="slds-text-color_error slds-p-around_small" role="alert">
-                {errorMessage}
-            </div>
+            <div class="error" role="alert">{errorMessage}</div>
         </template>
 
         <template lwc:if={rca}>
-            <!-- 현장 근거 요약 (identity는 dynamicHighlights) -->
-            <div class="rca-hl">
-                <dl class="rca-hl-fields">
-                    <div class="rca-hl-f"><dt>현장 근거</dt><dd class="num">{evidenceSummary}</dd></div>
+            <!-- RCA 상태 스트립 + CTA -->
+            <div class="meta">
+                <dl class="meta__list">
+                    <div class="meta__item">
+                        <dt>승인 상태</dt>
+                        <dd><span class={approvalStatusClass}>{approvalStatus}</span></dd>
+                    </div>
+                    <div class="meta__item">
+                        <dt>승인 담당</dt>
+                        <dd>{approvalOwnerLabel}</dd>
+                    </div>
+                    <div class="meta__item">
+                        <dt>초안 근거</dt>
+                        <dd class="num">Case {caseNumber}</dd>
+                    </div>
+                    <div class="meta__item">
+                        <dt>현장 근거</dt>
+                        <dd class="num">{evidenceSummary}</dd>
+                    </div>
                 </dl>
+                <div class="meta__actions">
+                    <button type="button" class="btn btn--primary"
+                        onclick={handleApprove} disabled={approveButtonDisabled}>
+                        {approveButtonLabel}
+                    </button>
+                </div>
             </div>
 
-            <div class="slds-m-top_small">
-                <lightning-card>
-                    <span slot="title" class="slds-text-heading_small">원인 구분</span>
-                    <lightning-badge slot="actions" label="확정" variant="success"></lightning-badge>
-                    <div class="slds-p-horizontal_medium slds-p-bottom_medium co-stack">
-                        <div class="callout co-crit">
-                            <span class="co-ico">→</span>
-                            <div><strong>직접 원인</strong>{directCause}
-                                <div class="co-sub">근거 — 현장 측정 <span class="num">{evidenceFailValue} N·m 불합격</span>
+            <div class="grid">
+                <!-- 원인 구분 -->
+                <section class="card col--main">
+                    <header class="card__head">
+                        <h3 class="card__title">원인 구분</h3>
+                    </header>
+                    <div class="card__body cause-stack">
+                        <div class="cause cause--direct">
+                            <span class="cause__ico" aria-hidden="true">→</span>
+                            <div class="cause__body">
+                                <p class="cause__label">직접 원인</p>
+                                <p class="cause__text">{directCause}</p>
+                                <p class="cause__note">
+                                    근거 · 현장 측정 <span class="num">{evidenceFailValue} N·m 불합격</span>
                                     → 재조임 <span class="num">{evidencePassValue} N·m 합격</span>
-                                    · 유량 <span class="num">{evidenceFlowBefore} → {evidenceFlowAfter}</span></div>
+                                </p>
                             </div>
                         </div>
-                        <div class="callout co-warn">
-                            <span class="co-ico">⚑</span>
-                            <div><strong>조직 차원의 근본원인</strong>{rootCause}</div>
+                        <div class="cause cause--root">
+                            <span class="cause__ico" aria-hidden="true">⚑</span>
+                            <div class="cause__body">
+                                <p class="cause__label">조직 차원 근본 원인</p>
+                                <p class="cause__text">{rootCause}</p>
+                            </div>
                         </div>
                     </div>
-                </lightning-card>
+                </section>
 
-                <lightning-card class="slds-m-top_small">
-                    <span slot="title" class="slds-text-heading_small">특수 조건과 공통 조건은 다른 질문에 답합니다</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
-                        <table class="tbl">
-                            <thead><tr><th>판단 단위</th><th>근거</th><th>답하는 질문</th><th>범위 후보</th></tr></thead>
-                            <tbody>
-                                <tr>
-                                    <td><b>A-07만의 특수 조건</b></td>
-                                    <td>Rev.B · F-07 · 과거 동일 위치 불합격</td>
-                                    <td>장애 원인을 어디서 찾을까</td>
-                                    <td><span class="slds-badge rca-badge-crit">시정조치 {correctiveCount}건</span></td>
-                                </tr>
-                                <tr>
-                                    <td><b>12대의 공통 조건</b></td>
-                                    <td>같은 프로젝트 · 설치 기간 · 시공업체 · 연결부 규격 · 점검 기준 누락</td>
-                                    <td>예방 범위를 어디까지 볼까</td>
-                                    <td><span class="slds-badge rca-badge-warn">예방확인 {preventiveCount}건</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- 판단 단위 비교 -->
+                <section class="card col--side">
+                    <header class="card__head">
+                        <h3 class="card__title">판단 단위 비교</h3>
+                    </header>
+                    <div class="card__body-tight">
+                        <ul class="scope">
+                            <li class="scope__item">
+                                <p class="scope__label">A-07 특수 조건</p>
+                                <p class="scope__evidence">Rev.B · F-07 · 동일 위치 재발</p>
+                                <p class="scope__question">→ 원인 위치 확정</p>
+                                <p class="scope__result">
+                                    <span class="chip chip--neg">시정조치 {correctiveCount}건</span>
+                                </p>
+                            </li>
+                            <li class="scope__item">
+                                <p class="scope__label">12대 공통 조건</p>
+                                <p class="scope__evidence">동일 프로젝트 · 시공 · 규격 · 점검 기준 누락</p>
+                                <p class="scope__question">→ 예방 범위 확정</p>
+                                <p class="scope__result">
+                                    <span class="chip chip--warn">예방확인 {preventiveCount}건</span>
+                                </p>
+                            </li>
+                        </ul>
                     </div>
-                </lightning-card>
+                </section>
             </div>
         </template>
     </div>

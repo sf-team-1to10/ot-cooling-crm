@@ -1,111 +1,124 @@
 <template>
-    <div class="slds-p-vertical_x-small">
+    <div class="wb">
         <template lwc:if={isLoading}>
-            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            <div class="loading">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
         </template>
 
         <template lwc:if={error}>
-            <div class="slds-text-color_error slds-p-around_small" role="alert">
-                {errorMessage}
-            </div>
+            <div class="error" role="alert">{errorMessage}</div>
         </template>
 
         <template lwc:if={actions}>
-            <!-- ── 하이라이트 ── -->
-            <div class="action-hl">
-                <div class="action-hl-head">
-                    <div class="action-hl-title">
-                        <p class="action-hl-eyebrow">후속 조치</p>
-                        <h1 class="action-hl-name">시정 {correctiveCount}건 · 예방 {preventiveCount}건 · 합계 {totalCount}건</h1>
-                    </div>
+            <!-- 승인 결과 배너 -->
+            <div class="banner">
+                <div class="banner__ico" aria-hidden="true">✓</div>
+                <div class="banner__body">
+                    <p class="banner__label">서비스 관리자 승인 결과</p>
+                    <p class="banner__text">
+                        <template lwc:if={isApproved}>
+                            서비스 관리자 승인으로 시정·예방 조치 <span class="num">{totalCount}</span>건이 생성됐습니다.
+                        </template>
+                        <template lwc:else>
+                            원인 분석 탭에서 시정·예방 계획을 승인하면 조치 목록이 이 화면에 생성됩니다.
+                        </template>
+                    </p>
                 </div>
-                <dl class="action-hl-fields">
-                    <div class="action-hl-f"><dt>시정조치</dt><dd class="num">{correctiveCount}건</dd></div>
-                    <div class="action-hl-f"><dt>예방확인</dt><dd class="num">{preventiveCount}건</dd></div>
-                    <div class="action-hl-f"><dt>합계</dt><dd class="num">{totalCount}건</dd></div>
-                </dl>
+                <div class="banner__status">
+                    <span class={approvalStatusClass}>{approvalStatus}</span>
+                </div>
             </div>
 
-            <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
-                <!-- 중앙: 생성된 WO + 점검표 개정 -->
-                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
-                    <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">생성된 Work Order</span>
-                        <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <template lwc:if={hasWorkOrders}>
-                                <div class="rl">
-                                    <template for:each={workOrders} for:item="wo">
-                                        <div key={wo.workOrderNumber} class="rl-row">
-                                            <span class={wo.badgeClass}>{wo.badgeLabel}</span>
-                                            <div class="rl-main">
-                                                <div class="rl-t">{wo.workOrderNumber} · {wo.subject}</div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </template>
-                            <template lwc:else>
-                                <p class="slds-text-body_small slds-text-color_weak">생성된 Work Order가 없습니다.</p>
-                            </template>
-                        </div>
-                    </lightning-card>
+            <!-- KPI 3카드 -->
+            <div class="kpi-grid">
+                <div class="kpi kpi--corr">
+                    <p class="kpi__value num">{correctiveCount}</p>
+                    <p class="kpi__label">시정조치</p>
+                </div>
+                <div class="kpi kpi--prev">
+                    <p class="kpi__value num">{preventiveCount}</p>
+                    <p class="kpi__label">예방확인</p>
+                </div>
+                <div class="kpi kpi--total">
+                    <p class="kpi__value num">{totalCount}</p>
+                    <p class="kpi__label">합계</p>
+                </div>
+            </div>
 
-                    <lightning-card class="slds-m-top_small">
-                        <span slot="title" class="slds-text-heading_small">점검표 개정</span>
-                        <span slot="actions" class="slds-badge scope-preventive">Rev.2 → Rev.3</span>
-                        <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <table class="tbl">
-                                <thead>
-                                    <tr>
-                                        <th>점검 항목</th>
-                                        <th>Rev.2</th>
-                                        <th>Rev.3</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <template for:each={checklistRows} for:item="row">
-                                        <tr key={row.key}>
-                                            <td><b>{row.item}</b></td>
-                                            <td>{row.rev2}</td>
+            <div class="grid">
+                <!-- 생성된 WO 리스트 -->
+                <section class="card col--main">
+                    <header class="card__head">
+                        <h3 class="card__title">생성된 Work Order</h3>
+                        <span class="chip chip--info num">{totalCount}건</span>
+                    </header>
+                    <div class="card__body-tight">
+                        <template lwc:if={hasWorkOrders}>
+                            <ul class="wo-list">
+                                <template for:each={workOrders} for:item="wo">
+                                    <li key={wo.workOrderNumber} class={wo.rowClass}>
+                                        <span class={wo.badgeClass}>{wo.badgeLabel}</span>
+                                        <div class="wo-main">
+                                            <p class="wo-num num">{wo.workOrderNumber}</p>
+                                            <p class="wo-subject">{wo.subject}</p>
+                                        </div>
+                                    </li>
+                                </template>
+                            </ul>
+                        </template>
+                        <template lwc:else>
+                            <p class="empty">생성된 Work Order가 없습니다.</p>
+                        </template>
+                    </div>
+                </section>
+
+                <!-- 점검표 개정 -->
+                <section class="card col--side">
+                    <header class="card__head">
+                        <h3 class="card__title">점검표 개정</h3>
+                        <span class="rev-badge">
+                            <span class="rev-badge__from">Rev.2</span>
+                            <span class="rev-badge__arrow" aria-hidden="true">→</span>
+                            <span class="rev-badge__to">Rev.3</span>
+                        </span>
+                    </header>
+                    <div class="card__body-tight">
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>점검 항목</th>
+                                    <th>Rev.2</th>
+                                    <th>Rev.3</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={checklistRows} for:item="row">
+                                    <template lwc:if={row.isNew}>
+                                        <tr key={row.key} class="tbl__row--new">
                                             <td>
-                                                <template lwc:if={row.isNew}>
-                                                    <span class="slds-badge scope-new">{row.rev3}</span>
-                                                </template>
-                                                <template lwc:else>
-                                                    {row.rev3}
-                                                </template>
+                                                <span class="new-mark" aria-hidden="true">★</span>
+                                                <strong>{row.item}</strong>
                                             </td>
+                                            <td class="text-muted">{row.rev2}</td>
+                                            <td><span class="chip chip--pos">{row.rev3}</span></td>
                                         </tr>
                                     </template>
-                                </tbody>
-                            </table>
-                        </div>
-                    </lightning-card>
-                </div>
-
-                <!-- 우측: Knowledge 초안 -->
-                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
-                    <lightning-card class="kb-card">
-                        <span slot="title" class="slds-text-heading_small">Knowledge 초안</span>
-                        <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <p class="kb-lead">유사 Knowledge 없음 — 신규 등록 후보</p>
-
-                            <div class="kb-inner">
-                                <dl class="kb-kv">
-                                    <div><dt>근거</dt><dd>{evidenceSource}</dd></div>
-                                    <div><dt>원기록</dt><dd class="num">{commissionText}</dd></div>
-                                    <div><dt>측정</dt><dd class="num">{recoveryText}</dd></div>
-                                    <div><dt>공개 범위</dt><dd><span class="slds-badge">검토 필요</span></dd></div>
-                                </dl>
-                            </div>
-
-                            <div class="kb-actions">
-                                <lightning-button label="등록 검토" variant="brand"></lightning-button>
-                                <lightning-button label="보류"></lightning-button>
-                            </div>
-                        </div>
-                    </lightning-card>
-                </div>
+                                    <template lwc:else>
+                                        <tr key={row.key}>
+                                            <td>{row.item}</td>
+                                            <td>{row.rev2}</td>
+                                            <td>{row.rev3}</td>
+                                        </tr>
+                                    </template>
+                                </template>
+                            </tbody>
+                        </table>
+                        <p class="checklist__note">
+                            <strong>신규 항목</strong>은 동일 프로젝트·시공 조건 12대의 다음 예방정비부터 필수 점검 대상입니다.
+                        </p>
+                    </div>
+                </section>
             </div>
         </template>
     </div>
