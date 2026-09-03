@@ -89,16 +89,17 @@
 
 /* 3-Column Workspace */
 .ws { display: grid; grid-template-columns: 288px minmax(0, 1fr) 292px; gap: 14px; align-items: stretch; }
-.col-left { position: relative; min-height: 0; }
+.col-left { position: relative; min-height: 0; display: flex; flex-direction: column; }
+.col-right { display: flex; flex-direction: column; }
 .panel { background: var(--ot-surface); border: 1px solid var(--ot-border); border-radius: var(--ot-radius-md); box-shadow: var(--ot-shadow-card); }
 .panel-h { display: flex; align-items: center; gap: 8px; padding: 12px 15px; border-bottom: 1px solid var(--ot-border); }
 .panel-h h3 { font-size: 13px; font-weight: 700; color: var(--ot-ink); margin: 0; }
 .panel-rt { margin-left: auto; font-size: 11px; color: var(--ot-dim); }
 
 /* Equipment list */
-.eqlist { display: flex; flex-direction: column; }
-.rows { overflow-y: auto; }
-.eqrow { display: flex; gap: 12px; padding: 9px 14px; min-height: 62px; align-items: center; border-bottom: 1px solid var(--ot-border); cursor: pointer; transition: .12s; position: relative; }
+.eqlist { display: flex; flex-direction: column; flex: 1; }
+.rows { overflow-y: auto; flex: 1; }
+.eqrow { display: flex; gap: 12px; padding: 13px 14px; min-height: 70px; align-items: center; border-bottom: 1px solid var(--ot-border); cursor: pointer; transition: .12s; position: relative; }
 .eqrow:hover { background: var(--ot-surface-subtle); }
 .eqrow.on { background: rgba(245, 124, 0, 0.08); }
 .eqrow.on::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--ot-warning); }
@@ -180,7 +181,9 @@
 .chart-container { width: 100%; }
 
 /* Right panels */
-.rp + .rp { margin-top: 14px; }
+.col-right { display: flex; flex-direction: column; gap: 14px; }
+.rp + .rp { margin-top: 0; }
+.rp.health-panel { display: flex; flex-direction: column; }
 .bd { padding: 13px 15px; }
 .infolist { display: flex; flex-direction: column; gap: 9px; }
 .ir { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; }
@@ -188,16 +191,18 @@
 .ir b { color: var(--ot-ink); font-weight: 600; text-align: right; }
 
 /* Health */
-.health { display: flex; align-items: center; justify-content: center; gap: 15px; }
-.donut-wrap { flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.health-bd { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 220px; padding: 20px 15px; }
+.health { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; }
+.donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .donut-container { width: 88px; height: 88px; position: relative; }
 .coolbit-status { width: 64px; height: 64px; object-fit: contain; mix-blend-mode: screen; }
-.sc { flex: 1; display: flex; flex-direction: column; gap: 9px; }
+.sc { width: 100%; display: flex; flex-direction: column; gap: 9px; }
 .sr span { display: flex; justify-content: space-between; font-size: 11px; color: var(--ot-dim); margin-bottom: 3px; }
 .sr b { color: var(--ot-ink); font-family: var(--ot-font-mono); font-feature-settings: "tnum"; }
 .bar { height: 5px; border-radius: 3px; background: var(--ot-border); overflow: hidden; }
 .bar i { display: block; height: 100%; border-radius: 3px; background: var(--ot-navy); }
-.health-lbl { margin-top: 11px; font-size: 11px; color: var(--ot-warning); background: rgba(245, 124, 0, 0.08); border: 1px solid rgba(245, 124, 0, 0.25); border-radius: var(--ot-radius-md); padding: 6px 9px; text-align: center; font-weight: 600; }
+.health-reason { font-size: 11.5px; color: var(--ot-muted); line-height: 1.6; text-align: center; padding: 10px 4px 4px; }
+.health-lbl { margin-top: 10px; font-size: 11px; color: var(--ot-warning); background: rgba(245, 124, 0, 0.08); border: 1px solid rgba(245, 124, 0, 0.25); border-radius: var(--ot-radius-md); padding: 6px 9px; text-align: center; font-weight: 600; }
 .health-note { font-size: 10px; color: var(--ot-dim); margin-top: 7px; line-height: 1.5; }
 
 /* Mini alarms */
