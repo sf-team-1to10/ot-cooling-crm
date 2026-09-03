@@ -30,12 +30,14 @@ export default class OtProblemRca extends LightningElement {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId) {
-            return;
-        }
-        this._tabLabeled = true;
-        await setTabLabel(this._tabId, 'RCA');
-        await setTabIcon(this._tabId, 'standard:problem');
+        if (!this._tabId) return;
+        const num = this.problemNumber || this.caseNumber || '';
+        const short = String(num).replace(/^0+/, '').slice(-4);
+        const label = short ? `원인 분석 · ${short}` : '원인 분석';
+        try {
+            await setTabLabel(this._tabId, label);
+            await setTabIcon(this._tabId, 'standard:problem');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     rca;
@@ -46,6 +48,7 @@ export default class OtProblemRca extends LightningElement {
         if (data) {
             this.rca = data;
             this.error = undefined;
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.rca = undefined;

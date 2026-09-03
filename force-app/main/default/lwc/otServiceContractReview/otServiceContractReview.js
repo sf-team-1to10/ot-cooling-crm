@@ -21,8 +21,10 @@ export default class OtServiceContractReview extends LightningElement {
             return;
         }
         this._tabLabeled = true;
-        await setTabLabel(this._tabId, 'SC-2022-0114');
-        await setTabIcon(this._tabId, 'standard:contract');
+        try {
+            await setTabLabel(this._tabId, '성과 리뷰');
+            await setTabIcon(this._tabId, 'standard:contract');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     handleCreateOpportunity() {

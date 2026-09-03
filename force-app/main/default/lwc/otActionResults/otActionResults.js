@@ -30,12 +30,13 @@ export default class OtActionResults extends LightningElement {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId) {
-            return;
-        }
-        this._tabLabeled = true;
-        await setTabLabel(this._tabId, '조치 결과');
-        await setTabIcon(this._tabId, 'standard:task');
+        if (!this._tabId) return;
+        const short = String(this.problemNumber || '').replace(/^0+/, '').slice(-4);
+        const label = short ? `시정·예방 · ${short}` : '시정·예방';
+        try {
+            await setTabLabel(this._tabId, label);
+            await setTabIcon(this._tabId, 'standard:problem');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     actions;
@@ -46,6 +47,7 @@ export default class OtActionResults extends LightningElement {
         if (data) {
             this.actions = data;
             this.error = undefined;
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.actions = undefined;

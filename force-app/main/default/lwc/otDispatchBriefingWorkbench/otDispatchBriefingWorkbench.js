@@ -56,10 +56,11 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
             return;
         }
         this._tabLabeled = true;
-        await setTabLabel(this._tabId, `${this.caseNumber} 출동 브리핑`);
-        // standard: 계열 아이콘은 콘솔 탭에서 다른 탭(Case 등)과 동일한 크기로 렌더된다.
-        // utility: 계열은 크게 나와 옆 탭 아이콘과 크기가 안 맞는다.
-        await setTabIcon(this._tabId, 'standard:announcement');
+        const short = String(this.caseNumber).replace(/^0+/, '').slice(-4);
+        try {
+            await setTabLabel(this._tabId, `브리핑 · ${short}`);
+            await setTabIcon(this._tabId, 'standard:case');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     get effectiveRecordId() {

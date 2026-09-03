@@ -30,12 +30,13 @@ export default class T5Customer360 extends LightningElement {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId) {
-            return;
-        }
-        this._tabLabeled = true;
-        await setTabLabel(this._tabId, 'Customer 360');
-        await setTabIcon(this._tabId, 'standard:contact');
+        if (!this._tabId) return;
+        const name = (this.accountName || '').slice(0, 8);
+        const label = name ? `고객 · ${name}` : '고객 360';
+        try {
+            await setTabLabel(this._tabId, label);
+            await setTabIcon(this._tabId, 'standard:account');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     data;
@@ -46,6 +47,7 @@ export default class T5Customer360 extends LightningElement {
         if (data) {
             this.data = data;
             this.error = undefined;
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.data = undefined;

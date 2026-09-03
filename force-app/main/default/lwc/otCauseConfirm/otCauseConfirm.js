@@ -36,12 +36,13 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId) {
-            return;
-        }
-        this._tabLabeled = true;
-        await setTabLabel(this._tabId, '원인확정');
-        await setTabIcon(this._tabId, 'standard:incident');
+        if (!this._tabId) return;
+        const short = String(this.caseNumber || '').replace(/^0+/, '').slice(-4);
+        const label = short ? `원인 확인 · ${short}` : '원인 확인';
+        try {
+            await setTabLabel(this._tabId, label);
+            await setTabIcon(this._tabId, 'standard:work_order');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     evidence;
@@ -52,6 +53,7 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
         if (data) {
             this.evidence = data;
             this.error = undefined;
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.evidence = undefined;
