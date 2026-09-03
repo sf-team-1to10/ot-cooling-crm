@@ -162,18 +162,6 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         }
     }
 
-    // "출동 확정" 클릭 → Toast + Stage "3 현장 출동"
-    async handleDispatchConfirm() {
-        await this.updateCaseStage('3 현장 출동');
-        this.dispatchEvent(
-            new ShowToastEvent({
-                title: '강시공 배정 완료',
-                message: 'Slack Swarm에서 강시공이 현장 출동으로 배정됐습니다. Work Order가 생성됩니다.',
-                variant: 'success'
-            })
-        );
-    }
-
     async updateCaseStage(stageValue) {
         const caseId = this.effectiveRecordId;
         if (!caseId) return;
