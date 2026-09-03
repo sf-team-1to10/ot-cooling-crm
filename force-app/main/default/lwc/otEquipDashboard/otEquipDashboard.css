@@ -89,16 +89,17 @@
 
 /* 3-Column Workspace */
 .ws { display: grid; grid-template-columns: 288px minmax(0, 1fr) 292px; gap: 14px; align-items: stretch; }
-.col-left { position: relative; min-height: 0; }
+.col-left { position: relative; min-height: 0; display: flex; flex-direction: column; }
+.col-right { display: flex; flex-direction: column; }
 .panel { background: var(--ot-surface); border: 1px solid var(--ot-border); border-radius: var(--ot-radius-md); box-shadow: var(--ot-shadow-card); }
 .panel-h { display: flex; align-items: center; gap: 8px; padding: 12px 15px; border-bottom: 1px solid var(--ot-border); }
 .panel-h h3 { font-size: 13px; font-weight: 700; color: var(--ot-ink); margin: 0; }
 .panel-rt { margin-left: auto; font-size: 11px; color: var(--ot-dim); }
 
 /* Equipment list */
-.eqlist { display: flex; flex-direction: column; }
-.rows { overflow-y: auto; }
-.eqrow { display: flex; gap: 12px; padding: 9px 14px; min-height: 62px; align-items: center; border-bottom: 1px solid var(--ot-border); cursor: pointer; transition: .12s; position: relative; }
+.eqlist { display: flex; flex-direction: column; flex: 1; }
+.rows { overflow-y: auto; flex: 1; }
+.eqrow { display: flex; gap: 12px; padding: 13px 14px; min-height: 70px; align-items: center; border-bottom: 1px solid var(--ot-border); cursor: pointer; transition: .12s; position: relative; }
 .eqrow:hover { background: var(--ot-surface-subtle); }
 .eqrow.on { background: rgba(245, 124, 0, 0.08); }
 .eqrow.on::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--ot-warning); }

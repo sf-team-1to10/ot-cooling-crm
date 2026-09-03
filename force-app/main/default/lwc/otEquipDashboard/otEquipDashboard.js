@@ -11,7 +11,7 @@ import CRAH_IMG from '@salesforce/resourceUrl/OT_Product_CRAH';
 import COOLBIT_ALERT from '@salesforce/resourceUrl/OT_Coolbit_Alert';
 import COOLBIT_CLEAR from '@salesforce/resourceUrl/OT_Coolbit_Clear';
 
-const PAGE_SIZE = 7;
+const PAGE_SIZE = 10;
 
 // 상태 정렬 우선순위: critical(0) > warning(1) > ok(2)
 const STATE_RANK = { critical: 0, warning: 1, ok: 2 };
