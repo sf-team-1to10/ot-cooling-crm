@@ -1,6 +1,4 @@
 import { LightningElement, api } from 'lwc';
-import LOGO from '@salesforce/resourceUrl/OT_Logo_KR';
-import COOLBIT_MONITOR from '@salesforce/resourceUrl/OT_Coolbit_Monitor';
 
 export default class OtEquipSidebar extends LightningElement {
     @api activeNav = 'equipment';
@@ -8,9 +6,9 @@ export default class OtEquipSidebar extends LightningElement {
     @api contactName = '';
     @api contactRole = '';
 
-    get hasCustomerInfo() { return !!this.customerName; }
-    get logoUrl() { return LOGO; }
-    get coolbitMonitorUrl() { return COOLBIT_MONITOR; }
+    get hasCustomerInfo() {
+        return !!this.customerName;
+    }
 
     get overviewClass()    { return this.navClass('overview'); }
     get equipmentClass()   { return this.navClass('equipment'); }

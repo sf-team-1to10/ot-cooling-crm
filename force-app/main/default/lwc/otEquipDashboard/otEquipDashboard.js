@@ -474,6 +474,16 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         }
     }
 
+    // 알람 항목 "상담 시작" 버튼 — 알람 텍스트 + 자산명 컨텍스트를 MIAW에 전달
+    handleAlarmChat(event) {
+        const alarmText = event.currentTarget.dataset.text || '';
+        const assetName = (this.sel && this.sel.name) ? this.sel.name : '';
+        const assetId = this.selectedId || '';
+        document.dispatchEvent(new CustomEvent('ot_launch_chat', {
+            detail: { assetId, assetName, alarmText }
+        }));
+    }
+
     renderedCallback() {
         const trendEl = this.template.querySelector('.chart-container');
         if (trendEl && this.isOverview) {

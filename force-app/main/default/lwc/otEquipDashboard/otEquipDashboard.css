@@ -194,10 +194,14 @@
 .health-note { font-size: 10px; color: var(--ot-dim); margin-top: 7px; line-height: 1.5; }
 
 /* Mini alarms */
-.miniAl { display: flex; flex-direction: column; gap: 9px; }
-.m { display: flex; gap: 8px; font-size: 11.5px; }
+.miniAl { display: flex; flex-direction: column; gap: 10px; }
+.m { display: flex; gap: 8px; font-size: 11.5px; align-items: flex-start; }
+.alarm-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
 .m p { color: var(--ot-muted); line-height: 1.45; margin: 0; }
 .m small { display: block; color: var(--ot-dim); font-size: 10px; font-family: var(--ot-font-mono); margin-top: 2px; font-feature-settings: "tnum"; }
+.alarm-chat-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: var(--ot-radius-md); font-size: 11px; font-weight: 600; color: var(--ot-navy); background: rgba(22,184,200,0.1); border: 1px solid rgba(22,184,200,0.35); cursor: pointer; font-family: inherit; transition: .12s; align-self: flex-start; }
+.alarm-chat-btn:hover { background: rgba(22,184,200,0.2); border-color: var(--ot-cyan); }
+.alarm-chat-btn svg { width: 12px; height: 12px; stroke: var(--ot-cyan); }
 
 /* Quick actions */
 .qa { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }

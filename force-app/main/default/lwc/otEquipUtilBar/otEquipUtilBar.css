@@ -1,108 +1,46 @@
-:host {
-    --ot-navy: #0b1f33;
-    --ot-border: #e9e9ea;
-    --ot-ink: #1d1f20;
-    --ot-muted: #5c6a72;
-    --ot-dim: #7f95a9;
-    --ot-surface: #ffffff;
-    --ot-paper: #f0f2f5;
-    --ot-cyan: #16b8c8;
-    --ot-font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        Roboto, "Apple SD Gothic Neo", sans-serif;
-    font-family: var(--ot-font-sans);
-}
-
 .util {
-    height: 52px;
-    flex: none;
-    background: var(--ot-surface);
-    border-bottom: 1px solid var(--ot-border);
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 0 22px;
-    position: sticky;
-    top: 0;
-    z-index: 20;
+    height: 56px; flex: none; background: #fff;
+    border-bottom: 1px solid #E4E9F3;
+    display: flex; align-items: center; gap: 14px;
+    padding: 0 22px; position: sticky; top: 0; z-index: 20;
 }
-
 .mi {
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-    display: grid;
-    place-items: center;
-    color: var(--ot-dim);
-    background: none;
-    border: 0;
-    cursor: pointer;
+    width: 34px; height: 34px; border-radius: 8px;
+    display: grid; place-items: center; color: #6B7896;
+    background: none; border: 0; cursor: pointer;
 }
-.mi:hover { background: var(--ot-paper); }
-.mi svg { width: 17px; height: 17px; }
-
-.crumb { font-size: 12.5px; color: var(--ot-dim); }
-.crumb b { color: var(--ot-ink); font-weight: 600; }
-
+.mi:hover { background: #F4F6FB; }
+.mi svg { width: 18px; height: 18px; }
+.crumb { font-size: 12.5px; color: #96A1B8; }
+.crumb b { color: #3D4A63; font-weight: 600; }
 .rt { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-
 .bell {
-    position: relative;
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-    display: grid;
-    place-items: center;
-    color: var(--ot-dim);
-    background: none;
-    border: 0;
-    cursor: pointer;
+    position: relative; width: 34px; height: 34px; border-radius: 8px;
+    display: grid; place-items: center; color: #6B7896;
+    background: none; border: 0; cursor: pointer;
 }
-.bell:hover { background: var(--ot-paper); }
-.bell svg { width: 17px; height: 17px; }
-
+.bell:hover { background: #F4F6FB; }
+.bell svg { width: 18px; height: 18px; }
 .dot {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background: #e53935;
-    color: #fff;
-    font-size: 9px;
-    font-weight: 700;
-    display: grid;
-    place-items: center;
-    border: 2px solid var(--ot-surface);
+    position: absolute; top: 5px; right: 5px;
+    width: 15px; height: 15px; border-radius: 50%;
+    background: #B67611; color: #fff; font-size: 9px; font-weight: 700;
+    display: grid; place-items: center; border: 2px solid #fff;
 }
-
 .prof {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    padding: 4px 8px 4px 5px;
-    border-radius: 4px;
-    border: 1px solid var(--ot-border);
-    background: none;
-    cursor: pointer;
-    font-family: inherit;
-    color: inherit;
+    display: flex; align-items: center; gap: 9px;
+    padding: 4px 8px 4px 5px; border-radius: 9px;
+    border: 1px solid #E4E9F3; background: none; cursor: pointer;
+    font-family: inherit; color: inherit;
 }
-.prof:hover { background: var(--ot-paper); }
-
+.prof:hover { background: #F4F6FB; }
 .av {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: var(--ot-navy);
-    display: grid;
-    place-items: center;
-    color: #fff;
-    font-weight: 700;
-    font-size: 11.5px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: linear-gradient(135deg, #5A8AF0, #2E6BE6);
+    display: grid; place-items: center; color: #fff;
+    font-weight: 700; font-size: 12px;
 }
-
 .pn { display: flex; flex-direction: column; line-height: 1.25; }
-.pn b { font-size: 12.5px; color: var(--ot-ink); font-weight: 600; }
-.pn span { font-size: 10.5px; color: var(--ot-dim); }
-.prof svg { width: 13px; height: 13px; stroke: var(--ot-dim); }
+.pn b { font-size: 12.5px; color: #1A2540; font-weight: 600; }
+.pn span { font-size: 10.5px; color: #96A1B8; }
+.prof svg { width: 14px; height: 14px; stroke: #96A1B8; }

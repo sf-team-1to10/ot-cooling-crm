@@ -238,7 +238,13 @@
                                     <template for:each={selAlarms} for:item="alarm">
                                         <div key={alarm.text} class="m">
                                             <span class={alarm.tagClass}>{alarm.tagLabel}</span>
-                                            <p>{alarm.text}<br/><small>{alarm.date}</small></p>
+                                            <div class="alarm-body">
+                                                <p>{alarm.text}<br/><small>{alarm.date}</small></p>
+                                                <button class="alarm-chat-btn" data-text={alarm.text} onclick={handleAlarmChat}>
+                                                    <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor"/></svg>
+                                                    상담 시작
+                                                </button>
+                                            </div>
                                         </div>
                                     </template>
                                 </div>
