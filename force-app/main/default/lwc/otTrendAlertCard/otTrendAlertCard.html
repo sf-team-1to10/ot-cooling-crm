@@ -46,7 +46,10 @@
                 <div class="body">
                     <div class="head">
                         <div class="name">{trend.name}</div>
-                        <div class={statusClass}>{statusText}</div>
+                        <c-ot-status-badge
+                            variant={statusVariant}
+                            label={statusLabel}
+                        ></c-ot-status-badge>
                     </div>
                     <div class="sub">{subline}</div>
 

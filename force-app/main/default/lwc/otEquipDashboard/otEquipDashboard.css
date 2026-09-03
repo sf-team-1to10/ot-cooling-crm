@@ -12,12 +12,12 @@
     --ot-ink: #1d1f20;
     --ot-muted: #5c6a72;
     --ot-dim: #7f95a9;
-    --ot-success: #4caf50;
-    --ot-success-light: #81c784;
-    --ot-warning: #f57c00;
-    --ot-warning-light: #ffb74d;
-    --ot-critical: #d32f2f;
-    --ot-critical-light: #ef5350;
+    --ot-success: #2E8B57;
+    --ot-success-light: #4caf50;
+    --ot-warning: #C87913;
+    --ot-warning-light: #f57c00;
+    --ot-critical: #C43D4B;
+    --ot-critical-light: #d32f2f;
     --ot-font-sans: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
     --ot-font-mono: "JetBrains Mono", Pretendard, monospace;
     --ot-font-condensed: "Barlow Condensed", Pretendard, sans-serif;
@@ -64,15 +64,25 @@
 .sel svg { width: 13px; height: 13px; stroke: var(--ot-dim); }
 .sel:hover { background: var(--ot-paper); }
 .sel:focus { outline: none; box-shadow: var(--ot-focus-ring); }
+.sel--open { background: var(--ot-paper); border-color: var(--ot-navy); }
+
+/* Dropdown */
+.dd-wrap { position: relative; }
+.dd-list { position: absolute; top: calc(100% + 4px); left: 0; min-width: 160px; background: var(--ot-surface); border: 1px solid var(--ot-border); border-radius: var(--ot-radius-md); box-shadow: 0 4px 12px rgba(11,31,51,.12); z-index: 200; padding: 4px 0; }
+.dd-opt { display: block; width: 100%; text-align: left; padding: 8px 14px; font-size: 12.5px; font-family: inherit; color: var(--ot-muted); background: none; border: 0; cursor: pointer; white-space: nowrap; }
+.dd-opt:hover { background: var(--ot-paper); color: var(--ot-ink); }
+.dd-opt.on { color: var(--ot-navy); font-weight: 700; background: rgba(22,184,200,.06); }
 
 /* KPI cards */
 .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 18px; }
 .kpi { background: var(--ot-surface); border: 1px solid var(--ot-border); border-radius: var(--ot-radius-md); padding: 13px 15px; box-shadow: var(--ot-shadow-card); display: flex; align-items: center; gap: 12px; }
 .ic { width: 38px; height: 38px; border-radius: var(--ot-radius-md); flex: none; display: grid; place-items: center; background: var(--ot-paper); color: var(--ot-dim); }
 .ic svg { width: 19px; height: 19px; }
-.kpi.g .ic { background: rgba(76, 175, 80, 0.08); color: var(--ot-success); }
-.kpi.a .ic { background: rgba(245, 124, 0, 0.08); color: var(--ot-warning); }
+.kpi.g .ic { background: rgba(46, 139, 87, 0.08); color: var(--ot-success); }
+.kpi.a .ic { background: rgba(200, 121, 19, 0.08); color: var(--ot-warning); }
 .kpi.b .ic { background: rgba(22, 184, 200, 0.08); color: var(--ot-navy); }
+.kpi--click { cursor: pointer; transition: box-shadow .12s; }
+.kpi--click:hover { box-shadow: 0 2px 8px rgba(11,31,51,.12); }
 .kt { display: flex; flex-direction: column; line-height: 1.25; }
 .kt span { font-size: 11px; color: var(--ot-dim); }
 .kt b { font-size: 21px; color: var(--ot-ink); font-weight: 750; letter-spacing: -.5px; font-feature-settings: "tnum"; }
@@ -121,10 +131,12 @@
 
 /* Assessment card */
 .assess { border-radius: var(--ot-radius-md); padding: 14px; }
-.adv-border { border: 1px solid rgba(245, 124, 0, 0.25); background: rgba(245, 124, 0, 0.08); }
-.ok-border { border: 1px solid rgba(76, 175, 80, 0.25); background: rgba(76, 175, 80, 0.08); }
+.crit-border { border: 1px solid rgba(196, 61, 75, 0.25); background: rgba(196, 61, 75, 0.06); }
+.adv-border { border: 1px solid rgba(200, 121, 19, 0.25); background: rgba(200, 121, 19, 0.08); }
+.ok-border { border: 1px solid rgba(46, 139, 87, 0.25); background: rgba(46, 139, 87, 0.08); }
 .ttl { display: flex; align-items: center; gap: 7px; font-size: 11px; font-weight: 700; letter-spacing: .3px; text-transform: uppercase; }
 .ttl svg { width: 14px; height: 14px; }
+.crit-color { color: var(--ot-critical); }
 .adv-color { color: var(--ot-warning); }
 .ok-color { color: var(--ot-success); }
 .hl { font-size: 15px; font-weight: 750; color: var(--ot-ink); margin: 8px 0 4px; letter-spacing: -.3px; }
@@ -157,6 +169,7 @@
 .warn-mono { font-family: var(--ot-font-mono); color: var(--ot-warning); font-feature-settings: "tnum"; }
 .ok-text { color: var(--ot-success); }
 .warn-text { color: var(--ot-warning); }
+.crit-text { color: var(--ot-critical); }
 
 /* Trend */
 .trend { margin-top: 14px; border: 1px solid var(--ot-border); border-radius: var(--ot-radius-md); padding: 13px 15px; }
@@ -203,7 +216,13 @@
 /* Demo footer */
 .demo-foot { margin-top: 22px; font-size: 10.5px; color: var(--ot-dim); text-align: center; line-height: 1.6; }
 
-/* 항목 2: 장비 목록 썸네일 이미지 */
+/* 그룹 뷰 헤더 */
+.grp-block { border-bottom: 1px solid var(--ot-border); }
+.grp-block:last-child { border-bottom: 0; }
+.grp-hdr { padding: 7px 14px 6px; font-size: 11px; font-weight: 700; color: var(--ot-dim); letter-spacing: .4px; text-transform: uppercase; background: var(--ot-surface-subtle); border-bottom: 1px solid var(--ot-border); display: flex; align-items: center; gap: 7px; }
+.grp-cnt { font-size: 10px; background: var(--ot-border); color: var(--ot-muted); border-radius: 10px; padding: 1px 7px; font-weight: 600; text-transform: none; }
+
+/* 장비 목록 썸네일 이미지 */
 .th img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
 
 /* 항목 1: 게이지 아크 미터 */

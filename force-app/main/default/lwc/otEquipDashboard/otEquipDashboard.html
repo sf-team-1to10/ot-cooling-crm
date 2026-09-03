@@ -32,26 +32,53 @@
                         <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor"/><path d="M21 21l-4.3-4.3" stroke="currentColor"/></svg>
                         <input type="text" placeholder="장비명, Asset ID 또는 설치 위치 검색" value={searchTerm} oninput={handleSearch}>
                     </div>
-                    <button class="sel" onclick={handleFilterType}>{filterTypeLabel} <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
-                    <button class="sel" onclick={handleFilterState}>{filterStateLabel} <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
-                    <button class="sel">Hall A <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
+
+                    <!-- 장비 유형 드롭다운 -->
+                    <div class="dd-wrap">
+                        <button class={typeBtnClass} onclick={handleToggleTypeDropdown}>
+                            {filterTypeLabel}
+                            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg>
+                        </button>
+                        <template lwc:if={isTypeDropOpen}>
+                            <div class="dd-list" onclick={handleDropdownContainerClick}>
+                                <template for:each={typeOptions} for:item="opt">
+                                    <button key={opt.value} class={opt.cls} data-value={opt.value} onclick={handleSelectType}>{opt.label}</button>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+
+                    <!-- 상태 드롭다운 -->
+                    <div class="dd-wrap">
+                        <button class={stateBtnClass} onclick={handleToggleStateDropdown}>
+                            {filterStateLabel}
+                            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg>
+                        </button>
+                        <template lwc:if={isStateDropOpen}>
+                            <div class="dd-list" onclick={handleDropdownContainerClick}>
+                                <template for:each={stateOptions} for:item="opt">
+                                    <button key={opt.value} class={opt.cls} data-value={opt.value} onclick={handleSelectState}>{opt.label}</button>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
                 </div>
 
                 <!-- KPI Cards -->
                 <div class="kpis">
-                    <div class="kpi b">
+                    <div class="kpi b kpi--click" onclick={handleKpiTotal}>
                         <div class="ic">
                             <svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor"/><path d="M3 9h18M9 3v18" stroke="currentColor"/></svg>
                         </div>
                         <div class="kt"><span>전체 자산</span><b>{kpiTotal}</b></div>
                     </div>
-                    <div class="kpi g">
+                    <div class="kpi g kpi--click" onclick={handleKpiNormal}>
                         <div class="ic"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor"/></svg></div>
                         <div class="kt"><span>정상</span><b>{kpiNormal}</b></div>
                     </div>
-                    <div class="kpi a">
+                    <div class="kpi a kpi--click" onclick={handleKpiAdvisory}>
                         <div class="ic"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.3 3.9L2 18a1.7 1.7 0 001.5 2.5h17A1.7 1.7 0 0022 18L13.7 3.9a1.7 1.7 0 00-3 0z" stroke="currentColor"/></svg></div>
-                        <div class="kt"><span>주의</span><b>{kpiAdvisory}</b></div>
+                        <div class="kt"><span>주의/이상</span><b>{kpiAdvisory}</b></div>
                     </div>
                     <div class="kpi">
                         <div class="ic"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 00-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 005.4-5.4l-2.7 2.7-2-2z" stroke="currentColor"/></svg></div>
@@ -68,30 +95,59 @@
                                 <h3>장비 목록</h3>
                                 <span class="panel-rt">정렬: 상태 우선</span>
                             </div>
-                            <div class="rows">
-                                <template for:each={pageItems} for:item="asset">
-                                    <div key={asset.id} class={asset.rowClass} data-id={asset.id} onclick={handleSelectAsset}>
-                                        <div class="th">
-                                            <img src={asset.thumbUrl} alt={asset.displayName} />
+
+                            <!-- 전체 탭: 페이지네이션 목록 -->
+                            <template lwc:if={isGroupView}>
+                                <div class="rows">
+                                    <template for:each={groupedItems} for:item="grp">
+                                        <div key={grp.key} class="grp-block">
+                                            <div class="grp-hdr">{grp.label} <span class="grp-cnt">{grp.items.length}</span></div>
+                                            <template for:each={grp.items} for:item="asset">
+                                                <div key={asset.id} class={asset.rowClass} data-id={asset.id} onclick={handleSelectAsset}>
+                                                    <div class="th">
+                                                        <img src={asset.thumbUrl} alt={asset.displayName} />
+                                                    </div>
+                                                    <div class="ei">
+                                                        <span class="n">{asset.displayName}</span>
+                                                        <span class="ty">{asset.type}</span>
+                                                        <span class="lo">{asset.loc}</span>
+                                                    </div>
+                                                    <div class="st">
+                                                        <c-ot-status-badge label={asset.chipLabel} variant={asset.chipVariant}></c-ot-status-badge>
+                                                    </div>
+                                                </div>
+                                            </template>
                                         </div>
-                                        <div class="ei">
-                                            <span class="n">{asset.displayName}</span>
-                                            <span class="ty">{asset.type}</span>
-                                            <span class="lo">{asset.loc}</span>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <template lwc:else>
+                                <div class="rows">
+                                    <template for:each={pageItems} for:item="asset">
+                                        <div key={asset.id} class={asset.rowClass} data-id={asset.id} onclick={handleSelectAsset}>
+                                            <div class="th">
+                                                <img src={asset.thumbUrl} alt={asset.displayName} />
+                                            </div>
+                                            <div class="ei">
+                                                <span class="n">{asset.displayName}</span>
+                                                <span class="ty">{asset.type}</span>
+                                                <span class="lo">{asset.loc}</span>
+                                            </div>
+                                            <div class="st">
+                                                <c-ot-status-badge label={asset.chipLabel} variant={asset.chipVariant}></c-ot-status-badge>
+                                            </div>
                                         </div>
-                                        <div class="st">
-                                            <c-ot-equip-status-chip label={asset.chipLabel} variant={asset.chipVariant}></c-ot-equip-status-chip>
-                                        </div>
-                                    </div>
-                                </template>
-                            </div>
-                            <div class="pager">
-                                <button class="pg" disabled={prevDisabled} onclick={handlePrevPage}>‹</button>
-                                <template for:each={pagerButtons} for:item="pg">
-                                    <button key={pg.num} class={pg.cls} data-num={pg.num} onclick={handlePage}>{pg.num}</button>
-                                </template>
-                                <button class="pg" disabled={nextDisabled} onclick={handleNextPage}>›</button>
-                            </div>
+                                    </template>
+                                </div>
+                                <div class="pager">
+                                    <button class="pg" disabled={prevDisabled} onclick={handlePrevPage}>‹</button>
+                                    <template for:each={pagerButtons} for:item="pg">
+                                        <button key={pg.num} class={pg.cls} data-num={pg.num} onclick={handlePage}>{pg.num}</button>
+                                    </template>
+                                    <button class="pg" disabled={nextDisabled} onclick={handleNextPage}>›</button>
+                                </div>
+                            </template>
                         </div>
                     </div>
 
@@ -102,7 +158,7 @@
                                 <div class="ht">
                                     <div class="r1">
                                         <b>{sel.name}</b>
-                                        <c-ot-equip-status-chip label={sel.stateLabel} variant={sel.stateCode}></c-ot-equip-status-chip>
+                                        <c-ot-status-badge label={sel.stateLabel} variant={sel.stateCode}></c-ot-status-badge>
                                     </div>
                                     <div class="r2">{sel.type} · {sel.family} · {sel.loc}</div>
                                 </div>
@@ -111,14 +167,17 @@
                                 </div>
                             </div>
 
-                            <!-- Overview Content (서브탭 제거, flat 레이아웃) -->
+                            <!-- Overview Content -->
                             <div class="selbody">
                                     <div class="ov-grid">
                                         <div>
                                             <div class={assessStyle}>
                                                 <div class={assessIconStyle}>
                                                     <svg fill="none" stroke-width="2" viewBox="0 0 24 24">
-                                                        <template lwc:if={isAdvisory}>
+                                                        <template lwc:if={isCritical}>
+                                                            <path d="M12 9v4m0 4h.01M10.3 3.9L2 18a1.7 1.7 0 001.5 2.5h17A1.7 1.7 0 0022 18L13.7 3.9a1.7 1.7 0 00-3 0z" stroke="currentColor"/>
+                                                        </template>
+                                                        <template lwc:elseif={isWarning}>
                                                             <path d="M12 9v4m0 4h.01M10.3 3.9L2 18a1.7 1.7 0 001.5 2.5h17A1.7 1.7 0 0022 18L13.7 3.9a1.7 1.7 0 00-3 0z" stroke="currentColor"/>
                                                         </template>
                                                         <template lwc:if={isNormal}>
@@ -129,7 +188,7 @@
                                                 </div>
                                                 <div class="hl">{sel.assess.hl}</div>
                                                 <div class="ds">{sel.assess.ds}</div>
-                                                <!-- 항목 1: 게이지 아크 미터 -->
+                                                <!-- 게이지 아크 미터 -->
                                                 <div class="gauge-wrap">
                                                     <div class="gauge-container" lwc:dom="manual"></div>
                                                     <div class="vv">

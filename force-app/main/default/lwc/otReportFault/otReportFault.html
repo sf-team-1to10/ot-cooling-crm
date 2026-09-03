@@ -8,37 +8,86 @@
 
         <!-- Success: created Case number + automation readback -->
         <template lwc:if={hasResult}>
-            <div class="card">
-                <div class="success">
-                    <div class="success-title">신고가 접수되었습니다.</div>
-                    <dl class="kv">
-                        <dt>신고 번호</dt>
-                        <dd>{result.caseNumber}</dd>
-                        <dt>회사</dt>
-                        <dd>{result.accountName}</dd>
-                        <dt>담당자</dt>
-                        <dd>{result.contactName}</dd>
-                        <dt>보증 판정</dt>
-                        <dd>{result.warrantyDecision}</dd>
-                        <dt>보증 범위 유형</dt>
-                        <dd>{result.coverageType}</dd>
-                        <dt>유상/무상</dt>
-                        <dd>{billableLabel}</dd>
-                        <dt>접수시점 보증만료일</dt>
-                        <dd>
-                            <lightning-formatted-date-time
-                                value={result.warrantyEndDateAtRequest}
-                                year="numeric"
-                                month="2-digit"
-                                day="2-digit"
-                            ></lightning-formatted-date-time>
-                        </dd>
-                    </dl>
-                    <div class="foot">
-                        <button class="btn g" onclick={handleBack}>
-                            목록으로 돌아가기
-                        </button>
+            <div class="card result-card">
+                <div class="result-header">
+                    <div class="result-icon" aria-hidden="true">✓</div>
+                    <div>
+                        <div class="result-title">신고가 접수되었습니다.</div>
+                        <div class="result-desc">담당 팀에서 검토 후 연락드리겠습니다.</div>
                     </div>
+                </div>
+
+                <div class="result-body">
+                    <!-- 케이스 번호 (복사 버튼 포함) -->
+                    <div class="result-field">
+                        <div class="rf-label">신고 번호</div>
+                        <div class="rf-value rf-case-row">
+                            <span class="case-number">{result.caseNumber}</span>
+                            <button
+                                class="copy-btn"
+                                type="button"
+                                title="케이스 번호 복사"
+                                onclick={handleCopyCaseNumber}
+                            >{copyButtonLabel}</button>
+                        </div>
+                    </div>
+
+                    <div class="result-field">
+                        <div class="rf-label">회사</div>
+                        <div class="rf-value">{result.accountName}</div>
+                    </div>
+
+                    <div class="result-field">
+                        <div class="rf-label">신고자</div>
+                        <div class="rf-value">{result.contactName}</div>
+                    </div>
+
+                    <div class="result-field">
+                        <div class="rf-label">보증 판정</div>
+                        <div class="rf-value">
+                            <c-ot-status-badge
+                                variant={warrantyVariant}
+                                label={result.warrantyDecision}
+                            ></c-ot-status-badge>
+                        </div>
+                    </div>
+
+                    <div class="result-field">
+                        <div class="rf-label">유상 / 무상</div>
+                        <div class="rf-value">
+                            <c-ot-status-badge
+                                variant={billableVariant}
+                                label={billableLabel}
+                            ></c-ot-status-badge>
+                        </div>
+                    </div>
+
+                    <template lwc:if={result.coverageType}>
+                        <div class="result-field">
+                            <div class="rf-label">보증 범위 유형</div>
+                            <div class="rf-value">{result.coverageType}</div>
+                        </div>
+                    </template>
+
+                    <template lwc:if={result.warrantyEndDateAtRequest}>
+                        <div class="result-field">
+                            <div class="rf-label">보증 만료일</div>
+                            <div class="rf-value">
+                                <lightning-formatted-date-time
+                                    value={result.warrantyEndDateAtRequest}
+                                    year="numeric"
+                                    month="2-digit"
+                                    day="2-digit"
+                                ></lightning-formatted-date-time>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="foot">
+                    <button class="btn g" onclick={handleBack}>
+                        목록으로 돌아가기
+                    </button>
                 </div>
             </div>
         </template>

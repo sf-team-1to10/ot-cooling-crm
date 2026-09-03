@@ -12,19 +12,9 @@
 
         <main class="content">
 
-            <!-- 개요 (Phase 2에서 otPortalOverview로 교체 예정) -->
+            <!-- 개요 대시보드 -->
             <template lwc:if={showOverview}>
-                <div class="coming-soon">
-                    <div class="cs-icon">
-                        <svg viewBox="0 0 48 48" fill="none">
-                            <rect width="48" height="48" rx="12" fill="rgba(22,184,200,0.08)"/>
-                            <path d="M12 16h8v8h-8zM28 16h8v8h-8zM12 28h8v8h-8zM28 28h8v8h-8z" fill="#16b8c8" opacity=".6"/>
-                        </svg>
-                    </div>
-                    <div class="cs-title">대시보드 준비 중</div>
-                    <div class="cs-sub">개요 화면은 곧 업데이트됩니다.<br/>지금은 내 자산을 먼저 확인해 보세요.</div>
-                    <button class="cs-btn" onclick={handleGoAssets}>내 자산 보기</button>
-                </div>
+                <c-ot-portal-overview onnavigate={handleNavigate}></c-ot-portal-overview>
             </template>
 
             <!-- 내 자산 목록 -->
