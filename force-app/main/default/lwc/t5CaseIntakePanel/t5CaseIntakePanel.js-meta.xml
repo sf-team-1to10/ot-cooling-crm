@@ -3,7 +3,7 @@
     <apiVersion>66.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Case Intake Panel</masterLabel>
-    <description>Agent가 수집한 증상·자가조치 결과와 규칙 산정 보증·SLA 판정을 출처 배지와 함께 한 화면에 표시 (S-01)</description>
+    <description>Case 접수 시 증상·자가조치·보증·SLA 판정을 한 화면에 표시 (S-01)</description>
     <targets>
         <target>lightning__RecordPage</target>
     </targets>

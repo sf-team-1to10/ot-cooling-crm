@@ -1,0 +1,50 @@
+:host {
+    --ot-c-brand: #0176d3;
+    --ot-c-success: #2e844a;
+    --ot-c-warning: #b46f00;
+    --ot-c-danger: #ba0517;
+    --ot-c-text: #181818;
+    --ot-c-text-muted: #706e6b;
+    --ot-c-bg: #ffffff;
+    --ot-c-border: #dddbda;
+    display: block;
+}
+
+.strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: var(--ot-c-bg);
+    border: 1px solid var(--ot-c-border);
+    border-radius: 0.25rem;
+}
+
+.kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.kpi-label {
+    font-size: 0.75rem;
+    color: var(--ot-c-text-muted);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.kpi-tone-brand   { color: var(--ot-c-brand); }
+.kpi-tone-success { color: var(--ot-c-success); }
+.kpi-tone-warning { color: var(--ot-c-warning); }
+.kpi-tone-danger  { color: var(--ot-c-danger); }
+.kpi-tone-muted   { color: var(--ot-c-text-muted); }
+
+.kpi-trend-up   { --sds-c-icon-color-foreground-default: var(--ot-c-success); }
+.kpi-trend-down { --sds-c-icon-color-foreground-default: var(--ot-c-danger); }
+.kpi-trend-flat { --sds-c-icon-color-foreground-default: var(--ot-c-text-muted); }

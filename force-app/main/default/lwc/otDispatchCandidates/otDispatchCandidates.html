@@ -27,15 +27,10 @@
             </div>
         </template>
 
-        <!-- ── 하이라이트 ── -->
+        <!-- 배정 지표 스트립 (identity는 dynamicHighlights) -->
         <template lwc:if={header}>
         <div class="cand-hl">
             <div class="cand-hl-head">
-                <span class="cand-hl-icon">SA</span>
-                <div class="cand-hl-title">
-                    <p class="cand-hl-eyebrow">{eyebrowText}</p>
-                    <h1 class="cand-hl-name">담당자 배정</h1>
-                </div>
                 <div class="cand-hl-actions">
                     <span class="slds-badge cand-badge-rule">스케줄링 정책 · 긴급</span>
                     <template lwc:if={isAssigned}>
@@ -63,7 +58,6 @@
             <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
                 <lightning-card>
                     <span slot="title" class="slds-text-heading_small">후보 3명 — 정책이 랭킹한 순서</span>
-                    <span slot="actions" class="slds-badge cand-badge-rule">규칙 산정</span>
                     <div class="slds-p-horizontal_small slds-p-bottom_small">
                         <div class="cand">
                             <div class={cand1Class} data-cand="kang" onclick={handleSelectCand}>
@@ -107,7 +101,6 @@
             <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
                 <lightning-card>
                     <span slot="title" class="slds-text-heading_small">랭킹 근거</span>
-                    <span slot="actions" class="slds-badge cand-badge-rule">규칙 산정</span>
                     <div class="slds-p-horizontal_small slds-p-bottom_small">
                         <table class="tbl">
                             <thead><tr><th>인자</th><th>강시공</th><th>임수리</th><th>전배관</th></tr></thead>

@@ -1,7 +1,6 @@
 <template>
     <div class="renewal-wrap">
-        <!-- ── 서브탭 바 ── -->
-        <div class="subtabs">
+        <div class="ren-tabs">
             <button class={tasksTabClass} onclick={handleShowTasks}>My Tasks</button>
             <button class={contractTabClass} onclick={handleShowContract}>Service Contract</button>
         </div>
@@ -128,7 +127,6 @@
 
                     <lightning-card class="slds-m-top_small sc-perf-card">
                         <span slot="title" class="slds-text-heading_small">서비스 운영 성과</span>
-                        <span slot="actions" class="slds-badge sc-badge-agent">앞 장면 데이터</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <dl class="kv">
                                 <div class="kv-row"><dt>최근 Case</dt><dd class="num">00001042</dd></div>

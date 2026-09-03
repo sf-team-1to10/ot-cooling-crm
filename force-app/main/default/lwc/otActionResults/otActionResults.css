@@ -1,3 +1,20 @@
+:host {
+  --ot-c-brand: #0176d3;
+  --ot-c-brand-strong: #014486;
+  --ot-c-brand-soft: #eaf2fb;
+  --ot-c-success: #2e844a;
+  --ot-c-warning: #b46f00;
+  --ot-c-danger: #ba0517;
+  --ot-c-info: #005fb2;
+  --ot-c-bg: #ffffff;
+  --ot-c-bg-alt: #f3f3f3;
+  --ot-c-bg-shade: #f4f6f9;
+  --ot-c-border: #dddbda;
+  --ot-c-text: #181818;
+  --ot-c-text-weak: #444444;
+  --ot-c-text-muted: #706e6b;
+}
+
 /* ── Path 바 ── */
 .path { display:flex; background:#fff; padding:11px 18px 12px; border-bottom:1px solid #cfdae5; gap:0; overflow-x:auto; }
 .path-step { flex:1 1 0; min-width:74px; padding:7px 6px 7px 19px; background:#eaf0f6; color:#6e8599; font-size:10.5px; font-weight:500; white-space:nowrap; clip-path:polygon(0 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,0 100%,11px 50%); margin-right:-9px; display:flex; align-items:center; gap:5px; }
@@ -6,12 +23,6 @@
 .path-step.done { background:#2e8b57; color:#fff; }
 .path-step.on { background:#0877d1; color:#fff; font-weight:700; }
 .path-num { opacity:.6; font-family:'IBM Plex Mono',ui-monospace,monospace; }
-
-/* ── 서브탭 ── */
-.subtabs { background:#fff; display:flex; gap:2px; padding:0 18px; border-bottom:1px solid #cfdae5; font-size:12.5px; overflow-x:auto; }
-.subtab { padding:8px 14px; color:#3d5568; border:none; border-bottom:2px solid transparent; white-space:nowrap; background:none; cursor:pointer; font-family:inherit; }
-.subtab:hover { color:#0b1f33; background:#f4f7fa; }
-.subtab.on { color:#0877d1; border-bottom-color:#0877d1; font-weight:600; }
 
 /* ── 하이라이트 ── */
 .action-hl { background:#fff; border-bottom:1px solid #cfdae5; padding:14px 18px; }
@@ -65,8 +76,5 @@
 .scope-corrective { background:#c43d4b; color:#fff; }
 .scope-preventive { background:#c87913; color:#fff; }
 .scope-new { background:#2e8b57; color:#fff; }
-.rca-badge-rule { background:#e2f6f8; color:#0f8a97; }
-.rca-badge-agent { background:#e2eefb; color:#1a5fb4; }
-
 /* ── 숫자 유틸 ── */
 .num { font-variant-numeric:tabular-nums; }

@@ -1,15 +1,13 @@
 import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import { CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    IsConsoleNavigation
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
 import getCustomer360 from '@salesforce/apex/T5Customer360Controller.getCustomer360';
 
-export default class T5Customer360 extends NavigationMixin(LightningElement) {
+export default class T5Customer360 extends LightningElement {
     @api recordId;
     _stateRecordId;
     _tabId;
@@ -32,12 +30,13 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId) {
-            return;
-        }
-        this._tabLabeled = true;
-        await setTabLabel(this._tabId, 'Customer 360');
-        await setTabIcon(this._tabId, 'standard:contact');
+        if (!this._tabId) return;
+        const name = (this.accountName || '').slice(0, 8);
+        const label = name ? `고객 · ${name}` : '고객 360';
+        try {
+            await setTabLabel(this._tabId, label);
+            await setTabIcon(this._tabId, 'standard:account');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     data;
@@ -48,6 +47,7 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         if (data) {
             this.data = data;
             this.error = undefined;
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.data = undefined;
@@ -192,35 +192,4 @@ export default class T5Customer360 extends NavigationMixin(LightningElement) {
         this.activeTab = event.currentTarget.dataset.c360;
     }
 
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
-
-    async handleSubtab(event) {
-        const target = event.currentTarget.dataset.goto;
-        const rid = this.effectiveRecordId;
-        if (!target || !rid) {
-            return;
-        }
-
-        if (target === 'case') {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: { recordId: rid, objectApiName: 'Case', actionName: 'view' }
-            });
-            return;
-        }
-
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, rid);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: rid }
-            });
-        }
-    }
 }

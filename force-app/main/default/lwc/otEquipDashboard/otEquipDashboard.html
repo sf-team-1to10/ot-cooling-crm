@@ -111,16 +111,8 @@
                                 </div>
                             </div>
 
-                            <!-- Sub Tabs -->
-                            <div class="subtabs">
-                                <template for:each={subTabs} for:item="st">
-                                    <button key={st.label} class={st.cls} data-tab={st.label} onclick={handleSubTab}>{st.label}</button>
-                                </template>
-                            </div>
-
-                            <!-- Overview Content -->
-                            <template lwc:if={isOverview}>
-                                <div class="selbody">
+                            <!-- Overview Content (서브탭 제거, flat 레이아웃) -->
+                            <div class="selbody">
                                     <div class="ov-grid">
                                         <div>
                                             <div class={assessStyle}>
@@ -179,16 +171,6 @@
                                         <div class="chart-container" lwc:dom="manual"></div>
                                     </div>
                                 </div>
-                            </template>
-
-                            <!-- Non-overview placeholder -->
-                            <template lwc:if={isNotOverview}>
-                                <div class="placeholder">
-                                    <div class="ph-title">{activeSubTab}</div>
-                                    <p>{subTabPlaceholder}</p>
-                                    <button class="btn ghost sm" onclick={handleGoDetail}>장비 상세로 이동</button>
-                                </div>
-                            </template>
                         </div>
                     </div>
 

@@ -1,0 +1,13 @@
+<template>
+    <div class="strip">
+        <template for:each={normalized} for:item="it">
+            <div key={it.key} class="kpi">
+                <div class="kpi-label">{it.label}</div>
+                <div class={it.toneClass}>{it.value}</div>
+                <template if:true={it.trendIcon}>
+                    <lightning-icon icon-name={it.trendIcon} size="xx-small" class={it.trendClass}></lightning-icon>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>

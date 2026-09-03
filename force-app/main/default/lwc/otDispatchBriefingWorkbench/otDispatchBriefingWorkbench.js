@@ -1,18 +1,16 @@
 import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import { CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    IsConsoleNavigation
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
 import approveDispatch from '@salesforce/apex/T5DispatchBriefingController.approveDispatch';
 
-export default class OtDispatchBriefingWorkbench extends NavigationMixin(LightningElement) {
+export default class OtDispatchBriefingWorkbench extends LightningElement {
     // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
     @api recordId;
     _stateRecordId;
@@ -44,12 +42,6 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
         }
     }
 
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
-
     // EnclosingTabId wire는 탭 컨텍스트가 준비된 후에 tabId를 반응형으로 준다.
     // standard__component 서브탭은 컴포넌트 로드 완료 시 라벨을 'Loading...'으로 덮으므로,
     // 이 wire(=로드 후)로 tabId를 받아 라벨을 다시 설정해야 최종적으로 고정된다.
@@ -64,10 +56,11 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
             return;
         }
         this._tabLabeled = true;
-        await setTabLabel(this._tabId, `${this.caseNumber} 출동 브리핑`);
-        // standard: 계열 아이콘은 콘솔 탭에서 다른 탭(Case 등)과 동일한 크기로 렌더된다.
-        // utility: 계열은 크게 나와 옆 탭 아이콘과 크기가 안 맞는다.
-        await setTabIcon(this._tabId, 'standard:announcement');
+        const short = String(this.caseNumber).replace(/^0+/, '').slice(-4);
+        try {
+            await setTabLabel(this._tabId, `브리핑 · ${short}`);
+            await setTabIcon(this._tabId, 'standard:case');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     get effectiveRecordId() {
@@ -167,38 +160,6 @@ export default class OtDispatchBriefingWorkbench extends NavigationMixin(Lightni
             hour: '2-digit',
             minute: '2-digit'
         });
-    }
-
-    // 서브탭 클릭 → 다른 장면으로 이동.
-    // Case는 레코드 페이지로, 나머지는 UrlAddressable 컴포넌트를 콘솔 서브탭(전체폭)으로 연다.
-    async handleSubtab(event) {
-        const target = event.currentTarget.dataset.goto;
-        const caseId = this.effectiveRecordId;
-        if (!target || !caseId) {
-            return;
-        }
-
-        if (target === 'case') {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: {
-                    recordId: caseId,
-                    objectApiName: 'Case',
-                    actionName: 'view'
-                }
-            });
-            return;
-        }
-
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, caseId);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: caseId }
-            });
-        }
     }
 
     // Slack 인계 → 전문가 소집 Flow(채널 생성·전문가 초대·Case 요약 발신)를 모달로 실행.

@@ -8,8 +8,8 @@ export default class OtRenewalTasks extends LightningElement {
     get isTasksView() { return this.activeView === 'tasks'; }
     get isContractView() { return this.activeView === 'contract'; }
 
-    get tasksTabClass() { return this.activeView === 'tasks' ? 'subtab on' : 'subtab'; }
-    get contractTabClass() { return this.activeView === 'contract' ? 'subtab on' : 'subtab'; }
+    get tasksTabClass() { return this.activeView === 'tasks' ? 'ren-tab on' : 'ren-tab'; }
+    get contractTabClass() { return this.activeView === 'contract' ? 'ren-tab on' : 'ren-tab'; }
 
     handleShowTasks() { this.activeView = 'tasks'; }
     handleShowContract() { this.activeView = 'contract'; }

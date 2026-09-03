@@ -1,15 +1,13 @@
 import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import { CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    IsConsoleNavigation
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
 import getActions from '@salesforce/apex/T5ProblemRcaController.getActions';
 
-export default class OtActionResults extends NavigationMixin(LightningElement) {
+export default class OtActionResults extends LightningElement {
     @api recordId;
     _stateRecordId;
     _tabId;
@@ -25,12 +23,6 @@ export default class OtActionResults extends NavigationMixin(LightningElement) {
         return this.recordId || this._stateRecordId || undefined;
     }
 
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
-
     @wire(EnclosingTabId)
     setTabId(tabId) {
         this._tabId = tabId;
@@ -38,12 +30,13 @@ export default class OtActionResults extends NavigationMixin(LightningElement) {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId) {
-            return;
-        }
-        this._tabLabeled = true;
-        await setTabLabel(this._tabId, '조치 결과');
-        await setTabIcon(this._tabId, 'standard:task');
+        if (!this._tabId) return;
+        const short = String(this.problemNumber || '').replace(/^0+/, '').slice(-4);
+        const label = short ? `시정·예방 · ${short}` : '시정·예방';
+        try {
+            await setTabLabel(this._tabId, label);
+            await setTabIcon(this._tabId, 'standard:problem');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     actions;
@@ -54,6 +47,7 @@ export default class OtActionResults extends NavigationMixin(LightningElement) {
         if (data) {
             this.actions = data;
             this.error = undefined;
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.actions = undefined;
@@ -132,32 +126,4 @@ export default class OtActionResults extends NavigationMixin(LightningElement) {
         return parts.length ? parts.join(' · ') : '—';
     }
 
-    async handleSubtab(event) {
-        this.navigate(event.currentTarget.dataset.goto);
-    }
-
-    async navigate(target) {
-        const rid = this.effectiveRecordId;
-        if (!target || !rid) {
-            return;
-        }
-
-        if (target === 'case') {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__recordPage',
-                attributes: { recordId: rid, objectApiName: 'Case', actionName: 'view' }
-            });
-            return;
-        }
-
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, rid);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: rid }
-            });
-        }
-    }
 }

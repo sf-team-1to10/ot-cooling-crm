@@ -11,21 +11,6 @@
         </template>
 
         <template lwc:if={briefing}>
-            <!-- ── Path 바 — Case.Stage__c 값을 실시간 반영 (otCasePath 공통 컴포넌트) ── -->
-            <c-ot-case-path record-id={effectiveRecordId}></c-ot-case-path>
-
-            <!-- ── 서브탭 (출동 브리핑 활성) ── -->
-            <div class="subtabs">
-                <button class="subtab" data-goto="case" onclick={handleSubtab}>Case</button>
-                <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
-                <button class="subtab on">출동 브리핑</button>
-                <button class="subtab" data-goto="c__otDispatchCandidates" onclick={handleSubtab}>담당자 확정</button>
-                <button class="subtab" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
-                <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
-                <button class="subtab" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
-                <button class="subtab">협업 로그</button>
-            </div>
-
             <!-- ── Highlights 헤더 ── -->
             <div class="briefing-hl">
                 <div class="briefing-hl-head">
@@ -79,7 +64,6 @@
                     <!-- Priority 산정 근거 -->
                     <lightning-card>
                         <span slot="title" class="slds-text-heading_small">Priority 산정 근거</span>
-                        <span slot="actions" class="slds-badge source-rule">규칙 산정</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <table class="slds-table slds-table_cell-buffer slds-table_bordered rationale-table">
                                 <thead>
@@ -105,7 +89,6 @@
                     <!-- Hall A CDU 12대 비교 -->
                     <lightning-card class="slds-m-top_small">
                         <span slot="title" class="slds-text-heading_small">Hall A CDU 12대 비교</span>
-                        <span slot="actions" class="slds-badge source-agent">Agent 제안</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <template lwc:if={hasComparisons}>
                                 <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
@@ -154,7 +137,6 @@
                 <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
                     <lightning-card>
                         <span slot="title" class="slds-text-heading_small">우선 점검 후보</span>
-                        <span slot="actions" class="slds-badge source-agent">Agent</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <template lwc:if={briefingBody}>
                                 <lightning-formatted-rich-text value={briefingBody}></lightning-formatted-rich-text>
@@ -167,7 +149,6 @@
 
                     <lightning-card class="slds-m-top_small">
                         <span slot="title" class="slds-text-heading_small">전사 유사사례</span>
-                        <span slot="actions" class="slds-badge source-agent">Agent</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <template lwc:if={similarCasesSummary}>
                                 <lightning-formatted-rich-text value={similarCasesSummary}></lightning-formatted-rich-text>

@@ -14,41 +14,9 @@
             <!-- ── Path 바 — Case.Stage__c 값을 실시간 반영 (otCasePath 공통 컴포넌트) ── -->
             <c-ot-case-path record-id={recordId}></c-ot-case-path>
 
-            <!-- ── 서브탭 ── -->
-            <div class="subtabs">
-                <button class="subtab on">Case</button>
-                <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
-                <button class="subtab" data-goto="c__otDispatchBriefingWorkbench" onclick={handleSubtab}>출동 브리핑</button>
-                <button class="subtab" data-goto="c__otDispatchCandidates" onclick={handleSubtab}>담당자 확정</button>
-                <button class="subtab" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
-                <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
-                <button class="subtab" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
-                <button class="subtab">협업 로그</button>
-            </div>
-
-            <!-- ── 하이라이트 스트립 ── -->
+            <!-- SLA 지표 스트립 (identity는 dynamicHighlights, Path는 위에서 담당) -->
             <div class="case-hl">
-                <div class="case-hl-head">
-                    <span class="case-hl-icon">C</span>
-                    <div class="case-hl-title">
-                        <p class="case-hl-eyebrow">Case · {accountName}</p>
-                        <h1 class="case-hl-name">{headerTitle}</h1>
-                    </div>
-                    <div class="case-hl-actions">
-                        <span class="slds-badge status-badge">{status}</span>
-                        <lightning-button label="출동 브리핑 생성" variant="brand"
-                            onclick={handleBriefing} class="slds-m-left_xx-small"></lightning-button>
-                    </div>
-                </div>
                 <dl class="case-hl-fields">
-                    <div class="case-hl-f">
-                        <dt>Case 번호</dt>
-                        <dd class="num">{caseNumber}</dd>
-                    </div>
-                    <div class="case-hl-f">
-                        <dt>Asset</dt>
-                        <dd>{assetName}</dd>
-                    </div>
                     <div class="case-hl-f">
                         <dt>Agent 최초 응답</dt>
                         <dd class="num">{agentFirstResponseText}</dd>
@@ -66,6 +34,10 @@
                         <dd class="num">{recoverySla}</dd>
                     </div>
                 </dl>
+                <div class="case-hl-actions">
+                    <lightning-button label="출동 브리핑 생성" variant="brand"
+                        onclick={handleBriefing}></lightning-button>
+                </div>
             </div>
         </template>
 

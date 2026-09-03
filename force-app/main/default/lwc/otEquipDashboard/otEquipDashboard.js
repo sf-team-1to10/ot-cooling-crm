@@ -33,7 +33,6 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     @track assets = [];
     @track selectedId = null;
     @track currentPage = 1;
-    @track activeSubTab = '개요';
     @track searchTerm = '';
     @track modalOpen = false;
     @track kpis = { totalAssets: 0, normalCount: 0, advisoryCount: 0, maintenanceScheduledCount: 0 };
@@ -383,25 +382,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get kpiAdvisory() { return this.kpis.advisoryCount; }
     get kpiMaintenance() { return this.kpis.maintenanceScheduledCount; }
 
-    // Sub-tab state
-    get isOverview() { return this.activeSubTab === '개요'; }
-    get isNotOverview() { return this.activeSubTab !== '개요'; }
     get isNormal() { return this.sel.stateCode !== 'adv'; }
-    get subTabPlaceholder() {
-        const msgs = {
-            '성능': '성능 추세 상세는 데모 범위에서 개요 탭의 유량 추세로 대표합니다.',
-            '알람': '알람 이력 상세는 장비 상세 화면에서 확인할 수 있습니다.',
-            '정비': '정비 일정 및 이력 상세는 장비 상세 화면에서 확인할 수 있습니다.',
-            '이력': '자산 변경·인수 이력 상세는 장비 상세 화면에서 확인할 수 있습니다.',
-            '문서': '장비 문서(도면·매뉴얼·보증서)는 장비 상세 화면에서 확인할 수 있습니다.'
-        };
-        return msgs[this.activeSubTab] || '';
-    }
-
-    get subTabs() {
-        const tabs = ['개요', '성능', '알람', '정비', '이력', '문서'];
-        return tabs.map(t => ({ label: t, cls: t === this.activeSubTab ? 'stab on' : 'stab' }));
-    }
 
     // 항목 7: 탭 버튼 클래스
     get tabAllClass()    { return this.activeTopTab === '전체' ? 't on' : 't'; }
@@ -421,7 +402,6 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     // Handlers
     handleSelectAsset(event) {
         this.selectedId = event.currentTarget.dataset.id;
-        this.activeSubTab = '개요';
         this.loadSelectedDetail();
         this.loadLocationInfo(this.selectedId);
         this.loadAlerts(this.selectedId);
@@ -433,7 +413,6 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         this.searchTerm = event.target.value;
         this.currentPage = 1;
     }
-    handleSubTab(event) { this.activeSubTab = event.currentTarget.dataset.tab; }
 
     // 항목 7: 탭/필터 핸들러
     handleTopTab(event) {
@@ -476,7 +455,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
 
     renderedCallback() {
         const trendEl = this.template.querySelector('.chart-container');
-        if (trendEl && this.isOverview) {
+        if (trendEl) {
             trendEl.innerHTML = this.trendSvg;
         }
         const donutEl = this.template.querySelector('.donut-container');

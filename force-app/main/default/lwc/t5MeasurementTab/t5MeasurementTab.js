@@ -55,7 +55,7 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
     }
 
     get homeSubtitle() {
-        return '유사사례를 확인하거나 바로 측정을 시작할 수 있습니다.';
+        return '측정 시작 또는 유사 사례 확인';
     }
 
     get statusSummary() {
@@ -233,7 +233,7 @@ export default class T5MeasurementTab extends NavigationMixin(LightningElement) 
         const pass = line.isPass === true;
         const point = line.point ?? '';
         const code = line.itemCode ?? line.measurementItemCode ?? '';
-        const headline = code && code !== point ? `${point} ${code}` : point;
+        const headline = point && code && code !== point ? `${point} ${code}` : (point || code);
         // 시연용 하드코딩: 유량은 허용구간 1900~2200 L/min으로 강제.
         const isFlow = code === '유량';
         const effMin = isFlow ? 1900 : line.thresholdMin;

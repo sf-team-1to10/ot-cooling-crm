@@ -2,10 +2,7 @@ import { LightningElement, wire } from 'lwc';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    getFocusedTabInfo,
-    getTabInfo,
-    focusTab
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
 
 export default class OtServiceContractReview extends LightningElement {
@@ -24,19 +21,14 @@ export default class OtServiceContractReview extends LightningElement {
             return;
         }
         this._tabLabeled = true;
-        await setTabLabel(this._tabId, 'SC-2022-0114');
-        await setTabIcon(this._tabId, 'standard:contract');
+        try {
+            await setTabLabel(this._tabId, '성과 리뷰');
+            await setTabIcon(this._tabId, 'standard:contract');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     handleCreateOpportunity() {
         this.opportunityCreated = true;
     }
 
-    async handleBackToTasks() {
-        const focused = await getFocusedTabInfo();
-        const parentTabId = focused.parentTabId || focused.tabId;
-        if (parentTabId) {
-            await focusTab(parentTabId);
-        }
-    }
 }

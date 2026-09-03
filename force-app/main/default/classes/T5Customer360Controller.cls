@@ -14,21 +14,75 @@ public with sharing class T5Customer360Controller {
      */
     @AuraEnabled(cacheable=true)
     public static Customer360 getCustomer360(Id caseId) {
-        Case current = getCurrentCase(caseId);
-        Id accountId = current.AccountId;
+        Id accountId;
+        Case current;
+        Id entitlementId;
+
+        if (caseId.getSObjectType() == Account.SObjectType) {
+            accountId = caseId;
+            current = null;
+            entitlementId = null;
+        } else {
+            current = getCurrentCase(caseId);
+            accountId = current.AccountId;
+            entitlementId = current.EntitlementId;
+        }
 
         Customer360 result = new Customer360();
-        result.accountName = current.Account?.Name;
-        result.currentEntitlementId = current.EntitlementId;
 
         if (accountId == null) {
             return result;
         }
 
-        result.profile = buildProfile(current);
-        result.contracts = buildContracts(accountId, current.EntitlementId);
+        if (current != null) {
+            result.accountName = current.Account?.Name;
+            result.currentEntitlementId = entitlementId;
+            result.profile = buildProfile(current);
+        } else {
+            List<Account> accts = [
+                SELECT Id, Name, Industry, Phone, Owner.Name,
+                    (SELECT Id, Name, Title, Phone, Email,
+                            MailingCity, MailingStreet
+                     FROM Contacts
+                     ORDER BY CreatedDate ASC
+                     LIMIT 1)
+                FROM Account
+                WHERE Id = :accountId
+                WITH USER_MODE
+                LIMIT 1
+            ];
+            if (!accts.isEmpty()) {
+                Account acct = accts[0];
+                result.accountName = acct.Name;
+                ProfileInfo p = new ProfileInfo();
+                p.industry = acct.Industry;
+                p.ownerName = acct.Owner?.Name;
+                if (!acct.Contacts.isEmpty()) {
+                    Contact ct = acct.Contacts[0];
+                    p.contactName = ct.Name;
+                    p.contactInitial = String.isNotBlank(ct.Name) ? ct.Name.substring(0, 1) : '';
+                    p.contactTitle = ct.Title;
+                    p.contactPhone = ct.Phone;
+                    p.contactEmail = ct.Email;
+                    String street = ct.MailingStreet;
+                    String city = ct.MailingCity;
+                    if (String.isNotBlank(city) || String.isNotBlank(street)) {
+                        p.contactAddress = (city == null ? '' : city) +
+                            (String.isNotBlank(city) && String.isNotBlank(street) ? ' ' : '') +
+                            (street == null ? '' : street);
+                    }
+                    p.contactRole = ct.Title;
+                    if (acct.Name != null) {
+                        p.contactRole = (p.contactRole == null ? '' : p.contactRole + ' · ') + acct.Name;
+                    }
+                }
+                result.profile = p;
+            }
+        }
+
+        result.contracts = buildContracts(accountId, entitlementId);
         result.assets = buildAssets(accountId);
-        result.pastCases = buildPastCases(accountId, caseId);
+        result.pastCases = buildPastCases(accountId, null);
         result.opportunities = buildOpportunities(accountId);
         return result;
     }

@@ -1,15 +1,13 @@
 import { LightningElement, api, wire } from 'lwc';
-import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
+import { CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    IsConsoleNavigation
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
 import getEvidence from '@salesforce/apex/T5AssetEvidenceController.getEvidence';
 
-export default class OtAssetEvidenceHistory extends NavigationMixin(LightningElement) {
+export default class OtAssetEvidenceHistory extends LightningElement {
     // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
     @api recordId;
     _stateRecordId;
@@ -23,8 +21,6 @@ export default class OtAssetEvidenceHistory extends NavigationMixin(LightningEle
             this._stateRecordId = stateId;
         }
     }
-
-    @wire(IsConsoleNavigation) isConsoleNavigation;
 
     evidence;
     error;
@@ -53,18 +49,16 @@ export default class OtAssetEvidenceHistory extends NavigationMixin(LightningEle
             return;
         }
         this._tabLabeled = true;
-        await setTabLabel(this._tabId, `${this.caseNumber} 이력 근거`);
-        // standard: 계열 아이콘은 콘솔 탭에서 다른 탭과 동일한 크기로 렌더된다.
-        await setTabIcon(this._tabId, 'standard:timesheet_entry');
+        const short = String(this.caseNumber).replace(/^0+/, '').slice(-4);
+        try {
+            await setTabLabel(this._tabId, `이력 근거 · ${short}`);
+            await setTabIcon(this._tabId, 'standard:asset_action');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     get effectiveRecordId() {
         // undefined를 반환해야 wire가 실행되지 않는다(null이면 Apex가 예외).
         return this.recordId || this._stateRecordId || undefined;
-    }
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
     }
 
     get isLoading() {
@@ -115,20 +109,6 @@ export default class OtAssetEvidenceHistory extends NavigationMixin(LightningEle
         }));
     }
 
-    async handleBackToBriefing() {
-        if (!this.effectiveRecordId) {
-            return;
-        }
-        const target = 'c__otDispatchBriefingWorkbench';
-
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, this.effectiveRecordId);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: this.effectiveRecordId }
-            });
-        }
+    handleBackToBriefing() {
     }
 }

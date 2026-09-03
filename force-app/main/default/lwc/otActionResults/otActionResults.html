@@ -1,20 +1,5 @@
 <template>
     <div class="slds-p-vertical_x-small">
-        <!-- ── Path 바 (path:5 = RCA·예방·지식 on) ── -->
-        <c-ot-case-path record-id={effectiveRecordId}></c-ot-case-path>
-
-        <!-- ── 서브탭 (조치 활성) ── -->
-        <div class="subtabs">
-            <button class="subtab" data-goto="case" onclick={handleSubtab}>Case</button>
-            <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
-            <button class="subtab" data-goto="c__otDispatchBriefingWorkbench" onclick={handleSubtab}>출동 브리핑</button>
-            <button class="subtab" data-goto="c__otDispatchCandidates" onclick={handleSubtab}>담당자 확정</button>
-            <button class="subtab" data-goto="c__otCauseConfirm" onclick={handleSubtab}>원인확정</button>
-            <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
-            <button class="subtab on">조치</button>
-            <button class="subtab">협업 로그</button>
-        </div>
-
         <template lwc:if={isLoading}>
             <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
         </template>
@@ -29,9 +14,8 @@
             <!-- ── 하이라이트 ── -->
             <div class="action-hl">
                 <div class="action-hl-head">
-                    <span class="action-hl-icon">✓</span>
                     <div class="action-hl-title">
-                        <p class="action-hl-eyebrow">승인 범위로 작업 생성됨 · Problem {problemNumber}</p>
+                        <p class="action-hl-eyebrow">후속 조치</p>
                         <h1 class="action-hl-name">시정 {correctiveCount}건 · 예방 {preventiveCount}건 · 합계 {totalCount}건</h1>
                     </div>
                 </div>
@@ -47,7 +31,6 @@
                 <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
                     <lightning-card>
                         <span slot="title" class="slds-text-heading_small">생성된 Work Order</span>
-                        <span slot="actions" class="slds-badge rca-badge-rule">PRI_ Flow</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
                             <template lwc:if={hasWorkOrders}>
                                 <div class="rl">
@@ -104,9 +87,8 @@
                 <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
                     <lightning-card class="kb-card">
                         <span slot="title" class="slds-text-heading_small">Knowledge 초안</span>
-                        <span slot="actions" class="slds-badge rca-badge-agent">Agent 제안</span>
                         <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <p class="kb-lead">이번 해결 내용은 기존 Knowledge와 완전히 같은 사례가 아니었습니다.</p>
+                            <p class="kb-lead">유사 Knowledge 없음 — 신규 등록 후보</p>
 
                             <div class="kb-inner">
                                 <dl class="kb-kv">
@@ -121,7 +103,6 @@
                                 <lightning-button label="등록 검토" variant="brand"></lightning-button>
                                 <lightning-button label="보류"></lightning-button>
                             </div>
-                            <p class="kb-note">자동으로 게시하지 않습니다. 최종 판단은 담당자에게 남깁니다.</p>
                         </div>
                     </lightning-card>
                 </div>

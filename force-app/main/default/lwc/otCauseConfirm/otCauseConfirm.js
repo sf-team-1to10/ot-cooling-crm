@@ -3,11 +3,11 @@ import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
-    setTabIcon,
-    IsConsoleNavigation
+    setTabIcon
 } from 'lightning/platformWorkspaceApi';
-import { openOrFocusSubtab } from 'c/otConsoleNav';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getEvidence from '@salesforce/apex/T5AssetEvidenceController.getEvidence';
+import createProblemWithRca from '@salesforce/apex/T5AssetEvidenceController.createProblemWithRca';
 
 export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -16,6 +16,8 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     _tabLabeled = false;
 
     problemCreated = false;
+    createdProblemId;
+    creating = false;
 
     @wire(CurrentPageReference)
     setPageRef(pageRef) {
@@ -27,12 +29,6 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
         return this.recordId || this._stateRecordId || undefined;
     }
 
-    @wire(IsConsoleNavigation) isConsoleNavigation;
-
-    get isConsole() {
-        return this.isConsoleNavigation?.data === true;
-    }
-
     @wire(EnclosingTabId)
     setTabId(tabId) {
         this._tabId = tabId;
@@ -40,12 +36,13 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId) {
-            return;
-        }
-        this._tabLabeled = true;
-        await setTabLabel(this._tabId, '원인확정');
-        await setTabIcon(this._tabId, 'standard:incident');
+        if (!this._tabId) return;
+        const short = String(this.caseNumber || '').replace(/^0+/, '').slice(-4);
+        const label = short ? `원인 확인 · ${short}` : '원인 확인';
+        try {
+            await setTabLabel(this._tabId, label);
+            await setTabIcon(this._tabId, 'standard:work_order');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     evidence;
@@ -56,6 +53,7 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
         if (data) {
             this.evidence = data;
             this.error = undefined;
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.evidence = undefined;
@@ -98,39 +96,38 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
         return this.timeline.length > 0;
     }
 
-    handleCreateProblem() {
-        this.problemCreated = true;
+    async handleCreateProblem() {
+        if (this.creating || this.problemCreated) return;
+        this.creating = true;
+        try {
+            const problemId = await createProblemWithRca({ recordId: this.effectiveRecordId });
+            this.createdProblemId = problemId;
+            this.problemCreated = true;
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Problem 생성 완료',
+                message: 'Problem이 생성되고 RCA 초안이 기록됐습니다.',
+                variant: 'success'
+            }));
+        } catch (e) {
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Problem 생성 실패',
+                message: e?.body?.message || '생성에 실패했습니다.',
+                variant: 'error'
+            }));
+        } finally {
+            this.creating = false;
+        }
     }
 
     handleGoRca() {
-        this.navigate('c__otProblemRca');
-    }
-
-    async handleSubtab(event) {
-        this.navigate(event.currentTarget.dataset.goto);
-    }
-
-    async navigate(target) {
-        const rid = this.effectiveRecordId;
-        if (!target || !rid) {
-            return;
-        }
-
-        if (target === 'case') {
+        if (this.createdProblemId) {
             this[NavigationMixin.Navigate]({
                 type: 'standard__recordPage',
-                attributes: { recordId: rid, objectApiName: 'Case', actionName: 'view' }
-            });
-            return;
-        }
-
-        if (this.isConsole) {
-            await openOrFocusSubtab(target, rid);
-        } else {
-            this[NavigationMixin.Navigate]({
-                type: 'standard__component',
-                attributes: { componentName: target },
-                state: { c__recordId: rid }
+                attributes: {
+                    recordId: this.createdProblemId,
+                    objectApiName: 'Problem',
+                    actionName: 'view'
+                }
             });
         }
     }

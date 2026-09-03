@@ -42,12 +42,13 @@ export default class OtDispatchCandidates extends LightningElement {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId) {
-            return;
-        }
-        this._tabLabeled = true;
-        await setTabLabel(this._tabId, '담당자 확정');
-        await setTabIcon(this._tabId, 'standard:service_resource');
+        if (!this._tabId) return;
+        const short = (this.caseNumber || '').replace(/^0+/, '').slice(-4);
+        const label = short ? `배정 · ${short}` : '배정';
+        try {
+            await setTabLabel(this._tabId, label);
+            await setTabIcon(this._tabId, 'standard:work_order');
+        } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     header;
@@ -58,6 +59,7 @@ export default class OtDispatchCandidates extends LightningElement {
         if (data) {
             this.header = data;
             this.error = undefined;
+            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.header = undefined;

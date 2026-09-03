@@ -1,20 +1,5 @@
 <template>
     <div class="slds-p-vertical_x-small">
-        <!-- ── Path 바 (path:5 = RCA·예방·지식 on) ── -->
-        <c-ot-case-path record-id={effectiveRecordId}></c-ot-case-path>
-
-        <!-- ── 서브탭 (원인확정 활성) ── -->
-        <div class="subtabs">
-            <button class="subtab" data-goto="case" onclick={handleSubtab}>Case</button>
-            <button class="subtab" data-goto="c__t5Customer360" onclick={handleSubtab}>Customer 360</button>
-            <button class="subtab" data-goto="c__otDispatchBriefingWorkbench" onclick={handleSubtab}>출동 브리핑</button>
-            <button class="subtab" data-goto="c__otDispatchCandidates" onclick={handleSubtab}>담당자 확정</button>
-            <button class="subtab on">원인확정</button>
-            <button class="subtab" data-goto="c__otProblemRca" onclick={handleSubtab}>RCA</button>
-            <button class="subtab" data-goto="c__otActionResults" onclick={handleSubtab}>조치</button>
-            <button class="subtab">협업 로그</button>
-        </div>
-
         <template lwc:if={isLoading}>
             <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
         </template>
@@ -26,14 +11,9 @@
         </template>
 
         <template lwc:if={evidence}>
-            <!-- ── 하이라이트 ── -->
+            <!-- 측정 근거 지표 (identity는 dynamicHighlights) -->
             <div class="rca-hl">
                 <div class="rca-hl-head">
-                    <span class="rca-hl-icon icon-green">→</span>
-                    <div class="rca-hl-title">
-                        <p class="rca-hl-eyebrow">Case {caseNumber} · {assetName}</p>
-                        <h1 class="rca-hl-name">원인 확정 · 현장 측정 근거</h1>
-                    </div>
                     <div class="rca-hl-actions">
                         <template lwc:if={problemCreated}>
                             <button type="button" class="rca-done" disabled>Problem 생성됨</button>
@@ -47,7 +27,6 @@
                     </div>
                 </div>
                 <dl class="rca-hl-fields">
-                    <div class="rca-hl-f"><dt>Asset</dt><dd>{assetName}</dd></div>
                     <div class="rca-hl-f"><dt>Revision</dt><dd>{revisionText}</dd></div>
                     <div class="rca-hl-f"><dt>최초 불합격</dt><dd class="num">{firstFailValue}</dd></div>
                     <div class="rca-hl-f"><dt>재시험 합격</dt><dd class="num">{retestPassValue}</dd></div>
@@ -58,8 +37,8 @@
             <template lwc:if={hasTimeline}>
                 <div class="slds-m-top_small">
                     <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">가설이 원인으로 확정된 경로</span>
-                        <span slot="actions" class="slds-badge rca-badge-human">현장 측정으로 확정</span>
+                        <span slot="title" class="slds-text-heading_small">원인 확정 타임라인</span>
+                        <lightning-badge slot="actions" label="측정 기반 확정" variant="success"></lightning-badge>
                         <div class="slds-p-horizontal_medium slds-p-bottom_medium">
                             <div class="tl">
                                 <template for:each={timeline} for:item="node">
