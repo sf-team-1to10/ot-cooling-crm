@@ -36,14 +36,21 @@ public with sharing class T5DispatchAssignController {
         }
         Id ownerId = (Id) cand.User_Id__c;
 
+        Id serviceResourceId = null;
+        if (String.isNotBlank(cand.ServiceResource_Id__c)) {
+            serviceResourceId = (Id) cand.ServiceResource_Id__c;
+        }
+
         try {
+            Id workOrderId = null;
             List<WorkOrder> wos = [
                 SELECT Id FROM WorkOrder
                 WHERE CaseId = :caseId
                 ORDER BY CreatedDate DESC LIMIT 1
             ];
             if (!wos.isEmpty()) {
-                update new WorkOrder(Id = wos[0].Id, OwnerId = ownerId);
+                workOrderId = wos[0].Id;
+                update new WorkOrder(Id = workOrderId, OwnerId = ownerId);
             }
 
             List<Case> cases = [
@@ -64,18 +71,54 @@ public with sharing class T5DispatchAssignController {
                 update c;
             }
 
+            Boolean fsmAssigned = false;
+            if (workOrderId != null && serviceResourceId != null) {
+                fsmAssigned = assignToFsm(workOrderId, serviceResourceId);
+            }
+
             AssignResult r = new AssignResult();
             r.ownerId = ownerId;
             r.resolvedCaseId = c.Id;
             r.stagePromoted = c.Stage__c == '2 담당자 배정';
             r.caseNumber = c.CaseNumber;
             r.caseSubject = c.Subject;
+            r.fsmAssigned = fsmAssigned;
             return r;
         } catch (AuraHandledException e) {
             throw e;
         } catch (Exception e) {
             throw new AuraHandledException('배정 처리 중 오류: ' + e.getMessage());
         }
+    }
+
+    // WO에 딸린 최신 ServiceAppointment 에 AssignedResource 를 붙인다.
+    // SA가 없으면 스킵(FSM 앱은 SA/AssignedResource 조합으로만 배정 반영). 이미 AR이 있으면 no-op.
+    private static Boolean assignToFsm(Id workOrderId, Id serviceResourceId) {
+        List<ServiceAppointment> sas = [
+            SELECT Id FROM ServiceAppointment
+            WHERE ParentRecordId = :workOrderId
+            ORDER BY CreatedDate DESC LIMIT 1
+        ];
+        if (sas.isEmpty()) {
+            return false;
+        }
+        Id saId = sas[0].Id;
+
+        List<AssignedResource> existing = [
+            SELECT Id FROM AssignedResource
+            WHERE ServiceAppointmentId = :saId
+              AND ServiceResourceId = :serviceResourceId
+            LIMIT 1
+        ];
+        if (!existing.isEmpty()) {
+            return true;
+        }
+
+        insert new AssignedResource(
+            ServiceAppointmentId = saId,
+            ServiceResourceId = serviceResourceId
+        );
+        return true;
     }
 
     private static Boolean shouldPromoteStage(String currentStage) {
@@ -94,5 +137,6 @@ public with sharing class T5DispatchAssignController {
         @AuraEnabled public Boolean stagePromoted;
         @AuraEnabled public String caseNumber;
         @AuraEnabled public String caseSubject;
+        @AuraEnabled public Boolean fsmAssigned;
     }
 }

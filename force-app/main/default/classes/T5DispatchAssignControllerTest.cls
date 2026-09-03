@@ -65,6 +65,23 @@ private class T5DispatchAssignControllerTest {
     }
 
     @IsTest
+    static void confirmAssignment_fsmSkippedWhenNoServiceAppointment() {
+        Account a = new Account(Name = 'T5-37 FSM T1');
+        insert a;
+        Case c = new Case(Subject = 'T5-37 FSM T1', AccountId = a.Id, Stage__c = '1 진단·브리핑');
+        insert c;
+        WorkOrder wo = new WorkOrder(CaseId = c.Id, AccountId = a.Id, Subject = 'WO T5-37', Status = 'New');
+        insert wo;
+
+        Test.startTest();
+        T5DispatchAssignController.AssignResult r =
+            T5DispatchAssignController.confirmAssignment(c.Id, 'Kang_Sikong');
+        Test.stopTest();
+
+        System.assertEquals(false, r.fsmAssigned, 'SA 없으면 FSM 배정 스킵');
+    }
+
+    @IsTest
     static void confirmAssignment_doesNotDowngradeStage() {
         Account a = new Account(Name = 'T5-36 T4');
         insert a;

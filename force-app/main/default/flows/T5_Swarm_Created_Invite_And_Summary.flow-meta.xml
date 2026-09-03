@@ -90,6 +90,22 @@
             </value>
         </assignmentItems>
         <connector>
+            <targetReference>Get_WorkOrder</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Add_WO_Owner</name>
+        <label>WorkOrder 소유자(=배정 담당자) 초대 대상 추가</label>
+        <locationX>176</locationX>
+        <locationY>464</locationY>
+        <assignmentItems>
+            <assignToReference>inviteUserIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Get_WorkOrder.OwnerId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
             <targetReference>Loop_Resources</targetReference>
         </connector>
     </assignments>
@@ -231,6 +247,32 @@
         <queriedFields>Id</queriedFields>
         <queriedFields>Name</queriedFields>
         <queriedFields>Site_Location__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_WorkOrder</name>
+        <label>WorkOrder 조회 (배정 담당자)</label>
+        <locationX>176</locationX>
+        <locationY>410</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_WO_Owner</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>CaseId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Case.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>OwnerId</queriedFields>
+        <queriedFields>WorkOrderNumber</queriedFields>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
