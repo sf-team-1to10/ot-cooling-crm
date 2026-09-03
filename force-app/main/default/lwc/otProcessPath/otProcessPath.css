@@ -1,0 +1,125 @@
+:host {
+    --path-bg: #ffffff;
+    --path-border: #e5e5e5;
+    --path-text-pending: #747474;
+    --path-text-current: #181818;
+    --path-text-done: #181818;
+    --path-icon-pending-bg: #ffffff;
+    --path-icon-pending-border: #c9c9c9;
+    --path-icon-pending-text: #747474;
+    --path-icon-current-bg: #181818;
+    --path-icon-current-text: #ffffff;
+    --path-icon-done-bg: #444444;
+    --path-icon-done-text: #ffffff;
+    --path-connector: #dddbda;
+    display: block;
+}
+
+.path {
+    background: var(--path-bg);
+    border: 1px solid var(--path-border);
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+}
+
+.path__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    overflow-x: auto;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1 1 0;
+    min-width: 0;
+    position: relative;
+    padding-right: 0.5rem;
+}
+
+/* connector line between steps */
+.step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -0.25rem;
+    width: 0.5rem;
+    height: 1px;
+    background: var(--path-connector);
+}
+
+.step__icon {
+    flex: 0 0 auto;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.step__label {
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.01em;
+}
+
+/* pending */
+.step--pending .step__icon {
+    background: var(--path-icon-pending-bg);
+    color: var(--path-icon-pending-text);
+    border: 1px solid var(--path-icon-pending-border);
+}
+.step--pending .step__label {
+    color: var(--path-text-pending);
+    font-weight: 400;
+}
+
+/* current — 무채색 강조 (검정 원 + bold 텍스트) */
+.step--current .step__icon {
+    background: var(--path-icon-current-bg);
+    color: var(--path-icon-current-text);
+    border: 1px solid var(--path-icon-current-bg);
+    box-shadow: 0 0 0 3px rgba(24, 24, 24, 0.08);
+}
+.step--current .step__label {
+    color: var(--path-text-current);
+    font-weight: 700;
+}
+
+/* done — 짙은 회색 원 + 체크 */
+.step--done .step__icon {
+    background: var(--path-icon-done-bg);
+    color: var(--path-icon-done-text);
+    border: 1px solid var(--path-icon-done-bg);
+}
+.step--done .step__label {
+    color: var(--path-text-done);
+    font-weight: 500;
+}
+.step--done:not(:last-child)::after {
+    background: var(--path-icon-done-bg);
+}
+
+@media (max-width: 768px) {
+    .step__label {
+        display: none;
+    }
+    .step--current .step__label {
+        display: inline;
+    }
+}

@@ -1,41 +1,115 @@
 :host {
-  --ot-c-brand: #0176d3;
-  --ot-c-brand-strong: #014486;
-  --ot-c-brand-soft: #eaf2fb;
-  --ot-c-success: #2e844a;
-  --ot-c-warning: #b46f00;
-  --ot-c-danger: #ba0517;
-  --ot-c-info: #005fb2;
-  --ot-c-bg: #ffffff;
-  --ot-c-bg-alt: #f3f3f3;
-  --ot-c-bg-shade: #f4f6f9;
-  --ot-c-border: #dddbda;
-  --ot-c-text: #181818;
-  --ot-c-text-weak: #444444;
-  --ot-c-text-muted: #706e6b;
+    --card-bg: #ffffff;
+    --card-border: #e5e5e5;
+    --card-head-border: #ececec;
+    --text-primary: #181818;
+    --text-secondary: #444444;
+    --text-muted: #706e6b;
+    --chip-pos-bg: #f0f7f2;
+    --chip-pos-text: #2e844a;
+    --chip-pos-border: #cde4d4;
+    --chip-neg-bg: #fbf0f0;
+    --chip-neg-text: #ba0517;
+    --chip-neg-border: #f0cfcf;
+    display: block;
 }
 
-/* label/value 2열 그리드 — 값 시작 위치를 일정하게 정렬 */
-.kv {
+.intake {
     display: grid;
-    grid-template-columns: 8rem 1fr;
-    column-gap: var(--slds-g-spacing-medium, 1rem);
-    row-gap: var(--slds-g-spacing-x-small, 0.5rem);
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 0.75rem;
+}
+
+@media (max-width: 900px) {
+    .intake {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.card__head {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--card-head-border);
+}
+
+.card__title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.card__body {
+    padding: 0.75rem 1rem 1rem;
+    flex: 1;
+}
+
+.kv {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.kv-row {
+    display: grid;
+    grid-template-columns: 7.5rem 1fr;
+    column-gap: 1rem;
     align-items: start;
 }
 
-.kv .slds-item_label {
-    width: auto;
-    color: var(--slds-g-color-neutral-base-30, #5c5c5c);
+.kv-row dt {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.5;
 }
 
-.kv .slds-item_detail {
-    width: auto;
+.kv-row dd {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
     font-weight: 500;
+    line-height: 1.5;
+    min-width: 0;
+    word-break: keep-all;
 }
 
-
-/* 숫자값 정렬 */
 .num {
     font-variant-numeric: tabular-nums;
+}
+
+/* 무채색 계열 chip — 상태 표현만 최소 채도 */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    border: 1px solid transparent;
+    letter-spacing: 0.01em;
+}
+
+.chip--pos {
+    background: var(--chip-pos-bg);
+    color: var(--chip-pos-text);
+    border-color: var(--chip-pos-border);
+}
+
+.chip--neg {
+    background: var(--chip-neg-bg);
+    color: var(--chip-neg-text);
+    border-color: var(--chip-neg-border);
 }
