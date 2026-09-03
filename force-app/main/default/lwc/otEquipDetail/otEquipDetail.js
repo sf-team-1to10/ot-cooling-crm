@@ -2,6 +2,11 @@ import { LightningElement, api, wire, track } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
 import setAssetContextFromLwc from '@salesforce/apex/T5SetAssetContextService.setAssetContextFromLwc';
+import gallery01 from '@salesforce/resourceUrl/OT_CDU_Gallery_01';
+import gallery02 from '@salesforce/resourceUrl/OT_CDU_Gallery_02';
+import gallery03 from '@salesforce/resourceUrl/OT_CDU_Gallery_03';
+import gallery04 from '@salesforce/resourceUrl/OT_CDU_Gallery_04';
+import gallery05 from '@salesforce/resourceUrl/OT_CDU_Gallery_05';
 
 const METRICS = {
     flow: { label:'CHW Flow', unit:'L/min', from:105, to:71, band:[95,115], vmin:60, vmax:125, interp:'냉수 유량은 기준선 하한보다 낮은 상태로 관찰되고 있으며, 상세 이력과 함께 확인이 필요합니다.' },
@@ -124,11 +129,11 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     // Gallery
     get galleryImages() {
         return [
-            { cap:'3/4 스튜디오 뷰', badge:'대표 이미지' },
-            { cap:'정면 뷰', badge:'' },
-            { cap:'도어 오픈 · 내부 배관', badge:'' },
-            { cap:'후면 배관 인터페이스', badge:'' },
-            { cap:'설치 현장', badge:'' }
+            { url: gallery01, cap:'3/4 스튜디오 뷰', badge:'대표 이미지' },
+            { url: gallery02, cap:'정면 뷰', badge:'' },
+            { url: gallery03, cap:'점검부 개방 · 내부 배관', badge:'' },
+            { url: gallery04, cap:'후면 배관 인터페이스', badge:'' },
+            { url: gallery05, cap:'설치 현장', badge:'' }
         ];
     }
     get currentImage() { return this.galleryImages[this.galIdx]; }
