@@ -1,0 +1,117 @@
+<template>
+    <div class="overview">
+
+        <!-- 로딩 상태 -->
+        <template lwc:if={isLoading}>
+            <div class="loading-msg">불러오는 중…</div>
+        </template>
+
+        <template lwc:else>
+
+            <!-- KPI 카드 행 -->
+            <section class="kpi-row">
+                <div class="kpi-card">
+                    <div class="kpi-value">{summary.totalAssets}</div>
+                    <div class="kpi-label">전체 자산</div>
+                    <div class="kpi-unit">대</div>
+                </div>
+                <div class="kpi-card kpi-card--attention">
+                    <div class="kpi-value">{summary.attentionAssets}</div>
+                    <div class="kpi-label">이상 장비</div>
+                    <div class="kpi-unit">대</div>
+                </div>
+                <div class="kpi-card kpi-card--alert">
+                    <div class="kpi-value">{summary.unacknowledgedAlerts}</div>
+                    <div class="kpi-label">미조치 알림</div>
+                    <div class="kpi-unit">건</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-value">{summary.openCases}</div>
+                    <div class="kpi-label">오픈 케이스</div>
+                    <div class="kpi-unit">건</div>
+                </div>
+            </section>
+
+            <!-- 도넛 + 최근 알림 -->
+            <section class="middle-row">
+
+                <!-- 장비 상태 도넛 차트 -->
+                <div class="panel donut-panel">
+                    <h2 class="panel-title">장비 상태</h2>
+                    <div class="donut-wrap">
+                        <svg class="donut-svg" viewBox="0 0 128 128">
+                            <!-- 배경 트랙 -->
+                            <circle cx="64" cy="64" r="54" class="donut-track"/>
+                            <!-- 정상 (cyan) -->
+                            <circle cx="64" cy="64" r="54"
+                                class="donut-seg donut-seg--normal"
+                                stroke-dasharray={normalDash}
+                                stroke-dashoffset="0"/>
+                            <!-- 주의 (orange) -->
+                            <circle cx="64" cy="64" r="54"
+                                class="donut-seg donut-seg--warning"
+                                stroke-dasharray={warningDash}
+                                stroke-dashoffset={warningOffset}/>
+                            <!-- 이상 (red) -->
+                            <circle cx="64" cy="64" r="54"
+                                class="donut-seg donut-seg--critical"
+                                stroke-dasharray={criticalDash}
+                                stroke-dashoffset={criticalOffset}/>
+                        </svg>
+                        <div class="donut-center">
+                            <div class="donut-total">{totalAssetCount}</div>
+                            <div class="donut-total-label">전체</div>
+                        </div>
+                    </div>
+                    <ul class="donut-legend">
+                        <li><span class="dot dot--normal"></span>정상 <strong>{normalCount}</strong></li>
+                        <li><span class="dot dot--warning"></span>주의 <strong>{warningCount}</strong></li>
+                        <li><span class="dot dot--critical"></span>이상 <strong>{criticalCount}</strong></li>
+                        <template lwc:if={unknownCount}>
+                            <li><span class="dot dot--unknown"></span>미측정 <strong>{unknownCount}</strong></li>
+                        </template>
+                    </ul>
+                    <button class="link-btn" onclick={handleGoAssets}>전체 자산 보기 →</button>
+                </div>
+
+                <!-- 최근 알림 테이블 -->
+                <div class="panel alert-panel">
+                    <h2 class="panel-title">최근 알림</h2>
+                    <template lwc:if={hasAlerts}>
+                        <table class="alert-table">
+                            <thead>
+                                <tr>
+                                    <th>시각</th>
+                                    <th>우선순위</th>
+                                    <th>자산</th>
+                                    <th>내용</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={alerts} for:item="alert">
+                                    <tr key={alert.alertId}>
+                                        <td class="alert-time">{alert.startedAtFormatted}</td>
+                                        <td>
+                                            <c-ot-status-badge
+                                                label={alert.priority}
+                                                variant={alert.priorityVariant}
+                                            ></c-ot-status-badge>
+                                        </td>
+                                        <td class="alert-asset">{alert.assetName}</td>
+                                        <td class="alert-msg">{alert.message}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template lwc:else>
+                        <div class="empty-msg">최근 알림이 없습니다.</div>
+                    </template>
+                    <button class="link-btn" onclick={handleGoAlerts}>전체 알림 보기 →</button>
+                </div>
+
+            </section>
+
+        </template>
+    </div>
+</template>
