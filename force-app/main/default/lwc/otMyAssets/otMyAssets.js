@@ -45,13 +45,19 @@ export default class OtMyAssets extends LightningElement {
     // 같은 신호를 쓰도록 통일).
     get decoratedAssets() {
         return this.assets.map((a) => {
-            const attention =
-                a.trendFlag === '주의' || a.trendFlag === '이상';
+            const isCritical = a.trendFlag === '이상';
+            const isWarning = a.trendFlag === '주의';
+            const attention = isCritical || isWarning;
+            const badgeVariant = isCritical ? 'critical' : isWarning ? 'warning' : 'success';
+            const statusLabel = isCritical ? '이상' : isWarning ? '주의' : '정상';
+            const accentClass = isCritical ? 'ac-accent critical' : isWarning ? 'ac-accent warning' : 'ac-accent success';
             return {
                 ...a,
                 attention,
-                statusText: attention ? '● 주의' : '● 정상',
-                statusClass: attention ? 'st warn' : 'st ok',
+                badgeVariant,
+                statusLabel,
+                accentClass,
+                cardClass: 'asset-card',
                 subline: this.buildSubline(a)
             };
         });

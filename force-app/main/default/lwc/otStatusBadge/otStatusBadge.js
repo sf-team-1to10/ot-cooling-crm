@@ -15,6 +15,7 @@ export default class OtStatusBadge extends LightningElement {
             critical: 'ot-badge ot-badge--critical',
             warning:  'ot-badge ot-badge--warning',
             success:  'ot-badge ot-badge--success',
+            ok:       'ot-badge ot-badge--success',
             info:     'ot-badge ot-badge--info',
             neutral:  'ot-badge ot-badge--neutral'
         };

@@ -13,23 +13,9 @@ import COOLBIT_CLEAR from '@salesforce/resourceUrl/OT_Coolbit_Clear';
 
 const PAGE_SIZE = 7;
 
-/**
- * T5-07 — 2026-08-31: 하드코딩된 16개 데모 자산 목록/건강점수/알람을
- * 실제 OTEquipDashboardController Apex 호출로 교체(사용자 요청 — 기존
- * otEquipDetail/otEquipDashboard가 Apex를 전혀 호출 안 하고 있던 걸 발견,
- * T5_트랙A_작업기록.md·T5_서비스에이전트_작업기록.md 참고).
- *
- * 목록·KPI는 getEquipmentDashboard()로 완전히 실데이터화됨. 선택된 자산의
- * 게이지·트렌드는 getEquipmentDetail()이 돌려주는 gaugesJson(Asset.
- * Latest_Gauges_JSON__c — T5SyncAssetTrendSummary가 WOLI 변경마다 갱신해둔
- * OtTrendAlertCardController.GaugeView 스냅샷)을 파싱해서 채운다. org에
- * 실제 WOLI 이력이 있는 건 CDU-A-07뿐이라(T5-06 시딩), 다른 자산은 게이지
- * 데이터가 비어있는 게 정상이며 그 경우 "데이터 없음"으로 정직하게 표시한다.
- *
- * 건강점수(health)·알람 이력(alarms)은 Apex에 아직 그 데이터 모델 자체가
- * 없어서(백엔드 신규 개발 필요, "기존 컨트롤러 연결"의 범위를 넘음) 이번
- * 작업에서는 손대지 않음 — 후속 작업으로 트래커에 남겨둘 것.
- */
+// 상태 정렬 우선순위: critical(0) > warning(1) > ok(2)
+const STATE_RANK = { critical: 0, warning: 1, ok: 2 };
+
 export default class OtEquipDashboard extends NavigationMixin(LightningElement) {
     @track assets = [];
     @track selectedId = null;
@@ -38,15 +24,14 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     @track modalOpen = false;
     @track kpis = { totalAssets: 0, normalCount: 0, advisoryCount: 0, maintenanceScheduledCount: 0 };
     @track location = { customerName: '', siteName: '마이클라우드 데이터센터', hall: 'Hall A' };
-    @track selDetail = null; // getEquipmentDetail() 결과 (선택된 자산)
-    @track selGauges = [];   // gaugesJson 파싱 결과
-    @track selAlarms = [];   // 최근 알람 목록
+    @track selDetail = null;
+    @track selGauges = [];
+    @track selAlarms = [];
 
-    // 항목 7: 탭/필터 상태
     @track activeTopTab = '전체';
-    @track filterType = '';   // '', 'CDU', 'CX', 'CX-Plant'
-    @track filterState = '';  // '', 'adv', 'ok'
-
+    @track filterType = '';
+    @track filterState = '';
+    @track openDropdown = null; // 'type' | 'state' | null
 
     @wire(getEquipmentDashboard)
     wiredDashboard({ data, error }) {
@@ -68,10 +53,10 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             stateLabel: a.stateLabel,
             alarms: []
         }));
-        // 이상·주의 항목을 1페이지 상단으로 강제 정렬
         this.assets = mapped.sort((a, b) => {
-            const rank = s => (s === 'adv' ? 0 : 1);
-            if (rank(a.stateCode) !== rank(b.stateCode)) return rank(a.stateCode) - rank(b.stateCode);
+            const ra = STATE_RANK[a.stateCode] ?? 2;
+            const rb = STATE_RANK[b.stateCode] ?? 2;
+            if (ra !== rb) return ra - rb;
             return (a.displayName || '').localeCompare(b.displayName || '', 'ko');
         });
         if (!this.selectedId && this.assets.length > 0) {
@@ -115,7 +100,6 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             .catch(() => {});
     }
 
-    // 항목 4: 알람 로드 (데이터 없으면 데모)
     loadAlerts(assetId) {
         if (!assetId) return;
         getAlerts({ assetId })
@@ -153,11 +137,11 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         }
     }
 
-    // 항목 7: 필터/탭 적용된 자산 목록
+    // ── 필터링된 기본 목록 (탭·필터·검색 모두 반영) ──────────────────────
     get filteredAssets() {
         let list = this.assets;
         if (this.filterType) {
-            list = list.filter(a => (a.name || '').toUpperCase().startsWith(this.filterType.toUpperCase()));
+            list = list.filter(a => a.family === this.filterType);
         }
         if (this.filterState) {
             list = list.filter(a => a.stateCode === this.filterState);
@@ -174,33 +158,71 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         return list;
     }
 
+    // ── 탭이 전체일 때: 페이지네이션 목록 ───────────────────────────────
     get totalPages() { return Math.max(1, Math.ceil(this.filteredAssets.length / PAGE_SIZE)); }
 
-    // 항목 2: pageItems에 thumbUrl 추가
     get pageItems() {
         const start = (this.currentPage - 1) * PAGE_SIZE;
-        return this.filteredAssets.slice(start, start + PAGE_SIZE).map(a => {
-            const upper = (a.name || '').toUpperCase();
-            let thumbUrl;
-            if (upper === 'CDU-A-07') {
-                thumbUrl = CDU_A07_IMG;
-            } else if (upper.startsWith('CDU')) {
-                thumbUrl = CDU_IMG;
-            } else if (upper.startsWith('CX')) {
-                thumbUrl = CX_IMG;
-            } else if (upper.startsWith('CA') || upper.includes('CRAH')) {
-                thumbUrl = CRAH_IMG;
-            } else {
-                thumbUrl = CDU_IMG;
-            }
-            return {
-                ...a,
-                thumbUrl,
-                rowClass: a.id === this.selectedId ? 'eqrow on' : 'eqrow',
-                chipVariant: a.stateCode === 'adv' ? 'adv' : 'ok',
-                chipLabel: a.stateCode === 'adv' ? '주의' : '정상'
-            };
-        });
+        return this.filteredAssets.slice(start, start + PAGE_SIZE).map(a => this._decorateAsset(a));
+    }
+
+    // ── 탭이 유형별/상태별일 때: 그룹 뷰 ────────────────────────────────
+    get isGroupView() { return this.activeTopTab !== '전체'; }
+
+    get groupedItems() {
+        const list = this.filteredAssets;
+        const groups = [];
+
+        if (this.activeTopTab === '유형별') {
+            const order = [...new Set(list.map(a => a.family || '기타'))];
+            order.forEach(key => {
+                const items = list.filter(a => (a.family || '기타') === key).map(a => this._decorateAsset(a));
+                if (items.length > 0) {
+                    groups.push({ key, label: key || '기타', items });
+                }
+            });
+        } else if (this.activeTopTab === '상태별') {
+            const stateMeta = [
+                { key: 'critical', label: '이상' },
+                { key: 'warning',  label: '주의' },
+                { key: 'ok',       label: '정상' }
+            ];
+            stateMeta.forEach(({ key, label }) => {
+                const items = list.filter(a => a.stateCode === key).map(a => this._decorateAsset(a));
+                if (items.length > 0) {
+                    groups.push({ key, label, items });
+                }
+            });
+        }
+        return groups;
+    }
+
+    _decorateAsset(a) {
+        const upper = (a.name || '').toUpperCase();
+        let thumbUrl;
+        if (upper === 'CDU-A-07') {
+            thumbUrl = CDU_A07_IMG;
+        } else if (upper.startsWith('CDU')) {
+            thumbUrl = CDU_IMG;
+        } else if (upper.startsWith('CX')) {
+            thumbUrl = CX_IMG;
+        } else if (upper.startsWith('CA') || upper.includes('CRAH')) {
+            thumbUrl = CRAH_IMG;
+        } else {
+            thumbUrl = CDU_IMG;
+        }
+        let chipVariant;
+        if (a.stateCode === 'critical') chipVariant = 'critical';
+        else if (a.stateCode === 'warning') chipVariant = 'warning';
+        else chipVariant = 'success';
+
+        return {
+            ...a,
+            thumbUrl,
+            rowClass: a.id === this.selectedId ? 'eqrow on' : 'eqrow',
+            chipVariant,
+            chipLabel: a.stateLabel || '정상'
+        };
     }
 
     get pagerButtons() {
@@ -213,6 +235,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get prevDisabled() { return this.currentPage <= 1; }
     get nextDisabled() { return this.currentPage >= this.totalPages; }
 
+    // ── 선택된 장비 ──────────────────────────────────────────────────────
     get sel() {
         const base = this.assets.find(a => a.id === this.selectedId) || this.assets[0] || {};
         const g = this.primaryGauge;
@@ -227,28 +250,40 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         };
     }
 
-    // sel.assess가 assessHeadline/assessDesc를 참조하고, 그것들은 isAdvisory를
-    // 참조하므로 isAdvisory가 sel을 거치면 무한 재귀가 된다 — 원본 목록에서
-    // 직접 찾는다.
-    get isAdvisory() {
-        const base = this.assets.find(a => a.id === this.selectedId) || this.assets[0];
-        return !!base && base.stateCode === 'adv';
-    }
-    get assessStyle() {
-        return this.isAdvisory ? 'assess adv-border' : 'assess ok-border';
-    }
-    get assessIconStyle() {
-        return this.isAdvisory ? 'ttl adv-color' : 'ttl ok-color';
+    get _selectedBase() {
+        return this.assets.find(a => a.id === this.selectedId) || this.assets[0];
     }
 
-    // 게이지 배열에서 CHW Flow(유량) 항목을 우선 찾고, 없으면 첫 항목을 쓴다.
+    get isCritical() {
+        return !!this._selectedBase && this._selectedBase.stateCode === 'critical';
+    }
+    get isWarning() {
+        return !!this._selectedBase && this._selectedBase.stateCode === 'warning';
+    }
+    get isAdvisory() {
+        return this.isCritical || this.isWarning;
+    }
+    get isNormal() {
+        return !this.isAdvisory;
+    }
+
+    get assessStyle() {
+        if (this.isCritical) return 'assess crit-border';
+        if (this.isWarning)  return 'assess adv-border';
+        return 'assess ok-border';
+    }
+    get assessIconStyle() {
+        if (this.isCritical) return 'ttl crit-color';
+        if (this.isWarning)  return 'ttl adv-color';
+        return 'ttl ok-color';
+    }
+
     get primaryGauge() {
         if (!this.selGauges || this.selGauges.length === 0) return null;
         return this.selGauges.find(g => /flow/i.test(g.measurementItemCode || '')) || this.selGauges[0];
     }
     get hasGaugeData() { return !!this.primaryGauge; }
 
-    // 항목 1: 게이지 아크 SVG
     get gaugeArcSvg() {
         const g = this.primaryGauge;
         if (!g) {
@@ -260,12 +295,9 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         const cur = g.currentValue || 0;
         const base = g.baselineValue || g.previousValue || 1;
         const ratio = Math.min(Math.max(cur / base, 0), 1);
-        const isAdv = this.isAdvisory;
-        const color = isAdv ? '#f57c00' : '#16b8c8';
-        // 반원 아크: 좌(10,70) → 우(110,70), 반지름 50
+        const color = this.isCritical ? '#C43D4B' : (this.isWarning ? '#C87913' : '#16b8c8');
         const cx = 60, cy = 70, r = 50;
-        const startAngle = Math.PI; // 왼쪽
-        const endFull = 0;          // 오른쪽
+        const startAngle = Math.PI;
         const endAngle = startAngle - ratio * Math.PI;
         const x1 = cx + r * Math.cos(startAngle);
         const y1 = cy + r * Math.sin(startAngle);
@@ -287,7 +319,6 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             `</svg>`;
     }
 
-    // Asset에 직접 첨부된 파일이 있으면 우선, 없으면 이름 패턴으로 Static Resource 매핑
     get selImageUrl() {
         if (this.selDetail && this.selDetail.imageUrl) return this.selDetail.imageUrl;
         const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
@@ -300,7 +331,6 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get hasSelImage() { return true; }
     get coolbitStatusUrl() { return this.isAdvisory ? COOLBIT_ALERT : COOLBIT_CLEAR; }
 
-    // 이미지 로드 실패 시 (포털 권한 없는 첨부파일 URL) → Static Resource로 폴백
     handleImageError(event) {
         const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
         if (name === 'CDU-A-07') {
@@ -317,21 +347,27 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
 
     get assessHeadline() {
         if (!this.selDetail) return '';
-        return this.isAdvisory ? '기준선 대비 이상 감지' : '정상 운전 중';
+        if (this.isCritical) return '심각한 이상 감지';
+        if (this.isWarning)  return '기준선 대비 이상 감지';
+        return '정상 운전 중';
     }
     get assessDesc() {
         const g = this.primaryGauge;
         if (!g) return '이 자산은 아직 실측 게이지 데이터가 없습니다.';
-        return this.isAdvisory
-            ? `${g.measurementItemCode}이(가) 기준선 대비 벗어난 상태로 관찰되고 있습니다.`
-            : '모든 지표가 기준선 범위 내에서 안정적으로 관찰되고 있습니다.';
+        if (this.isAdvisory) {
+            return `${g.measurementItemCode}이(가) 기준선 대비 벗어난 상태로 관찰되고 있습니다.`;
+        }
+        return '모든 지표가 기준선 범위 내에서 안정적으로 관찰되고 있습니다.';
     }
 
     get keyItems() {
         const g = this.primaryGauge;
         const d = this.selDetail;
+        let valCls = 'ki-val ok-text';
+        if (this.isCritical) valCls = 'ki-val crit-text';
+        else if (this.isWarning) valCls = 'ki-val warn-text';
         return [
-            { label: '자산 상태', value: d ? d.stateLabel : '—', cls: this.isAdvisory ? 'ki-val warn-text' : 'ki-val ok-text' },
+            { label: '자산 상태', value: d ? d.stateLabel : '—', cls: valCls },
             { label: g ? g.measurementItemCode : 'CHW Flow', value: g ? `${g.currentValue}` : '데이터 없음', cls: this.isAdvisory ? 'ki-val warn-mono' : 'ki-val mono' },
             { label: '직전 측정값', value: g ? `${g.previousValue}` : '—', cls: 'ki-val mono' },
             { label: '보증', value: d ? (d.warrantyType || '정보 없음') : '—', cls: 'ki-val' },
@@ -340,7 +376,6 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         ];
     }
 
-    // SVG trend chart — primaryGauge의 sparklineValues(실측)를 쓴다. 없으면 빈 상태.
     get trendSvg() {
         const g = this.primaryGauge;
         if (!g || !g.sparklineValues || g.sparklineValues.length < 2) {
@@ -371,15 +406,21 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         return g ? `${g.measurementItemCode} · 최근 ${g.sparklineValues ? g.sparklineValues.length : 0}건 실측 추이` : '실측 데이터 없음';
     }
 
-    // Health donut — 백엔드에 건강점수 산정 로직이 아직 없어 임시로 상태
-    // 기반 근사치만 표시(후속 작업 필요, T5_후속작업트래커.md에 기록).
-    get healthScore() { return this.isAdvisory ? 70 : 95; }
-    get healthLabel() { return this.isAdvisory ? '관찰 필요' : '양호'; }
+    get healthScore() {
+        if (this.isCritical) return 50;
+        if (this.isWarning)  return 70;
+        return 95;
+    }
+    get healthLabel() {
+        if (this.isCritical) return '위험';
+        if (this.isWarning)  return '관찰 필요';
+        return '양호';
+    }
     get healthSubs() { return []; }
     get donutSvg() {
         const score = this.healthScore;
         const r = 34, c = 2 * Math.PI * r, off = c * (1 - score / 100);
-        const col = score >= 90 ? '#4caf50' : (score >= 80 ? '#f57c00' : '#d32f2f');
+        const col = score >= 90 ? '#2E8B57' : (score >= 80 ? '#C87913' : '#C43D4B');
         return `<svg viewBox="0 0 88 88" style="width:88px;height:88px">` +
             `<circle cx="44" cy="44" r="${r}" fill="none" stroke="#e9e9ea" stroke-width="9"/>` +
             `<circle cx="44" cy="44" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" ` +
@@ -387,30 +428,52 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             `</svg>`;
     }
 
-    // KPIs — 전부 getEquipmentDashboard()의 실측 KPI
+    // ── KPI ─────────────────────────────────────────────────────────────
     get kpiTotal() { return this.kpis.totalAssets; }
     get kpiNormal() { return this.kpis.normalCount; }
     get kpiAdvisory() { return this.kpis.advisoryCount; }
     get kpiMaintenance() { return this.kpis.maintenanceScheduledCount; }
 
-    get isNormal() { return this.sel.stateCode !== 'adv'; }
+    // ── 탭 버튼 클래스 ──────────────────────────────────────────────────
+    get tabAllClass()   { return this.activeTopTab === '전체'  ? 't on' : 't'; }
+    get tabTypeClass()  { return this.activeTopTab === '유형별' ? 't on' : 't'; }
+    get tabStateClass() { return this.activeTopTab === '상태별' ? 't on' : 't'; }
 
-    // 항목 7: 탭 버튼 클래스
-    get tabAllClass()    { return this.activeTopTab === '전체' ? 't on' : 't'; }
-    get tabTypeClass()   { return this.activeTopTab === '유형별' ? 't on' : 't'; }
-    get tabStateClass()  { return this.activeTopTab === '상태별' ? 't on' : 't'; }
+    // ── 필터 드롭다운 옵션 ───────────────────────────────────────────────
+    get typeOptions() {
+        const families = [...new Set(this.assets.map(a => a.family).filter(Boolean))].sort();
+        return [
+            { value: '', label: '전체 장비 유형', cls: this.filterType === '' ? 'dd-opt on' : 'dd-opt' },
+            ...families.map(f => ({ value: f, label: f, cls: this.filterType === f ? 'dd-opt on' : 'dd-opt' }))
+        ];
+    }
 
-    // 항목 7: 필터 레이블 getter
+    get stateOptions() {
+        return [
+            { value: '',         label: '전체 상태', cls: this.filterState === ''         ? 'dd-opt on' : 'dd-opt' },
+            { value: 'critical', label: '이상',      cls: this.filterState === 'critical' ? 'dd-opt on' : 'dd-opt' },
+            { value: 'warning',  label: '주의',      cls: this.filterState === 'warning'  ? 'dd-opt on' : 'dd-opt' },
+            { value: 'ok',       label: '정상',      cls: this.filterState === 'ok'       ? 'dd-opt on' : 'dd-opt' }
+        ];
+    }
+
     get filterTypeLabel() {
         return this.filterType ? `유형: ${this.filterType}` : '전체 장비 유형';
     }
     get filterStateLabel() {
-        if (this.filterState === 'adv') return '상태: 주의';
-        if (this.filterState === 'ok') return '상태: 정상';
+        if (this.filterState === 'critical') return '상태: 이상';
+        if (this.filterState === 'warning')  return '상태: 주의';
+        if (this.filterState === 'ok')       return '상태: 정상';
         return '전체 상태';
     }
 
-    // Handlers
+    get isTypeDropOpen()  { return this.openDropdown === 'type'; }
+    get isStateDropOpen() { return this.openDropdown === 'state'; }
+
+    get typeBtnClass()  { return this.isTypeDropOpen  ? 'sel sel--open' : 'sel'; }
+    get stateBtnClass() { return this.isStateDropOpen ? 'sel sel--open' : 'sel'; }
+
+    // ── 핸들러 ──────────────────────────────────────────────────────────
     handleSelectAsset(event) {
         const id = event.currentTarget.dataset.id;
         if (id === this.selectedId) return;
@@ -422,6 +485,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             this.loadAlerts(this.selectedId);
         }, 150);
     }
+
     handlePrevPage() { if (this.currentPage > 1) this.currentPage--; }
     handleNextPage() { if (this.currentPage < this.totalPages) this.currentPage++; }
     handlePage(event) { this.currentPage = parseInt(event.currentTarget.dataset.num, 10); }
@@ -430,21 +494,53 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         this.currentPage = 1;
     }
 
-    // 항목 7: 탭/필터 핸들러
     handleTopTab(event) {
         this.activeTopTab = event.currentTarget.dataset.tab;
         this.currentPage = 1;
     }
-    handleFilterType() {
-        const cycle = ['', 'CDU', 'CX', 'CX-Plant'];
-        const idx = cycle.indexOf(this.filterType);
-        this.filterType = cycle[(idx + 1) % cycle.length];
+
+    // 드롭다운 토글
+    handleToggleTypeDropdown(event) {
+        event.stopPropagation();
+        this.openDropdown = this.openDropdown === 'type' ? null : 'type';
+    }
+    handleToggleStateDropdown(event) {
+        event.stopPropagation();
+        this.openDropdown = this.openDropdown === 'state' ? null : 'state';
+    }
+
+    // 드롭다운 옵션 선택
+    handleSelectType(event) {
+        this.filterType = event.currentTarget.dataset.value;
+        this.openDropdown = null;
         this.currentPage = 1;
     }
-    handleFilterState() {
-        const cycle = ['', 'adv', 'ok'];
-        const idx = cycle.indexOf(this.filterState);
-        this.filterState = cycle[(idx + 1) % cycle.length];
+    handleSelectState(event) {
+        this.filterState = event.currentTarget.dataset.value;
+        this.openDropdown = null;
+        this.currentPage = 1;
+    }
+
+    // 드롭다운 목록 내부 클릭이 document로 버블링되지 않도록 차단
+    handleDropdownContainerClick(event) {
+        event.stopPropagation();
+    }
+
+    // KPI 카드 클릭
+    handleKpiTotal() {
+        this.filterType  = '';
+        this.filterState = '';
+        this.activeTopTab = '전체';
+        this.currentPage = 1;
+    }
+    handleKpiNormal() {
+        this.filterState = 'ok';
+        this.openDropdown = null;
+        this.currentPage = 1;
+    }
+    handleKpiAdvisory() {
+        this.filterState = 'warning';
+        this.openDropdown = null;
         this.currentPage = 1;
     }
 
@@ -461,12 +557,20 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         this.handleGoDetail();
     }
 
-    // 사이드바 navigate 이벤트 — assistant 클릭 시 MIAW(Embedded Messaging) 실행
     handleNavigate(event) {
         const page = event.detail && event.detail.page;
         if (page === 'assistant') {
             document.dispatchEvent(new CustomEvent('ot_launch_chat', { detail: {} }));
         }
+    }
+
+    // document 클릭 시 열린 드롭다운 닫기
+    connectedCallback() {
+        this._docClickHandler = () => { this.openDropdown = null; };
+        document.addEventListener('click', this._docClickHandler);
+    }
+    disconnectedCallback() {
+        document.removeEventListener('click', this._docClickHandler);
     }
 
     renderedCallback() {
@@ -479,7 +583,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             donutEl.innerHTML = this.donutSvg;
         }
         const gaugeEl = this.template.querySelector('.gauge-container');
-        if (gaugeEl && this.isOverview) {
+        if (gaugeEl) {
             gaugeEl.innerHTML = this.gaugeArcSvg;
         }
     }

@@ -35,6 +35,7 @@ export default class OtReportFault extends LightningElement {
     isSaving = false;
     error;
     result; // CaseResult returned after save (company / contact / warranty).
+    copyButtonLabel = '복사';
 
     connectedCallback() {
         this.selectedId = this.assetId;
@@ -164,6 +165,34 @@ export default class OtReportFault extends LightningElement {
             return '';
         }
         return this.result.billable ? '유상' : '무상';
+    }
+
+    get billableVariant() {
+        if (!this.result) return 'neutral';
+        return this.result.billable ? 'warning' : 'success';
+    }
+
+    get warrantyVariant() {
+        if (!this.result?.warrantyDecision) return 'neutral';
+        const v = this.result.warrantyDecision;
+        if (v === '보증' || v === '보증내') return 'success';
+        if (v === '보증외' || v === '비보증') return 'critical';
+        return 'info';
+    }
+
+    async handleCopyCaseNumber() {
+        const num = this.result?.caseNumber;
+        if (!num) return;
+        try {
+            await navigator.clipboard.writeText(num);
+            this.copyButtonLabel = '복사됨 ✓';
+        } catch (_) {
+            this.copyButtonLabel = '복사 실패';
+        }
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        setTimeout(() => {
+            this.copyButtonLabel = '복사';
+        }, 2000);
     }
 
     handleSymptomChange(event) {

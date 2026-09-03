@@ -151,12 +151,14 @@ export default class OtTrendAlertCard extends LightningElement {
         return this.loaded && !this.trend && !this.error;
     }
 
-    get statusText() {
-        return this.trend?.needsAttention ? '● 주의' : '● 정상';
+    get statusVariant() {
+        if (this.trend?.trendFlag === '이상') return 'critical';
+        if (this.trend?.trendFlag === '주의') return 'warning';
+        return 'success';
     }
 
-    get statusClass() {
-        return this.trend?.needsAttention ? 'st warn' : 'st ok';
+    get statusLabel() {
+        return this.trend?.trendFlag || '정상';
     }
 
     get hasImage() {
