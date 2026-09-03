@@ -41,7 +41,6 @@
                         <span class="code">CHW FLOW LOW VS BASELINE</span>
                         <span class="msg">냉수 유량이 기준선보다 낮은 상태가 45분간 지속되고 있습니다.</span>
                         <span class="vals">현재값 71 L/min · 기준선 95–115 L/min</span>
-                        <span class="demo">데모 데이터</span>
                     </div>
 
                     <!-- Tabs -->
@@ -80,7 +79,7 @@
 
                             <!-- Current Condition -->
                             <div class="panel cc">
-                                <div class="panel-h"><h3>현재 상태</h3><span class="en">CURRENT CONDITION</span><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                                <div class="panel-h"><h3>현재 상태</h3><span class="en">CURRENT CONDITION</span></div>
                                 <div class="bd">
                                     <template for:each={conditionRows} for:item="row">
                                         <div key={row.label} class="cc-row">
@@ -98,7 +97,7 @@
                             <div class="panel-h"><h3>주요 운전 상태</h3><span class="en">KEY OPERATING CONDITION</span></div>
                             <div class="bd">
                                 <div class="delta">
-                                    <div class="delta-h"><span class="delta-title">냉수 유량 / CHW FLOW</span><span class="demo">데모 데이터</span></div>
+                                    <div class="delta-h"><span class="delta-title">냉수 유량 / CHW FLOW</span></div>
                                     <div class="delta-cols">
                                         <div class="dc"><div class="big">71<small> L/min</small></div><div class="lab">현재 측정값</div></div>
                                         <div class="dc"><div class="lab">정상 기준선</div><div class="ref">95–115 L/min</div></div>
@@ -136,7 +135,7 @@
                     <!-- TAB 2: 추세 분석 -->
                     <template lwc:if={isTrend}>
                         <div class="panel">
-                            <div class="panel-h"><h3>운전 추이 분석</h3><span class="en">PERFORMANCE TREND</span><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                            <div class="panel-h"><h3>운전 추이 분석</h3><span class="en">PERFORMANCE TREND</span></div>
                             <div class="bd">
                                 <div class="trendctl">
                                     <div class="seg">
@@ -208,7 +207,7 @@
                     <!-- TAB 4: 이력·문서 -->
                     <template lwc:if={isHistory}>
                         <div class="panel">
-                            <div class="panel-h"><h3>장비 이력</h3><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                            <div class="panel-h"><h3>장비 이력</h3></div>
                             <div class="bd">
                                 <div class="tl">
                                     <template for:each={timelineItems} for:item="item">
@@ -247,9 +246,6 @@
                         </div>
                     </template>
 
-                    <div class="demo-foot">
-                        ※ 프로토타입 · 모든 운영 수치·상태·추세·알림·이력은 데모 데이터입니다.
-                    </div>
                 </div>
             </div>
         </div>
@@ -278,7 +274,6 @@
             <div class="ctx-row"><span>현재값</span><b class="amber">71 L/min</b></div>
             <div class="ctx-row"><span>기준선</span><b>95–115 L/min</b></div>
             <div class="ctx-row"><span>현재 상태</span><b class="amber">P3 Advisory</b></div>
-            <span class="demo">데모 데이터</span>
         </div>
 
         <!-- T5-23 (2026-08-31 최종): MIAW가 이제 사이트 Head Markup에 직접
