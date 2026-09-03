@@ -1,0 +1,74 @@
+:host { display: block; }
+
+.card-container {
+    background: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2563eb;
+}
+
+.record-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.record-item:last-child { border-bottom: none; }
+
+.record-info { flex: 1; min-width: 0; }
+
+.record-name {
+    font-size: 0.875rem;
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.record-name:hover { text-decoration: underline; }
+
+.record-type {
+    font-size: 0.75rem;
+    color: #6b7280;
+    display: block;
+    margin-top: 0.125rem;
+}
+
+.card-footer {
+    padding-top: 0.75rem;
+    text-align: center;
+}
+
+.view-all {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #2563eb;
+    cursor: pointer;
+}
+
+.view-all:hover { text-decoration: underline; }
+
+.empty-msg {
+    text-align: center;
+    color: #9ca3af;
+    padding: 1.5rem;
+    font-size: 0.875rem;
+}

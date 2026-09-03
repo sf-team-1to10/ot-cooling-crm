@@ -1,0 +1,83 @@
+<template>
+    <div class="card-container">
+        <div class="card-header">
+            <lightning-icon icon-name="standard:forecasts" size="small"></lightning-icon>
+            <span class="card-title">분기 실적 현황</span>
+        </div>
+        <div class="card-body">
+            <!-- KPI + Donut row -->
+            <div class="kpi-donut-row">
+                <div class="kpi-section">
+                    <div class="kpi-item">
+                        <span class="kpi-label">Closed (분기 누적)</span>
+                        <span class="kpi-value">{closedFormatted}</span>
+                        <span class="kpi-sub green">목표 대비 {achievementPct}%</span>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">Open ( &gt;70% )</span>
+                        <span class="kpi-value">{openHighProbFormatted}</span>
+                        <span class="kpi-sub blue">진행률 {progressPct}%</span>
+                    </div>
+                    <div class="kpi-item">
+                        <span class="kpi-label">Goal (분기 목표)</span>
+                        <span class="kpi-value">{goalFormatted}</span>
+                        <span class="kpi-sub muted">남은 기간 {daysRemaining}일</span>
+                    </div>
+                </div>
+                <div class="donut-section">
+                    <svg viewBox="0 0 120 120" class="donut-chart">
+                        <circle cx="60" cy="60" r="50" fill="none" stroke="#e8e8e8" stroke-width="12"></circle>
+                        <circle cx="60" cy="60" r="50" fill="none" stroke="#2563eb" stroke-width="12"
+                            stroke-dasharray={donutDash} stroke-dashoffset="78.5"
+                            stroke-linecap="round" transform="rotate(-90 60 60)"></circle>
+                    </svg>
+                    <div class="donut-label">
+                        <span class="donut-pct">{achievementPct}%</span>
+                        <span class="donut-sub">달성률</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Monthly bar chart -->
+            <div class="chart-divider"></div>
+            <div class="monthly-section">
+                <span class="section-title">월별 실적 추이</span>
+                <div class="bar-chart-container">
+                    <!-- Y-axis labels -->
+                    <div class="y-axis">
+                        <span>300M</span>
+                        <span>200M</span>
+                        <span>100M</span>
+                        <span>0</span>
+                    </div>
+                    <!-- Grid + bars -->
+                    <div class="chart-area">
+                        <div class="grid-lines">
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                            <div class="grid-line"></div>
+                        </div>
+                        <div class="goal-line">
+                            <span class="goal-label">Goal</span>
+                        </div>
+                        <div class="bars-wrapper">
+                            <template for:each={monthBars} for:item="bar">
+                                <div key={bar.key} class="month-group">
+                                    <div class="bar-pair">
+                                        <div class="bar actual" style={bar.actualStyle} title={bar.actualTooltip}></div>
+                                        <div class="bar projected" style={bar.projectedStyle} title={bar.projectedTooltip}></div>
+                                    </div>
+                                    <span class="month-label">{bar.label}</span>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend">
+                    <span class="legend-item"><span class="legend-swatch actual"></span>실적(누적)</span>
+                    <span class="legend-item"><span class="legend-swatch projected"></span>예상(연말)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,38 @@
+<template>
+    <div class="card-container">
+        <div class="card-header">
+            <lightning-icon icon-name="standard:service_contract" size="small"></lightning-icon>
+            <span class="card-title">담당 서비스 계약 — 만료일 순</span>
+        </div>
+        <div class="card-body">
+            <template lwc:if={hasContracts}>
+                <table class="contract-table">
+                    <thead>
+                        <tr>
+                            <th>계약명</th>
+                            <th>Account</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={contracts} for:item="c">
+                            <tr key={c.id}>
+                                <td><a class="link" data-id={c.id} onclick={handleNavigate}>{c.name}</a></td>
+                                <td>{c.account}</td>
+                                <td>{c.endDateFormatted}</td>
+                                <td><span class="status-badge">{c.status}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template lwc:else>
+                <p class="empty-msg">담당 서비스 계약이 없습니다.</p>
+            </template>
+        </div>
+        <div class="card-footer">
+            <a class="view-all" onclick={handleViewAll}>모두 보기</a>
+        </div>
+    </div>
+</template>

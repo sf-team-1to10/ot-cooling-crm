@@ -1,0 +1,32 @@
+<template>
+    <div class="card-container">
+        <div class="card-header">
+            <lightning-icon icon-name="standard:opportunity" size="small"></lightning-icon>
+            <span class="card-title">주요 Deal</span>
+        </div>
+        <div class="card-body">
+            <template lwc:if={hasDeals}>
+                <template for:each={deals} for:item="deal">
+                    <div key={deal.id} class="deal-item">
+                        <div class="deal-info">
+                            <a class="deal-name" data-id={deal.id} onclick={handleNavigate}>{deal.name}</a>
+                            <span class="deal-detail">{deal.detail}</span>
+                        </div>
+                        <div class="deal-progress">
+                            <span class="deal-pct">{deal.probability}%</span>
+                            <div class="pct-track">
+                                <div class="pct-fill" style={deal.pctStyle}></div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template lwc:else>
+                <p class="empty-msg">진행 중 Opportunity가 없습니다.</p>
+            </template>
+        </div>
+        <div class="card-footer">
+            <a class="view-all" onclick={handleViewAll}>모두 보기</a>
+        </div>
+    </div>
+</template>

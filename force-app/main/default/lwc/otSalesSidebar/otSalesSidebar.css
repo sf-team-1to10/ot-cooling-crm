@@ -1,0 +1,12 @@
+:host {
+    display: block;
+}
+
+.task-subject {
+    font-weight: 600;
+}
+
+.event-time {
+    font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
+    font-weight: 600;
+}
