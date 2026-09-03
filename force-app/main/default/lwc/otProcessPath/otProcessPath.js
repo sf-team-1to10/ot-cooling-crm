@@ -68,10 +68,10 @@ export default class OtProcessPath extends LightningElement {
         if (this.currentStep !== null && this.currentStep !== undefined && this.currentStep >= 0) {
             return Number(this.currentStep);
         }
-        if (!this._stageValue) return -1;
+        if (!this._stageValue) return 0;
         const first = String(this._stageValue).trim().split(/\s+/)[0];
         const idx = parseInt(first, 10);
-        return Number.isNaN(idx) ? -1 : idx;
+        return Number.isNaN(idx) ? 0 : idx;
     }
 
     get steps() {
