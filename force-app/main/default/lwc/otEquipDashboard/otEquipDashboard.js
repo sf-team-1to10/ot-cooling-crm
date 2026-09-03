@@ -409,6 +409,11 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         return '양호';
     }
     get healthSubs() { return []; }
+    get healthReason() {
+        if (this.isCritical) return '심각한 이상 수치가 감지되어 즉각적인 점검이 필요합니다. 알람 이력과 측정값을 확인하고 서비스를 요청하세요.';
+        if (this.isWarning)  return '일부 운영 지표가 기준선을 벗어났습니다. 지속 모니터링을 권장하며, 추이가 악화되면 점검을 요청하세요.';
+        return '전체 운영 지표가 정상 범위 내에 있습니다. 정기 점검 일정을 유지하며 현 상태를 유지하세요.';
+    }
     get donutSvg() {
         const score = this.healthScore;
         const r = 34, c = 2 * Math.PI * r, off = c * (1 - score / 100);
