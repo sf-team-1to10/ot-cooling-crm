@@ -1,0 +1,132 @@
+<template>
+    <div class="work-panel">
+
+        <!-- ── 로딩 ── -->
+        <template lwc:if={isLoading}>
+            <div class="state-box">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- ── 오류 ── -->
+        <template lwc:if={hasError}>
+            <div class="state-box slds-text-color_error" role="alert">{errorMessage}</div>
+        </template>
+
+        <!-- ── Case 없음 ── -->
+        <template lwc:if={showNoCase}>
+            <div class="no-case-box">
+                <lightning-icon icon-name="utility:case" size="medium" class="slds-m-bottom_small"></lightning-icon>
+                <p class="no-case-msg">이 메시징 세션에 연결된 케이스가 없습니다.</p>
+                <lightning-button
+                    label="Case 생성"
+                    variant="brand"
+                    icon-name="utility:add"
+                    onclick={handleCreateCase}>
+                </lightning-button>
+            </div>
+        </template>
+
+        <!-- ── Case 있음 ── -->
+        <template lwc:if={showCaseWork}>
+
+            <!-- Path 바 -->
+            <c-ot-case-path record-id={caseId}></c-ot-case-path>
+
+            <!-- 서브탭 -->
+            <div class="subtabs">
+                <button class="subtab on">Case</button>
+                <button class="subtab" data-goto="c__t5Customer360"                onclick={handleSubtab}>Customer 360</button>
+                <button class="subtab" data-goto="c__otDispatchBriefingWorkbench"  onclick={handleSubtab}>출동 브리핑</button>
+                <button class="subtab" data-goto="c__otDispatchCandidates"         onclick={handleSubtab}>담당자 확정</button>
+                <button class="subtab" data-goto="c__otCauseConfirm"               onclick={handleSubtab}>원인확정</button>
+                <button class="subtab" data-goto="c__otProblemRca"                 onclick={handleSubtab}>RCA</button>
+                <button class="subtab" data-goto="c__otActionResults"              onclick={handleSubtab}>조치</button>
+                <button class="subtab">협업 로그</button>
+            </div>
+
+            <!-- 하이라이트 스트립 -->
+            <template lwc:if={caseHeader}>
+                <div class="case-hl">
+                    <div class="case-hl-head">
+                        <span class="case-hl-icon">C</span>
+                        <div class="case-hl-title">
+                            <p class="case-hl-eyebrow">Case · {caseHeader.accountName}</p>
+                            <h1 class="case-hl-name">{caseHeader.subject}</h1>
+                        </div>
+                        <div class="case-hl-actions">
+                            <span class="slds-badge status-badge">{caseHeader.status}</span>
+                            <lightning-button
+                                label="출동 브리핑 생성"
+                                variant="brand"
+                                onclick={handleBriefing}
+                                class="slds-m-left_xx-small">
+                            </lightning-button>
+                        </div>
+                    </div>
+                    <dl class="case-hl-fields">
+                        <div class="case-hl-f">
+                            <dt>Case 번호</dt>
+                            <dd class="num">{caseHeader.caseNumber}</dd>
+                        </div>
+                        <div class="case-hl-f">
+                            <dt>Asset</dt>
+                            <dd>{caseHeader.assetName}</dd>
+                        </div>
+                        <div class="case-hl-f">
+                            <dt>Agent 최초 응답</dt>
+                            <dd class="num">{agentFirstResponseText}</dd>
+                        </div>
+                        <div class="case-hl-f">
+                            <dt>상담사 인수</dt>
+                            <dd class="num">{agentHandoffText}</dd>
+                        </div>
+                        <div class="case-hl-f">
+                            <dt>응답 SLA</dt>
+                            <dd class="num">{caseHeader.responseSla}</dd>
+                        </div>
+                        <div class="case-hl-f">
+                            <dt>복구 SLA</dt>
+                            <dd class="num">{caseHeader.recoverySla}</dd>
+                        </div>
+                    </dl>
+                </div>
+            </template>
+
+            <!-- 헤더 로딩 중 -->
+            <template lwc:if={caseHeaderLoading}>
+                <div class="state-box">
+                    <lightning-spinner alternative-text="케이스 로딩 중" size="small"></lightning-spinner>
+                </div>
+            </template>
+
+        </template>
+
+        <!-- ── 출동 브리핑 Flow 모달 ── -->
+        <template lwc:if={showBriefingFlow}>
+            <div class="briefing-overlay" onclick={handleOverlayClick}>
+                <template lwc:if={flowLoading}>
+                    <div class="briefing-spinner">
+                        <lightning-spinner alternative-text="로딩 중" size="medium" variant="brand"></lightning-spinner>
+                    </div>
+                </template>
+                <div class={cardClass} onclick={stopPropagation}
+                     role="dialog" aria-modal="true" aria-label="출동 브리핑 생성">
+                    <div class="slds-p-around_medium">
+                        <template lwc:if={flowError}>
+                            <div class="slds-text-color_error slds-p-around_medium">
+                                Flow를 실행할 수 없습니다. Case 데이터를 확인해 주세요.
+                            </div>
+                        </template>
+                        <lightning-flow
+                            flow-api-name="Case_Dispatch_Briefing_Generate"
+                            flow-input-variables={flowInputVariables}
+                            onstatuschange={handleFlowStatusChange}>
+                        </lightning-flow>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+    </div>
+</template>

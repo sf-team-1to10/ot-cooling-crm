@@ -1,0 +1,141 @@
+:host { display: block; }
+
+.hl-wrap {
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+}
+
+.hl-loading,
+.hl-error {
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+}
+
+.hl-error { color: #c23934; }
+
+/* ── 본문 ── */
+.hl-body {
+    padding: 0.75rem 1rem 0.625rem;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+/* ── 제목 행 ── */
+.hl-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.625rem;
+}
+
+.hl-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+    background: #0176d3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.hl-title-group {
+    flex: 1;
+    min-width: 0;
+}
+
+.hl-eyebrow {
+    margin: 0;
+    font-size: 0.6875rem;
+    color: #706e6b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hl-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #181818;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── 상태 배지 ── */
+.hl-status {
+    flex-shrink: 0;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.2rem 0.625rem;
+    border-radius: 1rem;
+    background: #e4e4e4;
+    color: #444;
+}
+
+.hl-status--active {
+    background: #d4f5e3;
+    color: #04844b;
+}
+
+.hl-status--ended {
+    background: #f4f4f4;
+    color: #706e6b;
+}
+
+/* ── 메트릭 행 ── */
+.hl-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 1.5rem;
+    margin: 0;
+    padding: 0.5rem 0 0;
+    border-top: 1px solid #f0f0f0;
+}
+
+.hl-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.hl-metric dt {
+    font-size: 0.625rem;
+    color: #706e6b;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.hl-metric dd {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #181818;
+}
+
+/* ── Case 링크 ── */
+.hl-link {
+    color: #0176d3;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.hl-link:hover { text-decoration: underline; }
+
+.hl-case-subject {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: #444;
+}
+
+/* ── 인라인 배지 ── */
+.hl-badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.1rem 0.4rem;
+    border-radius: 0.875rem;
+    background: #e4e4e4;
+    color: #444;
+}

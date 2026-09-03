@@ -1,0 +1,49 @@
+<template>
+    <template lwc:if={info}>
+        <div class="banner">
+            <!-- 왼쪽: 고객 아바타 + 이름 + 채널 -->
+            <div class="banner-left">
+                <div class="avatar" aria-hidden="true">
+                    {avatarInitial}
+                </div>
+                <div class="banner-who">
+                    <span class="banner-name">{displayName}</span>
+                    <span class="banner-sub">{info.channelLabel} · {info.channelType}</span>
+                </div>
+            </div>
+
+            <!-- 가운데: 메트릭 칩 -->
+            <div class="banner-metrics">
+                <div class="chip">
+                    <span class="chip-label">상태</span>
+                    <span class={statusClass}>{statusLabel}</span>
+                </div>
+                <div class="chip">
+                    <span class="chip-label">시작</span>
+                    <span class="chip-value">{startTimeText}</span>
+                </div>
+                <div class="chip">
+                    <span class="chip-label">경과</span>
+                    <span class="chip-value chip-value--mono">{elapsed}</span>
+                </div>
+                <template lwc:if={info.caseId}>
+                    <div class="chip">
+                        <span class="chip-label">Case</span>
+                        <a class="chip-link" href={caseUrl} onclick={handleCaseClick}>
+                            {info.caseNumber}
+                        </a>
+                    </div>
+                    <div class="chip">
+                        <span class="chip-label">계정</span>
+                        <span class="chip-value">{info.accountName}</span>
+                    </div>
+                </template>
+            </div>
+
+            <!-- 오른쪽: 유입 경로 -->
+            <div class="banner-right">
+                <span class="origin-badge">{info.origin}</span>
+            </div>
+        </div>
+    </template>
+</template>

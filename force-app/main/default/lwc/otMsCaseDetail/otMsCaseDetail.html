@@ -1,0 +1,105 @@
+<template>
+    <div class="ms-card">
+        <div class="ms-card-header">
+            <lightning-icon icon-name="standard:case" size="x-small" alternative-text="Case"></lightning-icon>
+            <span class="ms-card-title">연결 Case</span>
+            <template lwc:if={hasCaseId}>
+                <a href={caseUrl} onclick={handleCaseClick} class="ms-card-action">열기</a>
+            </template>
+        </div>
+
+        <template lwc:if={isLoading}>
+            <div class="ms-state-box">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={hasError}>
+            <div class="ms-error" role="alert">{errorMessage}</div>
+        </template>
+
+        <template lwc:if={info}>
+            <template lwc:if={info.caseId}>
+                <dl class="ms-fields">
+                    <div class="ms-field">
+                        <dt>Case 번호</dt>
+                        <dd>
+                            <a href={caseUrl} onclick={handleCaseClick} class="ms-link ms-link--strong">
+                                {info.caseNumber}
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>상태</dt>
+                        <dd><span class="ms-badge">{info.caseStatus}</span></dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>Priority</dt>
+                        <dd><span class={priorityClass}>{info.casePriority}</span></dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>담당자</dt>
+                        <dd>{info.caseOwnerName}</dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>유형</dt>
+                        <dd>{caseTypeDisplay}</dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>사유</dt>
+                        <dd>{caseReasonDisplay}</dd>
+                    </div>
+                    <div class="ms-field ms-field--full">
+                        <dt>Subject</dt>
+                        <dd class="ms-subject">{info.caseSubject}</dd>
+                    </div>
+                    <template lwc:if={info.caseDescription}>
+                        <div class="ms-field ms-field--full">
+                            <dt>Description</dt>
+                            <dd class="ms-description">{info.caseDescription}</dd>
+                        </div>
+                    </template>
+
+                    <div class="ms-field ms-field--divider"></div>
+
+                    <div class="ms-field">
+                        <dt>Account</dt>
+                        <dd>{accountDisplay}</dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>Asset</dt>
+                        <dd>{assetDisplay}</dd>
+                    </div>
+                    <template lwc:if={info.assetSerialNumber}>
+                        <div class="ms-field">
+                            <dt>Serial No.</dt>
+                            <dd class="ms-mono">{info.assetSerialNumber}</dd>
+                        </div>
+                    </template>
+
+                    <template lwc:if={hasSla}>
+                        <div class="ms-field ms-field--divider"></div>
+                        <div class="ms-field">
+                            <dt>응답 SLA</dt>
+                            <dd class="ms-sla">{info.responseSla}</dd>
+                        </div>
+                        <div class="ms-field">
+                            <dt>복구 SLA</dt>
+                            <dd class="ms-sla">{info.recoverySla}</dd>
+                        </div>
+                    </template>
+                </dl>
+            </template>
+
+            <template lwc:else>
+                <div class="ms-empty">
+                    <lightning-icon icon-name="utility:case" size="medium"
+                        alternative-text="Case 없음" class="ms-empty-icon"></lightning-icon>
+                    <p class="ms-empty-text">연결된 Case가 없습니다</p>
+                    <lightning-button label="새 Case 생성" variant="brand"
+                        icon-name="utility:add" onclick={handleNewCase}></lightning-button>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

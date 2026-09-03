@@ -1,0 +1,220 @@
+<template>
+    <div class="panel">
+
+        <template lwc:if={isLoading}>
+            <div class="panel-loading">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={hasError}>
+            <div class="panel-error" role="alert">{errorMessage}</div>
+        </template>
+
+        <template lwc:if={info}>
+
+            <!-- ══ 세션 정보 ══ -->
+            <section class="sec">
+                <button class="sec-hd" onclick={toggle0} aria-expanded={open0}>
+                    <lightning-icon icon-name="standard:messaging_session"
+                        size="xx-small" alternative-text="세션" class="sec-icon"></lightning-icon>
+                    <span class="sec-title">세션 정보</span>
+                    <lightning-icon icon-name={chevron0} size="xx-small"
+                        alternative-text="" class="sec-chevron"></lightning-icon>
+                </button>
+                <template lwc:if={open0}>
+                    <dl class="fields">
+                        <div class="field">
+                            <dt>상태</dt>
+                            <dd><span class={statusClass}>{statusLabel}</span></dd>
+                        </div>
+                        <div class="field">
+                            <dt>유입 경로</dt>
+                            <dd>{info.origin}</dd>
+                        </div>
+                        <div class="field">
+                            <dt>채널</dt>
+                            <dd>{info.channelLabel}</dd>
+                        </div>
+                        <div class="field">
+                            <dt>채널 유형</dt>
+                            <dd>{info.channelType}</dd>
+                        </div>
+                        <div class="field">
+                            <dt>시작 시간</dt>
+                            <dd>{startTimeText}</dd>
+                        </div>
+                        <div class="field">
+                            <dt>종료 시간</dt>
+                            <dd>{endTimeText}</dd>
+                        </div>
+                        <div class="field">
+                            <dt>소요 시간</dt>
+                            <dd>{durationText}</dd>
+                        </div>
+                        <div class="field field--full">
+                            <dt>Preview</dt>
+                            <dd class="field-muted">{info.previewDetails}</dd>
+                        </div>
+                    </dl>
+                </template>
+            </section>
+
+            <!-- ══ 고객 정보 ══ -->
+            <section class="sec">
+                <button class="sec-hd" onclick={toggle1} aria-expanded={open1}>
+                    <lightning-icon icon-name="standard:contact"
+                        size="xx-small" alternative-text="고객" class="sec-icon"></lightning-icon>
+                    <span class="sec-title">고객 정보</span>
+                    <lightning-icon icon-name={chevron1} size="xx-small"
+                        alternative-text="" class="sec-chevron"></lightning-icon>
+                </button>
+                <template lwc:if={open1}>
+                    <dl class="fields">
+                        <div class="field">
+                            <dt>고객명</dt>
+                            <dd>{info.endUserName}</dd>
+                        </div>
+                        <div class="field">
+                            <dt>Consent 상태</dt>
+                            <dd><span class={consentClass}>{consentLabel}</span></dd>
+                        </div>
+                        <div class="field">
+                            <dt>Account</dt>
+                            <dd>{endUserAccountDisplay}</dd>
+                        </div>
+                        <div class="field">
+                            <dt>메시지 유형</dt>
+                            <dd>{info.channelType}</dd>
+                        </div>
+                        <template lwc:if={info.contactId}>
+                            <div class="field field--full field--group-label">
+                                <span>연결 Contact</span>
+                            </div>
+                            <div class="field">
+                                <dt>이름</dt>
+                                <dd>
+                                    <a href={contactUrl} onclick={handleContactClick} class="link">
+                                        {info.contactName}
+                                    </a>
+                                </dd>
+                            </div>
+                            <div class="field">
+                                <dt>소속</dt>
+                                <dd>{info.contactAccountName}</dd>
+                            </div>
+                            <div class="field">
+                                <dt>전화</dt>
+                                <dd>{contactPhoneDisplay}</dd>
+                            </div>
+                            <div class="field">
+                                <dt>이메일</dt>
+                                <dd>{contactEmailDisplay}</dd>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <div class="field field--full">
+                                <dt>연결 Contact</dt>
+                                <dd class="field-muted">없음</dd>
+                            </div>
+                        </template>
+                    </dl>
+                </template>
+            </section>
+
+            <!-- ══ Case 정보 ══ -->
+            <section class="sec">
+                <button class="sec-hd" onclick={toggle2} aria-expanded={open2}>
+                    <lightning-icon icon-name="standard:case"
+                        size="xx-small" alternative-text="Case" class="sec-icon"></lightning-icon>
+                    <span class="sec-title">연결 Case</span>
+                    <lightning-icon icon-name={chevron2} size="xx-small"
+                        alternative-text="" class="sec-chevron"></lightning-icon>
+                </button>
+                <template lwc:if={open2}>
+                    <template lwc:if={info.caseId}>
+                        <dl class="fields">
+                            <div class="field">
+                                <dt>Case 번호</dt>
+                                <dd>
+                                    <a href={caseUrl} onclick={handleCaseClick} class="link link--strong">
+                                        {info.caseNumber}
+                                    </a>
+                                </dd>
+                            </div>
+                            <div class="field">
+                                <dt>상태</dt>
+                                <dd><span class="badge">{info.caseStatus}</span></dd>
+                            </div>
+                            <div class="field">
+                                <dt>우선순위</dt>
+                                <dd><span class={priorityClass}>{info.casePriority}</span></dd>
+                            </div>
+                            <div class="field">
+                                <dt>담당자</dt>
+                                <dd>{info.caseOwnerName}</dd>
+                            </div>
+                            <div class="field">
+                                <dt>유형</dt>
+                                <dd>{caseTypeDisplay}</dd>
+                            </div>
+                            <div class="field">
+                                <dt>사유</dt>
+                                <dd>{caseReasonDisplay}</dd>
+                            </div>
+                            <div class="field field--full">
+                                <dt>제목 (Subject)</dt>
+                                <dd class="field-subject">{info.caseSubject}</dd>
+                            </div>
+                            <template lwc:if={info.caseDescription}>
+                                <div class="field field--full">
+                                    <dt>설명 (Description)</dt>
+                                    <dd class="field-muted">{info.caseDescription}</dd>
+                                </div>
+                            </template>
+                            <div class="field field--full field--group-label">
+                                <span>장비 및 계약</span>
+                            </div>
+                            <div class="field">
+                                <dt>Account</dt>
+                                <dd>{accountDisplay}</dd>
+                            </div>
+                            <div class="field">
+                                <dt>Asset</dt>
+                                <dd>{assetDisplay}</dd>
+                            </div>
+                            <template lwc:if={info.assetSerialNumber}>
+                                <div class="field">
+                                    <dt>시리얼 번호</dt>
+                                    <dd class="field-mono">{info.assetSerialNumber}</dd>
+                                </div>
+                            </template>
+                            <template lwc:if={hasSla}>
+                                <div class="field field--full field--group-label">
+                                    <span>SLA</span>
+                                </div>
+                                <div class="field">
+                                    <dt>응답 목표</dt>
+                                    <dd class="field-sla">{info.responseSla}</dd>
+                                </div>
+                                <div class="field">
+                                    <dt>복구 목표</dt>
+                                    <dd class="field-sla">{info.recoverySla}</dd>
+                                </div>
+                            </template>
+                        </dl>
+                    </template>
+                    <template lwc:else>
+                        <div class="no-case">
+                            <p class="no-case-text">연결된 Case가 없습니다</p>
+                            <lightning-button label="새 Case 생성" variant="brand"
+                                icon-name="utility:add" size="small"
+                                onclick={handleNewCase}></lightning-button>
+                        </div>
+                    </template>
+                </template>
+            </section>
+
+        </template>
+    </div>
+</template>

@@ -1,0 +1,117 @@
+:host { display: block; }
+
+.ms-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 0.375rem;
+    margin-bottom: 0.75rem;
+}
+
+.ms-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 0.875rem 0.5rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.ms-card-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #181818;
+    flex: 1;
+}
+
+.ms-card-action {
+    font-size: 0.6875rem;
+    color: #0176d3;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.ms-card-action:hover { text-decoration: underline; }
+
+.ms-fields {
+    margin: 0;
+    padding: 0.75rem 0.875rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.625rem 1rem;
+    list-style: none;
+}
+
+.ms-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.ms-field--full { grid-column: 1 / -1; }
+
+.ms-field--divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: #f0f0f0;
+    margin: 0.125rem 0;
+}
+
+.ms-field dt {
+    font-size: 0.6875rem;
+    color: #706e6b;
+    font-weight: 400;
+}
+
+.ms-field dd {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #181818;
+    word-break: break-word;
+}
+
+.ms-badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.1rem 0.5rem;
+    border-radius: 0.875rem;
+    background: #e4e4e4;
+    color: #444;
+}
+
+.ms-badge--active {
+    background: #04844b;
+    color: #fff;
+}
+
+.ms-badge--ended {
+    background: #706e6b;
+    color: #fff;
+}
+
+.ms-preview {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    color: #444;
+    line-height: 1.4;
+}
+
+.ms-mono {
+    font-family: monospace;
+    font-size: 0.625rem;
+    font-weight: 400;
+    word-break: break-all;
+    color: #444;
+}
+
+.ms-state-box {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.ms-error {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.75rem;
+    color: #c23934;
+}

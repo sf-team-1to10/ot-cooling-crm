@@ -1,0 +1,200 @@
+/* ── 상태 박스 (로딩·오류) ── */
+.state-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+/* ── Case 없음 ── */
+.no-case-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem;
+    gap: 0.75rem;
+    color: #5c5c5c;
+}
+
+.no-case-msg {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #5c5c5c;
+}
+
+/* ── Path 바 — otCasePath 컴포넌트와 동일 ── */
+.path {
+    display: flex;
+    background-color: #ffffff;
+    padding: 11px 18px 12px;
+    border-bottom: 1px solid #cfdae5;
+    gap: 0;
+    overflow-x: auto;
+}
+
+/* ── 서브탭 ── */
+.subtabs {
+    background-color: #ffffff;
+    display: flex;
+    gap: 2px;
+    padding: 0 18px;
+    border-bottom: 1px solid #cfdae5;
+    font-size: 12.5px;
+    overflow-x: auto;
+}
+
+.subtab {
+    padding: 8px 14px;
+    color: #3d5568;
+    border: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.subtab:hover {
+    color: #0b1f33;
+    background-color: #f4f7fa;
+}
+
+.subtab.on {
+    color: #0877d1;
+    border-bottom-color: #0877d1;
+    font-weight: 600;
+}
+
+/* ── Case 하이라이트 스트립 ── */
+.case-hl {
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem;
+}
+
+.case-hl-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.case-hl-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.25rem;
+    background-color: #dd7a01;
+    color: #ffffff;
+    font-weight: 700;
+    flex: 0 0 auto;
+}
+
+.case-hl-title {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.case-hl-eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.case-hl-name {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.case-hl-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.25rem;
+    flex: 0 0 auto;
+}
+
+.status-badge {
+    background-color: #fef1e6;
+    color: #a86403;
+    box-shadow: inset 0 0 0 1px #dd7a01;
+}
+
+.case-hl-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.case-hl-f {
+    display: flex;
+    flex-direction: column;
+}
+
+.case-hl-f dt {
+    font-size: 0.75rem;
+    color: #5c5c5c;
+}
+
+.case-hl-f dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.case-hl-f dd.num {
+    font-variant-numeric: tabular-nums;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ── 출동 브리핑 Flow 모달 ── */
+.briefing-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.briefing-spinner {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+}
+
+.briefing-card {
+    width: 40rem;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+.briefing-card_hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    opacity: 0;
+    pointer-events: none;
+}

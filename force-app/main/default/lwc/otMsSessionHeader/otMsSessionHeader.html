@@ -1,0 +1,65 @@
+<template>
+    <div class="hl-wrap">
+        <template lwc:if={isLoading}>
+            <div class="hl-loading">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={error}>
+            <div class="hl-error" role="alert">{errorMessage}</div>
+        </template>
+
+        <template lwc:if={header}>
+            <div class="hl-body">
+                <!-- 아이콘 + 제목 + 상태 -->
+                <div class="hl-title-row">
+                    <div class="hl-icon" aria-hidden="true">
+                        <lightning-icon icon-name="standard:messaging_session"
+                            size="small" alternative-text="메시징 세션"></lightning-icon>
+                    </div>
+                    <div class="hl-title-group">
+                        <p class="hl-eyebrow">{header.channelLabel} · {header.channelType}</p>
+                        <h1 class="hl-title">{sessionTitle}</h1>
+                    </div>
+                    <span class={statusClass}>{statusLabel}</span>
+                </div>
+
+                <!-- 메트릭 행 -->
+                <dl class="hl-metrics">
+                    <div class="hl-metric">
+                        <dt>시작</dt>
+                        <dd>{startTimeText}</dd>
+                    </div>
+                    <div class="hl-metric">
+                        <dt>종료</dt>
+                        <dd>{endTimeText}</dd>
+                    </div>
+                    <div class="hl-metric">
+                        <dt>고객</dt>
+                        <dd>{customerDisplay}</dd>
+                    </div>
+                    <template lwc:if={header.caseId}>
+                        <div class="hl-metric">
+                            <dt>연결 Case</dt>
+                            <dd>
+                                <a href={caseUrl} onclick={handleCaseClick} class="hl-link">
+                                    {header.caseNumber}
+                                </a>
+                                <span class="hl-case-subject"> · {header.caseSubject}</span>
+                            </dd>
+                        </div>
+                        <div class="hl-metric">
+                            <dt>Account</dt>
+                            <dd>{header.accountName}</dd>
+                        </div>
+                        <div class="hl-metric">
+                            <dt>Case 상태</dt>
+                            <dd><span class="hl-badge">{header.caseStatus}</span></dd>
+                        </div>
+                    </template>
+                </dl>
+            </div>
+        </template>
+    </div>
+</template>

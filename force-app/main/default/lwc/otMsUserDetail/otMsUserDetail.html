@@ -1,0 +1,80 @@
+<template>
+    <div class="ms-card">
+        <div class="ms-card-header">
+            <lightning-icon icon-name="standard:contact" size="x-small" alternative-text="고객"></lightning-icon>
+            <span class="ms-card-title">Messaging User</span>
+        </div>
+
+        <template lwc:if={isLoading}>
+            <div class="ms-state-box">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={hasError}>
+            <div class="ms-error" role="alert">{errorMessage}</div>
+        </template>
+
+        <template lwc:if={info}>
+            <dl class="ms-fields">
+                <div class="ms-field">
+                    <dt>이름</dt>
+                    <dd>{info.endUserName}</dd>
+                </div>
+                <div class="ms-field">
+                    <dt>Message Type</dt>
+                    <dd>{info.channelType}</dd>
+                </div>
+                <div class="ms-field">
+                    <dt>Consent 상태</dt>
+                    <dd><span class={consentClass}>{consentLabel}</span></dd>
+                </div>
+                <div class="ms-field">
+                    <dt>Account</dt>
+                    <dd>{endUserAccountDisplay}</dd>
+                </div>
+
+                <template lwc:if={info.contactId}>
+                    <div class="ms-field ms-field--divider"></div>
+                    <div class="ms-field ms-field--full">
+                        <dt>
+                            <lightning-icon icon-name="standard:contact" size="xx-small"
+                                alternative-text="Contact" class="ms-inline-icon"></lightning-icon>
+                            연결 Contact
+                        </dt>
+                        <dd>
+                            <a href={contactUrl} onclick={handleContactClick} class="ms-link">
+                                {info.contactName}
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>전화</dt>
+                        <dd>{contactPhoneDisplay}</dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>이메일</dt>
+                        <dd>{contactEmailDisplay}</dd>
+                    </div>
+                    <div class="ms-field">
+                        <dt>소속 Account</dt>
+                        <dd>{info.contactAccountName}</dd>
+                    </div>
+                </template>
+
+                <template lwc:else>
+                    <div class="ms-field ms-field--full">
+                        <dt>Contact</dt>
+                        <dd class="ms-weak">연결된 Contact 없음</dd>
+                    </div>
+                </template>
+
+                <div class="ms-field ms-field--divider"></div>
+                <div class="ms-field ms-field--full">
+                    <dt>Messaging Platform Key</dt>
+                    <dd class="ms-mono">{info.endUserPlatformKey}</dd>
+                </div>
+            </dl>
+        </template>
+    </div>
+</template>

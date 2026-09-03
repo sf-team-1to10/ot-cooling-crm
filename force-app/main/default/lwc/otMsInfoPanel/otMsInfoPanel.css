@@ -1,0 +1,228 @@
+/* ── Panel wrapper ─────────────────────────────────────────────────── */
+.ms-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+    font-size: 0.75rem;
+    color: #181818;
+    background: #fff;
+}
+
+/* ── Highlight strip ────────────────────────────────────────────────── */
+.ms-hl {
+    background: #f3f3f3;
+    border-bottom: 1px solid #dddbda;
+    padding: 0.75rem 1rem 0.5rem;
+}
+
+.ms-hl-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.ms-hl-icon-wrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+    background: #0176d3;
+    color: #fff;
+}
+
+.ms-hl-title {
+    flex: 1;
+    min-width: 0;
+}
+
+.ms-hl-eyebrow {
+    margin: 0;
+    font-size: 0.6875rem;
+    color: #706e6b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ms-hl-name {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ms-hl-badge-wrap {
+    flex-shrink: 0;
+}
+
+/* ── Metrics row ─────────────────────────────────────────────────────── */
+.ms-hl-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+}
+
+.ms-hl-metric {
+    display: flex;
+    flex-direction: column;
+}
+
+.ms-hl-metric-label {
+    font-size: 0.625rem;
+    color: #706e6b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ms-hl-metric-value {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* ── Status badges ───────────────────────────────────────────────────── */
+.ms-badge {
+    font-size: 0.6875rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.875rem;
+}
+
+.ms-badge--active {
+    background: #04844b;
+    color: #fff;
+    border-color: #04844b;
+}
+
+.ms-badge--ended {
+    background: #706e6b;
+    color: #fff;
+    border-color: #706e6b;
+}
+
+/* ── Tabset nav ──────────────────────────────────────────────────────── */
+.ms-tabs {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ms-tabs-nav {
+    display: flex;
+    border-bottom: 2px solid #dddbda;
+    padding: 0 0.5rem;
+    gap: 0;
+    flex-shrink: 0;
+}
+
+.ms-tab-btn {
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.75rem;
+    color: #706e6b;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.ms-tab-btn:hover {
+    color: #181818;
+}
+
+.ms-tab-btn--active {
+    color: #0176d3;
+    border-bottom-color: #0176d3;
+    font-weight: 700;
+}
+
+/* ── Tab panels ──────────────────────────────────────────────────────── */
+.ms-tab-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.75rem 1rem;
+}
+
+/* ── Field grid ──────────────────────────────────────────────────────── */
+.ms-field-grid {
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1rem;
+}
+
+.ms-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.ms-field--full {
+    grid-column: 1 / -1;
+}
+
+.ms-field dt {
+    font-size: 0.6875rem;
+    color: #706e6b;
+    font-weight: 400;
+}
+
+.ms-field dd {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.ms-platform-key {
+    font-size: 0.625rem;
+    font-family: monospace;
+    word-break: break-all;
+    font-weight: 400;
+}
+
+.ms-case-link {
+    color: #0176d3;
+    text-decoration: none;
+}
+
+.ms-case-link:hover {
+    text-decoration: underline;
+}
+
+/* ── Case actions ────────────────────────────────────────────────────── */
+.ms-case-actions {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #dddbda;
+}
+
+/* ── Empty case state ────────────────────────────────────────────────── */
+.ms-empty-case {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.ms-empty-icon {
+    opacity: 0.4;
+}
+
+.ms-empty-text {
+    margin: 0;
+    color: #706e6b;
+    font-size: 0.8125rem;
+}

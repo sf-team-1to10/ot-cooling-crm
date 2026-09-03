@@ -1,0 +1,59 @@
+<template>
+    <div class="ms-card">
+        <div class="ms-card-header">
+            <lightning-icon icon-name="standard:messaging_session" size="x-small" alternative-text="세션"></lightning-icon>
+            <span class="ms-card-title">세션 정보</span>
+        </div>
+
+        <template lwc:if={isLoading}>
+            <div class="ms-state-box">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template lwc:if={hasError}>
+            <div class="ms-error" role="alert">{errorMessage}</div>
+        </template>
+
+        <template lwc:if={info}>
+            <dl class="ms-fields">
+                <div class="ms-field ms-field--full">
+                    <dt>상태</dt>
+                    <dd><span class={statusClass}>{info.status}</span></dd>
+                </div>
+                <div class="ms-field">
+                    <dt>채널</dt>
+                    <dd>{info.channelLabel}</dd>
+                </div>
+                <div class="ms-field">
+                    <dt>채널 유형</dt>
+                    <dd>{info.channelType}</dd>
+                </div>
+                <div class="ms-field">
+                    <dt>유입 경로</dt>
+                    <dd>{info.origin}</dd>
+                </div>
+                <div class="ms-field">
+                    <dt>시작 시간</dt>
+                    <dd>{startTimeText}</dd>
+                </div>
+                <div class="ms-field">
+                    <dt>종료 시간</dt>
+                    <dd>{endTimeText}</dd>
+                </div>
+                <div class="ms-field">
+                    <dt>소요 시간</dt>
+                    <dd>{durationText}</dd>
+                </div>
+                <div class="ms-field ms-field--full">
+                    <dt>Preview Details</dt>
+                    <dd class="ms-preview">{info.previewDetails}</dd>
+                </div>
+                <div class="ms-field ms-field--full">
+                    <dt>Channel Key</dt>
+                    <dd class="ms-mono">{info.channelKey}</dd>
+                </div>
+            </dl>
+        </template>
+    </div>
+</template>
