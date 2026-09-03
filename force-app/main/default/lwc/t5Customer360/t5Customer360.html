@@ -11,20 +11,7 @@
         </template>
 
         <template lwc:if={data}>
-            <!-- ── 하이라이트 ── -->
-            <div class="c360-hl">
-                <div class="c360-hl-head">
-                    <span class="c360-hl-icon">아</span>
-                    <div class="c360-hl-title">
-                        <p class="c360-hl-eyebrow">Customer 360 · {accountName}</p>
-                        <h1 class="c360-hl-name">고객 360 개요</h1>
-                    </div>
-                    <div class="c360-hl-actions">
-                    </div>
-                </div>
-            </div>
-
-            <!-- ── 프로필 ── -->
+            <!-- ── 대표 담당자 (Contact 정보는 dynamicHighlights와 별개) ── -->
             <template lwc:if={profile}>
                 <div class="c360-profile">
                     <div class="c360-av">{profile.contactInitial}</div>
@@ -36,7 +23,6 @@
                         <div><dt>Email</dt><dd>{contactEmail}</dd></div>
                         <div><dt>Phone</dt><dd class="num">{contactPhone}</dd></div>
                         <div><dt>Address</dt><dd>{contactAddress}</dd></div>
-                        <div><dt>Industry</dt><dd>{contactIndustry}</dd></div>
                     </dl>
                     <div class="c360-actions">
                         <lightning-button label="편집"></lightning-button>

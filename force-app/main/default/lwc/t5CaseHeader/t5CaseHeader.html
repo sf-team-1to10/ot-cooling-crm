@@ -21,29 +21,9 @@
                 <div class="path-step"><span class="path-num">5</span> RCA·예방·지식</div>
             </div>
 
-            <!-- ── 하이라이트 스트립 ── -->
+            <!-- SLA 지표 스트립 (identity는 dynamicHighlights, Path는 위에서 담당) -->
             <div class="case-hl">
-                <div class="case-hl-head">
-                    <span class="case-hl-icon">C</span>
-                    <div class="case-hl-title">
-                        <p class="case-hl-eyebrow">Case · {accountName}</p>
-                        <h1 class="case-hl-name">{headerTitle}</h1>
-                    </div>
-                    <div class="case-hl-actions">
-                        <span class="slds-badge status-badge">{status}</span>
-                        <lightning-button label="출동 브리핑 생성" variant="brand"
-                            onclick={handleBriefing} class="slds-m-left_xx-small"></lightning-button>
-                    </div>
-                </div>
                 <dl class="case-hl-fields">
-                    <div class="case-hl-f">
-                        <dt>Case 번호</dt>
-                        <dd class="num">{caseNumber}</dd>
-                    </div>
-                    <div class="case-hl-f">
-                        <dt>Asset</dt>
-                        <dd>{assetName}</dd>
-                    </div>
                     <div class="case-hl-f">
                         <dt>Agent 최초 응답</dt>
                         <dd class="num">{agentFirstResponseText}</dd>
@@ -61,6 +41,10 @@
                         <dd class="num">{recoverySla}</dd>
                     </div>
                 </dl>
+                <div class="case-hl-actions">
+                    <lightning-button label="출동 브리핑 생성" variant="brand"
+                        onclick={handleBriefing}></lightning-button>
+                </div>
             </div>
         </template>
 
