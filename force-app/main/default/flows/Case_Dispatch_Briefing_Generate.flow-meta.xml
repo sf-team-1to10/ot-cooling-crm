@@ -111,6 +111,31 @@
         <offset>0</offset>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
+    <actionCalls>
+        <description>Applies demo-only fallback briefing content for the CDU-A-07 demo case when the two Case text fields are blank</description>
+        <name>Ensure_Fallback_Briefing_Content</name>
+        <label>Ensure Fallback Briefing Content</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <actionName>T5DispatchBriefingSeedAction</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Get_This_Case</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Show_Error</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>recordId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>T5DispatchBriefingSeedAction</nameSegment>
+        <offset>0</offset>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </actionCalls>
     <apiVersion>65.0</apiVersion>
     <assignments>
         <description>Builds formatted measurement history by concatenating WorkOrderLineItem fields with the parent WorkOrder StartDate</description>
@@ -638,7 +663,7 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Get_This_Case</targetReference>
+            <targetReference>Ensure_Fallback_Briefing_Content</targetReference>
         </connector>
     </start>
     <status>Active</status>

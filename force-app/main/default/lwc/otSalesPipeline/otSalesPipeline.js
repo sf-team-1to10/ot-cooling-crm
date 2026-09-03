@@ -4,10 +4,10 @@ import getPipeline from '@salesforce/apex/OtSalesDashboardController.getPipeline
 const KRW = new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW', maximumFractionDigits: 0 });
 const STAGE_ORDER = ['Qualification', 'Proposal', 'Negotiation', 'Closed Won'];
 const STAGE_COLORS = {
-    'Qualification': '#93c5fd',
-    'Proposal': '#3b82f6',
-    'Negotiation': '#2563eb',
-    'Closed Won': '#1d4ed8'
+    'Qualification': '#c9d5e5',
+    'Proposal': '#7189af',
+    'Negotiation': '#032d60',
+    'Closed Won': '#014486'
 };
 
 export default class OtSalesPipeline extends LightningElement {
@@ -31,7 +31,7 @@ export default class OtSalesPipeline extends LightningElement {
                         amount: amt,
                         amountFormatted: KRW.format(amt),
                         pct: pct,
-                        barStyle: `width:${maxW}%;background:${STAGE_COLORS[s] || '#3b82f6'}`
+                        barStyle: `width:${maxW}%;background:${STAGE_COLORS[s] || '#032d60'}`
                     };
                 });
         }

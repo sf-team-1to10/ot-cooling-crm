@@ -123,7 +123,7 @@
 
 .c360-kpi {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0.75rem;
     margin-bottom: 0.75rem;
 }
@@ -227,114 +227,74 @@
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--text);
-    letter-spacing: -0.01em;
 }
 
 .card-body-tight {
-    padding: 0;
+    padding: 0.125rem 0;
 }
 
-/* 기본 리스트: 텍스트만인 리스트(제품/문제)용 — 각 row 전체폭 사용 */
 .rl {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    gap: 0;
 }
 
-.rl-row {
-    padding: 0.625rem 1rem;
-    border-bottom: 1px solid var(--border-soft);
-    display: flex;
-    gap: 0.75rem;
+.rl--aligned .rl-row {
     align-items: center;
 }
 
-.rl-row:last-child {
-    border-bottom: none;
+.rl-row {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--border-soft);
+}
+
+.rl-row:first-child {
+    border-top: none;
 }
 
 .rl-main {
     min-width: 0;
-    flex: 1 1 auto;
-}
-
-/* 뱃지 정렬용 리스트(계약/Sales): grid로 모든 row의 뱃지 세로선을 일치 */
-.rl--aligned {
-    display: grid;
-    grid-template-columns: max-content auto;
-    column-gap: 0.75rem;
-}
-
-.rl--aligned .rl-row {
-    display: contents;
-}
-
-.rl--aligned .rl-main {
-    padding: 0.625rem 0 0.625rem 1rem;
-    border-bottom: 1px solid var(--border-soft);
-    flex: none;
-}
-
-.rl--aligned .rl-row:last-child .rl-main,
-.rl--aligned .rl-row:last-child .rl-badge {
-    border-bottom: none;
 }
 
 .rl-t {
     font-size: 0.8125rem;
     font-weight: 600;
     color: var(--text);
-    line-height: 1.4;
-    letter-spacing: -0.01em;
+    line-height: 1.35;
 }
 
 .rl-s {
-    color: var(--text-muted);
     font-size: 0.75rem;
+    color: var(--text-muted);
     margin-top: 0.125rem;
-    line-height: 1.4;
+    line-height: 1.35;
 }
 
-/* row 뱃지 슬롯 — 가장 긴 텍스트 오른쪽에 맞춰 세로선 정렬 (aligned 리스트 전용) */
-.rl--aligned .rl-badge {
-    padding: 0.625rem 1rem 0.625rem 0;
-    border-bottom: 1px solid var(--border-soft);
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
+.rl-badge {
+    flex: 0 0 auto;
+    align-self: center;
+}
+
+.slds-badge.c360-badge-ok {
+    background: var(--chip-pos-bg);
+    color: var(--chip-pos-text);
+    border: 1px solid var(--chip-pos-border);
+}
+
+.slds-badge.c360-badge-warn {
+    background: var(--chip-warn-bg);
+    color: var(--chip-warn-text);
+    border: 1px solid var(--chip-warn-border);
+}
+
+.slds-badge.c360-badge-neutral {
+    background: var(--chip-info-bg);
+    color: var(--chip-info-text);
+    border: 1px solid var(--chip-info-border);
 }
 
 .num {
     font-variant-numeric: tabular-nums;
-}
-
-/* ── 배지 (chip 규격 §6) ── */
-.slds-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.125rem 0.5rem;
-    border-radius: 0.75rem;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    line-height: 1.4;
-    letter-spacing: 0.01em;
-    border: 1px solid transparent;
-    white-space: nowrap;
-}
-
-.c360-badge-ok {
-    background: var(--chip-pos-bg);
-    color: var(--chip-pos-text);
-    border-color: var(--chip-pos-border);
-}
-
-.c360-badge-warn {
-    background: var(--chip-warn-bg);
-    color: var(--chip-warn-text);
-    border-color: var(--chip-warn-border);
-}
-
-.c360-badge-neutral {
-    background: var(--chip-info-bg);
-    color: var(--chip-info-text);
-    border-color: var(--chip-info-border);
 }

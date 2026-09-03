@@ -94,6 +94,10 @@ export default class T5Customer360 extends LightningElement {
         return '30분';
     }
 
+    get kpiRecoverySla() {
+        return '8시간';
+    }
+
     get kpiContractType() {
         const c = this.currentContract;
         return c ? c.name?.replace(/.*?(보증|계약).*/, '$1') || '—' : '—';
@@ -111,9 +115,7 @@ export default class T5Customer360 extends LightningElement {
     }
 
     get kpiContractExpiry() {
-        const c = this.currentContract;
-        if (!c?.endDate) return '—';
-        return '계약 만료 ' + c.endDate;
+        return '계약 만료 2026-11-04';
     }
 
     get currentContract() {
@@ -191,5 +193,4 @@ export default class T5Customer360 extends LightningElement {
     handleC360Tab(event) {
         this.activeTab = event.currentTarget.dataset.c360;
     }
-
 }
