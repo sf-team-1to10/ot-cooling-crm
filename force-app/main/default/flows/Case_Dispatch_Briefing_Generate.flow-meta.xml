@@ -112,7 +112,6 @@
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </actionCalls>
     <apiVersion>65.0</apiVersion>
-    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <description>Builds formatted measurement history by concatenating WorkOrderLineItem fields with the parent WorkOrder StartDate</description>
         <name>Build_History</name>
@@ -496,7 +495,7 @@
         <locationX>0</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Show_History</targetReference>
+            <targetReference>Advance_Stage_To_Briefing</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -510,6 +509,38 @@
             <field>Dispatch_Briefing__c</field>
             <value>
                 <elementReference>varBriefing</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Case</object>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Advances Case.Stage__c from "0 접수" to "1 진단·브리핑" after briefing is saved. Filter includes Stage__c = "0 접수" so already-advanced Cases are skipped (no-op) — prevents downgrade per Stage__c field description.</description>
+        <name>Advance_Stage_To_Briefing</name>
+        <label>Advance Stage To Briefing</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Show_History</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Stage__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>0 접수</stringValue>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Stage__c</field>
+            <value>
+                <stringValue>1 진단·브리핑</stringValue>
             </value>
         </inputAssignments>
         <object>Case</object>
@@ -540,23 +571,6 @@
         <object>Case</object>
     </recordUpdates>
     <screens>
-        <description>Shown when no measurement history was found for the asset — the prompt cannot run without data</description>
-        <name>Show_No_Data</name>
-        <label>Show No Data</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <allowBack>false</allowBack>
-        <allowFinish>true</allowFinish>
-        <allowPause>false</allowPause>
-        <fields>
-            <name>noDataDisplay</name>
-            <fieldText>&lt;p&gt;이 Case의 장비에 측정 이력이 없어 브리핑을 생성할 수 없습니다.&lt;/p&gt;&lt;p&gt;WorkOrder에 측정 데이터(Measured_Value)가 입력되었는지 확인해 주세요.&lt;/p&gt;</fieldText>
-            <fieldType>DisplayText</fieldType>
-        </fields>
-        <showFooter>true</showFooter>
-        <showHeader>true</showHeader>
-    </screens>
-    <screens>
         <description>Displays fault details when any step in the flow fails</description>
         <name>Show_Error</name>
         <label>Show Error</label>
@@ -586,14 +600,6 @@
             <name>measurementHistoryDisplay</name>
             <fieldText>{!varBriefing}</fieldText>
             <fieldType>DisplayText</fieldType>
-            <styleProperties>
-                <verticalAlignment>
-                    <stringValue>top</stringValue>
-                </verticalAlignment>
-                <width>
-                    <stringValue>12</stringValue>
-                </width>
-            </styleProperties>
         </fields>
         <fields>
             <name>briefingNavigator</name>
@@ -607,14 +613,23 @@
             </inputParameters>
             <isRequired>false</isRequired>
             <storeOutputAutomatically>true</storeOutputAutomatically>
-            <styleProperties>
-                <verticalAlignment>
-                    <stringValue>top</stringValue>
-                </verticalAlignment>
-                <width>
-                    <stringValue>12</stringValue>
-                </width>
-            </styleProperties>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <description>Shown when no measurement history was found for the asset — the prompt cannot run without data</description>
+        <name>Show_No_Data</name>
+        <label>Show No Data</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>noDataDisplay</name>
+            <fieldText>&lt;p&gt;이 Case의 장비에 측정 이력이 없어 브리핑을 생성할 수 없습니다.&lt;/p&gt;&lt;p&gt;WorkOrder에 측정 데이터(Measured_Value)가 입력되었는지 확인해 주세요.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
