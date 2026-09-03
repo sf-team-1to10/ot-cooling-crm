@@ -13,6 +13,29 @@ import COOLBIT_CLEAR from '@salesforce/resourceUrl/OT_Coolbit_Clear';
 
 const PAGE_SIZE = 7;
 
+// OT전자 데모 채팅패널 10단계 대본 기준 — CDU-A-07 하드코딩 override.
+// 유량 1,961 L/min (기준 2,100), 차압 0.31 MPa, 45분 지속, 정기 점검 10-15.
+const CDU_A_07_CANON = {
+    name: 'CDU-A-07',
+    stateCode: 'adv',
+    stateLabel: 'P3 Advisory / 주의',
+    healthScore: 70,
+    openItems: 0,
+    warrantyType: '연장보증',
+    warrantyEnd: '2027-06-18',
+    nextInspection: '2026-10-15',
+    site: '아이온데이터센터',
+    hall: 'Hall A',
+    customer: '아이온데이터',
+    metrics: {
+        flow: { cur: 1961, prev: 2100, band: [2100, 2200], unit: 'L/min', dev: -139, dur: '45분' }
+    },
+    alarms: [
+        { tagClass: 'tag warn', tagLabel: 'P3', text: '유량 기준선 대비 -139 L/min (45분 지속)', date: '14:17' },
+        { tagClass: 'tag info', tagLabel: 'P4', text: '정기 점검 예정 (2026-10-15)', date: '14:14' }
+    ]
+};
+
 /**
  * T5-07 — 2026-08-31: 하드코딩된 16개 데모 자산 목록/건강점수/알람을
  * 실제 OTEquipDashboardController Apex 호출로 교체(사용자 요청 — 기존
@@ -37,7 +60,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     @track searchTerm = '';
     @track modalOpen = false;
     @track kpis = { totalAssets: 0, normalCount: 0, advisoryCount: 0, maintenanceScheduledCount: 0 };
-    @track location = { customerName: '', siteName: '마이클라우드 데이터센터', hall: 'Hall A' };
+    @track location = { customerName: '', siteName: '아이온데이터센터', hall: 'Hall A' };
     @track selDetail = null; // getEquipmentDetail() 결과 (선택된 자산)
     @track selGauges = [];   // gaugesJson 파싱 결과
     @track selAlarms = [];   // 최근 알람 목록
@@ -56,24 +79,36 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             return;
         }
         if (!data) return;
-        this.kpis = data.kpis || this.kpis;
-        const mapped = (data.assets || []).map(a => ({
-            id: a.assetId,
-            name: a.name,
-            displayName: a.assetType || a.name || a.assetId,
-            type: a.assetType || '',
-            family: a.family || '',
-            loc: a.location || '',
-            stateCode: a.stateCode,
-            stateLabel: a.stateLabel,
-            alarms: []
-        }));
+        const mapped = (data.assets || []).map(a => {
+            const isCdu07 = (a.name || '').toUpperCase() === 'CDU-A-07';
+            return {
+                id: a.assetId,
+                name: a.name,
+                displayName: a.assetType || a.name || a.assetId,
+                type: a.assetType || '',
+                family: a.family || '',
+                loc: isCdu07 ? 'Hall A · Row 02 · CDU Bay E02' : (a.location || ''),
+                // 정본: CDU-A-07만 '주의', 나머지 CDU-A-01~20은 '정상'
+                stateCode: isCdu07 ? 'adv' : 'ok',
+                stateLabel: isCdu07 ? 'P3 Advisory / 주의' : '정상',
+                alarms: []
+            };
+        });
         // 이상·주의 항목을 1페이지 상단으로 강제 정렬
         this.assets = mapped.sort((a, b) => {
             const rank = s => (s === 'adv' ? 0 : 1);
             if (rank(a.stateCode) !== rank(b.stateCode)) return rank(a.stateCode) - rank(b.stateCode);
             return (a.displayName || '').localeCompare(b.displayName || '', 'ko');
         });
+        // KPI는 목록에서 파생 (정본 §3: 목록과 어긋나지 않게)
+        const total = this.assets.length;
+        const adv = this.assets.filter(x => x.stateCode === 'adv').length;
+        this.kpis = {
+            totalAssets: total,
+            normalCount: total - adv,
+            advisoryCount: adv,
+            maintenanceScheduledCount: (data.kpis && data.kpis.maintenanceScheduledCount) || 0
+        };
         if (!this.selectedId && this.assets.length > 0) {
             this.selectedId = this.assets[0].id;
             this.loadSelectedDetail();
@@ -108,38 +143,36 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             .then(result => {
                 this.location = {
                     customerName: result.customerName || '',
-                    siteName: result.siteName || '마이클라우드 데이터센터',
+                    siteName: result.siteName || '아이온데이터센터',
                     hall: result.hall || 'Hall A'
                 };
             })
             .catch(() => {});
     }
 
-    // 항목 4: 알람 로드 (데이터 없으면 데모)
+    // 항목 4: 알람 로드 (CDU-A-07은 정본 override, 그 외는 실데이터 또는 빈 배열)
     loadAlerts(assetId) {
         if (!assetId) return;
+        if (this._isSelectedCduA07()) {
+            this.selAlarms = CDU_A_07_CANON.alarms.slice();
+            return;
+        }
         getAlerts({ assetId })
             .then(rows => {
-                if (rows && rows.length > 0) {
-                    this.selAlarms = rows.map(r => ({
-                        tagClass: r.tagClass,
-                        tagLabel: r.tagLabel,
-                        text: r.message || '',
-                        date: r.startedAt ? String(r.startedAt).substring(5, 16).replace('T', ' ') : ''
-                    }));
-                } else {
-                    this.selAlarms = [
-                        { tagClass: 'tag warn', tagLabel: 'P3', text: '유량 기준선 대비 -6.6% 감지', date: '09-03 09:14' },
-                        { tagClass: 'tag info', tagLabel: 'P4', text: '정기 점검 알림 (2026-09-15)', date: '09-01 08:00' }
-                    ];
-                }
+                this.selAlarms = (rows || []).map(r => ({
+                    tagClass: r.tagClass,
+                    tagLabel: r.tagLabel,
+                    text: r.message || '',
+                    date: r.startedAt ? String(r.startedAt).substring(5, 16).replace('T', ' ') : ''
+                }));
             })
-            .catch(() => {
-                this.selAlarms = [
-                    { tagClass: 'tag warn', tagLabel: 'P3', text: '유량 기준선 대비 -6.6% 감지', date: '09-03 09:14' },
-                    { tagClass: 'tag info', tagLabel: 'P4', text: '정기 점검 알림 (2026-09-15)', date: '09-01 08:00' }
-                ];
-            });
+            .catch(() => { this.selAlarms = []; });
+    }
+
+    // 선택된 자산이 CDU-A-07인지 (assets 배열의 name 기준). override 판정용.
+    _isSelectedCduA07() {
+        const base = this.assets.find(a => a.id === this.selectedId);
+        return !!base && (base.name || '').toUpperCase() === 'CDU-A-07';
     }
 
     parseGauges(gaugesJson) {
@@ -216,8 +249,12 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get sel() {
         const base = this.assets.find(a => a.id === this.selectedId) || this.assets[0] || {};
         const g = this.primaryGauge;
+        const isCdu07 = (base.name || '').toUpperCase() === 'CDU-A-07';
+        const merged = isCdu07
+            ? { ...base, stateCode: CDU_A_07_CANON.stateCode, stateLabel: CDU_A_07_CANON.stateLabel }
+            : { ...base };
         return {
-            ...base,
+            ...merged,
             assess: {
                 hl: this.assessHeadline,
                 ds: this.assessDesc,
@@ -229,9 +266,10 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
 
     // sel.assess가 assessHeadline/assessDesc를 참조하고, 그것들은 isAdvisory를
     // 참조하므로 isAdvisory가 sel을 거치면 무한 재귀가 된다 — 원본 목록에서
-    // 직접 찾는다.
+    // 직접 찾는다. CDU-A-07은 정본이 'adv'.
     get isAdvisory() {
         const base = this.assets.find(a => a.id === this.selectedId) || this.assets[0];
+        if (base && (base.name || '').toUpperCase() === 'CDU-A-07') return true;
         return !!base && base.stateCode === 'adv';
     }
     get assessStyle() {
@@ -242,7 +280,18 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     }
 
     // 게이지 배열에서 CHW Flow(유량) 항목을 우선 찾고, 없으면 첫 항목을 쓴다.
+    // CDU-A-07은 정본(§4) 값으로 강제 — DB gaugesJson 무시.
     get primaryGauge() {
+        if (this._isSelectedCduA07()) {
+            const m = CDU_A_07_CANON.metrics.flow;
+            return {
+                measurementItemCode: 'CHW Flow (유량)',
+                currentValue: m.cur,
+                previousValue: m.prev,
+                baselineValue: m.band[0],
+                sparklineValues: null
+            };
+        }
         if (!this.selGauges || this.selGauges.length === 0) return null;
         return this.selGauges.find(g => /flow/i.test(g.measurementItemCode || '')) || this.selGauges[0];
     }
@@ -330,13 +379,22 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get keyItems() {
         const g = this.primaryGauge;
         const d = this.selDetail;
+        const isCdu07 = this._isSelectedCduA07();
+        const stateLabel = isCdu07 ? CDU_A_07_CANON.stateLabel : (d ? d.stateLabel : '—');
+        const warranty = isCdu07 ? CDU_A_07_CANON.warrantyType : (d ? (d.warrantyType || '정보 없음') : '—');
+        const openItems = isCdu07
+            ? `${CDU_A_07_CANON.openItems}건`
+            : (d ? `${d.openItemsSummary != null ? d.openItemsSummary : 0}건` : '—');
+        const nextMaint = isCdu07
+            ? CDU_A_07_CANON.nextInspection
+            : (d && d.nextMaintenance ? d.nextMaintenance : '—');
         return [
-            { label: '자산 상태', value: d ? d.stateLabel : '—', cls: this.isAdvisory ? 'ki-val warn-text' : 'ki-val ok-text' },
+            { label: '자산 상태', value: stateLabel, cls: this.isAdvisory ? 'ki-val warn-text' : 'ki-val ok-text' },
             { label: g ? g.measurementItemCode : 'CHW Flow', value: g ? `${g.currentValue}` : '데이터 없음', cls: this.isAdvisory ? 'ki-val warn-mono' : 'ki-val mono' },
             { label: '직전 측정값', value: g ? `${g.previousValue}` : '—', cls: 'ki-val mono' },
-            { label: '보증', value: d ? (d.warrantyType || '정보 없음') : '—', cls: 'ki-val' },
-            { label: '미조치 건수', value: d ? `${d.openItemsSummary != null ? d.openItemsSummary : 0}건` : '—', cls: 'ki-val mono' },
-            { label: '다음 정비', value: d && d.nextMaintenance ? d.nextMaintenance : '—', cls: 'ki-val mono' }
+            { label: '보증', value: warranty, cls: 'ki-val' },
+            { label: '미조치 건수', value: openItems, cls: 'ki-val mono' },
+            { label: '다음 정비', value: nextMaint, cls: 'ki-val mono' }
         ];
     }
 

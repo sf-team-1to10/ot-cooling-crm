@@ -144,7 +144,7 @@ public with sharing class OTEquipDashboardController {
 
             LocationView loc = new LocationView();
             loc.customerName = accounts.isEmpty() ? '' : accounts[0].Name;
-            loc.siteName = '마이클라우드 데이터센터';
+            loc.siteName = '아이온데이터센터';
             loc.hall = 'Hall A';
             loc.assetRow = '';
             if (!assets.isEmpty() && assets[0].Site_Location__c != null) {

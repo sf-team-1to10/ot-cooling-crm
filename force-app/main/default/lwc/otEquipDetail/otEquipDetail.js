@@ -8,20 +8,38 @@ import gallery03 from '@salesforce/resourceUrl/OT_CDU_Gallery_03';
 import gallery04 from '@salesforce/resourceUrl/OT_CDU_Gallery_04';
 import gallery05 from '@salesforce/resourceUrl/OT_CDU_Gallery_05';
 
+// OT전자 데모 채팅패널 10단계 대본 기준 — CDU-A-07 정본. 다른 자산은 wire 값 그대로.
+const CDU_A_07_CANON = {
+    name: 'CDU-A-07',
+    assetType: 'CDU1350',
+    family: 'CF-CDU-L2L-1350-G1',
+    location: 'Hall A · Row 02 · CDU Bay E02',
+    serialNumber: 'CF17-2207',
+    installDate: '2022-02-18',
+    stateCode: 'adv',
+    stateLabel: 'P3 Advisory / 주의',
+    warrantyType: '연장보증',
+    warrantyEnd: '2027-06-18',
+    nextInspection: '2026-10-15',
+    openItems: 0
+};
+
+// 대본 §1: flow 2100→1961 [2100,2200], dp 0.28→0.31 MPa [0.20,0.30]
 const METRICS = {
-    flow: { label:'CHW Flow', unit:'L/min', from:105, to:71, band:[95,115], vmin:60, vmax:125, interp:'냉수 유량은 기준선 하한보다 낮은 상태로 관찰되고 있으며, 상세 이력과 함께 확인이 필요합니다.' },
-    dp:   { label:'ΔP (차압)', unit:'kPa', from:122, to:148, band:[110,140], vmin:95, vmax:165, interp:'차압은 완만한 상승세로, 기준선 상단에 근접해 관찰이 필요합니다.' },
+    flow: { label:'CHW Flow', unit:'L/min', from:2100, to:1961, band:[2100,2200], vmin:1900, vmax:2250, interp:'냉수 유량은 기준선(2,100 L/min)보다 낮은 상태로 관찰되고 있으며, 상세 이력과 함께 확인이 필요합니다.' },
+    dp:   { label:'ΔP (차압)', unit:'MPa', from:0.28, to:0.31, band:[0.20,0.30], vmin:0.15, vmax:0.35, interp:'차압은 완만한 상승세로, 기준선 상단을 초과해 관찰이 필요합니다.' },
     temp: { label:'공급수 온도', unit:'°C', from:17.9, to:18.2, band:[16,19], vmin:14.5, vmax:20.5, interp:'공급수 온도는 기준선 범위 내에서 안정적으로 유지되고 있습니다.' },
     dt:   { label:'ΔT (온도차)', unit:'°C', from:8.0, to:6.1, band:[7,12], vmin:4.5, vmax:13.5, interp:'온도차(ΔT)가 기준선 하한 부근으로 낮아졌습니다. 부하 조건과 함께 검토가 필요합니다.' }
 };
+// 대본 시각: 14:14 접수 → 15:30 도착 → 17:30 조치 완료 → 18:24 복구
 const RANGES = {
-    '1':['01:59','02:14','02:29','02:44','02:59'],
-    '8':['19:00','21:00','23:00','01:00','03:00'],
-    '24':['03:00','09:00','15:00','21:00','03:00'],
-    '168':['8/24','8/25','8/26','8/27','8/28','8/29','8/30']
+    '1':['14:14','14:29','14:44','14:59','15:14'],
+    '8':['11:00','13:00','15:00','17:00','19:00'],
+    '24':['어제 19:00','23:00','03:00','07:00','오늘 19:00'],
+    '168':['9/8','9/9','9/10','9/11','9/12','9/13','9/14']
 };
 const TIMELINE = [
-    { d:'2026-03-12', cat:'정기점검', desc:'정기 점검 결과 정상. 다음 점검일 2026-06-12.', att:1 },
+    { d:'2026-03-12', cat:'정기점검', desc:'정기 점검 결과 정상. 다음 점검 예정 2026-10-15.', att:1 },
     { d:'2025-10-15', cat:'예방정비', desc:'연결부 체결 상태 및 필터 상태 확인.', att:1 },
     { d:'2024-10-15', cat:'서비스 작업', desc:'현장 점검 및 운전 상태 확인.', att:1 },
     { d:'2022-06-18', cat:'설치/시운전/인수', desc:'설치 및 인수 완료. 서비스 계약 및 보증 적용 시작.', att:2 },
@@ -35,7 +53,8 @@ const DOCS = [
     { group:'변경 도면 및 Revision', items:[{ name:'배관 계통도 Rev.B (F-07 구간 반영)', meta:'2022-05-30 · DWG/PDF' }] },
     { group:'서비스 보고서', items:[{ name:'현장 서비스 작업 보고서', meta:'2024-10-15 · PDF' }] }
 ];
-const CHAT_ANALYSIS = '냉수 유량이 기준선보다 낮은 상태로 관찰되고 있습니다. 확인이 필요한 부분: 2차측 스트레이너 차압·바이패스 밸브 저항, 배관 연결부 체결 상태, 순환 펌프·제어·유량계 센서. 근본 원인은 현장 확인 후 판단합니다.';
+// 대본 §1: 배관·접합부 상태 확인 필요 (원격 확인 범위 초과)
+const CHAT_ANALYSIS = '냉수 유량이 기준선(2,100 L/min)보다 낮은 상태로 관찰되고 있습니다. 운전모드 AUTO, 장비 알람 없음, 차압 0.31 MPa 상태에서 유량 저하가 지속되고 있어 배관 연결부·접합부 상태 확인이 필요합니다. 원격 확인 범위를 초과하므로 서비스 담당자의 현장 확인 판단이 필요합니다.';
 
 export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     @api assetId;
@@ -74,7 +93,25 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
             return;
         }
         if (!data) return;
-        this.detail = data;
+        // CDU-A-07이면 정본 값으로 override — 다른 자산은 wire 값 그대로.
+        if ((data.name || '').toUpperCase() === 'CDU-A-07') {
+            this.detail = {
+                ...data,
+                name: CDU_A_07_CANON.name,
+                serialNumber: CDU_A_07_CANON.serialNumber,
+                assetType: CDU_A_07_CANON.assetType,
+                family: CDU_A_07_CANON.family,
+                location: CDU_A_07_CANON.location,
+                installDate: CDU_A_07_CANON.installDate,
+                stateCode: CDU_A_07_CANON.stateCode,
+                stateLabel: CDU_A_07_CANON.stateLabel,
+                warrantyType: CDU_A_07_CANON.warrantyType,
+                openItemsSummary: CDU_A_07_CANON.openItems,
+                nextMaintenance: CDU_A_07_CANON.nextInspection
+            };
+        } else {
+            this.detail = data;
+        }
         this.gauges = this.parseGauges(data.gaugesJson);
     }
 
@@ -90,6 +127,15 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     }
 
     get primaryGauge() {
+        if (this.detail && this.detail.name === CDU_A_07_CANON.name) {
+            return {
+                measurementItemCode: 'CHW Flow (유량)',
+                currentValue: METRICS.flow.to,
+                previousValue: METRICS.flow.from,
+                baselineValue: METRICS.flow.band[0],
+                sparklineValues: null
+            };
+        }
         if (!this.gauges || this.gauges.length === 0) return null;
         return this.gauges.find(g => /flow/i.test(g.measurementItemCode || '')) || this.gauges[0];
     }
@@ -243,9 +289,10 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
 
         let evtMarkers = '';
         if ((this.curRange === '8' || this.curRange === '1') && this.curMetric === 'flow') {
+            // 대본 §1 마커: 14:14 이상 감지 / 14:17 P3 Advisory
             const events = [
-                { frac: this.curRange === '1' ? 0.66 : 0.905, color: '#f57c00', time: '02:14', label: 'P3 Advisory 발생' },
-                { frac: this.curRange === '1' ? 0.92 : 0.955, color: '#5980a6', time: '02:37', label: '고객 알림 확인' }
+                { frac: this.curRange === '1' ? 0.02 : 0.42, color: '#5980a6', time: '14:14', label: '유량 저하 감지' },
+                { frac: this.curRange === '1' ? 0.20 : 0.44, color: '#f57c00', time: '14:17', label: 'P3 Advisory 발생' }
             ];
             events.forEach(e => {
                 const ex = pL + e.frac * iw;
