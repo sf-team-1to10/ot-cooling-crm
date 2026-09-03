@@ -215,4 +215,9 @@
         <readable>true</readable>
         <editable>true</editable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Customer_Alert__c.Account__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
 </PermissionSet>
