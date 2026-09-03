@@ -239,7 +239,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>출동 준비</value>
+                    <value>브리핑</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>briefingTab</identifier>

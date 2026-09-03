@@ -164,7 +164,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>갱신 검토</value>
+                    <value>갱신</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>renewalTab</identifier>
@@ -178,7 +178,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>운영 성과</value>
+                    <value>성과 리뷰</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>contractReviewTab</identifier>
