@@ -1,59 +1,122 @@
 <template>
-    <div class="slds-p-vertical_x-small">
+    <div class="wb">
         <template lwc:if={isLoading}>
-            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            <div class="loading">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
         </template>
 
         <template lwc:if={error}>
-            <div class="slds-text-color_error slds-p-around_small" role="alert">
-                {errorMessage}
-            </div>
+            <div class="error" role="alert">{errorMessage}</div>
         </template>
 
         <template lwc:if={evidence}>
-            <!-- 측정 근거 지표 (identity는 dynamicHighlights) -->
-            <div class="rca-hl">
-                <div class="rca-hl-head">
-                    <div class="rca-hl-actions">
-                        <template lwc:if={problemCreated}>
-                            <button type="button" class="rca-done" disabled>Problem 생성됨</button>
-                            <lightning-button label="RCA 검토 →" variant="brand"
-                                onclick={handleGoRca}></lightning-button>
-                        </template>
-                        <template lwc:else>
-                            <lightning-button label="Problem 생성 · RCA 기록" variant="brand"
-                                onclick={handleCreateProblem}></lightning-button>
-                        </template>
+            <!-- 헤더 요약 + CTA -->
+            <div class="meta">
+                <dl class="meta__list">
+                    <div class="meta__item">
+                        <dt>2022 최초 불합격</dt>
+                        <dd class="num">{firstFailValue}</dd>
                     </div>
-                </div>
-                <dl class="rca-hl-fields">
-                    <div class="rca-hl-f"><dt>Revision</dt><dd>{revisionText}</dd></div>
-                    <div class="rca-hl-f"><dt>최초 불합격</dt><dd class="num">{firstFailValue}</dd></div>
-                    <div class="rca-hl-f"><dt>재시험 합격</dt><dd class="num">{retestPassValue}</dd></div>
+                    <div class="meta__item">
+                        <dt>2022 재시험 합격</dt>
+                        <dd class="num">{retestPassValue}</dd>
+                    </div>
+                    <div class="meta__item">
+                        <dt>연결 Case</dt>
+                        <dd class="num">{relatedCaseNumber}</dd>
+                    </div>
+                    <div class="meta__item">
+                        <dt>측정 위치</dt>
+                        <dd>{measurementPoint}</dd>
+                    </div>
+                    <div class="meta__item">
+                        <dt>작업 완료</dt>
+                        <dd class="num">{completedAtText}</dd>
+                    </div>
                 </dl>
+                <div class="meta__actions">
+                    <template lwc:if={problemCreated}>
+                        <button type="button" class="btn btn--muted" disabled>Problem 생성됨</button>
+                        <button type="button" class="btn btn--primary" onclick={handleGoRca}>
+                            원인 분석 →
+                        </button>
+                    </template>
+                    <template lwc:else>
+                        <button type="button" class="btn btn--primary" onclick={handleCreateProblem}>
+                            Problem 생성 · RCA 기록
+                        </button>
+                    </template>
+                </div>
             </div>
 
-            <!-- ── 타임라인 ── -->
-            <template lwc:if={hasTimeline}>
-                <div class="slds-m-top_small">
-                    <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">원인 확정 타임라인</span>
-                        <lightning-badge slot="actions" label="측정 기반 확정" variant="success"></lightning-badge>
-                        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
-                            <div class="tl">
+            <div class="grid">
+                <!-- 좌: 원인 확정 타임라인 -->
+                <section class="card col--main">
+                    <header class="card__head">
+                        <h3 class="card__title">원인 확정 타임라인</h3>
+                    </header>
+                    <div class="card__body">
+                        <template lwc:if={hasTimeline}>
+                            <ol class="tl">
                                 <template for:each={timeline} for:item="node">
-                                    <div key={node.key} class={node.nodeClass}>
-                                        <div class="tl-dot"></div>
-                                        <div class="tl-when">{node.whenText}</div>
-                                        <div class="tl-what">{node.what}</div>
-                                        <div class="tl-detail">{node.detail}</div>
-                                    </div>
+                                    <li key={node.key} class={node.nodeClass}>
+                                        <span class="tl-dot" aria-hidden="true"></span>
+                                        <div class="tl-content">
+                                            <p class="tl-when">{node.whenText}</p>
+                                            <p class="tl-what">{node.what}</p>
+                                            <p class="tl-detail">{node.detail}</p>
+                                            <template lwc:if={node.source}>
+                                                <p class="tl-source">{node.source}</p>
+                                            </template>
+                                        </div>
+                                    </li>
                                 </template>
+                            </ol>
+                        </template>
+                        <template lwc:else>
+                            <p class="empty">타임라인 데이터가 없습니다.</p>
+                        </template>
+                    </div>
+                </section>
+
+                <!-- 우: 오늘의 측정 요약 (2026 장애복구) -->
+                <section class="card col--side">
+                    <header class="card__head">
+                        <h3 class="card__title">오늘의 측정 요약</h3>
+                        <template lwc:if={recoveryEyebrow}>
+                            <span class="card__eyebrow">{recoveryEyebrow}</span>
+                        </template>
+                    </header>
+                    <div class="card__body">
+                        <template lwc:if={hasRecovery}>
+                            <div class="rec">
+                                <div class="rec__row">
+                                    <div class="rec__label">조치 전 체결토크</div>
+                                    <div class="rec__val num rec__val--neg">{torqueBefore}</div>
+                                </div>
+                                <div class="rec__arrow" aria-hidden="true">↓</div>
+                                <div class="rec__row">
+                                    <div class="rec__label">조치 후 체결토크</div>
+                                    <div class="rec__val num rec__val--pos">{torqueAfter}</div>
+                                </div>
+                                <div class="rec__divider"></div>
+                                <div class="rec__row">
+                                    <div class="rec__label">조치 후 유량</div>
+                                    <div class="rec__val num rec__val--pos">{flowAfter}</div>
+                                </div>
                             </div>
-                        </div>
-                    </lightning-card>
-                </div>
-            </template>
+                            <p class="rec__note">
+                                동일 측정 위치({measurementPoint})에서 2022년 재시험 합격값 {retestPassValue}과
+                                2026년 재조임 결과 {torqueAfter} 판정이 이력으로 함께 남았습니다.
+                            </p>
+                        </template>
+                        <template lwc:else>
+                            <p class="empty">장애복구 측정 데이터가 아직 없습니다.</p>
+                        </template>
+                    </div>
+                </section>
+            </div>
         </template>
     </div>
 </template>

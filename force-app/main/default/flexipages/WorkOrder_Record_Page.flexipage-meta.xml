@@ -248,26 +248,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>otDispatchCandidates</componentName>
-                <identifier>c_otDispatchCandidates_wo</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>assignTabContent</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>t5MeasurementTab</componentName>
-                <identifier>c_t5MeasurementTab_wo</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>measurementTabContent</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
                 <componentName>otCauseConfirm</componentName>
                 <identifier>c_otCauseConfirm_wo</identifier>
             </componentInstance>
@@ -320,39 +300,11 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>assignTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>배정</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>assignTab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>measurementTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>측정</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>measurementTab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
                     <value>causeConfirmTabContent</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>원인 확인</value>
+                    <value>자산 이력</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>causeConfirmTab</identifier>

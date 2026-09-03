@@ -36,12 +36,11 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     }
 
     async labelEnclosingTab() {
-        if (!this._tabId) return;
-        const short = String(this.caseNumber || '').replace(/^0+/, '').slice(-4);
-        const label = short ? `원인 확인 · ${short}` : '원인 확인';
+        if (this._tabLabeled || !this._tabId) return;
+        this._tabLabeled = true;
         try {
-            await setTabLabel(this._tabId, label);
-            await setTabIcon(this._tabId, 'standard:work_order');
+            await setTabLabel(this._tabId, '자산 이력');
+            await setTabIcon(this._tabId, 'standard:asset_relationship');
         } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
@@ -65,19 +64,11 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     }
 
     get errorMessage() {
-        return this.error?.body?.message || '원인확정 데이터를 불러오지 못했습니다.';
-    }
-
-    get caseNumber() {
-        return this.evidence?.caseNumber || '';
-    }
-
-    get assetName() {
-        return this.evidence?.assetName || '';
+        return this.error?.body?.message || '자산 이력 데이터를 불러오지 못했습니다.';
     }
 
     get revisionText() {
-        return this.evidence?.summary?.revisionText || '';
+        return this.evidence?.summary?.revisionText || '—';
     }
 
     get firstFailValue() {
@@ -89,11 +80,60 @@ export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     }
 
     get timeline() {
-        return this.evidence?.timeline || [];
+        return (this.evidence?.timeline || []).map((n) => ({
+            ...n,
+            nodeClass: n.state === 'hit'
+                ? 'tl-node tl-node--hit'
+                : n.state === 'ok'
+                    ? 'tl-node tl-node--ok'
+                    : 'tl-node'
+        }));
     }
 
     get hasTimeline() {
-        return this.timeline.length > 0;
+        return (this.evidence?.timeline || []).length > 0;
+    }
+
+    // ─── 오늘의 측정 요약 (2026 장애복구 WO) ───
+    get recovery() {
+        return this.evidence?.recovery;
+    }
+
+    get hasRecovery() {
+        return this.recovery?.hasData === true;
+    }
+
+    get torqueBefore() {
+        const v = this.recovery?.torqueBefore;
+        return v ? `${v} N·m` : '—';
+    }
+
+    get torqueAfter() {
+        const v = this.recovery?.torqueAfter;
+        return v ? `${v} N·m` : '—';
+    }
+
+    get flowAfter() {
+        const v = this.recovery?.flowAfter;
+        return v ? `${v} L/min` : '—';
+    }
+
+    get recoveryEyebrow() {
+        const wo = this.recovery?.woNumber ? `WO ${this.recovery.woNumber}` : '';
+        const dt = this.recovery?.recoveryDateText || '';
+        return [wo, dt].filter(Boolean).join(' · ');
+    }
+
+    get relatedCaseNumber() {
+        return this.recovery?.caseNumber || '—';
+    }
+
+    get measurementPoint() {
+        return this.recovery?.measurementPoint || '—';
+    }
+
+    get completedAtText() {
+        return this.recovery?.completedAtText || '—';
     }
 
     async handleCreateProblem() {

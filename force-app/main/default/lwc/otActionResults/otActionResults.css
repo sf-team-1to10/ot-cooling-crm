@@ -1,80 +1,379 @@
 :host {
-  --ot-c-brand: #0176d3;
-  --ot-c-brand-strong: #014486;
-  --ot-c-brand-soft: #eaf2fb;
-  --ot-c-success: #2e844a;
-  --ot-c-warning: #b46f00;
-  --ot-c-danger: #ba0517;
-  --ot-c-info: #005fb2;
-  --ot-c-bg: #ffffff;
-  --ot-c-bg-alt: #f3f3f3;
-  --ot-c-bg-shade: #f4f6f9;
-  --ot-c-border: #dddbda;
-  --ot-c-text: #181818;
-  --ot-c-text-weak: #444444;
-  --ot-c-text-muted: #706e6b;
+    --brand: #032d60;
+    --brand-alt: #014486;
+    --brand-soft: #d8e6f6;
+    --surface: #ffffff;
+    --border: #e5e5e5;
+    --border-soft: #ececec;
+    --border-strong: #c9c7c5;
+    --text: #181818;
+    --text-2: #444444;
+    --text-muted: #706e6b;
+    --chip-pos-bg: #f0f7f2;
+    --chip-pos-text: #2e844a;
+    --chip-pos-border: #cde4d4;
+    --chip-neg-bg: #fbf0f0;
+    --chip-neg-text: #ba0517;
+    --chip-neg-border: #f0cfcf;
+    --chip-warn-bg: #fdf5e6;
+    --chip-warn-text: #8a5a00;
+    --chip-warn-border: #f0dfb8;
+    --chip-info-bg: #eef4fb;
+    --chip-info-text: #014486;
+    --chip-info-border: #cddcf0;
+    display: block;
 }
 
-/* ── Path 바 ── */
-.path { display:flex; background:#fff; padding:11px 18px 12px; border-bottom:1px solid #cfdae5; gap:0; overflow-x:auto; }
-.path-step { flex:1 1 0; min-width:74px; padding:7px 6px 7px 19px; background:#eaf0f6; color:#6e8599; font-size:10.5px; font-weight:500; white-space:nowrap; clip-path:polygon(0 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,0 100%,11px 50%); margin-right:-9px; display:flex; align-items:center; gap:5px; }
-.path-step:first-child { clip-path:polygon(0 0,calc(100% - 11px) 0,100% 50%,calc(100% - 11px) 100%,0 100%); padding-left:14px; border-radius:4px 0 0 4px; }
-.path-step:last-child { margin-right:0; }
-.path-step.done { background:#2e8b57; color:#fff; }
-.path-step.on { background:#0877d1; color:#fff; font-weight:700; }
-.path-num { opacity:.6; font-family:'IBM Plex Mono',ui-monospace,monospace; }
+.wb {
+    padding: 0.75rem;
+}
 
-/* ── 하이라이트 ── */
-.action-hl { background:#fff; border-bottom:1px solid #cfdae5; padding:14px 18px; }
-.action-hl-head { display:flex; align-items:flex-start; gap:14px; }
-.action-hl-icon { width:38px; height:38px; border-radius:7px; flex:0 0 auto; display:grid; place-items:center; font-size:17px; font-weight:700; color:#fff; background:#2e8b57; }
-.action-hl-title { flex:1 1 auto; min-width:180px; }
-.action-hl-eyebrow { margin:0; font-size:11px; color:#6e8599; letter-spacing:.3px; }
-.action-hl-name { margin:0; font-size:19px; font-weight:600; letter-spacing:-.3px; line-height:1.25; }
-.action-hl-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:2px 20px; border-top:1px solid #e3eaf1; padding-top:11px; margin:12px 0 0; }
-.action-hl-f dt { font-size:10.5px; color:#6e8599; margin-bottom:2px; }
-.action-hl-f dd { margin:0; font-size:13px; font-weight:500; }
+.loading {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+}
 
-/* ── 결과 카운트 ── */
-.res-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-.res { background:#fff; border:1px solid #cfdae5; border-radius:9px; padding:14px 12px; text-align:center; }
-.res-n { font-family:'IBM Plex Mono',ui-monospace,monospace; font-size:30px; font-weight:700; line-height:1; color:#0b1f33; }
-.res-n.green { color:#2e8b57; }
-.res-n.warn { color:#c87913; }
-.res-l { font-size:11px; color:#6e8599; margin-top:6px; }
+.error {
+    padding: 0.75rem 1rem;
+    background: var(--chip-neg-bg);
+    color: var(--chip-neg-text);
+    border: 1px solid var(--chip-neg-border);
+    border-radius: 0.25rem;
+    font-size: 0.8125rem;
+}
 
-/* ── 관련 목록 행 ── */
-.rl { display:flex; flex-direction:column; }
-.rl-row { display:flex; gap:11px; align-items:flex-start; padding:11px 4px; border-bottom:1px solid #e3eaf1; }
-.rl-row:last-child { border-bottom:none; }
-.rl-main { flex:1 1 auto; min-width:0; }
-.rl-t { font-size:13px; font-weight:600; }
-.rl-s { font-size:11.5px; color:#6e8599; margin-top:2px; }
+/* ─── 승인 결과 배너 ─── */
+.banner {
+    background: var(--brand-soft);
+    border: 1px solid #b7cfe8;
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
 
-/* ── T5-22 Knowledge 카드 ── */
-.kb-card { --slds-c-card-color-border:#0877d1; }
-.kb-lead { font-size:12.5px; line-height:1.65; margin:0 0 11px; }
-.kb-inner { background:#f4f7fa; border:1px solid #e3eaf1; border-radius:8px; padding:11px; }
-.mini-label { font-size:10px; font-weight:600; letter-spacing:.4px; text-transform:uppercase; color:#6e8599; margin-bottom:5px; }
-.kb-quote { font-size:11.5px; color:#3d5568; line-height:1.6; padding:8px 10px; background:#fff; border-radius:6px; border-left:2.5px solid #6e8599; }
-.kb-arrow { text-align:center; font-size:16px; color:#0877d1; margin:7px 0 5px; }
-.kb-title { font-size:13px; font-weight:600; margin-bottom:7px; }
-.kb-kv { display:grid; grid-template-columns:1fr 1fr; gap:4px 10px; margin:0; font-size:11.5px; }
-.kb-kv > div { display:flex; justify-content:space-between; gap:8px; }
-.kb-kv dt { color:#6e8599; }
-.kb-kv dd { margin:0; font-weight:500; }
-.kb-actions { display:flex; gap:7px; margin-top:11px; flex-wrap:wrap; }
-.kb-note { font-size:11.5px; color:#6e8599; margin:9px 0 0; line-height:1.55; }
+.banner__ico {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--brand);
+    color: var(--surface);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+}
 
-/* ── 테이블 ── */
-.tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
-.tbl th { text-align:left; padding:8px 11px; font-size:10.5px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; color:#6e8599; border-bottom:1px solid #cfdae5; background:#f4f7fa; white-space:nowrap; }
-.tbl td { padding:8px 11px; border-bottom:1px solid #e3eaf1; vertical-align:top; }
-.tbl tr:last-child td { border-bottom:none; }
+.banner__body {
+    min-width: 0;
+}
 
-/* ── 배지 ── */
-.scope-corrective { background:#c43d4b; color:#fff; }
-.scope-preventive { background:#c87913; color:#fff; }
-.scope-new { background:#2e8b57; color:#fff; }
-/* ── 숫자 유틸 ── */
-.num { font-variant-numeric:tabular-nums; }
+.banner__label {
+    margin: 0 0 0.125rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--brand);
+}
+
+.banner__text {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text);
+    line-height: 1.5;
+    word-break: keep-all;
+}
+
+.banner__status {
+    flex: 0 0 auto;
+}
+
+/* ─── KPI 3카드 ─── */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+@media (max-width: 900px) {
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0.875rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+}
+
+.kpi__value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 0;
+}
+
+.kpi__label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.kpi--corr .kpi__value {
+    color: var(--chip-neg-text);
+}
+
+.kpi--prev .kpi__value {
+    color: var(--chip-warn-text);
+}
+
+.kpi--total .kpi__value {
+    color: var(--brand);
+}
+
+/* ─── 그리드 ─── */
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ─── 카드 ─── */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.card__head {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.card__title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.card__body-tight {
+    padding: 0;
+}
+
+.empty {
+    padding: 0.75rem 1rem;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ─── Chip ─── */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+.chip--pos { background: var(--chip-pos-bg); color: var(--chip-pos-text); border-color: var(--chip-pos-border); }
+.chip--neg { background: var(--chip-neg-bg); color: var(--chip-neg-text); border-color: var(--chip-neg-border); }
+.chip--warn { background: var(--chip-warn-bg); color: var(--chip-warn-text); border-color: var(--chip-warn-border); }
+.chip--info { background: var(--chip-info-bg); color: var(--chip-info-text); border-color: var(--chip-info-border); }
+
+/* ─── WO 리스트 (세로 축소 + 스크롤) ─── */
+.wo-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 22rem;
+    overflow-y: auto;
+}
+
+.wo-row {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    padding: 0.5rem 1rem 0.5rem 0.625rem;
+    border-bottom: 1px solid var(--border-soft);
+    align-items: center;
+    border-left: 3px solid transparent;
+}
+
+.wo-row:last-child {
+    border-bottom: none;
+}
+
+/* 시정: 좌측 red 바 + 옅은 red 배경 */
+.wo-row--corr {
+    border-left-color: var(--chip-neg-text);
+    background: var(--chip-neg-bg);
+}
+
+/* 예방: 좌측 warn 바 (배경은 흰색 유지 · 개수가 많아 노이즈 방지) */
+.wo-row--prev {
+    border-left-color: var(--chip-warn-text);
+}
+
+.wo-main {
+    min-width: 0;
+}
+
+.wo-num {
+    margin: 0;
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.wo-subject {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    word-break: keep-all;
+}
+
+/* 스크롤바 부드럽게 */
+.wo-list::-webkit-scrollbar { width: 8px; }
+.wo-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+.wo-list::-webkit-scrollbar-track { background: transparent; }
+
+/* ─── Rev.2 → Rev.3 강조 뱃지 ─── */
+.rev-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.5rem;
+    background: var(--brand-soft);
+    border: 1px solid #b7cfe8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.rev-badge__from {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+}
+
+.rev-badge__arrow {
+    color: var(--brand);
+    font-weight: 700;
+}
+
+.rev-badge__to {
+    color: var(--brand);
+    font-size: 0.8125rem;
+}
+
+/* ─── 신규 점검 항목 행 강조 ─── */
+.tbl__row--new {
+    background: var(--chip-pos-bg);
+}
+
+.tbl__row--new td {
+    color: var(--text) !important;
+}
+
+.new-mark {
+    color: var(--chip-pos-text);
+    font-weight: 700;
+    margin-right: 0.375rem;
+    font-size: 0.75rem;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.checklist__note {
+    margin: 0;
+    padding: 0.625rem 1rem;
+    border-top: 1px solid var(--border-soft);
+    font-size: 0.75rem;
+    color: var(--text-2);
+    line-height: 1.5;
+    background: #fafafa;
+    word-break: keep-all;
+}
+
+/* ─── 테이블 ─── */
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+}
+
+.tbl thead th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+    background: #fafafa;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.tbl tbody tr {
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.tbl tbody tr:last-child {
+    border-bottom: none;
+}
+
+.tbl tbody td {
+    padding: 0.5rem 0.75rem;
+    color: var(--text-2);
+    line-height: 1.4;
+    font-weight: 500;
+    text-align: left;
+    word-break: keep-all;
+}
