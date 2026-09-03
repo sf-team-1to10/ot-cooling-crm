@@ -40,12 +40,19 @@ public with sharing class OTEquipDashboardController {
                 v.status = a.Status;
                 v.installDate = a.InstallDate;
 
-                Boolean isAdv = a.Latest_Trend_Flag__c == '주의' ||
-                                a.Latest_Trend_Flag__c == '이상';
-                v.stateCode = isAdv ? 'adv' : 'ok';
-                v.stateLabel = isAdv ? 'P3 Advisory / 주의' : '정상';
-
-                if (isAdv) { advisoryCount++; } else { normalCount++; }
+                if (a.Latest_Trend_Flag__c == '이상') {
+                    v.stateCode = 'critical';
+                    v.stateLabel = '이상';
+                    advisoryCount++;
+                } else if (a.Latest_Trend_Flag__c == '주의') {
+                    v.stateCode = 'warning';
+                    v.stateLabel = '주의';
+                    advisoryCount++;
+                } else {
+                    v.stateCode = 'ok';
+                    v.stateLabel = '정상';
+                    normalCount++;
+                }
                 if (a.Next_Inspection_Date__c != null &&
                     a.Next_Inspection_Date__c <= Date.today().addDays(90)) {
                     maintCount++;
@@ -112,10 +119,16 @@ public with sharing class OTEquipDashboardController {
             // 불가라 이 경로로 우회한다(T5SyncAssetTrendSummary 클래스 참고).
             result.gaugesJson = a.Latest_Gauges_JSON__c;
 
-            Boolean isAdv = a.Latest_Trend_Flag__c == '주의' ||
-                            a.Latest_Trend_Flag__c == '이상';
-            result.stateCode = isAdv ? 'adv' : 'ok';
-            result.stateLabel = isAdv ? 'P3 Advisory / 주의' : '정상';
+            if (a.Latest_Trend_Flag__c == '이상') {
+                result.stateCode = 'critical';
+                result.stateLabel = '이상';
+            } else if (a.Latest_Trend_Flag__c == '주의') {
+                result.stateCode = 'warning';
+                result.stateLabel = '주의';
+            } else {
+                result.stateCode = 'ok';
+                result.stateLabel = '정상';
+            }
             result.meta = (result.assetType != null ? result.assetType : '') +
                 ' · ' + (result.family != null ? result.family : '') +
                 ' · ' + (result.location != null ? result.location : '');

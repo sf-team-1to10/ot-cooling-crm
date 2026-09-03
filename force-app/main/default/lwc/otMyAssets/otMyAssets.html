@@ -3,21 +3,44 @@
         <h1>내 자산</h1>
         <div class="sub">{subheading}</div>
 
-        <!-- Loading -->
+        <!-- Skeleton loading -->
         <template lwc:if={isLoading}>
-            <div class="card">
-                <div class="loading">불러오는 중…</div>
+            <div class="skeleton-grid">
+                <div class="skel-card">
+                    <div class="skel-accent"></div>
+                    <div class="skel-body">
+                        <div class="skel-line skel-badge"></div>
+                        <div class="skel-line skel-title"></div>
+                        <div class="skel-line skel-sub"></div>
+                    </div>
+                </div>
+                <div class="skel-card">
+                    <div class="skel-accent"></div>
+                    <div class="skel-body">
+                        <div class="skel-line skel-badge"></div>
+                        <div class="skel-line skel-title"></div>
+                        <div class="skel-line skel-sub"></div>
+                    </div>
+                </div>
+                <div class="skel-card">
+                    <div class="skel-accent"></div>
+                    <div class="skel-body">
+                        <div class="skel-line skel-badge"></div>
+                        <div class="skel-line skel-title"></div>
+                        <div class="skel-line skel-sub"></div>
+                    </div>
+                </div>
             </div>
         </template>
 
         <!-- Error -->
         <template lwc:if={error}>
-            <div class="card">
+            <div class="card-shell">
                 <div class="error" role="alert">{error}</div>
             </div>
         </template>
 
-        <!-- Filter pills + list (shown whenever the user owns any asset) -->
+        <!-- Filter pills + grid (shown whenever the user owns any asset) -->
         <template lwc:if={hasAnyAssets}>
             <div class="tools">
                 <button class={allPillClass} onclick={handleShowAll}>
@@ -31,38 +54,44 @@
                 </button>
             </div>
 
-            <div class="card">
-                <template lwc:if={hasVisibleAssets}>
+            <template lwc:if={hasVisibleAssets}>
+                <div class="asset-grid">
                     <template for:each={visibleAssets} for:item="asset">
                         <div
                             key={asset.assetId}
-                            class="row"
+                            class={asset.cardClass}
                             role="button"
                             tabindex="0"
                             data-id={asset.assetId}
                             data-name={asset.name}
                             onclick={handleContact}
                         >
-                            <div class={asset.statusClass}>
-                                {asset.statusText}
+                            <div class={asset.accentClass}></div>
+                            <div class="ac-body">
+                                <div class="ac-head">
+                                    <c-ot-status-badge
+                                        variant={asset.badgeVariant}
+                                        label={asset.statusLabel}
+                                    ></c-ot-status-badge>
+                                    <div class="chev">&rsaquo;</div>
+                                </div>
+                                <div class="ac-name">{asset.name}</div>
+                                <div class="ac-sub">{asset.subline}</div>
                             </div>
-                            <div class="rmain">
-                                <div class="rt">{asset.name}</div>
-                                <div class="rs">{asset.subline}</div>
-                            </div>
-                            <div class="chev">&rsaquo;</div>
                         </div>
                     </template>
-                </template>
-                <template lwc:if={showNoMatch}>
+                </div>
+            </template>
+            <template lwc:if={showNoMatch}>
+                <div class="card-shell">
                     <div class="empty">해당하는 장비가 없습니다.</div>
-                </template>
-            </div>
+                </div>
+            </template>
         </template>
 
         <!-- Empty state: user owns no assets at all -->
         <template lwc:if={showEmptyState}>
-            <div class="card">
+            <div class="card-shell">
                 <div class="empty">조회 가능한 자산이 없습니다.</div>
             </div>
         </template>
