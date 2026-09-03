@@ -5,6 +5,7 @@ import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getE
 import getLocationInfo from '@salesforce/apex/OTEquipDashboardController.getLocationInfo';
 import getAlerts from '@salesforce/apex/OTEquipDashboardController.getAlerts';
 import CDU_IMG from '@salesforce/resourceUrl/OT_Product_CDU';
+import CDU_A07_IMG from '@salesforce/resourceUrl/OT_CDU_Gallery_01';
 import CX_IMG from '@salesforce/resourceUrl/OT_Product_CX';
 import CRAH_IMG from '@salesforce/resourceUrl/OT_Product_CRAH';
 import COOLBIT_ALERT from '@salesforce/resourceUrl/OT_Coolbit_Alert';
@@ -176,7 +177,9 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         return this.filteredAssets.slice(start, start + PAGE_SIZE).map(a => {
             const upper = (a.name || '').toUpperCase();
             let thumbUrl;
-            if (upper.startsWith('CDU')) {
+            if (upper === 'CDU-A-07') {
+                thumbUrl = CDU_A07_IMG;
+            } else if (upper.startsWith('CDU')) {
                 thumbUrl = CDU_IMG;
             } else if (upper.startsWith('CX')) {
                 thumbUrl = CX_IMG;
@@ -283,6 +286,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get selImageUrl() {
         if (this.selDetail && this.selDetail.imageUrl) return this.selDetail.imageUrl;
         const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
+        if (name === 'CDU-A-07') return CDU_A07_IMG;
         if (name.startsWith('CDU')) return CDU_IMG;
         if (name.startsWith('CX')) return CX_IMG;
         if (name.startsWith('CA') || name.includes('CRAH')) return CRAH_IMG;
@@ -294,7 +298,9 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     // 이미지 로드 실패 시 (포털 권한 없는 첨부파일 URL) → Static Resource로 폴백
     handleImageError(event) {
         const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
-        if (name.startsWith('CX')) {
+        if (name === 'CDU-A-07') {
+            event.target.src = CDU_A07_IMG;
+        } else if (name.startsWith('CX')) {
             event.target.src = CX_IMG;
         } else if (name.startsWith('CA') || name.includes('CRAH')) {
             event.target.src = CRAH_IMG;
