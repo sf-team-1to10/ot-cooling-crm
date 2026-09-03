@@ -4,6 +4,10 @@
     <protected>false</protected>
     <values>
         <field>User_Id__c</field>
-        <value xsi:type="xsd:string">005bm00000UFF3uAAH</value>
+        <value xsi:type="xsd:string">005bm00000UFJyjAAH</value>
+    </values>
+    <values>
+        <field>ServiceResource_Id__c</field>
+        <value xsi:type="xsd:string">0Hnbm000000ST8jCAG</value>
     </values>
 </CustomMetadata>

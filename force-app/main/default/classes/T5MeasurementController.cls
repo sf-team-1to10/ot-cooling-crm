@@ -139,6 +139,27 @@ public with sharing class T5MeasurementController {
         } catch (DmlException e) {
             throw new AuraHandledException('작업 완료 처리에 실패했습니다: ' + e.getDmlMessage(0));
         }
+
+        // SA도 함께 Completed 로 바꿔 FSM 모바일 앱 status 반영.
+        // SA가 없으면 스킵. USER_MODE로 접근권한 검사.
+        List<ServiceAppointment> sas = [
+            SELECT Id, Status FROM ServiceAppointment
+            WHERE ParentRecordId = :workOrderId
+              AND Status != :STATUS_COMPLETED
+            WITH USER_MODE
+        ];
+        if (!sas.isEmpty()) {
+            List<ServiceAppointment> toUpdate = new List<ServiceAppointment>();
+            for (ServiceAppointment sa : sas) {
+                toUpdate.add(new ServiceAppointment(Id = sa.Id, Status = STATUS_COMPLETED));
+            }
+            try {
+                Database.update(toUpdate, AccessLevel.USER_MODE);
+            } catch (DmlException e) {
+                // SA 실패는 blocker 아님 - WO는 이미 Completed. 로그만 남기고 통과.
+                System.debug(LoggingLevel.WARN, 'SA Completed 반영 실패: ' + e.getDmlMessage(0));
+            }
+        }
     }
 
     // ─── Builders ────────────────────────────────────────────────────────
