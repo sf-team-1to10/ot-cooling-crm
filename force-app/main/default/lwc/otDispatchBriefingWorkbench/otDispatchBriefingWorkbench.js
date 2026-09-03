@@ -208,18 +208,21 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         const targetName = this.briefing?.targetAssetName;
         return rows.map((c) => {
             const isTarget = c.assetName === targetName;
-            const hasTrendChip = c.trendFlag === '이상' || c.trendFlag === '주의';
+            const hasTrendChip = !!c.trendFlag;
             return {
                 ...c,
                 key: c.assetId,
                 isTarget,
-                driftText: c.driftFromBaseline == null ? '—' : `${c.driftFromBaseline}%`,
+                driftText: this.formatSignedPercent(c.driftFromBaseline),
                 measuredText: c.measuredValue == null ? '—' : `${c.measuredValue} L/min`,
+                measuredClass: this.measuredCellClass(c),
                 revisionText: c.appliedRevision || '—',
                 rowClass: isTarget ? 'cmp-row cmp-row--target' : 'cmp-row',
+                driftClass: this.driftCellClass(c),
                 hasTrendChip,
                 trendClass: hasTrendChip ? this.trendChipClass(c.trendFlag) : '',
-                pastFailureText: c.hasPastFailure ? '있음' : '—'
+                failureClass: this.failureCellClass(c),
+                pastFailureText: c.pastFailureText === '—' ? '없음' : (c.pastFailureText || (c.hasPastFailure ? '있음' : '없음'))
             };
         });
     }
@@ -228,7 +231,42 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         if (trend === '이상') {
             return 'chip chip--neg';
         }
-        return 'chip chip--warn';
+        if (trend === '주의') {
+            return 'chip chip--warn';
+        }
+        return 'chip chip--pos';
+    }
+
+    formatSignedPercent(value) {
+        if (value == null) {
+            return '—';
+        }
+        const num = Number(value);
+        if (Number.isNaN(num)) {
+            return '—';
+        }
+        const sign = num > 0 ? '+' : '';
+        return `${sign}${num}%`;
+    }
+
+    measuredCellClass(row) {
+        return this.isCriticalComparison(row) && row.measuredValue != null
+            ? 'num drift-neg'
+            : 'num';
+    }
+
+    driftCellClass(row) {
+        return this.isCriticalComparison(row) && row.driftFromBaseline < 0
+            ? 'num drift-neg'
+            : 'num';
+    }
+
+    isCriticalComparison(row) {
+        return row.driftFromBaseline <= -5 || !!row.pastFailureText;
+    }
+
+    failureCellClass(row) {
+        return row.hasPastFailure || !!row.pastFailureText ? 'failure-neg' : '';
     }
 
     get hasComparisons() {

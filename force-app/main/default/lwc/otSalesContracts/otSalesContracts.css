@@ -1,23 +1,39 @@
-:host { display: block; }
+:host {
+    --brand: #032d60;
+    --brand-alt: #014486;
+    --surface: #ffffff;
+    --border: #e5e5e5;
+    --border-soft: #ececec;
+    --text: #181818;
+    --text-2: #444444;
+    --text-muted: #706e6b;
+    --chip-pos-bg: #f0f7f2;
+    --chip-pos-text: #2e844a;
+    --chip-pos-border: #cde4d4;
+    display: block;
+}
 
 .card-container {
-    background: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 10px;
-    padding: 1.25rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem 1rem;
 }
 
 .card-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    padding: 0.75rem 0;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-soft);
 }
 
 .card-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #2563eb;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
 }
 
 .contract-table {
@@ -28,22 +44,24 @@
 }
 
 .contract-table th {
-    color: #6b7280;
+    color: var(--text-muted);
     font-weight: 600;
     text-align: left;
     padding: 0.5rem 0.75rem;
-    border-bottom: 2px solid #e5e7eb;
+    border-bottom: 1px solid var(--border);
     white-space: nowrap;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
 }
 
 .contract-table td {
     padding: 0.625rem 0.75rem;
-    border-bottom: 1px solid #f3f4f6;
-    color: #374151;
+    border-bottom: 1px solid var(--border-soft);
+    color: var(--text-2);
 }
 
 .link {
-    color: #2563eb;
+    color: var(--brand);
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
@@ -53,24 +71,27 @@
 
 .status-badge {
     display: inline-block;
-    padding: 0.125rem 0.625rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.6875rem;
     font-weight: 600;
-    background: #059669;
-    color: #ffffff;
+    background: var(--chip-pos-bg);
+    color: var(--chip-pos-text);
+    border: 1px solid var(--chip-pos-border);
+    letter-spacing: 0.02em;
 }
 
 .card-footer {
     padding-top: 0.75rem;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     text-align: center;
+    border-top: 1px solid var(--border-soft);
 }
 
 .view-all {
     font-size: 0.8125rem;
     font-weight: 600;
-    color: #2563eb;
+    color: var(--brand);
     cursor: pointer;
 }
 
@@ -78,7 +99,7 @@
 
 .empty-msg {
     text-align: center;
-    color: #9ca3af;
+    color: var(--text-muted);
     padding: 2rem;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
 }

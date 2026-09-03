@@ -112,15 +112,15 @@
                                                     </template>
                                                 </th>
                                                 <td>{row.revisionText}</td>
-                                                <td class="num">{row.measuredText}</td>
-                                                <td class="num">{row.driftText}</td>
+                                                <td class={row.measuredClass}>{row.measuredText}</td>
+                                                <td class={row.driftClass}>{row.driftText}</td>
                                                 <td>
                                                     <template lwc:if={row.hasTrendChip}>
                                                         <span class={row.trendClass}>{row.trendFlag}</span>
                                                     </template>
                                                     <template lwc:else>—</template>
                                                 </td>
-                                                <td>{row.pastFailureText}</td>
+                                                <td class={row.failureClass}>{row.pastFailureText}</td>
                                             </tr>
                                         </template>
                                     </tbody>

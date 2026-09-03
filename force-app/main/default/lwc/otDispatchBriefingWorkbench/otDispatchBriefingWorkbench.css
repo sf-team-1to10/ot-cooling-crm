@@ -283,6 +283,14 @@
     color: var(--brand);
 }
 
+.cmp-row--target td.drift-neg {
+    color: var(--chip-neg-text);
+}
+
+.cmp-row--target td.failure-neg {
+    color: var(--chip-neg-text);
+}
+
 .cmp-pin {
     color: var(--brand);
     margin-left: 0.375rem;
@@ -292,6 +300,17 @@
 
 .num {
     font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+}
+
+.drift-neg {
+    color: var(--chip-neg-text);
+    font-weight: 700;
+}
+
+.failure-neg {
+    color: var(--chip-neg-text);
+    font-weight: 700;
 }
 
 /* ─── Chip (§6) ─── */

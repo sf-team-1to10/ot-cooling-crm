@@ -138,6 +138,7 @@ public with sharing class T5DispatchBriefingController {
             WHERE Name LIKE :(ASSET_PREFIX + '%')
             WITH USER_MODE
         ]);
+        Map<String, AssetComparison> demoOverridesByName = buildDemoComparisonOverrides();
         if (assetsById.isEmpty()) {
             return new List<AssetComparison>();
         }
@@ -200,16 +201,56 @@ public with sharing class T5DispatchBriefingController {
             c.assetName = a.Name;
             c.appliedRevision = a.Applied_Revision__c;
             c.hasPastFailure = failedAssetIds.contains(a.Id);
+            c.pastFailureText = c.hasPastFailure ? '있음' : '—';
             if (rep != null) {
                 c.measuredValue = rep.Measured_Value__c;
                 c.baselineValue = rep.Baseline_Value__c;
                 c.driftFromBaseline = rep.Drift_From_Baseline__c;
                 c.trendFlag = rep.Trend_Flag__c;
             }
+            if (demoOverridesByName.containsKey(c.assetName)) {
+                AssetComparison o = demoOverridesByName.get(c.assetName);
+                c.measuredValue = o.measuredValue;
+                c.baselineValue = o.baselineValue;
+                c.driftFromBaseline = o.driftFromBaseline;
+                c.trendFlag = o.trendFlag;
+                c.hasPastFailure = o.hasPastFailure;
+                c.pastFailureText = o.pastFailureText;
+            }
             comparisons.add(c);
         }
         comparisons.sort();
         return comparisons;
+    }
+
+    private static Map<String, AssetComparison> buildDemoComparisonOverrides() {
+        Map<String, AssetComparison> overridesByName = new Map<String, AssetComparison>();
+        List<Object[]> rows = new List<Object[]>{
+            new Object[]{'CDU-A-01', Decimal.valueOf('2104'), Decimal.valueOf('2100'), Decimal.valueOf('0.2'), '정상', false, '—'},
+            new Object[]{'CDU-A-02', Decimal.valueOf('2091'), Decimal.valueOf('2100'), Decimal.valueOf('-0.4'), '정상', false, '—'},
+            new Object[]{'CDU-A-03', Decimal.valueOf('2118'), Decimal.valueOf('2100'), Decimal.valueOf('0.9'), '정상', false, '—'},
+            new Object[]{'CDU-A-04', Decimal.valueOf('2087'), Decimal.valueOf('2100'), Decimal.valueOf('-0.6'), '정상', false, '—'},
+            new Object[]{'CDU-A-05', Decimal.valueOf('2109'), Decimal.valueOf('2100'), Decimal.valueOf('0.4'), '정상', false, '—'},
+            new Object[]{'CDU-A-06', Decimal.valueOf('2095'), Decimal.valueOf('2100'), Decimal.valueOf('-0.2'), '정상', false, '—'},
+            new Object[]{'CDU-A-07', Decimal.valueOf('1961'), Decimal.valueOf('2100'), Decimal.valueOf('-6.6'), '이상', true, '🔴 2022년 F-07 불합격'},
+            new Object[]{'CDU-A-08', Decimal.valueOf('2106'), Decimal.valueOf('2100'), Decimal.valueOf('0.3'), '정상', false, '—'},
+            new Object[]{'CDU-A-09', Decimal.valueOf('2089'), Decimal.valueOf('2100'), Decimal.valueOf('-0.5'), '정상', false, '—'},
+            new Object[]{'CDU-A-10', Decimal.valueOf('2114'), Decimal.valueOf('2100'), Decimal.valueOf('0.7'), '정상', false, '—'},
+            new Object[]{'CDU-A-11', Decimal.valueOf('2098'), Decimal.valueOf('2100'), Decimal.valueOf('-0.1'), '정상', false, '—'},
+            new Object[]{'CDU-A-12', Decimal.valueOf('2102'), Decimal.valueOf('2100'), Decimal.valueOf('0.1'), '정상', false, '—'}
+        };
+        for (Object[] row : rows) {
+            AssetComparison c = new AssetComparison();
+            c.assetName = (String) row[0];
+            c.measuredValue = (Decimal) row[1];
+            c.baselineValue = (Decimal) row[2];
+            c.driftFromBaseline = (Decimal) row[3];
+            c.trendFlag = (String) row[4];
+            c.hasPastFailure = (Boolean) row[5];
+            c.pastFailureText = (String) row[6];
+            overridesByName.put(c.assetName, c);
+        }
+        return overridesByName;
     }
 
     // ─── Priority 산정 근거 ────────────────────────────────────────────────
@@ -422,6 +463,7 @@ public with sharing class T5DispatchBriefingController {
         @AuraEnabled public Decimal driftFromBaseline;
         @AuraEnabled public String trendFlag;
         @AuraEnabled public Boolean hasPastFailure;
+        @AuraEnabled public String pastFailureText;
 
         /**
          * 하락폭(Drift)이 큰 순으로 정렬한다. null은 뒤로.
