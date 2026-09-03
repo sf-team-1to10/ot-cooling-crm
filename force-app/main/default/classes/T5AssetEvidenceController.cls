@@ -14,6 +14,7 @@ public with sharing class T5AssetEvidenceController {
     private static final String JUDGE_FAIL = '불합격';
     private static final String JUDGE_PASS = '합격';
     private static final String SUBTYPE_COMMISSION = '시운전';
+    private static final String SUBTYPE_RECOVERY = '장애복구';
 
     /**
      * 현재 Case 기준으로 Asset 원기록 타임라인을 조립한다.
@@ -24,9 +25,11 @@ public with sharing class T5AssetEvidenceController {
     @AuraEnabled(cacheable=true)
     public static AssetEvidence getEvidence(Id caseId) {
         if (caseId == null) {
-            throw new AuraHandledException('Case Id가 필요합니다.');
+            throw new AuraHandledException('레코드 Id가 필요합니다.');
         }
-        Case current = getCurrentCase(caseId);
+        // 파라미터가 WorkOrder Id로 들어오면 CaseId로 해석
+        Id resolvedCaseId = resolveCaseId(caseId);
+        Case current = getCurrentCase(resolvedCaseId);
         if (current.AssetId == null) {
             throw new AuraHandledException('Case에 연결된 Asset이 없습니다.');
         }
@@ -39,13 +42,42 @@ public with sharing class T5AssetEvidenceController {
         ChangeRequest cr = (link != null) ? getChangeRequest(link.ChangeRequestId) : null;
 
         List<WorkOrderLineItem> commissionLines = getCommissionLines(current.AssetId);
+        List<WorkOrderLineItem> recoveryLines = getRecoveryLines(current.AssetId);
 
         result.timeline = buildTimeline(cr, link, commissionLines);
         result.summary = buildSummary(cr, link, commissionLines);
+        result.recovery = buildRecovery(recoveryLines);
         return result;
     }
 
     // ─── Current Case ────────────────────────────────────────────────────
+
+    /**
+     * 파라미터 Id의 sobject prefix에 따라 실제 Case Id로 정규화한다.
+     * - `500` 접두어(Case) → 그대로 반환
+     * - `0WO` 접두어(WorkOrder) → 해당 WO의 CaseId 조회
+     * 기타 오브젝트가 들어오면 예외를 던진다.
+     */
+    private static Id resolveCaseId(Id recordId) {
+        String prefix = String.valueOf(recordId).substring(0, 3);
+        if (prefix == '500') {
+            return recordId;
+        }
+        if (prefix == '0WO') {
+            List<WorkOrder> wos = [
+                SELECT CaseId
+                FROM WorkOrder
+                WHERE Id = :recordId
+                WITH USER_MODE
+                LIMIT 1
+            ];
+            if (wos.isEmpty() || wos[0].CaseId == null) {
+                throw new AuraHandledException('WorkOrder에 연결된 Case가 없습니다.');
+            }
+            return wos[0].CaseId;
+        }
+        throw new AuraHandledException('지원하지 않는 레코드 유형입니다: ' + prefix);
+    }
 
     private static Case getCurrentCase(Id caseId) {
         List<Case> cases = [
@@ -115,6 +147,25 @@ public with sharing class T5AssetEvidenceController {
         ];
     }
 
+    /**
+     * 대상 Asset의 장애복구 WorkOrder에 속한 측정 라인을 가져온다.
+     * 2026년 현장 조치의 전/후 값(체결토크·유량)을 카드로 노출한다.
+     */
+    private static List<WorkOrderLineItem> getRecoveryLines(Id assetId) {
+        return [
+            SELECT Id, Measurement_Item_Code__c, Measurement_Point__c,
+                   Measured_Value__c, Spec_Value__c, Judgement__c,
+                   WorkOrder.StartDate, WorkOrder.EndDate,
+                   WorkOrder.WorkOrderNumber, WorkOrder.Case.CaseNumber
+            FROM WorkOrderLineItem
+            WHERE WorkOrder.AssetId = :assetId
+              AND WorkOrder.Work_Subtype__c = :SUBTYPE_RECOVERY
+              AND Measured_Value__c != null
+            WITH USER_MODE
+            ORDER BY WorkOrder.StartDate DESC
+        ];
+    }
+
     // ─── 타임라인 조립 ─────────────────────────────────────────────────────
 
     /**
@@ -133,9 +184,9 @@ public with sharing class T5AssetEvidenceController {
             EvidenceNode n = new EvidenceNode();
             n.key = 'chg';
             n.state = '';
-            n.whenText = formatDate(cr.Received_Date__c) + ' · Change Request';
+            n.whenText = formatDate(cr.Received_Date__c) + ' · Change Request 접수';
             n.what = cr.Subject;
-            n.detail = '설치 진행 중 접수된 변경 요청입니다.';
+            n.detail = '설치 진행 중 고객 요청으로 변경 검토 개시';
             String requester = cr.Requester__r != null ? cr.Requester__r.Name : null;
             n.source = cr.ChangeRequestNumber
                 + (String.isNotBlank(requester) ? ' · 요청자 ' + requester : '');
@@ -147,7 +198,7 @@ public with sharing class T5AssetEvidenceController {
                 n2.key = 'review';
                 n2.state = '';
                 n2.whenText = '계약·기술 검토';
-                n2.what = cr.Scope_Type__c + '으로 판정';
+                n2.what = cr.Scope_Type__c + ' 판정';
                 n2.detail = buildReviewDetail(cr);
                 n2.source = String.isNotBlank(cr.Technical_Impact__c)
                     ? cr.Technical_Impact__c
@@ -163,10 +214,13 @@ public with sharing class T5AssetEvidenceController {
                 n3.whenText = formatDate(cr.Revision_Approved_Date__c) + ' · Revision 발행';
                 String point = (link != null && String.isNotBlank(link.Comment)) ? link.Comment : null;
                 n3.what = cr.Revision_No__c + ' 승인'
-                    + (point != null ? ' · 적용 위치 확인' : '');
-                n3.detail = '설계 검토와 고객 승인을 거쳐 ' + cr.Revision_No__c + '가 발행됐습니다.'
-                    + (cr.Customer_Approved__c == true ? ' 고객 승인 완료.' : '')
-                    + (point != null ? ' ' + point : '');
+                    + (point != null ? ' · ' + point + ' 적용' : '');
+                List<String> parts = new List<String>();
+                parts.add('설계 검토 · 고객 승인 완료');
+                if (cr.Customer_Approved__c == true) {
+                    // 고객 승인 표시는 이미 위 문구에 포함
+                }
+                n3.detail = String.join(parts, ' · ');
                 String approver = cr.Revision_Approver__r != null ? cr.Revision_Approver__r.Name : null;
                 n3.source = cr.Revision_No__c
                     + (String.isNotBlank(approver) ? ' · 승인자 ' + approver : '')
@@ -221,13 +275,14 @@ public with sharing class T5AssetEvidenceController {
             n.whenText = dateLabel + ' · 시운전 최초 검사';
             String point = String.isNotBlank(torqueFail.Measurement_Point__c)
                 ? torqueFail.Measurement_Point__c + ' ' : '';
-            n.what = point + '체결값 ' + formatNum(torqueFail.Measured_Value__c) + ' N·m — 기준 미달';
-            n.detail = '설계 목표 ' + formatNum(torqueFail.Spec_Value__c) + ' N·m.'
-                + ' 최초 검사에서 기준에 미달했습니다.'
-                + (flowFail != null
-                    ? ' 같은 시점 유량은 ' + formatNum(flowFail.Measured_Value__c) + ' L/min이었습니다.'
-                    : '');
-            n.source = '시운전 WO · 측정' + verifierSuffix(torqueFail);
+            n.what = point + '체결토크 ' + formatNum(torqueFail.Measured_Value__c) + ' N·m 불합격';
+            List<String> parts = new List<String>();
+            parts.add('설계 Spec ' + formatNum(torqueFail.Spec_Value__c) + ' N·m 대비 미달');
+            if (flowFail != null) {
+                parts.add('동시 측정 유량 ' + formatNum(flowFail.Measured_Value__c) + ' L/min');
+            }
+            n.detail = String.join(parts, ' · ');
+            n.source = '시운전 WO · 최초 측정' + verifierSuffix(torqueFail);
             nodes.add(n);
         }
 
@@ -237,35 +292,32 @@ public with sharing class T5AssetEvidenceController {
             n.key = 'retest';
             n.state = 'ok';
             n.whenText = dateLabel + ' · 재조임 후 재시험';
-            n.what = '체결값 ' + formatNum(torquePass.Measured_Value__c) + ' N·m'
-                + (flowPass != null ? ' · 유량 ' + formatNum(flowPass.Measured_Value__c) + ' L/min' : '');
-            n.detail = '재조임 후 정상화됐습니다.'
-                + (flowFail != null && flowPass != null
-                    ? ' 유량도 ' + formatNum(flowFail.Measured_Value__c) + ' → '
-                        + formatNum(flowPass.Measured_Value__c) + '으로 회복됐습니다.'
-                    : '')
-                + ' 당시에는 해결된 문제였습니다.';
-            n.source = '재시험 WOLI · 판정 합격' + verifierSuffix(torquePass);
+            n.what = '체결토크 ' + formatNum(torquePass.Measured_Value__c) + ' N·m 합격'
+                + (flowPass != null ? ' · 유량 ' + formatNum(flowPass.Measured_Value__c) + ' L/min 회복' : '');
+            List<String> parts = new List<String>();
+            parts.add('재조임 후 규격 범위 내로 복원');
+            if (flowFail != null && flowPass != null) {
+                parts.add('유량 ' + formatNum(flowFail.Measured_Value__c)
+                    + ' → ' + formatNum(flowPass.Measured_Value__c) + ' L/min');
+            }
+            n.detail = String.join(parts, ' · ');
+            n.source = '시운전 WO · 재시험 판정' + verifierSuffix(torquePass);
             nodes.add(n);
         }
 
-        // 6) 이력 보존 — 최초 실패값과 재시험 합격값이 같은 장비에 함께 남았다는 결론.
-        // 별도 인수 레코드가 아니라, 68(불합격)·112(합격) 두 측정이 org에 공존한다는
-        // 사실 자체가 근거다. 데모 핵심 메시지("합격값만 남기지 않았다")를 이 노드가 담는다.
+        // 6) 이력 보존 — 실패·합격 측정이 함께 남았다는 사실을 시간축의 마지막 노드로 기록.
         if (torqueFail != null && torquePass != null) {
             EvidenceNode n = new EvidenceNode();
             n.key = 'preserved';
             n.state = 'ok';
             String point = String.isNotBlank(torqueFail.Measurement_Point__c)
                 ? torqueFail.Measurement_Point__c : 'F-07';
-            n.whenText = '이력 보존';
-            n.what = '최종 합격값만 남기지 않았습니다';
-            n.detail = '최초 실패값 ' + formatNum(torqueFail.Measured_Value__c)
-                + ', 변경 위치 ' + point
-                + ', 재시험값 ' + formatNum(torquePass.Measured_Value__c)
-                + '를 같은 장비의 이력으로 남겼습니다.'
-                + ' 이 기록이 4년 뒤 오늘의 점검 위치를 좁혔습니다.';
-            n.source = '시운전 WO · 실패/재시험 측정 공존';
+            n.whenText = dateLabel + ' · 원기록 확정';
+            n.what = point + ' 불합격/합격 측정 이력 병존';
+            n.detail = '불합격 ' + formatNum(torqueFail.Measured_Value__c)
+                + ' N·m · 합격 ' + formatNum(torquePass.Measured_Value__c)
+                + ' N·m 두 판정이 같은 Asset 이력에 보존됨';
+            n.source = '시운전 WO · WOLI 2건';
             nodes.add(n);
         }
     }
@@ -330,6 +382,108 @@ public with sharing class T5AssetEvidenceController {
         return s;
     }
 
+    /**
+     * WO의 원인·근거 확인 결과를 Problem으로 승격한다.
+     * 데모 시나리오상 같은 Case에 대해 여러 번 생성되지 않도록,
+     * CaseRelatedIssue 정션으로 이미 연결된 Problem이 있으면 그 Id를 반환한다.
+     * 없으면 새로 만들어 Case와 연결한 뒤 Id를 반환한다.
+     * @param recordId Case Id
+     */
+    @AuraEnabled
+    public static Id createProblemWithRca(Id recordId) {
+        if (recordId == null) {
+            throw new AuraHandledException('레코드 Id가 필요합니다.');
+        }
+        Id caseId = resolveCaseId(recordId);
+        Case current = getCurrentCase(caseId);
+
+        // 이미 연결된 Problem이 있으면 재사용
+        List<CaseRelatedIssue> existing = [
+            SELECT RelatedIssueId
+            FROM CaseRelatedIssue
+            WHERE CaseId = :caseId
+              AND RelatedIssueId != null
+            WITH USER_MODE
+            ORDER BY CreatedDate DESC
+            LIMIT 1
+        ];
+        if (!existing.isEmpty()) {
+            return existing[0].RelatedIssueId;
+        }
+
+        String subject = (current.Asset != null && String.isNotBlank(current.Asset.Name))
+            ? current.Asset.Name + ' 원인 확정 · RCA 초안'
+            : 'RCA 초안';
+        Problem p = new Problem(
+            Subject = subject,
+            Description = current.CaseNumber != null
+                ? 'Case ' + current.CaseNumber + '의 현장 조치 결과 기반 근본원인 분석 초안입니다.'
+                : '현장 조치 결과 기반 근본원인 분석 초안입니다.'
+        );
+        insert as user p;
+
+        CaseRelatedIssue link = new CaseRelatedIssue(
+            CaseId = caseId,
+            RelatedIssueId = p.Id
+        );
+        insert as user link;
+
+        return p.Id;
+    }
+
+    // ─── 오늘의 측정 요약 (2026 장애복구 WO) ─────────────────────────────
+    /**
+     * 장애복구 WO의 최신 측정 라인에서 조치 전(불합격) 토크, 조치 후(합격) 토크,
+     * 조치 후 유량 세 값을 뽑아 카드용 요약 DTO를 만든다.
+     */
+    private static RecoverySummary buildRecovery(List<WorkOrderLineItem> lines) {
+        RecoverySummary r = new RecoverySummary();
+        if (lines == null || lines.isEmpty()) {
+            return r;
+        }
+        Date recoveryDate;
+        Datetime endDt;
+        for (WorkOrderLineItem w : lines) {
+            if (w.WorkOrder != null && w.WorkOrder.StartDate != null && recoveryDate == null) {
+                recoveryDate = w.WorkOrder.StartDate.date();
+                r.woNumber = w.WorkOrder.WorkOrderNumber;
+                if (w.WorkOrder.EndDate != null) {
+                    endDt = w.WorkOrder.EndDate;
+                }
+                if (w.WorkOrder.Case != null && String.isNotBlank(w.WorkOrder.Case.CaseNumber)) {
+                    r.caseNumber = w.WorkOrder.Case.CaseNumber;
+                }
+            }
+            if (w.Measurement_Item_Code__c == ITEM_TORQUE) {
+                if (String.isBlank(r.measurementPoint) && String.isNotBlank(w.Measurement_Point__c)) {
+                    r.measurementPoint = w.Measurement_Point__c;
+                }
+                if (w.Judgement__c == JUDGE_FAIL && r.torqueBefore == null) {
+                    r.torqueBefore = formatNum(w.Measured_Value__c);
+                } else if (w.Judgement__c == JUDGE_PASS && r.torqueAfter == null) {
+                    r.torqueAfter = formatNum(w.Measured_Value__c);
+                }
+            } else if (w.Measurement_Item_Code__c == ITEM_FLOW) {
+                if (w.Judgement__c == JUDGE_PASS && r.flowAfter == null) {
+                    r.flowAfter = formatNum(w.Measured_Value__c);
+                }
+            }
+        }
+        r.recoveryDateText = (recoveryDate != null) ? formatDate(recoveryDate) : '';
+        r.completedAtText = (endDt != null) ? formatDateTimeShort(endDt) : '';
+        r.hasData = r.torqueBefore != null || r.torqueAfter != null || r.flowAfter != null;
+        return r;
+    }
+
+    /**
+     * "MM-dd HH:mm" 형태로 포맷 (연도 생략, 시각 표시).
+     * WO EndDate 헤더 표기용.
+     */
+    private static String formatDateTimeShort(Datetime dt) {
+        return twoDigit(dt.month()) + '-' + twoDigit(dt.day())
+             + ' ' + twoDigit(dt.hour()) + ':' + twoDigit(dt.minute());
+    }
+
     // ─── 포맷 헬퍼 ─────────────────────────────────────────────────────────
 
     private static String formatDate(Date d) {
@@ -361,12 +515,25 @@ public with sharing class T5AssetEvidenceController {
         @AuraEnabled public String assetName;
         @AuraEnabled public EvidenceSummary summary;
         @AuraEnabled public List<EvidenceNode> timeline = new List<EvidenceNode>();
+        @AuraEnabled public RecoverySummary recovery;
     }
 
     public class EvidenceSummary {
         @AuraEnabled public String revisionText;
         @AuraEnabled public String firstFailValue;
         @AuraEnabled public String retestPassValue;
+    }
+
+    public class RecoverySummary {
+        @AuraEnabled public Boolean hasData = false;
+        @AuraEnabled public String woNumber;
+        @AuraEnabled public String recoveryDateText;
+        @AuraEnabled public String torqueBefore;
+        @AuraEnabled public String torqueAfter;
+        @AuraEnabled public String flowAfter;
+        @AuraEnabled public String caseNumber;
+        @AuraEnabled public String measurementPoint;
+        @AuraEnabled public String completedAtText;
     }
 
     public class EvidenceNode {
