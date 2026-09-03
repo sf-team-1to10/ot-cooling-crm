@@ -283,4 +283,38 @@ public with sharing class OTEquipDashboardController {
         @AuraEnabled public String hall { get; set; }
         @AuraEnabled public String assetRow { get; set; }
     }
+
+    @AuraEnabled(cacheable=true)
+    public static List<AlertView> getAlerts(Id assetId) {
+        validateAssetAccess(assetId);
+        List<Customer_Alert__c> rows = [
+            SELECT Priority__c, Status__c, Message__c, Started_At__c
+            FROM Customer_Alert__c
+            WHERE Asset__c = :assetId
+            WITH USER_MODE
+            ORDER BY Started_At__c DESC
+            LIMIT 10
+        ];
+        List<AlertView> result = new List<AlertView>();
+        for (Customer_Alert__c r : rows) {
+            AlertView v = new AlertView();
+            v.priority = r.Priority__c;
+            v.status = r.Status__c;
+            v.message = r.Message__c;
+            v.startedAt = r.Started_At__c;
+            v.tagClass = (r.Priority__c == 'P1' || r.Priority__c == 'P2') ? 'tag crit' : 'tag warn';
+            v.tagLabel = r.Priority__c != null ? r.Priority__c : '알람';
+            result.add(v);
+        }
+        return result;
+    }
+
+    public class AlertView {
+        @AuraEnabled public String priority { get; set; }
+        @AuraEnabled public String status { get; set; }
+        @AuraEnabled public String message { get; set; }
+        @AuraEnabled public Datetime startedAt { get; set; }
+        @AuraEnabled public String tagClass { get; set; }
+        @AuraEnabled public String tagLabel { get; set; }
+    }
 }

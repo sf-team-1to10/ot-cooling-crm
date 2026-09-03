@@ -213,6 +213,19 @@
 /* Demo footer */
 .demo-foot { margin-top: 22px; font-size: 10.5px; color: var(--ot-dim); text-align: center; line-height: 1.6; }
 
+/* 항목 2: 장비 목록 썸네일 이미지 */
+.th img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+
+/* 항목 1: 게이지 아크 미터 */
+.gauge-wrap { display: flex; align-items: center; gap: 14px; margin-top: 11px; padding-top: 11px; border-top: 1px solid rgba(245, 124, 0, 0.25); }
+.gauge-container { flex: none; }
+
+/* 항목 4: 알람 태그 스타일 */
+.tag { display: inline-flex; align-items: center; justify-content: center; padding: 2px 7px; border-radius: 5px; font-size: 10px; font-weight: 700; letter-spacing: .2px; white-space: nowrap; flex: none; }
+.tag.crit { background: rgba(211, 47, 47, 0.12); color: var(--ot-critical); border: 1px solid rgba(211, 47, 47, 0.25); }
+.tag.warn { background: rgba(245, 124, 0, 0.12); color: var(--ot-warning); border: 1px solid rgba(245, 124, 0, 0.25); }
+.tag.info { background: rgba(127, 149, 169, 0.12); color: var(--ot-dim); border: 1px solid var(--ot-border); }
+
 /* Responsive */
 @media (max-width: 1240px) {
     .ws { grid-template-columns: 260px minmax(0, 1fr); }

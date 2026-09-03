@@ -39,7 +39,13 @@
 }
 .x:hover { background: var(--ot-surface-subtle); }
 .x svg { width: 16px; height: 16px; }
-.mb { padding: 18px; font-size: 12.5px; color: var(--ot-muted); line-height: 1.6; }
+.mb { padding: 18px; font-size: 12.5px; color: var(--ot-muted); line-height: 1.6; display: flex; flex-direction: column; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label { font-size: 11.5px; font-weight: 700; color: var(--ot-ink); }
+.form-select { padding: 8px 11px; border: 1px solid var(--ot-border); border-radius: 4px; background: var(--ot-surface); font: inherit; font-size: 12.5px; color: var(--ot-muted); cursor: pointer; }
+.form-select:focus { outline: none; box-shadow: var(--ot-focus-ring); border-color: var(--ot-navy); }
+.form-textarea { padding: 9px 11px; border: 1px solid var(--ot-border); border-radius: 4px; background: var(--ot-surface); font: inherit; font-size: 12.5px; color: var(--ot-muted); resize: vertical; min-height: 80px; }
+.form-textarea:focus { outline: none; box-shadow: var(--ot-focus-ring); border-color: var(--ot-navy); }
 .mf {
     display: flex; justify-content: flex-end; gap: 8px; padding: 13px 18px;
     border-top: 1px solid var(--ot-border); background: var(--ot-surface-subtle);
