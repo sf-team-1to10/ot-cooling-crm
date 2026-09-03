@@ -161,7 +161,6 @@ public with sharing class OTEquipDashboardController {
     private static final Set<String> IMAGE_EXTS = new Set<String>{ 'png', 'jpg', 'jpeg', 'webp', 'gif' };
 
     private static String resolveImageUrl(Id assetId) {
-        // 이미지 파일(PNG/JPG 등)만 필터링 — PDF·도면 등 비이미지 파일은 제외
         List<ContentDocumentLink> links = [
             SELECT ContentDocument.LatestPublishedVersionId,
                    ContentDocument.FileExtension,
@@ -169,20 +168,30 @@ public with sharing class OTEquipDashboardController {
             FROM ContentDocumentLink
             WHERE LinkedEntityId = :assetId
             WITH USER_MODE
-            ORDER BY ContentDocument.CreatedDate ASC
+            ORDER BY ContentDocument.CreatedDate DESC
         ];
         if (links.isEmpty()) return null;
-        // 제품/설치 사진 우선 (설치 현장, 제품 등 키워드 포함된 이미지)
+        // 1순위: '제품_' 접두사 갤러리 이미지 (가장 최신)
         for (ContentDocumentLink l : links) {
             if (l.ContentDocument == null) continue;
             String ext = (l.ContentDocument.FileExtension ?? '').toLowerCase();
             String title = (l.ContentDocument.Title ?? '').toLowerCase();
             if (!IMAGE_EXTS.contains(ext)) continue;
-            if (title.contains('설치') || title.contains('제품') || title.contains('product') || title.contains('installed')) {
+            if (title.startsWith('제품_') || title.startsWith('product_')) {
                 return '/sfc/servlet.shepherd/version/download/' + l.ContentDocument.LatestPublishedVersionId;
             }
         }
-        // 키워드 없으면 첫 번째 이미지 파일 반환
+        // 2순위: 제품·설치 키워드 포함 이미지
+        for (ContentDocumentLink l : links) {
+            if (l.ContentDocument == null) continue;
+            String ext = (l.ContentDocument.FileExtension ?? '').toLowerCase();
+            String title = (l.ContentDocument.Title ?? '').toLowerCase();
+            if (!IMAGE_EXTS.contains(ext)) continue;
+            if (title.contains('제품') || title.contains('설치') || title.contains('product') || title.contains('installed')) {
+                return '/sfc/servlet.shepherd/version/download/' + l.ContentDocument.LatestPublishedVersionId;
+            }
+        }
+        // 3순위: 첫 번째 이미지 파일
         for (ContentDocumentLink l : links) {
             if (l.ContentDocument == null) continue;
             String ext = (l.ContentDocument.FileExtension ?? '').toLowerCase();
