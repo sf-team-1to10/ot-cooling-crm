@@ -225,7 +225,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>고객 360</value>
+                    <value>고객 현황</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>customerInsightTab</identifier>
