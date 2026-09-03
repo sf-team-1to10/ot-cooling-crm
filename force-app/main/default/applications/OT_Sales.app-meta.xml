@@ -41,7 +41,7 @@
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>OT전자 Cooling Sales</label>
     <navType>Console</navType>
-    <tabs>OT_Sales_Home</tabs>
+    <tabs>standard-home</tabs>
     <tabs>standard-Account</tabs>
     <tabs>standard-Opportunity</tabs>
     <tabs>standard-ServiceContract</tabs>
@@ -51,7 +51,7 @@
     <utilityBar>OT_Cooling_Continuity_UtilityBar</utilityBar>
     <workspaceConfig>
         <mappings>
-            <tab>OT_Sales_Home</tab>
+            <tab>standard-home</tab>
         </mappings>
         <mappings>
             <tab>Renewal_Tasks</tab>
