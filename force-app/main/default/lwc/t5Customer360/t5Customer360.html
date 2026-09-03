@@ -24,10 +24,6 @@
                         <div><dt>Phone</dt><dd class="num">{contactPhone}</dd></div>
                         <div><dt>Address</dt><dd>{contactAddress}</dd></div>
                     </dl>
-                    <div class="c360-actions">
-                        <lightning-button label="편집"></lightning-button>
-                        <lightning-button label="일정 예약" variant="brand"></lightning-button>
-                    </div>
                 </div>
             </template>
 
@@ -54,7 +50,7 @@
                     <div class="card">
                         <div class="card-head"><h3>계약 이력</h3></div>
                         <div class="card-body-tight">
-                            <div class="rl">
+                            <div class="rl rl--aligned">
                                 <template lwc:if={hasContracts}>
                                     <template for:each={contracts} for:item="c">
                                         <div key={c.id} class="rl-row">
@@ -62,7 +58,9 @@
                                                 <div class="rl-t">{c.name}</div>
                                                 <div class="rl-s">{c.status} &middot; 만료 {c.endDateFormatted}</div>
                                             </div>
-                                            <span class={c.badgeClass}>{c.badgeLabel}</span>
+                                            <div class="rl-badge">
+                                                <span class={c.badgeClass}>{c.badgeLabel}</span>
+                                            </div>
                                         </div>
                                     </template>
                                 </template>
@@ -133,7 +131,7 @@
                     <div class="card">
                         <div class="card-head"><h3>Sales History</h3></div>
                         <div class="card-body-tight">
-                            <div class="rl">
+                            <div class="rl rl--aligned">
                                 <template lwc:if={hasOpportunities}>
                                     <template for:each={opportunities} for:item="o">
                                         <div key={o.id} class="rl-row">
@@ -143,7 +141,9 @@
                                                     {o.amountFormatted} &middot; {o.closeDateFormatted}
                                                 </div>
                                             </div>
-                                            <span class={o.badgeClass}>{o.badgeLabel}</span>
+                                            <div class="rl-badge">
+                                                <span class={o.badgeClass}>{o.badgeLabel}</span>
+                                            </div>
                                         </div>
                                     </template>
                                 </template>

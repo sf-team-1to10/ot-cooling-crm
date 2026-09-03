@@ -1,310 +1,456 @@
 :host {
-  --ot-c-brand: #0176d3;
-  --ot-c-brand-strong: #014486;
-  --ot-c-brand-soft: #eaf2fb;
-  --ot-c-success: #2e844a;
-  --ot-c-warning: #b46f00;
-  --ot-c-danger: #ba0517;
-  --ot-c-info: #005fb2;
-  --ot-c-bg: #ffffff;
-  --ot-c-bg-alt: #f3f3f3;
-  --ot-c-bg-shade: #f4f6f9;
-  --ot-c-border: #dddbda;
-  --ot-c-text: #181818;
-  --ot-c-text-weak: #444444;
-  --ot-c-text-muted: #706e6b;
+    /* 브랜드 (§1-1) */
+    --brand: #032d60;
+    --brand-alt: #014486;
+    --brand-soft: #d8e6f6;
+    /* 중립 (§1-2) */
+    --surface: #ffffff;
+    --border: #e5e5e5;
+    --border-soft: #ececec;
+    --border-strong: #c9c7c5;
+    --text: #181818;
+    --text-2: #444444;
+    --text-muted: #706e6b;
+    /* 상태 chip (§1-3) */
+    --chip-pos-bg: #f0f7f2;
+    --chip-pos-text: #2e844a;
+    --chip-pos-border: #cde4d4;
+    --chip-neg-bg: #fbf0f0;
+    --chip-neg-text: #ba0517;
+    --chip-neg-border: #f0cfcf;
+    --chip-warn-bg: #fdf5e6;
+    --chip-warn-text: #8a5a00;
+    --chip-warn-border: #f0dfb8;
+    --chip-info-bg: #eef4fb;
+    --chip-info-text: #014486;
+    --chip-info-border: #cddcf0;
+    display: block;
 }
 
-/* ── Highlights 헤더 ── */
-.briefing-hl {
-    background-color: #ffffff;
-    border: 1px solid #e5e5e5;
-    border-radius: 0.25rem;
-    padding: 0.75rem 1rem;
+.wb {
+    padding: 0.75rem;
 }
 
-.briefing-hl-head {
+.loading {
+    padding: 1rem;
     display: flex;
-    align-items: flex-start;
+    justify-content: center;
+}
+
+.error {
+    padding: 0.75rem 1rem;
+    background: var(--chip-neg-bg);
+    color: var(--chip-neg-text);
+    border: 1px solid var(--chip-neg-border);
+    border-radius: 0.25rem;
+    font-size: 0.8125rem;
+}
+
+/* ─── 최초 진입 안내 ─── */
+.intake {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 3rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
     gap: 0.75rem;
 }
 
-.briefing-hl-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    border-radius: 0.25rem;
-    background-color: #0877d1;
-    flex: 0 0 auto;
+.intake__icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    background: var(--brand);
+    display: grid;
+    place-items: center;
+    margin-bottom: 0.25rem;
 }
 
-.briefing-hl-title {
-    flex: 1 1 auto;
-    min-width: 0;
-}
-
-.briefing-hl-eyebrow {
-    margin: 0;
-    font-size: 0.75rem;
-    color: #5c5c5c;
-}
-
-.briefing-hl-name {
+.intake__title {
     margin: 0;
     font-size: 1.125rem;
     font-weight: 700;
-    line-height: 1.25;
+    color: var(--text);
+    letter-spacing: -0.01em;
 }
 
-.briefing-hl-actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    gap: 0.25rem;
-    flex: 0 0 auto;
-}
-
-.briefing-hl-fields {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #f0f0f0;
-}
-
-.briefing-hl-f dt {
-    font-size: 0.75rem;
-    color: #5c5c5c;
-}
-
-.briefing-hl-f dd {
-    margin: 0;
-    font-size: 0.875rem;
-    font-weight: 600;
-}
-
-.briefing-hl-f dd.num {
-    font-variant-numeric: tabular-nums;
-}
-
-/* Priority 산정 근거 — 프로토타입 3열 인자 테이블 */
-.rationale-table th[scope='row'] {
-    color: #5c5c5c;
-    font-weight: 600;
-}
-
-/* ── Path 바 (프로토타입 v-briefing) ── */
-.path {
-    display: flex;
-    background-color: #ffffff;
-    padding: 11px 18px 12px;
-    border-bottom: 1px solid #cfdae5;
-    gap: 0;
-    overflow-x: auto;
-}
-
-.path-step {
-    flex: 1 1 0;
-    min-width: 74px;
-    padding: 7px 6px 7px 19px;
-    background-color: #eaf0f6;
-    color: #6e8599;
-    font-size: 10.5px;
-    font-weight: 500;
-    white-space: nowrap;
-    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%, 11px 50%);
-    margin-right: -9px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.path-step:first-child {
-    clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%);
-    padding-left: 14px;
-    border-radius: 4px 0 0 4px;
-}
-
-.path-step:last-child {
-    margin-right: 0;
-}
-
-.path-step.done {
-    background-color: #2e8b57;
-    color: #ffffff;
-}
-
-.path-step.on {
-    background-color: #0877d1;
-    color: #ffffff;
-    font-weight: 700;
-}
-
-.path-num {
-    opacity: 0.6;
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
-}
-
-/* ── 실시간 Trend 게이지 ── */
-.gauge {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-.gauge-top {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-}
-
-.gauge-val {
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
-    font-size: 26px;
-    font-weight: 600;
-    letter-spacing: -1px;
-    line-height: 1;
-    color: #c87913;
-}
-
-.gauge-unit {
-    font-size: 12px;
-    color: #6e8599;
-}
-
-.gauge-bar {
-    height: 7px;
-    border-radius: 4px;
-    background-color: #eaf0f6;
-    position: relative;
-    overflow: hidden;
-}
-
-.gauge-fill {
-    height: 100%;
-    border-radius: 4px;
-    width: 62%;
-    background-color: #c87913;
-}
-
-.gauge-mark {
-    position: absolute;
-    top: -3px;
-    bottom: -3px;
-    left: 84%;
-    width: 2px;
-    background-color: #3d5568;
-    opacity: 0.55;
-}
-
-.gauge-scale {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: #6e8599;
-    font-family: 'IBM Plex Mono', ui-monospace, monospace;
-}
-
-.trend-badge-warn {
-    background-color: #fbf1e1;
-    color: #c87913;
-}
-
-/* 우선 점검 후보·전사 유사사례 — '■' 섹션 문단 구분 (문단 간 한 줄 추가) */
-.briefing-section {
-    margin-bottom: 2.5rem;
+.intake__desc {
+    margin: 0 0 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
     line-height: 1.6;
 }
 
-.briefing-section:last-child {
-    margin-bottom: 0;
-}
-
-/* Priority 제안 배지 */
-.priority-badge {
-    background-color: #ba0517;
-    color: #ffffff;
-}
-
-/* Priority 승인 완료 배지 — 담당자 승인(사람 통제) 색 */
-.priority-badge-approved {
-    background-color: #2e844a;
-    color: #ffffff;
-}
-
-/* 출동 확정됨 버튼 — 프로토타입 btn-done 색(연초록 배경·초록 테두리/글자).
-   승인 후엔 클릭 불가한 완료 표시라 lightning-button 대신 light DOM button으로 렌더해
-   shadow DOM 제약 없이 색을 직접 통제한다. */
-.approve-done {
-    background-color: #e6f2eb;
-    border: 1px solid #4fb47c;
-    color: #4fb47c;
-    font-weight: 600;
-    font-size: 0.8125rem;
+/* ─── 버튼 ─── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
     border-radius: 0.25rem;
-    padding: 0 1rem;
-    height: 2rem;
-    line-height: 1.875rem;
-    cursor: default;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 0.12s, border-color 0.12s;
+    letter-spacing: -0.01em;
 }
 
-/* disabled여도 완료 표시 색을 흐리지 않게 유지 */
-.approve-done[disabled] {
-    background-color: #e6f2eb;
-    border-color: #4fb47c;
-    color: #4fb47c;
-    opacity: 1;
+.btn--primary {
+    background: var(--brand);
+    color: var(--surface);
+    border-color: var(--brand);
+}
+.btn--primary:hover {
+    background: var(--brand-alt);
+    border-color: var(--brand-alt);
 }
 
-/* 12대 비교에서 대상 장비(A-07) 행 강조 */
-.target-row {
-    background-color: #fef1ee;
+.btn--secondary {
+    background: var(--surface);
+    color: var(--brand);
+    border-color: var(--brand);
+}
+.btn--secondary:hover {
+    background: var(--brand-soft);
+}
+
+/* ─── 메타 스트립 ─── */
+.meta {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.meta__list {
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    min-width: 0;
+}
+
+.meta__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+}
+
+.meta__item dt {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    line-height: 1.3;
+    font-weight: 400;
+    margin: 0;
+}
+
+.meta__item dd {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+}
+
+.meta__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+}
+
+/* ─── 그리드 ─── */
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+/* ─── 카드 ─── */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.card__head {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.card__title {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.card__body {
+    padding: 0.75rem 1rem 1rem;
+    font-size: 0.8125rem;
+    color: var(--text-2);
+    line-height: 1.6;
+}
+
+.card__body-tight {
+    padding: 0;
+}
+
+.empty {
+    padding: 0.75rem 1rem;
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+/* ─── 테이블 ─── */
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+}
+
+.tbl thead th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+    background: #fafafa;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.tbl tbody tr {
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.tbl tbody tr:last-child {
+    border-bottom: none;
+}
+
+.tbl tbody th,
+.tbl tbody td {
+    padding: 0.5rem 0.75rem;
+    color: var(--text-2);
+    line-height: 1.4;
+    font-weight: 500;
+    text-align: left;
+}
+
+.tbl tbody th {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.cmp-row--target {
+    background: var(--brand-soft);
+}
+
+.cmp-row--target th,
+.cmp-row--target td {
+    color: var(--brand);
+}
+
+.cmp-pin {
+    color: var(--brand);
+    margin-left: 0.375rem;
+    font-size: 0.625rem;
+    vertical-align: middle;
+}
+
+.num {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ─── Chip (§6) ─── */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+.chip--pos { background: var(--chip-pos-bg); color: var(--chip-pos-text); border-color: var(--chip-pos-border); }
+.chip--neg { background: var(--chip-neg-bg); color: var(--chip-neg-text); border-color: var(--chip-neg-border); }
+.chip--warn { background: var(--chip-warn-bg); color: var(--chip-warn-text); border-color: var(--chip-warn-border); }
+.chip--info { background: var(--chip-info-bg); color: var(--chip-info-text); border-color: var(--chip-info-border); }
+
+/* ─── 인사이트 리스트 (우선 점검 / 유사사례) ─── */
+.insights {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.insight {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.625rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.insight:last-child {
+    border-bottom: none;
+}
+
+.insight__dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: 50%;
+    background: var(--brand);
+    margin-top: 0.5rem;
+    flex: 0 0 auto;
+}
+
+.insight__content {
+    min-width: 0;
+}
+
+.insight__label {
+    margin: 0 0 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--brand);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    line-height: 1.3;
+}
+
+.insight__body {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--text-2);
+    line-height: 1.6;
+    word-break: keep-all;
+}
+
+/* ─── 실시간 Trend 게이지 ─── */
+.gauge {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.gauge__top {
+    display: flex;
+    align-items: baseline;
+    gap: 0.375rem;
+}
+
+.gauge__val {
+    font-size: 1.5rem;
     font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
 }
 
-.target-row th,
-.target-row td {
-    border-top: 2px solid #ba0517;
-    border-bottom: 2px solid #ba0517;
+.gauge__unit {
+    font-size: 0.75rem;
+    color: var(--text-muted);
 }
 
-/* Slack 전문가 소집 Flow 모달 — t5CaseHeader 브리핑 모달과 동일 패턴 */
+.gauge__bar {
+    position: relative;
+    height: 0.5rem;
+    background: var(--border-soft);
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.gauge__fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 62%;
+    background: var(--chip-warn-text);
+    opacity: 0.7;
+}
+
+.gauge__mark {
+    position: absolute;
+    top: -0.125rem;
+    bottom: -0.125rem;
+    left: 65%;
+    width: 2px;
+    background: var(--brand);
+}
+
+.gauge__scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+}
+
+/* ─── Slack Swarm 모달 ─── */
 .swarm-overlay {
     position: fixed;
     inset: 0;
+    background: rgba(24, 24, 24, 0.35);
+    display: grid;
+    place-items: center;
     z-index: 9000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .swarm-spinner {
-    position: relative;
-    width: 4rem;
-    height: 4rem;
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
 }
 
 .swarm-card {
-    width: 40rem;
-    max-width: 90vw;
-    max-height: 80vh;
-    overflow-y: auto;
-    background-color: #ffffff;
-    border-radius: 0.25rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    background: var(--surface);
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    max-width: 560px;
+    width: min(560px, calc(100vw - 2rem));
+    max-height: calc(100vh - 4rem);
+    overflow: auto;
 }
 
-/* 로딩 중엔 카드를 화면에서 숨기되 Flow는 DOM에 유지(statuschange 수신) */
 .swarm-card_hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    opacity: 0;
-    pointer-events: none;
+    visibility: hidden;
 }

@@ -6,16 +6,19 @@ import {
     setTabIcon
 } from 'lightning/platformWorkspaceApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { refreshApex } from '@salesforce/apex';
+import { updateRecord } from 'lightning/uiRecordApi';
+import CASE_ID from '@salesforce/schema/Case.Id';
+import CASE_STAGE from '@salesforce/schema/Case.Stage__c';
 import getBriefing from '@salesforce/apex/T5DispatchBriefingController.getBriefing';
-import approveDispatch from '@salesforce/apex/T5DispatchBriefingController.approveDispatch';
 
 export default class OtDispatchBriefingWorkbench extends LightningElement {
-    // Record page에서는 자동 주입, App Page에서는 pageReference state에서 해석한다.
     @api recordId;
     _stateRecordId;
     _tabId;
     _tabLabeled = false;
+
+    // 최초 진입 상태 — false면 안내 + 브리핑 생성 버튼만 렌더
+    briefingRevealed = false;
 
     // Slack 전문가 소집 Flow 모달 상태
     showSwarmFlow = false;
@@ -29,7 +32,6 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         return this.swarmFlowLoaded ? 'swarm-card' : 'swarm-card swarm-card_hidden';
     }
 
-    // Flow input: 전문가 소집 Flow는 recordId(Case Id)를 받는다.
     get swarmFlowInputVariables() {
         return [{ name: 'recordId', type: 'String', value: this.effectiveRecordId }];
     }
@@ -42,9 +44,6 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         }
     }
 
-    // EnclosingTabId wire는 탭 컨텍스트가 준비된 후에 tabId를 반응형으로 준다.
-    // standard__component 서브탭은 컴포넌트 로드 완료 시 라벨을 'Loading...'으로 덮으므로,
-    // 이 wire(=로드 후)로 tabId를 받아 라벨을 다시 설정해야 최종적으로 고정된다.
     @wire(EnclosingTabId)
     setTabId(tabId) {
         this._tabId = tabId;
@@ -52,35 +51,28 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
     }
 
     async labelEnclosingTab() {
-        if (this._tabLabeled || !this._tabId || !this.caseNumber) {
+        if (this._tabLabeled || !this._tabId) {
             return;
         }
         this._tabLabeled = true;
-        const short = String(this.caseNumber).replace(/^0+/, '').slice(-4);
         try {
-            await setTabLabel(this._tabId, `브리핑 · ${short}`);
+            await setTabLabel(this._tabId, '출동 준비');
             await setTabIcon(this._tabId, 'standard:case');
         } catch (e) { /* 콘솔 외 컨텍스트 무시 */ }
     }
 
     get effectiveRecordId() {
-        // undefined를 반환해야 wire가 실행되지 않는다(null이면 Apex가 예외를 던짐).
         return this.recordId || this._stateRecordId || undefined;
     }
 
     briefing;
     error;
-    _wiredBriefing;
 
     @wire(getBriefing, { caseId: '$effectiveRecordId' })
-    wiredBriefing(response) {
-        this._wiredBriefing = response;
-        const { data, error } = response;
+    wiredBriefing({ data, error }) {
         if (data) {
             this.briefing = data;
             this.error = undefined;
-            // caseNumber 확보 — tabId가 이미 왔다면 이 시점에 라벨을 설정한다.
-            this.labelEnclosingTab();
         } else if (error) {
             this.error = error;
             this.briefing = undefined;
@@ -88,68 +80,27 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
     }
 
     get isLoading() {
-        return !this.briefing && !this.error;
+        return this.briefingRevealed && !this.briefing && !this.error;
     }
 
     get errorMessage() {
         return this.error?.body?.message || '브리핑 데이터를 불러오지 못했습니다.';
     }
 
-    get priority() {
-        return this.briefing?.priority;
+    get showIntake() {
+        return !this.briefingRevealed;
     }
 
-    get caseNumber() {
-        return this.briefing?.caseNumber;
-    }
-
-    get headerTitle() {
-        const asset = this.briefing?.targetAssetName;
-        return asset ? `${asset} 출동 브리핑` : '출동 브리핑';
+    get showBriefing() {
+        return this.briefingRevealed && this.briefing;
     }
 
     get slaRemaining() {
         return this.briefing?.slaRemaining || '—';
     }
 
-    // 산정 시각 — 규칙 엔진이 Impact·보증·Priority를 판정한 시각(시:분)
     get calculatedAtText() {
         return this.formatTime(this.briefing?.calculatedAt);
-    }
-
-    // ── Priority 승인 상태 (step9) ──
-    get isApproved() {
-        return this.briefing?.isApproved === true;
-    }
-
-    // 승인 전: "Priority · {High} 제안" / 승인 후: "Priority {High} · 담당자 승인"
-    get priorityBadgeText() {
-        return this.isApproved
-            ? `Priority ${this.priority} · 담당자 승인`
-            : `Priority · ${this.priority} 제안`;
-    }
-
-    get priorityBadgeClass() {
-        return this.isApproved
-            ? 'slds-badge priority-badge-approved'
-            : 'slds-badge priority-badge';
-    }
-
-    // 승인 전: "Priority 승인 · 출동 확정" / 승인 후: "출동 확정됨 · {02:45}"
-    get approveButtonLabel() {
-        return this.isApproved
-            ? `출동 확정됨 · ${this.approvedAtText}`
-            : 'Priority 승인 · 출동 확정';
-    }
-
-
-    get approvedByText() {
-        const name = this.briefing?.approvedByName || '담당자';
-        return `${name} · ${this.approvedAtText}`;
-    }
-
-    get approvedAtText() {
-        return this.formatTime(this.briefing?.approvedAt);
     }
 
     formatTime(raw) {
@@ -162,13 +113,22 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         });
     }
 
-    // Slack 인계 → 전문가 소집 Flow(채널 생성·전문가 초대·Case 요약 발신)를 모달로 실행.
-    handleSlack() {
+    // ─── 액션 핸들러 ───
+
+    // 최초 진입에서 "출동 브리핑 생성" 클릭 → 본문 렌더 + Stage "1 진단·브리핑"
+    async handleGenerateBriefing() {
+        this.briefingRevealed = true;
+        await this.updateCaseStage('1 진단·브리핑');
+    }
+
+    // Slack 전문가 소집 Flow 모달 실행 + Stage "2 담당자 배정"
+    async handleSlack() {
         if (!this.effectiveRecordId) {
             return;
         }
         this.swarmFlowLoaded = false;
         this.showSwarmFlow = true;
+        await this.updateCaseStage('2 담당자 배정');
     }
 
     closeSwarmFlow() {
@@ -186,7 +146,6 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
 
     handleSwarmStatusChange(event) {
         const status = event.detail.status;
-        // Flow 첫 화면 렌더 시 로딩 종료로 간주(스피너→카드).
         if (status !== 'ERROR') {
             this.swarmFlowLoaded = true;
         }
@@ -203,55 +162,37 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
         }
     }
 
-    async handleApprove() {
-        const caseId = this.effectiveRecordId;
-        if (!caseId || this.isApproved) {
-            return;
-        }
-        try {
-            await approveDispatch({ caseId });
-            await refreshApex(this._wiredBriefing);
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: '출동 확정',
-                    message: `Priority ${this.priority} 승인 및 출동이 확정됐습니다.`,
-                    variant: 'success'
-                })
-            );
-        } catch (e) {
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: '출동 확정 실패',
-                    message: e?.body?.message || '승인을 저장하지 못했습니다.',
-                    variant: 'error'
-                })
-            );
-        }
-    }
-
-    notReady(feature) {
+    // "출동 확정" 클릭 → Toast + Stage "3 현장 출동"
+    async handleDispatchConfirm() {
+        await this.updateCaseStage('3 현장 출동');
         this.dispatchEvent(
             new ShowToastEvent({
-                title: `${feature} — 준비 중`,
-                message: '해당 기능은 후속 작업에서 연결됩니다.',
-                variant: 'info'
+                title: '강시공 배정 완료',
+                message: 'Slack Swarm에서 강시공이 현장 출동으로 배정됐습니다. Work Order가 생성됩니다.',
+                variant: 'success'
             })
         );
     }
+
+    async updateCaseStage(stageValue) {
+        const caseId = this.effectiveRecordId;
+        if (!caseId) return;
+        const fields = {};
+        fields[CASE_ID.fieldApiName] = caseId;
+        fields[CASE_STAGE.fieldApiName] = stageValue;
+        try {
+            await updateRecord({ fields });
+        } catch (e) {
+            // 이미 같은 값이면 무시. 실패 시엔 조용히 넘어감(데모 단계이므로).
+        }
+    }
+
+    // ─── 브리핑 본문 뷰 게터 ───
 
     get rationale() {
         return this.briefing?.priorityRationale;
     }
 
-    get maxDriftText() {
-        const r = this.rationale;
-        if (!r || r.maxDriftValue == null) {
-            return '';
-        }
-        return `${r.maxDriftValue}% · ${r.comparedCount}대 중 최대`;
-    }
-
-    // 프로토타입 5행 산정 인자 테이블 — 각 인자에 기여도 배지 클래스 부여
     get rationaleFactors() {
         const factors = this.rationale?.factors || [];
         return factors.map((f) => ({
@@ -259,27 +200,27 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
             valueText: f.available ? f.value : '—',
             contributionText: f.available ? f.contribution : '준비중',
             contributionClass: f.available
-                ? this.contributionBadgeClass(f.contribution)
-                : 'slds-badge'
+                ? this.contributionChipClass(f.contribution)
+                : 'chip'
         }));
     }
 
-    contributionBadgeClass(contribution) {
+    contributionChipClass(contribution) {
         if (contribution === '높음') {
-            return 'slds-badge slds-theme_error';
+            return 'chip chip--neg';
         }
         if (contribution === '보통') {
-            return 'slds-badge slds-theme_warning';
+            return 'chip chip--warn';
         }
-        return 'slds-badge';
+        return 'chip chip--info';
     }
 
-    // 12대 비교 행 — 대표값을 표시용으로 가공(A-07 강조 플래그 포함)
     get comparisonRows() {
         const rows = this.briefing?.comparisons || [];
         const targetName = this.briefing?.targetAssetName;
         return rows.map((c) => {
             const isTarget = c.assetName === targetName;
+            const hasTrendChip = c.trendFlag === '이상' || c.trendFlag === '주의';
             return {
                 ...c,
                 key: c.assetId,
@@ -287,51 +228,69 @@ export default class OtDispatchBriefingWorkbench extends LightningElement {
                 driftText: c.driftFromBaseline == null ? '—' : `${c.driftFromBaseline}%`,
                 measuredText: c.measuredValue == null ? '—' : `${c.measuredValue} L/min`,
                 revisionText: c.appliedRevision || '—',
-                rowClass: isTarget
-                    ? 'slds-hint-parent target-row'
-                    : 'slds-hint-parent',
-                trendClass: this.trendBadgeClass(c.trendFlag),
+                rowClass: isTarget ? 'cmp-row cmp-row--target' : 'cmp-row',
+                hasTrendChip,
+                trendClass: hasTrendChip ? this.trendChipClass(c.trendFlag) : '',
                 pastFailureText: c.hasPastFailure ? '있음' : '—'
             };
         });
     }
 
-    trendBadgeClass(trend) {
+    trendChipClass(trend) {
         if (trend === '이상') {
-            return 'slds-badge slds-theme_error';
+            return 'chip chip--neg';
         }
-        if (trend === '주의') {
-            return 'slds-badge slds-theme_warning';
-        }
-        return 'slds-badge';
+        return 'chip chip--warn';
     }
 
     get hasComparisons() {
         return (this.briefing?.comparisons || []).length > 0;
     }
 
-    get similarCasesSummary() {
-        return this.toSections(this.briefing?.similarCasesSummary);
+    get similarCaseInsights() {
+        return this.toInsights(this.briefing?.similarCasesSummary);
     }
 
-    get briefingBody() {
-        return this.toSections(this.briefing?.briefingBody);
+    get briefingInsights() {
+        return this.toInsights(this.briefing?.briefingBody);
     }
 
-    // '■' 섹션 마커 단위로 문단을 나눠 가독성 확보
-    toSections(raw) {
-        if (!raw) {
-            return raw;
-        }
+    get hasSimilarCaseInsights() {
+        return this.similarCaseInsights.length > 0;
+    }
+
+    get hasBriefingInsights() {
+        return this.briefingInsights.length > 0;
+    }
+
+    // '■ 라벨 본문...' 문자열을 { label, body } 리스트로 파싱.
+    // 라벨은 첫 어절(공백 기준 2~3 단어 히어리스틱)로 뽑고, 나머지는 본문으로.
+    toInsights(raw) {
+        if (!raw) return [];
         return raw
             .split('■')
             .map((seg) => seg.trim())
             .filter((seg) => seg.length > 0)
-            .map((seg) => `<p class="briefing-section">■ ${seg}</p>`)
-            .join('');
+            .map((seg, i) => {
+                const { label, body } = this.splitLabel(seg);
+                return { key: `insight-${i}`, label, body };
+            });
     }
 
-    get hasPastFailure() {
-        return this.rationale?.hasPastFailure === true;
+    splitLabel(seg) {
+        // 알려진 라벨 후보 우선 매칭 (데이터가 일정한 패턴을 따를 때 정확도↑)
+        const KNOWN_LABELS = [
+            '원인 분포', '평균 복구시간', '재발 판정 근거',
+            '우선 점검 후보', '핵심 근거', '주의 신호', '권장 조치'
+        ];
+        for (const l of KNOWN_LABELS) {
+            if (seg.startsWith(l)) {
+                return { label: l, body: seg.slice(l.length).trim() };
+            }
+        }
+        // fallback: 앞 2어절을 라벨로
+        const tokens = seg.split(/\s+/);
+        if (tokens.length <= 2) return { label: '', body: seg };
+        return { label: tokens.slice(0, 2).join(' '), body: tokens.slice(2).join(' ') };
     }
 }
