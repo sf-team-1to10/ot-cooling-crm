@@ -7,8 +7,8 @@
                     <name>uiBehavior</name>
                     <value>required</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.ContractNumber</fieldItem>
-                <identifier>RecordContractNumberPrimaryField</identifier>
+                <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNameField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-PrimaryFields</name>
@@ -19,10 +19,20 @@
             <fieldInstance>
                 <fieldInstanceProperties>
                     <name>uiBehavior</name>
-                    <value>required</value>
+                    <value>readonly</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.ContractNumber</fieldItem>
+                <identifier>RecordContractNumberField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Status</fieldItem>
-                <identifier>RecordStatusSecondaryField0</identifier>
+                <identifier>RecordStatusField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -32,7 +42,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.StartDate</fieldItem>
-                <identifier>RecordStartDateSecondaryField1</identifier>
+                <identifier>RecordStartDateField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -42,7 +52,17 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.EndDate</fieldItem>
-                <identifier>RecordEndDateSecondaryField2</identifier>
+                <identifier>RecordEndDateField</identifier>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.AccountId</fieldItem>
+                <identifier>RecordAccountField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-SecondaryFields</name>
@@ -51,17 +71,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>actionNames</name>
-                    <valueList>
-                        <valueListItems>
-                            <value>Edit</value>
-                        </valueListItems>
-                        <valueListItems>
-                            <value>Delete</value>
-                        </valueListItems>
-                    </valueList>
-                </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>numVisibleActions</name>
                     <value>3</value>
@@ -84,34 +93,18 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>relatedListComponentOverride</name>
-                    <value>NONE</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>rowsToDisplay</name>
-                    <value>10</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>showActionBar</name>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <componentName>force:relatedListContainer</componentName>
-                <identifier>force_relatedListContainer</identifier>
+                <componentName>otServiceContractReview</componentName>
+                <identifier>c_otServiceContractReview_record</identifier>
             </componentInstance>
         </itemInstances>
-        <name>relatedTabContent</name>
+        <name>reviewTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>label</name>
-                    <value>계약 정보</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:fieldSection</componentName>
-                <identifier>flexipage_fieldSection</identifier>
+                <componentName>force:detailPanel</componentName>
+                <identifier>force_detailPanel</identifier>
             </componentInstance>
         </itemInstances>
         <name>detailTabContent</name>
@@ -120,21 +113,15 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>otRenewalTasks</componentName>
-                <identifier>c_otRenewalTasks_sc</identifier>
+                <componentInstanceProperties>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListContainer</componentName>
+                <identifier>relatedListContainer</identifier>
             </componentInstance>
         </itemInstances>
-        <name>renewalTabContent</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>otServiceContractReview</componentName>
-                <identifier>c_otServiceContractReview_sc</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>contractReviewTabContent</name>
+        <name>relatedTabContent</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -146,6 +133,20 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>body</name>
+                    <value>reviewTabContent</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>갱신</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>reviewTab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
                     <value>detailTabContent</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
@@ -154,34 +155,6 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>detailTab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>renewalTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>갱신</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>renewalTab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>contractReviewTabContent</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>성과 리뷰</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>contractReviewTab</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -227,7 +200,7 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentName>runtime_sales_activities:activityPanel</componentName>
-                <identifier>runtime_sales_activities_activityPanel</identifier>
+                <identifier>activityPanel</identifier>
             </componentInstance>
         </itemInstances>
         <name>activityTabContent</name>
@@ -273,7 +246,7 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>계약 갱신 검토</masterLabel>
+    <masterLabel>서비스 계약 레코드 페이지</masterLabel>
     <sobjectType>ServiceContract</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>
