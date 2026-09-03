@@ -363,9 +363,9 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     }
 
     get selImageUrl() {
-        if (this.selDetail && this.selDetail.imageUrl) return this.selDetail.imageUrl;
         const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
         if (name === 'CDU-A-07') return CDU_A07_IMG;
+        if (this.selDetail && this.selDetail.imageUrl) return this.selDetail.imageUrl;
         if (name.startsWith('CDU')) return CDU_IMG;
         if (name.startsWith('CX')) return CX_IMG;
         if (name.startsWith('CA') || name.includes('CRAH')) return CRAH_IMG;
