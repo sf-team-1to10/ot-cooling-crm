@@ -189,11 +189,11 @@
 .ir b { color: var(--ot-ink); font-weight: 600; text-align: right; }
 
 /* Health */
-.health { display: flex; align-items: center; justify-content: center; gap: 15px; }
-.donut-wrap { flex: none; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.health { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .donut-container { width: 88px; height: 88px; position: relative; }
 .coolbit-status { width: 64px; height: 64px; object-fit: contain; mix-blend-mode: screen; }
-.sc { flex: 1; display: flex; flex-direction: column; gap: 9px; }
+.sc { width: 100%; display: flex; flex-direction: column; gap: 9px; }
 .sr span { display: flex; justify-content: space-between; font-size: 11px; color: var(--ot-dim); margin-bottom: 3px; }
 .sr b { color: var(--ot-ink); font-family: var(--ot-font-mono); font-feature-settings: "tnum"; }
 .bar { height: 5px; border-radius: 3px; background: var(--ot-border); overflow: hidden; }
