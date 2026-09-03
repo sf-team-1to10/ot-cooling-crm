@@ -181,9 +181,9 @@
 .chart-container { width: 100%; }
 
 /* Right panels */
-.col-right { display: flex; flex-direction: column; }
-.rp + .rp { margin-top: 14px; }
-.rp.health-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.col-right { display: flex; flex-direction: column; gap: 14px; }
+.rp + .rp { margin-top: 0; }
+.rp.health-panel { display: flex; flex-direction: column; }
 .bd { padding: 13px 15px; }
 .infolist { display: flex; flex-direction: column; gap: 9px; }
 .ir { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; }
@@ -191,8 +191,8 @@
 .ir b { color: var(--ot-ink); font-weight: 600; text-align: right; }
 
 /* Health */
-.health-bd { display: flex; flex-direction: column; justify-content: center; flex: 1; padding: 13px 15px; }
-.health { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+.health-bd { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 220px; padding: 20px 15px; }
+.health { display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%; }
 .donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .donut-container { width: 88px; height: 88px; position: relative; }
 .coolbit-status { width: 64px; height: 64px; object-fit: contain; mix-blend-mode: screen; }
