@@ -3,7 +3,7 @@
     <apiVersion>66.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Dispatch Candidates</masterLabel>
-    <description>Case에서 서브탭으로 여는 담당자 확정 화면 — 스케줄링 정책이 랭킹한 후보 3명과 랭킹 근거, 담당자 선택</description>
+    <description>WorkOrder 배정 탭 — 후보 3명, 랭킹 근거, 담당자 선택</description>
     <targets>
         <target>lightning__RecordPage</target>
         <target>lightning__AppPage</target>

@@ -113,6 +113,4 @@ export default class OtProblemRca extends LightningElement {
         return '—';
     }
 
-    handleSaveRca() {
-    }
 }

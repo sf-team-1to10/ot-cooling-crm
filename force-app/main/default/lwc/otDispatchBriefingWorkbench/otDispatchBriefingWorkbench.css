@@ -207,17 +207,6 @@
     margin-bottom: 0;
 }
 
-/* 출처 배지 — S-01 t5CaseIntakePanel과 색 일치 */
-.source-agent {
-    background-color: #0877d1;
-    color: #ffffff;
-}
-
-.source-rule {
-    background-color: #16b8c8;
-    color: #ffffff;
-}
-
 /* Priority 제안 배지 */
 .priority-badge {
     background-color: #ba0517;

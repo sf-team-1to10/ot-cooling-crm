@@ -59,8 +59,5 @@
 .scope-corrective { background:#c43d4b; color:#fff; }
 .scope-preventive { background:#c87913; color:#fff; }
 .scope-new { background:#2e8b57; color:#fff; }
-.rca-badge-rule { background:#e2f6f8; color:#0f8a97; }
-.rca-badge-agent { background:#e2eefb; color:#1a5fb4; }
-
 /* ── 숫자 유틸 ── */
 .num { font-variant-numeric:tabular-nums; }

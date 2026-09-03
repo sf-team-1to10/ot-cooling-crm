@@ -485,16 +485,6 @@
     color: #a5620f;
 }
 
-.rca-badge-human {
-    background-color: #ede4f5;
-    color: #6b3fa0;
-}
-
-.rca-badge-agent {
-    background-color: #e2eefb;
-    color: #1a5fb4;
-}
-
 /* ── 숫자/색상 유틸 ── */
 .num {
     font-variant-numeric: tabular-nums;

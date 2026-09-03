@@ -44,7 +44,7 @@
                 <div class="slds-m-top_small">
                     <lightning-card>
                         <span slot="title" class="slds-text-heading_small">원인 확정 타임라인</span>
-                        <span slot="actions" class="slds-badge rca-badge-human">현장 측정으로 확정</span>
+                        <lightning-badge slot="actions" label="측정 기반 확정" variant="success"></lightning-badge>
                         <div class="slds-p-horizontal_medium slds-p-bottom_medium">
                             <div class="tl">
                                 <template for:each={timeline} for:item="node">
