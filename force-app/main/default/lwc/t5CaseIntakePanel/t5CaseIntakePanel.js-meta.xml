@@ -3,7 +3,7 @@
     <apiVersion>66.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Case Intake Panel</masterLabel>
-    <description>Case 접수 시 증상·자가조치·보증·SLA 판정을 한 화면에 표시 (S-01)</description>
+    <description>Case 접수 시 증상·자가조치 요약과 보증·SLA 판정을 좌/우 2열 카드로 표시 (장면 1)</description>
     <targets>
         <target>lightning__RecordPage</target>
     </targets>

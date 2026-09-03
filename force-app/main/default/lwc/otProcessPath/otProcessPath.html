@@ -1,0 +1,19 @@
+<template>
+    <template lwc:if={hasSteps}>
+        <div class="path" role="application" aria-label="프로세스 진행 상태">
+            <ol class="path__list">
+                <template for:each={steps} for:item="s">
+                    <li key={s.key} class={s.cls}>
+                        <div class="step__inner">
+                            <span class={s.iconCls} aria-hidden="true">
+                                <template lwc:if={s.showCheck}>✓</template>
+                                <template lwc:else>{s.num}</template>
+                            </span>
+                            <span class="step__label">{s.label}</span>
+                        </div>
+                    </li>
+                </template>
+            </ol>
+        </div>
+    </template>
+</template>

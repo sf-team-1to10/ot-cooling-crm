@@ -1,200 +1,230 @@
 <template>
-    <div class="slds-p-vertical_x-small">
-        <template lwc:if={isLoading}>
-            <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
-        </template>
-
-        <template lwc:if={error}>
-            <div class="slds-text-color_error slds-p-around_small" role="alert">
-                {errorMessage}
+    <div class="wb">
+        <!-- ─── 최초 진입: 안내 + 브리핑 생성 버튼 ─── -->
+        <template lwc:if={showIntake}>
+            <div class="intake">
+                <div class="intake__icon" aria-hidden="true">
+                    <lightning-icon icon-name="utility:einstein" size="medium" variant="inverse"></lightning-icon>
+                </div>
+                <h2 class="intake__title">출동 브리핑을 생성하세요</h2>
+                <p class="intake__desc">
+                    현장 상황·자산 이력·Priority 산정 근거를 한 화면에 요약합니다.<br>
+                    아래 버튼을 눌러 브리핑을 시작하세요.
+                </p>
+                <button type="button" class="btn btn--primary" onclick={handleGenerateBriefing}>
+                    출동 브리핑 생성
+                </button>
             </div>
         </template>
 
-        <template lwc:if={briefing}>
-            <!-- ── Highlights 헤더 ── -->
-            <div class="briefing-hl">
-                <div class="briefing-hl-head">
-                    <span class="briefing-hl-icon">
-                        <lightning-icon icon-name="utility:trending" size="small"
-                            variant="inverse"></lightning-icon>
-                    </span>
-                    <div class="briefing-hl-title">
-                        <p class="briefing-hl-eyebrow">출동 브리핑 · Case {caseNumber}</p>
-                        <h1 class="briefing-hl-name">{headerTitle}</h1>
-                    </div>
-                    <div class="briefing-hl-actions">
-                        <span class={priorityBadgeClass}>{priorityBadgeText}</span>
-                        <template lwc:if={isApproved}>
-                            <button type="button" class="approve-done slds-m-left_xx-small" disabled>
-                                {approveButtonLabel}
-                            </button>
-                        </template>
-                        <template lwc:else>
-                            <lightning-button label={approveButtonLabel} variant="brand"
-                                onclick={handleApprove}
-                                class="slds-m-left_xx-small"></lightning-button>
-                        </template>
-                    </div>
-                </div>
-                <dl class="briefing-hl-fields">
-                    <div class="briefing-hl-f">
+        <!-- ─── 로딩 ─── -->
+        <template lwc:if={isLoading}>
+            <div class="loading">
+                <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- ─── 에러 ─── -->
+        <template lwc:if={error}>
+            <div class="error" role="alert">{errorMessage}</div>
+        </template>
+
+        <!-- ─── 브리핑 본문 ─── -->
+        <template lwc:if={showBriefing}>
+            <!-- 컴포넌트 메타 필드 (표준 하이라이트에 없는 값만) -->
+            <div class="meta">
+                <dl class="meta__list">
+                    <div class="meta__item">
                         <dt>SLA 잔여</dt>
                         <dd class="num">{slaRemaining}</dd>
                     </div>
-                    <div class="briefing-hl-f">
+                    <div class="meta__item">
                         <dt>산정 시각</dt>
                         <dd class="num">{calculatedAtText}</dd>
                     </div>
-                    <div class="briefing-hl-f">
+                    <div class="meta__item">
                         <dt>비교 대상</dt>
                         <dd>Hall A CDU {rationale.comparedCount}대</dd>
                     </div>
-                    <template lwc:if={isApproved}>
-                        <div class="briefing-hl-f">
-                            <dt>승인</dt>
-                            <dd>{approvedByText}</dd>
-                        </div>
-                    </template>
                 </dl>
+                <div class="meta__actions">
+                    <button type="button" class="btn btn--primary" onclick={handleSlack}>
+                        Slack 전문가 소집
+                    </button>
+                    <button type="button" class="btn btn--secondary" onclick={handleDispatchConfirm}>
+                        출동 확정
+                    </button>
+                </div>
             </div>
 
-            <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
-                <!-- ── 중앙: Priority 근거 + 12대 비교 ── -->
-                <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
+            <div class="grid">
+                <!-- 중앙: Priority 근거 + 12대 비교 -->
+                <div class="col col--main">
                     <!-- Priority 산정 근거 -->
-                    <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">Priority 산정 근거</span>
-                        <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <table class="slds-table slds-table_cell-buffer slds-table_bordered rationale-table">
+                    <section class="card">
+                        <header class="card__head">
+                            <h3 class="card__title">Priority 산정 근거</h3>
+                        </header>
+                        <div class="card__body-tight">
+                            <table class="tbl">
                                 <thead>
-                                    <tr class="slds-line-height_reset">
-                                        <th scope="col"><div class="slds-truncate">산정 인자</div></th>
-                                        <th scope="col"><div class="slds-truncate">{rationale.maxDriftAssetName} 값</div></th>
-                                        <th scope="col"><div class="slds-truncate">기여</div></th>
+                                    <tr>
+                                        <th scope="col">산정 인자</th>
+                                        <th scope="col">{rationale.maxDriftAssetName} 값</th>
+                                        <th scope="col">기여</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <template for:each={rationaleFactors} for:item="f">
-                                        <tr key={f.key} class="slds-hint-parent">
-                                            <th scope="row"><div class="slds-truncate">{f.label}</div></th>
-                                            <td><div>{f.valueText}</div></td>
+                                        <tr key={f.key}>
+                                            <th scope="row">{f.label}</th>
+                                            <td>{f.valueText}</td>
                                             <td><span class={f.contributionClass}>{f.contributionText}</span></td>
                                         </tr>
                                     </template>
                                 </tbody>
                             </table>
                         </div>
-                    </lightning-card>
+                    </section>
 
                     <!-- Hall A CDU 12대 비교 -->
-                    <lightning-card class="slds-m-top_small">
-                        <span slot="title" class="slds-text-heading_small">Hall A CDU 12대 비교</span>
-                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                    <section class="card">
+                        <header class="card__head">
+                            <h3 class="card__title">Hall A CDU 12대 비교</h3>
+                        </header>
+                        <div class="card__body-tight">
                             <template lwc:if={hasComparisons}>
-                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                                <table class="tbl">
                                     <thead>
-                                        <tr class="slds-line-height_reset">
-                                            <th scope="col"><div class="slds-truncate">장비</div></th>
-                                            <th scope="col"><div class="slds-truncate">Revision</div></th>
-                                            <th scope="col"><div class="slds-truncate">현재 유량</div></th>
-                                            <th scope="col"><div class="slds-truncate">기준선 대비</div></th>
-                                            <th scope="col"><div class="slds-truncate">추세</div></th>
-                                            <th scope="col"><div class="slds-truncate">과거 실패</div></th>
+                                        <tr>
+                                            <th scope="col">장비</th>
+                                            <th scope="col">Revision</th>
+                                            <th scope="col">현재 유량</th>
+                                            <th scope="col">기준선 대비</th>
+                                            <th scope="col">추세</th>
+                                            <th scope="col">과거 실패</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <template for:each={comparisonRows} for:item="row">
                                             <tr key={row.key} class={row.rowClass}>
                                                 <th scope="row">
-                                                    <div class="slds-truncate">
-                                                        {row.assetName}
-                                                        <template lwc:if={row.isTarget}>
-                                                            <lightning-icon icon-name="utility:pinned" size="xx-small"
-                                                                class="slds-m-left_xx-small"></lightning-icon>
-                                                        </template>
-                                                    </div>
+                                                    {row.assetName}
+                                                    <template lwc:if={row.isTarget}>
+                                                        <span class="cmp-pin" aria-label="현재 대상">●</span>
+                                                    </template>
                                                 </th>
-                                                <td><div class="slds-truncate">{row.revisionText}</div></td>
-                                                <td><div class="slds-truncate">{row.measuredText}</div></td>
-                                                <td><div class="slds-truncate">{row.driftText}</div></td>
+                                                <td>{row.revisionText}</td>
+                                                <td class="num">{row.measuredText}</td>
+                                                <td class="num">{row.driftText}</td>
                                                 <td>
-                                                    <span class={row.trendClass}>{row.trendFlag}</span>
+                                                    <template lwc:if={row.hasTrendChip}>
+                                                        <span class={row.trendClass}>{row.trendFlag}</span>
+                                                    </template>
+                                                    <template lwc:else>—</template>
                                                 </td>
-                                                <td><div class="slds-truncate">{row.pastFailureText}</div></td>
+                                                <td>{row.pastFailureText}</td>
                                             </tr>
                                         </template>
                                     </tbody>
                                 </table>
                             </template>
                             <template lwc:else>
-                                <p class="slds-text-body_small slds-text-color_weak">비교할 측정 데이터가 없습니다.</p>
+                                <p class="empty">비교할 측정 데이터가 없습니다.</p>
                             </template>
                         </div>
-                    </lightning-card>
+                    </section>
                 </div>
 
-                <!-- ── 우측 레일: 우선 점검 후보 + 유사사례 ── -->
-                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
-                    <lightning-card>
-                        <span slot="title" class="slds-text-heading_small">우선 점검 후보</span>
-                        <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <template lwc:if={briefingBody}>
-                                <lightning-formatted-rich-text value={briefingBody}></lightning-formatted-rich-text>
+                <!-- 우측: 우선 점검 후보 + 유사사례 + Trend -->
+                <div class="col col--side">
+                    <section class="card">
+                        <header class="card__head">
+                            <h3 class="card__title">우선 점검 후보</h3>
+                        </header>
+                        <div class="card__body-tight">
+                            <template lwc:if={hasBriefingInsights}>
+                                <ul class="insights">
+                                    <template for:each={briefingInsights} for:item="it">
+                                        <li key={it.key} class="insight">
+                                            <span class="insight__dot" aria-hidden="true"></span>
+                                            <div class="insight__content">
+                                                <template lwc:if={it.label}>
+                                                    <p class="insight__label">{it.label}</p>
+                                                </template>
+                                                <p class="insight__body">{it.body}</p>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
                             </template>
                             <template lwc:else>
-                                <p class="slds-text-body_small slds-text-color_weak">브리핑 본문이 아직 생성되지 않았습니다.</p>
+                                <p class="empty">브리핑 본문이 아직 생성되지 않았습니다.</p>
                             </template>
                         </div>
-                    </lightning-card>
+                    </section>
 
-                    <lightning-card class="slds-m-top_small">
-                        <span slot="title" class="slds-text-heading_small">전사 유사사례</span>
-                        <div class="slds-p-horizontal_small slds-p-bottom_small">
-                            <template lwc:if={similarCasesSummary}>
-                                <lightning-formatted-rich-text value={similarCasesSummary}></lightning-formatted-rich-text>
+                    <section class="card">
+                        <header class="card__head">
+                            <h3 class="card__title">전사 유사사례</h3>
+                        </header>
+                        <div class="card__body-tight">
+                            <template lwc:if={hasSimilarCaseInsights}>
+                                <ul class="insights">
+                                    <template for:each={similarCaseInsights} for:item="it">
+                                        <li key={it.key} class="insight">
+                                            <span class="insight__dot" aria-hidden="true"></span>
+                                            <div class="insight__content">
+                                                <template lwc:if={it.label}>
+                                                    <p class="insight__label">{it.label}</p>
+                                                </template>
+                                                <p class="insight__body">{it.body}</p>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
                             </template>
                             <template lwc:else>
-                                <p class="slds-text-body_small slds-text-color_weak">유사사례 요약이 아직 없습니다.</p>
+                                <p class="empty">유사사례 요약이 아직 없습니다.</p>
                             </template>
                         </div>
-                    </lightning-card>
+                    </section>
 
-                    <!-- 실시간 Trend (프로토타입 v-briefing 우측 게이지) -->
-                    <lightning-card class="slds-m-top_small">
-                        <span slot="title" class="slds-text-heading_small">실시간 Trend</span>
-                        <span slot="actions" class="slds-badge trend-badge-warn">주의</span>
-                        <div class="slds-p-horizontal_small slds-p-bottom_small">
+                    <section class="card">
+                        <header class="card__head">
+                            <h3 class="card__title">실시간 Trend</h3>
+                            <span class="chip chip--warn">주의</span>
+                        </header>
+                        <div class="card__body">
                             <div class="gauge">
-                                <div class="gauge-top">
-                                    <span class="gauge-val">1,961</span>
-                                    <span class="gauge-unit">L/min</span>
+                                <div class="gauge__top">
+                                    <span class="gauge__val num">1,961</span>
+                                    <span class="gauge__unit">L/min</span>
                                 </div>
-                                <div class="gauge-bar">
-                                    <div class="gauge-fill"></div>
-                                    <div class="gauge-mark"></div>
+                                <div class="gauge__bar">
+                                    <div class="gauge__fill"></div>
+                                    <div class="gauge__mark"></div>
                                 </div>
-                                <div class="gauge-scale">
+                                <div class="gauge__scale">
                                     <span>1,900</span>
                                     <span>기준선 2,100</span>
                                     <span>2,200</span>
                                 </div>
                             </div>
                         </div>
-                    </lightning-card>
+                    </section>
                 </div>
             </div>
         </template>
 
-        <!-- Slack 전문가 소집 Flow 모달 — 회색 backdrop 없이, 밖 클릭 시 닫힘 -->
+        <!-- Slack 전문가 소집 Flow 모달 -->
         <template lwc:if={showSwarmFlow}>
             <div class="swarm-overlay" onclick={handleSwarmOverlayClick}>
                 <template lwc:if={swarmFlowLoading}>
                     <div class="swarm-spinner">
-                        <lightning-spinner alternative-text="로딩 중" size="medium"
-                            variant="brand"></lightning-spinner>
+                        <lightning-spinner alternative-text="로딩 중" size="medium" variant="brand"></lightning-spinner>
                     </div>
                 </template>
-
                 <div class={swarmCardClass} onclick={stopPropagation}
                     role="dialog" aria-modal="true" aria-label="Slack 전문가 소집">
                     <div class="slds-p-around_medium">

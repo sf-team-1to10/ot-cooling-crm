@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Process Path (공용)</masterLabel>
+    <description>여러 오브젝트에서 재사용하는 공용 프로세스 진행률 바. sobjectType에 따라 stage 배열을 내장 매핑에서 자동 선택. Record Page에 배치하면 recordId가 자동 주입되고, currentStep 파라미터로 App Builder에서 override 가능.</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="currentStep" type="Integer" label="Current Step (override)" description="비워두면 레코드의 stage 필드를 자동 읽음. 값을 넣으면 그 단계로 고정." min="-1" default="-1"/>
+        </targetConfig>
+        <targetConfig targets="lightning__AppPage,lightning__HomePage">
+            <property name="objectType" type="String" label="Object Type" description="Case, WorkOrder, Problem 등 내장 매핑 key"/>
+            <property name="currentStep" type="Integer" label="Current Step" min="0" default="0"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

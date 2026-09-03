@@ -1,0 +1,215 @@
+:host {
+    /* SLDS 네이비 브랜드 헤더 색 계열 (dynamicHighlights와 같은 톤) */
+    --path-brand: #032d60;
+    --path-brand-light: #014486;
+    --path-brand-soft: #d8e6f6;
+    --path-bg: #ffffff;
+    --path-border: #dddbda;
+    --path-pending-bg: #ffffff;
+    --path-pending-border: #c9c7c5;
+    --path-pending-text: #706e6b;
+    --path-done-bg: #014486;
+    --path-done-text: #ffffff;
+    --path-current-bg: #032d60;
+    --path-current-text: #ffffff;
+    display: block;
+}
+
+.path {
+    background: var(--path-bg);
+    border: 1px solid var(--path-border);
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    overflow: hidden;
+}
+
+.path__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+}
+
+/* ─── 각 step: chevron 형태 ─── */
+.step {
+    flex: 1 1 0;
+    min-width: 0;
+    position: relative;
+    height: 2.25rem;
+    display: flex;
+    align-items: stretch;
+}
+
+.step__inner {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0 0.75rem 0 1.25rem;
+    min-width: 0;
+    background: var(--path-pending-bg);
+    color: var(--path-pending-text);
+    border-top: 1px solid var(--path-pending-border);
+    border-bottom: 1px solid var(--path-pending-border);
+    position: relative;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.step:first-child .step__inner {
+    padding-left: 0.75rem;
+    border-left: 1px solid var(--path-pending-border);
+    border-top-left-radius: 0.125rem;
+    border-bottom-left-radius: 0.125rem;
+}
+
+.step:last-child .step__inner {
+    border-right: 1px solid var(--path-pending-border);
+    border-top-right-radius: 0.125rem;
+    border-bottom-right-radius: 0.125rem;
+}
+
+/* chevron 뾰족한 우측 화살표 (CSS clip-path 로 구현) */
+.step:not(:last-child) .step__inner {
+    clip-path: polygon(
+        0 0,
+        calc(100% - 0.75rem) 0,
+        100% 50%,
+        calc(100% - 0.75rem) 100%,
+        0 100%,
+        0.75rem 50%
+    );
+    margin-right: -0.75rem;
+}
+
+.step:first-child .step__inner {
+    clip-path: polygon(
+        0 0,
+        calc(100% - 0.75rem) 0,
+        100% 50%,
+        calc(100% - 0.75rem) 100%,
+        0 100%
+    );
+}
+
+.step:last-child:not(:first-child) .step__inner {
+    padding-left: 1.5rem;
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 100%,
+        0 100%,
+        0.75rem 50%
+    );
+    margin-right: 0;
+}
+
+/* 숫자·체크 뱃지 */
+.step__icon {
+    flex: 0 0 auto;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    background: transparent;
+    border: 1.5px solid currentColor;
+}
+
+.step__label {
+    font-size: 0.8125rem;
+    line-height: 1.2;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.01em;
+}
+
+/* ─── 상태별 색상 ─── */
+
+/* pending — 흰 배경 + 옅은 회색 텍스트 */
+.step--pending .step__inner {
+    background: var(--path-pending-bg);
+    color: var(--path-pending-text);
+}
+.step--pending .step__icon {
+    border-color: var(--path-pending-border);
+    color: var(--path-pending-text);
+}
+
+/* done — 옅은 네이비 + 흰 텍스트 */
+.step--done .step__inner {
+    background: var(--path-done-bg);
+    color: var(--path-done-text);
+    border-top-color: var(--path-done-bg);
+    border-bottom-color: var(--path-done-bg);
+}
+.step--done:first-child .step__inner {
+    border-left-color: var(--path-done-bg);
+}
+.step--done:last-child .step__inner {
+    border-right-color: var(--path-done-bg);
+}
+.step--done .step__icon {
+    background: var(--path-done-text);
+    color: var(--path-done-bg);
+    border-color: var(--path-done-text);
+    font-size: 0.875rem;
+}
+
+/* current — 진한 네이비 + 흰 텍스트 + 그림자 강조 */
+.step--current .step__inner {
+    background: var(--path-current-bg);
+    color: var(--path-current-text);
+    border-top-color: var(--path-current-bg);
+    border-bottom-color: var(--path-current-bg);
+    box-shadow: 0 1px 3px rgba(3, 45, 96, 0.35);
+    z-index: 2;
+}
+.step--current:first-child .step__inner {
+    border-left-color: var(--path-current-bg);
+}
+.step--current:last-child .step__inner {
+    border-right-color: var(--path-current-bg);
+}
+.step--current .step__icon {
+    background: var(--path-current-text);
+    color: var(--path-current-bg);
+    border-color: var(--path-current-text);
+}
+.step--current .step__label {
+    font-weight: 700;
+}
+
+/* pending step이 current 다음에 오면 z-index 아래로 */
+.step--pending .step__inner {
+    z-index: 1;
+}
+
+/* 반응형: 좁을 때 라벨 감춤, 현재 단계는 유지 */
+@media (max-width: 900px) {
+    .step__label {
+        display: none;
+    }
+    .step--current .step__label {
+        display: inline;
+    }
+    .step__inner {
+        padding-left: 0.75rem;
+        padding-right: 0.5rem;
+    }
+    .step:first-child .step__inner {
+        padding-left: 0.5rem;
+    }
+    .step:last-child:not(:first-child) .step__inner {
+        padding-left: 1rem;
+    }
+}
