@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "개요",
+  "contentBody" : {
+    "activeViewId" : "overview",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom",
+    "urlPrefix" : "overview"
+  },
+  "urlName" : "overview"
+}

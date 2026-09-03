@@ -1,0 +1,647 @@
+<template>
+    <div class="app">
+        <!-- ============ Sidebar ============ -->
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brandmark"></span><span>Coolinx</span>
+            </div>
+            <nav class="nav">
+                <template for:each={navItems} for:item="item">
+                    <a
+                        key={item.id}
+                        href="#"
+                        class={item.cls}
+                        data-id={item.id}
+                        onclick={handleNav}
+                    >
+                        <span class="icon">{item.icon}</span>
+                        <span>{item.label}</span>
+                        <template lwc:if={item.chev}
+                            ><span class="chev">›</span></template
+                        >
+                    </a>
+                </template>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="assistant"><span class="bot">🤖</span></div>
+                <div class="ai-label">
+                    <span>◈</span><span>AI 어시스턴트</span
+                    ><span class="beta">베타</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ============ Main ============ -->
+        <main class="main">
+            <header class="topbar">
+                <div class="menu">☷</div>
+                <div class="top-right">
+                    <span class="sun">☼</span><span class="vline"></span>
+                    <span class="bell">♧<sup>8</sup></span>
+                    <span class="vline"></span>
+                    <div class="user">
+                        <div class="avatar">●</div>
+                        <div>
+                            <strong>김민준</strong><small>운영 관리자</small>
+                        </div>
+                        <span class="down">⌄</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="heading">
+                <h1>개요</h1>
+                <button class="select">전체 사이트 <span>⌄</span></button>
+                <div class="controls">
+                    <button class="select live">
+                        <span class="dot"></span>실시간 <span>⌄</span>
+                    </button>
+                    <button class="select">최근 1시간 <span>⌄</span></button>
+                    <button class="select refresh" onclick={handleRefresh}>
+                        ↻
+                    </button>
+                </div>
+            </section>
+
+            <!-- ============ KPI cards ============ -->
+            <section class="kpis">
+                <div class="card kpi">
+                    <div class="kpi-icon">◇</div>
+                    <div>
+                        <div class="kpi-label">전체 시스템</div>
+                        <div class="kpi-value">24</div>
+                        <div class="kpi-foot">가동 24</div>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="kpi-icon">♧</div>
+                    <div>
+                        <div class="kpi-label">활성 알람</div>
+                        <div class="kpi-value">3</div>
+                        <div class="kpi-foot">
+                            심각 <span class="red">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="kpi-icon">◌</div>
+                    <div>
+                        <div class="kpi-label">평균 시스템 효율</div>
+                        <div class="kpi-value">92.4<span>%</span></div>
+                        <div class="kpi-foot green">+2.1%</div>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="kpi-icon">❄</div>
+                    <div>
+                        <div class="kpi-label">총 냉각 용량</div>
+                        <div class="kpi-value">12.6<span> MW</span></div>
+                        <div class="kpi-foot">사용 8.7 MW</div>
+                    </div>
+                </div>
+                <div class="card kpi">
+                    <div class="kpi-icon">〽</div>
+                    <div>
+                        <div class="kpi-label">PUE</div>
+                        <div class="kpi-value">1.28</div>
+                        <div class="kpi-foot">
+                            목표 <span class="green">1.30</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============ Content ============ -->
+            <section class="content">
+                <div class="main-column">
+                    <!-- Left column -->
+                    <div class="left">
+                        <!-- Equipment Status donut -->
+                        <div class="card panel status">
+                            <div class="panel-title">
+                                <span>장비 상태</span><span>›</span>
+                            </div>
+                            <div class="status-body">
+                                <div class="donut">
+                                    <div class="donut-center">
+                                        24<small>전체</small>
+                                    </div>
+                                </div>
+                                <div class="legend">
+                                    <div class="legend-row">
+                                        <i class="l-dot normal"></i
+                                        ><span>정상</span><span>18 (75%)</span>
+                                    </div>
+                                    <div class="legend-row">
+                                        <i class="l-dot warn"></i
+                                        ><span>경고</span><span>4 (17%)</span>
+                                    </div>
+                                    <div class="legend-row">
+                                        <i class="l-dot critical"></i
+                                        ><span>심각</span><span>2 (8%)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-link">전체 장비 보기&nbsp; →</div>
+                        </div>
+
+                        <!-- Cooling Efficiency Trend -->
+                        <div class="card panel trend">
+                            <div class="panel-title">
+                                <span>냉각 효율 추세</span>
+                            </div>
+                            <div class="legend-inline">
+                                <span>━ &nbsp;이번 주</span>
+                                <span class="last">┄ &nbsp;지난 주</span>
+                            </div>
+                            <div class="chart">
+                                <div class="chart-label">
+                                    5/18<strong>92.4%</strong>
+                                </div>
+                                <svg
+                                    viewBox="0 0 280 120"
+                                    preserveAspectRatio="none"
+                                >
+                                    <g stroke="#edf1f6" stroke-width="1">
+                                        <line
+                                            x1="25"
+                                            y1="15"
+                                            x2="270"
+                                            y2="15"
+                                        ></line>
+                                        <line
+                                            x1="25"
+                                            y1="45"
+                                            x2="270"
+                                            y2="45"
+                                        ></line>
+                                        <line
+                                            x1="25"
+                                            y1="75"
+                                            x2="270"
+                                            y2="75"
+                                        ></line>
+                                        <line
+                                            x1="25"
+                                            y1="105"
+                                            x2="270"
+                                            y2="105"
+                                        ></line>
+                                    </g>
+                                    <g
+                                        fill="none"
+                                        stroke="#a9b8cd"
+                                        stroke-width="1.5"
+                                        stroke-dasharray="4 4"
+                                    >
+                                        <path
+                                            d="M25,70 C45,60 54,88 70,75 S95,50 110,68 S135,82 150,56 S175,63 190,48 S220,65 235,38 S250,70 270,55"
+                                        ></path>
+                                    </g>
+                                    <g
+                                        fill="none"
+                                        stroke="#1768e6"
+                                        stroke-width="2.5"
+                                    >
+                                        <path
+                                            d="M25,53 C42,40 51,50 63,45 S78,55 90,48 S105,58 118,45 S136,56 148,47 S165,58 178,44 S198,50 211,42 S228,49 241,43 S255,48 270,30"
+                                        ></path>
+                                    </g>
+                                    <circle
+                                        cx="25"
+                                        cy="53"
+                                        r="3"
+                                        fill="#1768e6"
+                                    ></circle>
+                                    <circle
+                                        cx="270"
+                                        cy="30"
+                                        r="4"
+                                        fill="#1768e6"
+                                    ></circle>
+                                    <g font-size="8" fill="#71829c">
+                                        <text x="2" y="18">100%</text>
+                                        <text x="2" y="48">80%</text>
+                                        <text x="2" y="78">60%</text>
+                                        <text x="2" y="108">40%</text>
+                                    </g>
+                                </svg>
+                                <div class="days">
+                                    <span>5/12</span><span>5/13</span
+                                    ><span>5/14</span><span>5/15</span
+                                    ><span>5/16</span><span>5/17</span
+                                    ><span>5/18</span>
+                                </div>
+                            </div>
+                            <div class="panel-link">전체 분석 보기&nbsp; →</div>
+                        </div>
+                    </div>
+
+                    <!-- Center — Data Center Overview -->
+                    <div class="center">
+                        <div class="card hall">
+                            <div class="panel-title">
+                                <span>데이터센터 개요</span>
+                            </div>
+                            <div class="hall-head">
+                                <div class="hall-meta">
+                                    <div>
+                                        <div class="meta-label">사이트</div>
+                                        <div class="meta-value">서울 DC #1</div>
+                                    </div>
+                                    <div>
+                                        <div class="meta-label">층</div>
+                                        <div class="meta-value">3층</div>
+                                    </div>
+                                </div>
+                                <button class="view3d">
+                                    ◇ &nbsp; 3D로 보기
+                                </button>
+                            </div>
+                            <div
+                                class={hallImageClass}
+                                onmousemove={handleStageMove}
+                                onmouseleave={handleStageLeave}
+                            >
+                                <div class="hall-scene" style={sceneStyle}>
+                                    <img
+                                        class="hall-bg"
+                                        src={hallImageUrl}
+                                        alt="데이터센터 냉각 설비 개요"
+                                    />
+                                    <div class="hall-tint"></div>
+                                    <div class="hall-scan"></div>
+                                    <div class="hall-heat"></div>
+
+                                    <svg
+                                        class="hall-flow"
+                                        viewBox="0 0 400 240"
+                                        preserveAspectRatio="none"
+                                    >
+                                        <path
+                                            class="flow-path"
+                                            d="M36,206 L36,132 L150,132 L150,74 L266,74 L266,150 L372,150"
+                                        ></path>
+                                        <circle class="flow-dot" r="2.6">
+                                            <animateMotion
+                                                dur="3s"
+                                                repeatCount="indefinite"
+                                                path="M36,206 L36,132 L150,132 L150,74 L266,74 L266,150 L372,150"
+                                            ></animateMotion>
+                                        </circle>
+                                        <circle class="flow-dot" r="2.6">
+                                            <animateMotion
+                                                dur="3s"
+                                                begin="-1s"
+                                                repeatCount="indefinite"
+                                                path="M36,206 L36,132 L150,132 L150,74 L266,74 L266,150 L372,150"
+                                            ></animateMotion>
+                                        </circle>
+                                        <circle class="flow-dot" r="2.6">
+                                            <animateMotion
+                                                dur="3s"
+                                                begin="-2s"
+                                                repeatCount="indefinite"
+                                                path="M36,206 L36,132 L150,132 L150,74 L266,74 L266,150 L372,150"
+                                            ></animateMotion>
+                                        </circle>
+                                    </svg>
+                                </div>
+
+                                <span class="hud-corner tl"></span>
+                                <span class="hud-corner tr"></span>
+                                <span class="hud-corner bl"></span>
+                                <span class="hud-corner br"></span>
+
+                                <div class="hall-live">
+                                    <span class="live-dot"></span>실시간
+                                </div>
+                                <div class="hall-stamp">
+                                    갱신 {lastUpdate} KST
+                                </div>
+
+                                <template
+                                    for:each={hallMarkers}
+                                    for:item="m"
+                                >
+                                    <div
+                                        key={m.id}
+                                        class={m.cls}
+                                        style={m.style}
+                                        data-id={m.id}
+                                        role="button"
+                                        tabindex="0"
+                                        aria-label={m.ariaLabel}
+                                        onmouseenter={handleMarkerEnter}
+                                        onmouseleave={handleMarkerLeave}
+                                        onclick={handleMarkerClick}
+                                        onkeydown={handleMarkerKey}
+                                    >
+                                        <span class="mk-dot"></span>
+                                        <span class="mk-temp">{m.tempLabel}</span>
+                                        <template lwc:if={m.alert}>
+                                            <span class="mk-flag"
+                                                >{m.label} · {m.alert}</span
+                                            >
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <template lwc:if={activeMarker}>
+                                    <div
+                                        class="hall-tip"
+                                        style={activeMarker.tipStyle}
+                                    >
+                                        <div class="tip-head">
+                                            <span
+                                                class={activeMarker.tipDotCls}
+                                            ></span>
+                                            <strong>{activeMarker.label}</strong>
+                                            <span class="tip-status"
+                                                >{activeMarker.statusLabel}</span
+                                            >
+                                        </div>
+                                        <dl class="tip-body">
+                                            <div>
+                                                <dt>온도</dt>
+                                                <dd>{activeMarker.tempLabel}</dd>
+                                            </div>
+                                            <div>
+                                                <dt>냉수 유량</dt>
+                                                <dd>{activeMarker.flowLabel}</dd>
+                                            </div>
+                                            <div>
+                                                <dt>부하</dt>
+                                                <dd>{activeMarker.loadLabel}</dd>
+                                            </div>
+                                        </dl>
+                                        <template lwc:if={activeMarker.alert}>
+                                            <div class="tip-alert">
+                                                ⚠ {activeMarker.alert}
+                                            </div>
+                                        </template>
+                                        <a
+                                            href="#"
+                                            class="tip-link"
+                                            onclick={handleTipLink}
+                                            >장비 상세 보기 →</a
+                                        >
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="hall-legend">
+                                <span class="legend-item"
+                                    ><i style="background: #21aa42"></i
+                                    >정상</span
+                                >
+                                <span class="legend-item"
+                                    ><i style="background: #ff9f31"></i
+                                    >경고</span
+                                >
+                                <span class="legend-item"
+                                    ><i style="background: #ed4c4c"></i
+                                    >심각</span
+                                >
+                                <span class="legend-item"
+                                    ><i style="background: #a7b5c8"></i
+                                    >오프라인</span
+                                >
+                            </div>
+                            <div class="hall-foot">
+                                데이터센터로 이동&nbsp; →
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Alerts -->
+                    <section class="card alerts">
+                        <div class="alert-head">
+                            <strong>최근 알림</strong
+                            ><a href="#">전체 알람 보기&nbsp; →</a>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>시각</th>
+                                    <th>심각도</th>
+                                    <th>장비</th>
+                                    <th>메시지</th>
+                                    <th>사이트</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>10:24:15</td>
+                                    <td>
+                                        <span
+                                            class="severity"
+                                            style="color: #ef4b4b"
+                                            ><i class="sev-dot">!</i>심각</span
+                                        >
+                                    </td>
+                                    <td>Chiller-02</td>
+                                    <td>토출 온도 상승 감지</td>
+                                    <td>서울 DC #1</td>
+                                </tr>
+                                <tr>
+                                    <td>10:18:42</td>
+                                    <td>
+                                        <span
+                                            class="severity"
+                                            style="color: #ff921e"
+                                            ><i class="sev-dot">△</i>경고</span
+                                        >
+                                    </td>
+                                    <td>CRAC-05</td>
+                                    <td>에어 필터 점검 권장</td>
+                                    <td>서울 DC #1</td>
+                                </tr>
+                                <tr>
+                                    <td>10:05:31</td>
+                                    <td>
+                                        <span
+                                            class="severity"
+                                            style="color: #3e8bf1"
+                                            ><i class="sev-dot">i</i>정보</span
+                                        >
+                                    </td>
+                                    <td>Pump-03</td>
+                                    <td>정비 완료</td>
+                                    <td>서울 DC #1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+
+                <!-- Right column -->
+                <div class="right">
+                    <!-- System Health -->
+                    <div class="card panel health">
+                        <div class="panel-title">
+                            <span>시스템 상태</span
+                            ><a href="#">전체 보기&nbsp; →</a>
+                        </div>
+                        <div class="health-row">
+                            <div class="h-icon">◈</div>
+                            <div>
+                                <div class="health-name">냉동기</div>
+                                <div class="bar">
+                                    <div class="fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="health-val green">
+                                8 / 8<br /><b>100%</b>
+                            </div>
+                        </div>
+                        <div class="health-row">
+                            <div class="h-icon">▣</div>
+                            <div>
+                                <div class="health-name">항온항습기</div>
+                                <div class="bar">
+                                    <div class="fill" style="width: 83%"></div>
+                                </div>
+                            </div>
+                            <div class="health-val orange">
+                                10 / 12<br /><b>83% △</b>
+                            </div>
+                        </div>
+                        <div class="health-row">
+                            <div class="h-icon">◫</div>
+                            <div>
+                                <div class="health-name">CDU 유닛</div>
+                                <div class="bar">
+                                    <div class="fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="health-val green">
+                                4 / 4<br /><b>100%</b>
+                            </div>
+                        </div>
+                        <div class="health-row">
+                            <div class="h-icon">♙</div>
+                            <div>
+                                <div class="health-name">펌프</div>
+                                <div class="bar">
+                                    <div class="fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="health-val green">
+                                6 / 6<br /><b>100%</b>
+                            </div>
+                        </div>
+                        <div class="health-row">
+                            <div class="h-icon">♜</div>
+                            <div>
+                                <div class="health-name">냉각탑</div>
+                                <div class="bar">
+                                    <div class="fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="health-val green">
+                                2 / 2<br /><b>100%</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Energy Usage -->
+                    <div class="card panel energy">
+                        <div class="panel-title">
+                            <span>에너지 사용량</span>
+                            <button
+                                class="select"
+                                style="
+                                    height: 34px;
+                                    padding: 0 10px;
+                                    font-size: 10px;
+                                "
+                            >
+                                이번 주 ⌄
+                            </button>
+                        </div>
+                        <div class="energy-total">총 소비량</div>
+                        <div class="energy-number">
+                            245,430 <span>kWh</span>
+                            <small>+8.2% &nbsp; <span>전주 대비</span></small>
+                        </div>
+                        <svg viewBox="0 0 360 145" preserveAspectRatio="none">
+                            <g stroke="#e9eef5" stroke-width="1">
+                                <line x1="0" y1="15" x2="350" y2="15"></line>
+                                <line x1="0" y1="50" x2="350" y2="50"></line>
+                                <line x1="0" y1="85" x2="350" y2="85"></line>
+                                <line x1="0" y1="120" x2="350" y2="120"></line>
+                            </g>
+                            <g fill="#4a8de9">
+                                <rect
+                                    x="12"
+                                    y="48"
+                                    width="25"
+                                    height="72"
+                                    rx="1"
+                                ></rect>
+                                <rect
+                                    x="63"
+                                    y="43"
+                                    width="25"
+                                    height="77"
+                                    rx="1"
+                                ></rect>
+                                <rect
+                                    x="114"
+                                    y="57"
+                                    width="25"
+                                    height="63"
+                                    rx="1"
+                                ></rect>
+                                <rect
+                                    x="165"
+                                    y="51"
+                                    width="25"
+                                    height="69"
+                                    rx="1"
+                                ></rect>
+                                <rect
+                                    x="216"
+                                    y="52"
+                                    width="25"
+                                    height="68"
+                                    rx="1"
+                                ></rect>
+                                <rect
+                                    x="267"
+                                    y="61"
+                                    width="25"
+                                    height="59"
+                                    rx="1"
+                                    opacity=".35"
+                                ></rect>
+                                <rect
+                                    x="318"
+                                    y="69"
+                                    width="25"
+                                    height="51"
+                                    rx="1"
+                                    opacity=".25"
+                                ></rect>
+                            </g>
+                            <g font-size="9" fill="#6e809d">
+                                <text x="17" y="137">월</text>
+                                <text x="68" y="137">화</text>
+                                <text x="119" y="137">수</text>
+                                <text x="170" y="137">목</text>
+                                <text x="221" y="137">금</text>
+                                <text x="272" y="137">토</text>
+                                <text x="323" y="137">일</text>
+                                <text x="1" y="18">60k</text>
+                                <text x="1" y="53">40k</text>
+                                <text x="1" y="88">20k</text>
+                                <text x="4" y="123">0</text>
+                            </g>
+                        </svg>
+                        <div class="energy-foot">에너지 분석 보기&nbsp; →</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</template>

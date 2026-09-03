@@ -2,6 +2,7 @@ import { LightningElement, api, wire, track } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
 import setAssetContextFromLwc from '@salesforce/apex/T5SetAssetContextService.setAssetContextFromLwc';
+import CDU_3Q from '@salesforce/resourceUrl/OT_CDU1350_3q';
 
 const METRICS = {
     flow: { label:'CHW Flow', unit:'L/min', from:105, to:71, band:[95,115], vmin:60, vmax:125, interp:'냉수 유량은 기준선 하한보다 낮은 상태로 관찰되고 있으며, 상세 이력과 함께 확인이 필요합니다.' },

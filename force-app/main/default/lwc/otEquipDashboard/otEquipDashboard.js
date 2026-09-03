@@ -2,7 +2,13 @@ import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getEquipmentDashboard from '@salesforce/apex/OTEquipDashboardController.getEquipmentDashboard';
 import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
+import CDU_3Q from '@salesforce/resourceUrl/OT_CDU1350_3q';
+import CDU_FRONT from '@salesforce/resourceUrl/OT_CDU1350_front';
+import CDU_INTERNAL from '@salesforce/resourceUrl/OT_CDU1350_internal';
+import CDU_INSTALLED from '@salesforce/resourceUrl/OT_CDU1350_installed';
+import CDU_REAR from '@salesforce/resourceUrl/OT_CDU1350_rear';
 
+const CDU_IMAGES = [CDU_3Q, CDU_FRONT, CDU_INTERNAL, CDU_INSTALLED, CDU_REAR];
 const PAGE_SIZE = 7;
 
 /**
@@ -43,7 +49,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         }
         if (!data) return;
         this.kpis = data.kpis || this.kpis;
-        this.assets = (data.assets || []).map(a => ({
+        this.assets = (data.assets || []).map((a, idx) => ({
             id: a.assetId,
             name: a.name,
             type: a.assetType || '',
@@ -51,8 +57,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             loc: a.location || '',
             stateCode: a.stateCode,
             stateLabel: a.stateLabel,
-            // 알람 이력은 Apex에 아직 데이터 모델이 없음(위 클래스독 참고) —
-            // for:each={sel.alarms}가 undefined로 깨지지 않도록 빈 배열 유지.
+            imageUrl: CDU_IMAGES[idx % CDU_IMAGES.length],
             alarms: []
         }));
         if (!this.selectedId && this.assets.length > 0) {

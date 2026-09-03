@@ -1,0 +1,196 @@
+<template>
+    <!-- ===== Page Heading ===== -->
+    <section class="page-head">
+        <div>
+            <h1 class="page-title">오늘</h1>
+            <span class="page-sub">일간 운영 · 지금+계속</span>
+        </div>
+    </section>
+
+    <!-- ===== KPI Row ===== -->
+    <section class="kpi-row">
+        <div class="kpi-card kpi-danger">
+            <div class="kpi-top">
+                <span class="kpi-label">SLA 위험 신호 ⓘ</span>
+                <span class="kpi-change up">↑ 1</span>
+            </div>
+            <div class="kpi-body">
+                <span class="kpi-icon-warn">⚠</span>
+                <span class="kpi-value">2<span class="kpi-unit">건</span></span>
+            </div>
+            <div class="kpi-spark">
+                <svg viewBox="0 0 60 20" preserveAspectRatio="none">
+                    <polyline points="0,15 10,12 20,16 30,8 40,14 50,6 60,10" fill="none" stroke="#EF4444" stroke-width="1.5"></polyline>
+                </svg>
+            </div>
+            <div class="kpi-foot danger">가장 가까운 SLA <strong>38분</strong></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-top">
+                <span class="kpi-label">내 Case 큐 ⓘ</span>
+                <span class="kpi-change down">↓ 2</span>
+            </div>
+            <div class="kpi-body">
+                <span class="kpi-value">7<span class="kpi-unit">건</span></span>
+            </div>
+            <div class="kpi-spark">
+                <svg viewBox="0 0 60 20" preserveAspectRatio="none">
+                    <polyline points="0,10 10,14 20,8 30,12 40,6 50,11 60,5" fill="none" stroke="#3B82F6" stroke-width="1.5"></polyline>
+                </svg>
+            </div>
+            <div class="kpi-foot"><span class="p1">P1</span> 1 · <span class="p2">P2</span> 3 · <span class="p3">P3</span> 3</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-top">
+                <span class="kpi-label">Agent 인계 대기함 ⓘ</span>
+                <span class="kpi-change neutral">—</span>
+            </div>
+            <div class="kpi-body">
+                <span class="kpi-value">3<span class="kpi-unit">건</span></span>
+            </div>
+            <div class="kpi-spark">
+                <svg viewBox="0 0 60 20" preserveAspectRatio="none">
+                    <polyline points="0,12 10,10 20,14 30,8 40,12 50,9 60,11" fill="none" stroke="#3B82F6" stroke-width="1.5"></polyline>
+                </svg>
+            </div>
+            <div class="kpi-foot">현장 확인 <strong>2</strong> · 기술 판단 <strong>1</strong></div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-top">
+                <span class="kpi-label">Critical Trend 알림 ⓘ</span>
+                <span class="kpi-change up">↑ 1</span>
+            </div>
+            <div class="kpi-body">
+                <span class="kpi-icon-alert">🔔</span>
+                <span class="kpi-value">1<span class="kpi-unit">건</span></span>
+            </div>
+            <div class="kpi-spark">
+                <svg viewBox="0 0 60 20" preserveAspectRatio="none">
+                    <polyline points="0,18 10,15 20,17 30,10 40,14 50,5 60,8" fill="none" stroke="#F59E0B" stroke-width="1.5"></polyline>
+                </svg>
+            </div>
+            <div class="kpi-foot">CDU-A-07 차압 상승</div>
+        </div>
+    </section>
+
+    <!-- ===== Main Content Grid ===== -->
+    <section class="main-grid">
+        <!-- Left: 고객 경보(미확인) 감시 -->
+        <div class="card alert-card">
+            <div class="card-head">
+                <div class="card-head-left">
+                    <div class="avatar-sm">🦫</div>
+                    <h2>고객 경보(미확인) 감시</h2>
+                </div>
+                <a class="card-link">전체 보기 ›</a>
+            </div>
+            <table class="alert-table">
+                <thead>
+                    <tr>
+                        <th>발생 시간</th>
+                        <th>자산 / 알림 내용</th>
+                        <th>측정 값</th>
+                        <th>기준 / 목표</th>
+                        <th>상태</th>
+                        <th>액션</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={alerts} for:item="a">
+                        <tr key={a.id}>
+                            <td>
+                                <div>{a.time}</div>
+                                <div class="sub">{a.ago}</div>
+                            </td>
+                            <td>
+                                <a class="asset-link">{a.asset}</a>
+                                <div class="sub">{a.desc}</div>
+                            </td>
+                            <td class={a.valClass}>{a.value}</td>
+                            <td>{a.threshold}</td>
+                            <td><span class={a.badgeCls}>{a.status}</span></td>
+                            <td>
+                                <button class="btn-confirm">확인</button>
+                                <button class="btn-more">⌄</button>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            <div class="card-foot-link">모든 경보 (미확인) 보기</div>
+        </div>
+
+        <!-- Center: Hall 자산 상태 미니뷰 -->
+        <div class="card hall-card">
+            <div class="card-head">
+                <h2>Hall 자산 상태 미니뷰</h2>
+                <div class="hall-stats">
+                    <span>14 assets</span>
+                    <span class="tele-sep">·</span>
+                    <span class="hall-normal">13 Normal</span>
+                    <span class="tele-sep">·</span>
+                    <span class="hall-watch">1 Watch</span>
+                </div>
+            </div>
+            <div class="hall-map">
+                <img src={hallImageUrl} alt="Hall A 조감도" class="hall-img" />
+                <div class="hall-overlay"></div>
+                <template for:each={hallAssets} for:item="h">
+                    <div key={h.id} class={h.cls} style={h.style}>
+                        <span class="ha-label">{h.name}</span>
+                        <span class={h.badgeCls}>{h.status}</span>
+                    </div>
+                </template>
+            </div>
+            <div class="hall-legend">
+                <span class="legend-item"><i class="dot-normal"></i>Normal</span>
+                <span class="legend-item"><i class="dot-watch"></i>Watch</span>
+                <span class="legend-item"><i class="dot-critical"></i>Critical</span>
+                <span class="legend-item"><i class="dot-unknown"></i>Unknown</span>
+            </div>
+            <a class="card-foot-link">모든 자산 보기 ›</a>
+        </div>
+
+        <!-- Full-width: 오늘 현장 출동 현황 -->
+        <div class="card dispatch-card">
+            <div class="card-head">
+                <div class="card-head-left">
+                    <div class="avatar-sm">🦫</div>
+                    <h2>오늘 현장 출동 현황</h2>
+                </div>
+            </div>
+            <table class="dispatch-table">
+                <thead>
+                    <tr>
+                        <th>엔지니어</th>
+                        <th>Case ID</th>
+                        <th>자산</th>
+                        <th>작업 유형</th>
+                        <th>상태</th>
+                        <th>ETA</th>
+                        <th>위치 / 경로</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={dispatches} for:item="d">
+                        <tr key={d.id}>
+                            <td>
+                                <div class="engineer">
+                                    <div class="eng-avatar" style={d.avatarStyle}></div>
+                                    <span>{d.name}</span>
+                                </div>
+                            </td>
+                            <td><a class="asset-link">{d.caseId}</a></td>
+                            <td>{d.asset}</td>
+                            <td>{d.type}</td>
+                            <td><span class={d.statusCls}>{d.status}</span></td>
+                            <td>{d.eta}</td>
+                            <td>{d.location}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+            <div class="card-foot-link">전체 출동 현황 보기</div>
+        </div>
+    </section>
+</template>

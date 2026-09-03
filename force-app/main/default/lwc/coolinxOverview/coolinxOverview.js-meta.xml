@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Coolinx Overview</masterLabel>
+    <description>Coolinx 데이터센터 냉각 모니터링 Overview 대시보드 — KPI, 장비 상태 도넛, 냉각 효율 추세, 데이터센터 조감도, 시스템 헬스, 에너지 사용량, 최근 알람 (프로토타입 기반, 수치·차트 정적)</description>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+</LightningComponentBundle>
