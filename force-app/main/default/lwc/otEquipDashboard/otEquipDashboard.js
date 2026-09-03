@@ -424,12 +424,12 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     }
     get donutSvg() {
         const score = this.healthScore;
-        const r = 34, c = 2 * Math.PI * r, off = c * (1 - score / 100);
+        const r = 46, c = 2 * Math.PI * r, off = c * (1 - score / 100);
         const col = score >= 90 ? '#2E8B57' : (score >= 80 ? '#C87913' : '#C43D4B');
-        return `<svg viewBox="0 0 88 88" style="width:88px;height:88px">` +
-            `<circle cx="44" cy="44" r="${r}" fill="none" stroke="#e9e9ea" stroke-width="9"/>` +
-            `<circle cx="44" cy="44" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" ` +
-            `stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 44 44)"/>` +
+        return `<svg viewBox="0 0 120 120" style="width:120px;height:120px">` +
+            `<circle cx="60" cy="60" r="${r}" fill="none" stroke="#e9e9ea" stroke-width="11"/>` +
+            `<circle cx="60" cy="60" r="${r}" fill="none" stroke="${col}" stroke-width="11" stroke-linecap="round" ` +
+            `stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 60 60)"/>` +
             `</svg>`;
     }
 
