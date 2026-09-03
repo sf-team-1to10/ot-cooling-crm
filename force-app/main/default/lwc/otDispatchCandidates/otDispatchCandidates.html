@@ -10,15 +10,10 @@
             </div>
         </template>
 
-        <!-- ── 하이라이트 ── -->
+        <!-- 배정 지표 스트립 (identity는 dynamicHighlights) -->
         <template lwc:if={header}>
         <div class="cand-hl">
             <div class="cand-hl-head">
-                <span class="cand-hl-icon">SA</span>
-                <div class="cand-hl-title">
-                    <p class="cand-hl-eyebrow">{eyebrowText}</p>
-                    <h1 class="cand-hl-name">담당자 배정</h1>
-                </div>
                 <div class="cand-hl-actions">
                     <span class="slds-badge cand-badge-rule">스케줄링 정책 · 긴급</span>
                     <template lwc:if={isAssigned}>

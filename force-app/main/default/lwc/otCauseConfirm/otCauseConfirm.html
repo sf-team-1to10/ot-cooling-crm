@@ -11,14 +11,9 @@
         </template>
 
         <template lwc:if={evidence}>
-            <!-- ── 하이라이트 ── -->
+            <!-- 측정 근거 지표 (identity는 dynamicHighlights) -->
             <div class="rca-hl">
                 <div class="rca-hl-head">
-                    <span class="rca-hl-icon icon-green">→</span>
-                    <div class="rca-hl-title">
-                        <p class="rca-hl-eyebrow">Case {caseNumber} · {assetName}</p>
-                        <h1 class="rca-hl-name">원인 확정 · 현장 측정 근거</h1>
-                    </div>
                     <div class="rca-hl-actions">
                         <template lwc:if={problemCreated}>
                             <button type="button" class="rca-done" disabled>Problem 생성됨</button>
@@ -32,7 +27,6 @@
                     </div>
                 </div>
                 <dl class="rca-hl-fields">
-                    <div class="rca-hl-f"><dt>Asset</dt><dd>{assetName}</dd></div>
                     <div class="rca-hl-f"><dt>Revision</dt><dd>{revisionText}</dd></div>
                     <div class="rca-hl-f"><dt>최초 불합격</dt><dd class="num">{firstFailValue}</dd></div>
                     <div class="rca-hl-f"><dt>재시험 합격</dt><dd class="num">{retestPassValue}</dd></div>
