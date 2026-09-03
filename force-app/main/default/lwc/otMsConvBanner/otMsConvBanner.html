@@ -1,0 +1,50 @@
+<template>
+    <div class="banner">
+        <!-- 왼쪽: 아이콘 + 제목 -->
+        <div class="banner__lead">
+            <div class="banner__icon" aria-hidden="true">
+                <lightning-icon icon-name="standard:messaging_session" size="medium"></lightning-icon>
+            </div>
+            <div class="banner__title-block">
+                <div class="banner__title">{previewLabel}</div>
+                <div class="banner__sub">
+                    <span class={statusBadgeClass}>{statusLabel}</span>
+                    <span class="banner__dot" aria-hidden="true">·</span>
+                    <span class="banner__meta">시작 {startTimeFormatted}</span>
+                    <template lwc:if={hasElapsed}>
+                        <span class="banner__dot" aria-hidden="true">·</span>
+                        <span class="banner__meta">경과 {elapsedLabel}</span>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- 오른쪽: Case / 계정 링크 -->
+        <div class="banner__links">
+            <template lwc:if={caseId}>
+                <div class="banner__link-item">
+                    <span class="banner__link-lbl">케이스</span>
+                    <a class="banner__link-val" href={caseUrl} target="_blank" rel="noreferrer">{caseNumber}</a>
+                </div>
+            </template>
+            <template lwc:if={accountName}>
+                <div class="banner__link-item">
+                    <span class="banner__link-lbl">고객사</span>
+                    <span class="banner__link-val">{accountName}</span>
+                </div>
+            </template>
+            <template lwc:if={channelName}>
+                <div class="banner__link-item">
+                    <span class="banner__link-lbl">채널</span>
+                    <span class="banner__link-val">{channelName}</span>
+                </div>
+            </template>
+            <template lwc:if={origin}>
+                <div class="banner__link-item">
+                    <span class="banner__link-lbl">유입</span>
+                    <span class="banner__link-val">{origin}</span>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

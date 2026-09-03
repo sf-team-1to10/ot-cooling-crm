@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OT_Session_Header</fullName>
+    <fields>DisplayTitle__c</fields>
+    <fields>Status</fields>
+    <fields>StartTime</fields>
+    <fields>Origin</fields>
+    <label>OT 세션 헤더</label>
+</CompactLayout>

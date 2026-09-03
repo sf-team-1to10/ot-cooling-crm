@@ -116,21 +116,10 @@ export default class T5ServiceReplies extends LightningElement {
         return REPLY_OPTIONS.map(o => ({ label: o.label, value: o.value }));
     }
 
-    get isSelect() {
-        return this._state === 'select';
-    }
-
-    get isGenerating() {
-        return this._state === 'generating';
-    }
-
-    get hasReply() {
-        return this._state === 'reply';
-    }
-
-    get cannotGenerate() {
-        return !this._selectedValue;
-    }
+    get isSelect() { return this._state === 'select'; }
+    get isGenerating() { return this._state === 'generating'; }
+    get hasReply() { return this._state === 'reply'; }
+    get cannotGenerate() { return !this._selectedValue; }
 
     get selectedOption() {
         return REPLY_OPTIONS.find(o => o.value === this._selectedValue);
@@ -147,7 +136,7 @@ export default class T5ServiceReplies extends LightningElement {
     }
 
     get copyLabel() {
-        return this._copied ? '복사됨 ✓' : '채팅에 사용';
+        return this._copied ? '복사됨 ✓' : '복사하기';
     }
 
     handleComboChange(event) {
@@ -166,11 +155,15 @@ export default class T5ServiceReplies extends LightningElement {
     }
 
     handleCopy() {
-        navigator.clipboard.writeText(this.replyText).then(() => {
-            this._copied = true;
-            // eslint-disable-next-line @lwc/lwc/no-async-operation
-            setTimeout(() => { this._copied = false; }, 1500);
-        });
+        const text = this.replyText;
+        if (!text) return;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(() => {
+                this._copied = true;
+                // eslint-disable-next-line @lwc/lwc/no-async-operation
+                setTimeout(() => { this._copied = false; }, 1500);
+            });
+        }
     }
 
     handleBack() {

@@ -1,0 +1,123 @@
+<template>
+    <div class="stack">
+        <!-- ══ 케이스 상세 ══ -->
+        <article class="card">
+            <header class="card-head">
+                <h2 class="card-title">케이스 상세</h2>
+            </header>
+
+            <div class="card-body">
+                <template lwc:if={hasCaseId}>
+                    <template lwc:if={isLoadingCase}>
+                        <div class="loading"><lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner></div>
+                    </template>
+                    <template lwc:else>
+                        <div class="case-hero">
+                            <a class="case-num" href={caseUrl} onclick={handleCaseClick}>{caseNumber}</a>
+                            <span class="case-status">{caseStatus}</span>
+                        </div>
+                        <p class="case-subject">{caseSubject}</p>
+
+                        <div class="kv-grid">
+                            <div class="kv-col">
+                                <p class="section-title">분류</p>
+                                <dl class="kv">
+                                    <div class="kv-row"><dt>우선순위</dt><dd>{casePriority}</dd></div>
+                                    <div class="kv-row"><dt>유형</dt><dd>{caseType}</dd></div>
+                                    <div class="kv-row"><dt>접수 경로</dt><dd>{caseOrigin}</dd></div>
+                                </dl>
+                            </div>
+                            <div class="kv-col">
+                                <p class="section-title">연결 정보</p>
+                                <dl class="kv">
+                                    <div class="kv-row"><dt>고객사</dt><dd>{caseAccountName}</dd></div>
+                                    <div class="kv-row"><dt>자산</dt><dd>{caseAssetName}</dd></div>
+                                    <div class="kv-row"><dt>담당자</dt><dd>{caseContactName}</dd></div>
+                                    <div class="kv-row"><dt>소유자</dt><dd>{caseOwnerName}</dd></div>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <template lwc:if={hasDesc}>
+                            <p class="section-title">설명</p>
+                            <p class="case-desc">{caseDesc}</p>
+                        </template>
+                    </template>
+                </template>
+                <template lwc:else>
+                    <div class="empty">
+                        <p>연결된 케이스가 없습니다.</p>
+                        <lightning-button
+                            label="새 케이스 생성"
+                            variant="neutral"
+                            icon-name="utility:add"
+                            onclick={handleNewCase}
+                        ></lightning-button>
+                    </div>
+                </template>
+            </div>
+        </article>
+
+        <!-- ══ 자산 실시간 상태 ══ -->
+        <article class="card">
+            <header class="card-head">
+                <h2 class="card-title">자산 실시간 상태</h2>
+            </header>
+
+            <div class="card-body">
+                <template lwc:if={hasAssetId}>
+                    <template lwc:if={isLoadingAsset}>
+                        <div class="loading"><lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner></div>
+                    </template>
+                    <template lwc:else>
+                        <div class="asset-hero">
+                            <a class="asset-name" href={assetUrl} onclick={handleAssetClick}>{assetName}</a>
+                            <span class="asset-status">{assetStatus}</span>
+                        </div>
+                        <template lwc:if={assetSite}>
+                            <p class="asset-site">{assetSite}</p>
+                        </template>
+
+                        <template lwc:if={hasGauges}>
+                            <p class="section-title">최신 계측값</p>
+                            <div class="gauges">
+                                <template for:each={gauges} for:item="g">
+                                    <div key={g.key} class="gauge">
+                                        <div class="gauge-head">
+                                            <span class="gauge-label">{g.label}</span>
+                                            <template lwc:if={g.hasTrend}>
+                                                <span class={g.trendClass}>{g.trend}</span>
+                                            </template>
+                                        </div>
+                                        <div class="gauge-value-row">
+                                            <span class="gauge-value">{g.currentText}</span>
+                                            <span class={g.deltaClass}>{g.deltaText}</span>
+                                        </div>
+                                        <div class="gauge-meta">
+                                            <span>기준선 {g.baselineText}</span>
+                                            <template lwc:if={g.pctText}>
+                                                <span class="gauge-pct">{g.pctText}</span>
+                                            </template>
+                                        </div>
+                                        <template lwc:if={g.hasSpark}>
+                                            <svg class="spark" viewBox={g.viewBox} preserveAspectRatio="none" aria-hidden="true">
+                                                <path d={g.sparkArea} class="spark-area"></path>
+                                                <path d={g.sparkPath} class="spark-line"></path>
+                                            </svg>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:else>
+                            <p class="asset-empty">이 자산에 대한 최신 계측 스냅샷이 아직 없습니다.</p>
+                        </template>
+                    </template>
+                </template>
+                <template lwc:else>
+                    <p class="asset-empty">이 케이스에 연결된 자산이 없습니다.</p>
+                </template>
+            </div>
+        </article>
+    </div>
+</template>
