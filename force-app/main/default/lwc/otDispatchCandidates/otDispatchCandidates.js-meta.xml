@@ -13,6 +13,8 @@
         <targetConfig targets="lightning__RecordPage">
             <objects>
                 <object>Case</object>
+                <object>WorkOrder</object>
+                <object>ServiceAppointment</object>
             </objects>
         </targetConfig>
     </targetConfigs>
