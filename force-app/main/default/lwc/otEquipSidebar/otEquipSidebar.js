@@ -1,14 +1,27 @@
 import { LightningElement, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import LOGO from '@salesforce/resourceUrl/OT_Logo_KR';
+import COOLBIT_MONITOR from '@salesforce/resourceUrl/OT_Coolbit_Monitor';
 
-export default class OtEquipSidebar extends LightningElement {
+const PAGE_MAP = {
+    overview: '/overview',
+    equipment: '/',
+    alarms: '/',
+    analytics: '/',
+    reports: '/',
+    maintenance: '/',
+    settings: '/'
+};
+
+export default class OtEquipSidebar extends NavigationMixin(LightningElement) {
     @api activeNav = 'equipment';
     @api customerName = '';
     @api contactName = '';
     @api contactRole = '';
 
-    get hasCustomerInfo() {
-        return !!this.customerName;
-    }
+    get hasCustomerInfo() { return !!this.customerName; }
+    get logoUrl() { return LOGO; }
+    get coolbitMonitorUrl() { return COOLBIT_MONITOR; }
 
     get overviewClass()    { return this.navClass('overview'); }
     get equipmentClass()   { return this.navClass('equipment'); }
@@ -24,7 +37,13 @@ export default class OtEquipSidebar extends LightningElement {
 
     handleNavClick(event) {
         const page = event.currentTarget.dataset.page;
-        this.dispatchEvent(new CustomEvent('navigate', { detail: { page } }));
+        const url = PAGE_MAP[page];
+        if (url) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__webPage',
+                attributes: { url }
+            });
+        }
     }
 
     handleAssistClick() {

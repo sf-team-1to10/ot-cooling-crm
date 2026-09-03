@@ -24,6 +24,8 @@ public with sharing class OTEquipDashboardController {
             );
             List<Asset> safe = (List<Asset>) decision.getRecords();
 
+            Map<Id, String> assetImageMap = buildAssetImageMap(safe);
+
             DashboardData result = new DashboardData();
             Integer normalCount = 0;
             Integer advisoryCount = 0;
@@ -44,6 +46,8 @@ public with sharing class OTEquipDashboardController {
                                 a.Latest_Trend_Flag__c == '이상';
                 v.stateCode = isAdv ? 'adv' : 'ok';
                 v.stateLabel = isAdv ? 'P3 Advisory / 주의' : '정상';
+
+                v.imageUrl = assetImageMap.get(a.Id);
 
                 if (isAdv) { advisoryCount++; } else { normalCount++; }
                 if (a.Next_Inspection_Date__c != null &&
@@ -120,6 +124,9 @@ public with sharing class OTEquipDashboardController {
                 ' · ' + (result.family != null ? result.family : '') +
                 ' · ' + (result.location != null ? result.location : '');
 
+            Map<Id, String> imgMap = buildAssetImageMap(new List<Asset>{ a });
+            result.imageUrl = imgMap.get(a.Id);
+
             return result;
         } catch (AuraHandledException ae) {
             throw ae;
@@ -155,6 +162,27 @@ public with sharing class OTEquipDashboardController {
         } catch (Exception e) {
             throw new AuraHandledException('위치 정보를 불러오는 중 오류가 발생했습니다.');
         }
+    }
+
+    private static final String[] CDU_1350_IMAGES = new String[]{
+        'OT_CDU1350_3q', 'OT_CDU1350_front', 'OT_CDU1350_internal',
+        'OT_CDU1350_installed', 'OT_CDU1350_rear'
+    };
+
+    private static Map<Id, String> buildAssetImageMap(List<Asset> assets) {
+        Map<Id, String> result = new Map<Id, String>();
+        if (assets == null || assets.isEmpty()) return result;
+
+        String sitePrefix = Site.getPathPrefix();
+        if (sitePrefix == null) sitePrefix = '';
+
+        Integer idx = 0;
+        for (Asset a : assets) {
+            String resourceName = CDU_1350_IMAGES[Math.mod(idx, CDU_1350_IMAGES.size())];
+            result.put(a.Id, sitePrefix + '/resource/' + resourceName);
+            idx++;
+        }
+        return result;
     }
 
     private static Id resolveRunningUserAccountId() {
@@ -238,6 +266,7 @@ public with sharing class OTEquipDashboardController {
         @AuraEnabled public String warrantyType { get; set; }
         @AuraEnabled public Decimal openItemsSummary { get; set; }
         @AuraEnabled public String gaugesJson { get; set; }
+        @AuraEnabled public String imageUrl { get; set; }
     }
 
     public class LocationView {

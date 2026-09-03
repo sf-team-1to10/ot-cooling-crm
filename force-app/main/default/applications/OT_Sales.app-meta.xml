@@ -3,24 +3,25 @@
     <actionOverrides>
         <actionName>View</actionName>
         <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Case_Record_Page</content>
+        <content>Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Flexipage</type>
-        <pageOrSobjectType>Case</pageOrSobjectType>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
         <comment>Action override created by Lightning App Builder during activation.</comment>
-        <content>Case_Record_Page</content>
-        <formFactor>Small</formFactor>
+        <content>ServiceContract_Record_Page</content>
+        <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Flexipage</type>
-        <pageOrSobjectType>Case</pageOrSobjectType>
+        <pageOrSobjectType>ServiceContract</pageOrSobjectType>
     </actionOverrides>
     <actionOverrides>
         <actionName>Tab</actionName>
-        <content>OT_Cooling_Operations_Home</content>
+        <comment>Action override created by Lightning App Builder during activation.</comment>
+        <content>OT_Sales_Home</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Flexipage</type>
@@ -37,56 +38,23 @@
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
-    <isOmniPinnedViewEnabled>true</isOmniPinnedViewEnabled>
-    <label>OT전자 Cooling Continuity</label>
+    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
+    <label>OT전자 Cooling Sales</label>
     <navType>Console</navType>
     <tabs>standard-home</tabs>
     <tabs>standard-Account</tabs>
     <tabs>standard-Opportunity</tabs>
+    <tabs>standard-ServiceContract</tabs>
     <tabs>standard-Contract</tabs>
-    <tabs>Technical_Review__c</tabs>
-    <tabs>Technical_Baseline__c</tabs>
-    <tabs>Technical_Baseline_Spec__c</tabs>
-    <tabs>standard-ChangeRequest</tabs>
-    <tabs>Customer_Commitment__c</tabs>
-    <tabs>standard-Asset</tabs>
-    <tabs>standard-WorkOrder</tabs>
-    <tabs>standard-Case</tabs>
-    <tabs>standard-Problem</tabs>
-    <tabs>Dispatch_Briefing_Workbench</tabs>
     <tabs>Renewal_Tasks</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>OT_Cooling_Continuity_UtilityBar</utilityBar>
     <workspaceConfig>
         <mappings>
-            <tab>Customer_Commitment__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Dispatch_Briefing_Workbench</tab>
-        </mappings>
-        <mappings>
             <tab>Renewal_Tasks</tab>
         </mappings>
         <mappings>
-            <tab>Technical_Baseline_Spec__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Technical_Baseline__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Technical_Review__c</tab>
-        </mappings>
-        <mappings>
             <tab>standard-Account</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Asset</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Case</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ChangeRequest</tab>
         </mappings>
         <mappings>
             <tab>standard-Contract</tab>
@@ -95,10 +63,7 @@
             <tab>standard-Opportunity</tab>
         </mappings>
         <mappings>
-            <tab>standard-Problem</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-WorkOrder</tab>
+            <tab>standard-ServiceContract</tab>
         </mappings>
         <mappings>
             <tab>standard-home</tab>

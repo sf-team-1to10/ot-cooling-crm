@@ -68,6 +68,7 @@
 .gal-count{position:absolute;right:10px;bottom:10px;font-size:10px;font-family:var(--mono);color:#fff;background:rgba(21,33,64,.66);border-radius:5px;padding:2px 8px}
 .gal-ph{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--mut);font-size:11px}
 .gal-ph svg{width:44px;height:44px}
+.gal-img{width:100%;height:100%;object-fit:contain}
 .nav-btn{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);border:1px solid var(--line);display:grid;place-items:center;color:var(--tx);cursor:pointer;z-index:2}
 .nav-btn svg{width:15px;height:15px}
 .prev{left:10px}.next{right:10px}
@@ -166,45 +167,6 @@
 /* Demo footer */
 .demo-foot{margin-top:24px;font-size:10.5px;color:var(--mut);text-align:center;line-height:1.7}
 
-/* Service Agent Drawer */
-.scrim{position:fixed;inset:0;background:rgba(15,25,50,.32);z-index:45;opacity:0;pointer-events:none;transition:opacity .2s}
-.scrim.open{opacity:1;pointer-events:auto}
-.drawer{position:fixed;top:0;right:0;height:100vh;width:464px;background:var(--surface);z-index:50;border-left:1px solid var(--line);box-shadow:-14px 0 40px rgba(16,32,64,.16);display:flex;flex-direction:column;transform:translateX(100%);transition:transform .26s ease}
-.drawer.open{transform:translateX(0)}
-.drawer.minimized{transform:translateX(0);height:auto;top:auto;bottom:18px;right:18px;width:320px;border-radius:12px;border:1px solid var(--line)}
-.drawer.minimized .dw-body,.drawer.minimized .dw-foot,.drawer.minimized .dw-ctx{display:none}
-
-.dw-h{display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:1px solid var(--line)}
-.dw-av{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#2E6BE6,#0A2A57);display:grid;place-items:center;flex:none}
-.dw-av svg{width:16px;height:16px}
-.dw-nm{min-width:0;flex:1}
-.dw-nm b{font-size:12.5px;color:var(--ink);font-weight:700;display:block}
-.dw-nm span{font-size:10px;color:var(--tx2);font-family:var(--mono)}
-.dw-advb{font-size:9px;font-weight:700;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-ln);border-radius:4px;padding:2px 5px;flex:none}
-.dw-cbtn{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;color:var(--tx2);flex:none;background:none;border:0;cursor:pointer}
-.dw-cbtn:hover{background:var(--bg)}
-.dw-cbtn svg{width:14px;height:14px}
-
-.dw-ctx{margin:12px 13px 0;border:1px solid var(--line2);background:var(--surface2);border-radius:8px;padding:10px 11px}
-.ctx-label{font-size:9px;font-weight:700;color:var(--tx2);letter-spacing:.5px;margin-bottom:6px}
-.ctx-row{display:flex;justify-content:space-between;font-size:10.5px;padding:3px 0;color:var(--tx2)}
-.ctx-row b{color:var(--ink);font-family:var(--mono);font-weight:600}
-.ctx-row b.amber{color:var(--amber)}
-
-.dw-body{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:11px}
-.dw-body-iframe{padding:0;overflow:hidden}
-.chat-iframe{width:100%;height:100%;border:0;display:block}
-.bot,.user{max-width:86%;font-size:11.5px;line-height:1.55;border-radius:7px;padding:9px 11px}
-.bot{background:var(--surface2);color:var(--tx);border:1px solid var(--line);align-self:flex-start}
-.user{background:var(--blue);color:#fff;align-self:flex-end}
-
-.dw-foot{border-top:1px solid var(--line);padding:9px 11px}
-.ci{display:flex;gap:8px;align-items:center}
-.ci input{flex:1;font:inherit;font-size:11.5px;border:1px solid var(--line2);border-radius:7px;padding:9px 11px;background:var(--bg)}
-.snd{width:32px;height:32px;border-radius:7px;background:var(--blue);display:grid;place-items:center;flex:none;border:0;cursor:pointer}
-.snd svg{width:14px;height:14px}
-.fn{font-size:9.5px;color:var(--mut);margin-top:6px}
-
 /* Lightbox */
 .lightbox{position:fixed;inset:0;background:rgba(12,20,40,.86);z-index:60;display:flex;align-items:center;justify-content:center;padding:40px}
 .lx-close{position:absolute;top:20px;right:24px;width:38px;height:38px;border-radius:9px;background:rgba(255,255,255,.14);display:grid;place-items:center;border:0;cursor:pointer}
@@ -219,4 +181,3 @@
     .covgrid{grid-template-columns:1fr}
 }
 @media(max-width:620px){.app{grid-template-columns:1fr}}
-@media(max-width:520px){.drawer{width:100vw}}

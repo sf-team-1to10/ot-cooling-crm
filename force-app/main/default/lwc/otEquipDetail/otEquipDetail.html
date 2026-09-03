@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이언데이터센터"></c-ot-equip-sidebar>
+        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이온데이터센터"></c-ot-equip-sidebar>
 
         <div class="main">
             <c-ot-equip-util-bar breadcrumb-prefix="내 자산 / Hall A" breadcrumb-current="CDU-A-07"></c-ot-equip-util-bar>
@@ -22,16 +22,6 @@
                                 <c-ot-equip-status-chip label="정상 운전" variant="ok"></c-ot-equip-status-chip>
                             </div>
                             <div class="r2">{assetMeta}</div>
-                        </div>
-                        <div class="ha">
-                            <button class="btn" onclick={handleLaunchChat}>
-                                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor"/></svg>
-                                서비스 에이전트와 상담
-                            </button>
-                            <button class="btn ghost">
-                                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor"/></svg>
-                                서비스 요청
-                            </button>
                         </div>
                     </div>
 
@@ -62,10 +52,15 @@
                                         <template lwc:if={hasBadge}>
                                             <span class="gal-badge">{currentImage.badge}</span>
                                         </template>
-                                        <div class="gal-ph">
-                                            <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor"/><path d="M8 3v18M8 8h13M8 14h13" stroke="currentColor"/></svg>
-                                            <span>{currentImage.cap}</span>
-                                        </div>
+                                        <template lwc:if={detailImageUrl}>
+                                            <img src={detailImageUrl} alt={assetName} class="gal-img" />
+                                        </template>
+                                        <template lwc:else>
+                                            <div class="gal-ph">
+                                                <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor"/><path d="M8 3v18M8 8h13M8 14h13" stroke="currentColor"/></svg>
+                                                <span>{currentImage.cap}</span>
+                                            </div>
+                                        </template>
                                         <button class="nav-btn prev" onclick={handleGalPrev}><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="currentColor"/></svg></button>
                                         <button class="nav-btn next" onclick={handleGalNext}><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke="currentColor"/></svg></button>
                                         <button class="zoom-btn" onclick={handleZoom}><svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M11 8v6M8 11h6" stroke="currentColor"/><circle cx="11" cy="11" r="7" stroke="currentColor"/><path d="M21 21l-4.3-4.3" stroke="currentColor"/></svg></button>
@@ -191,10 +186,6 @@
                                             서비스 에이전트와 상담
                                         </button>
                                         <button>
-                                            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor"/></svg>
-                                            서비스 요청
-                                        </button>
-                                        <button>
                                             <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor"/><path d="M3 10h18M8 2v4M16 2v4" stroke="currentColor"/></svg>
                                             정비 일정 문의
                                         </button>
@@ -258,42 +249,6 @@
         </div>
     </div>
 
-    <!-- Service Agent Drawer -->
-    <div class={scrimClass} onclick={handleScrimClick}></div>
-    <aside class={drawerClass}>
-        <div class="dw-h">
-            <span class="dw-av">
-                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#fff"/></svg>
-            </span>
-            <span class="dw-nm"><b>OT전자 서비스 에이전트</b><span>CDU-A-07 · Hall A · 3열</span></span>
-            <span class="dw-advb">P3 Advisory</span>
-            <button class="dw-cbtn" onclick={handleMinDrawer}>
-                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor"/></svg>
-            </button>
-            <button class="dw-cbtn" onclick={handleCloseDrawer}>
-                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor"/></svg>
-            </button>
-        </div>
-
-        <div class="dw-ctx">
-            <div class="ctx-label">상담 컨텍스트 (자동 첨부)</div>
-            <div class="ctx-row"><span>관찰 항목</span><b>CHW Flow 기준선 대비 낮음</b></div>
-            <div class="ctx-row"><span>현재값</span><b class="amber">71 L/min</b></div>
-            <div class="ctx-row"><span>기준선</span><b>95–115 L/min</b></div>
-            <div class="ctx-row"><span>현재 상태</span><b class="amber">P3 Advisory</b></div>
-            <span class="demo">데모 데이터</span>
-        </div>
-
-        <!-- T5-23 (2026-08-31 최종): MIAW가 이제 사이트 Head Markup에 직접
-             임베드돼 화면 우측 하단에 항상 떠 있음. 이 버튼은 그 위젯을
-             기본 버블 대신 여기서 열어주는 트리거 — LWC는 LWS로 격리돼
-             있어 SDK를 직접 호출 못 하므로 CustomEvent로 Head Markup
-             스크립트에 위임한다(handleLaunchChat 참고). -->
-        <div class="dw-body">
-            <p class="chat-launch-desc">위 상담 컨텍스트를 바탕으로 서비스 에이전트와 바로 대화를 시작합니다.</p>
-            <button class="btn chat-launch-btn" onclick={handleLaunchChat}>서비스 에이전트와 상담 시작</button>
-        </div>
-    </aside>
 
     <!-- Lightbox -->
     <template lwc:if={lightboxOpen}>

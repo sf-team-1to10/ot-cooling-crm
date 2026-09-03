@@ -2,6 +2,7 @@ import { LightningElement, api, wire, track } from 'lwc';
 import { CurrentPageReference, NavigationMixin } from 'lightning/navigation';
 import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
 import setAssetContextFromLwc from '@salesforce/apex/T5SetAssetContextService.setAssetContextFromLwc';
+import CDU_3Q from '@salesforce/resourceUrl/OT_CDU1350_3q';
 
 const METRICS = {
     flow: { label:'CHW Flow', unit:'L/min', from:105, to:71, band:[95,115], vmin:60, vmax:125, interp:'냉수 유량은 기준선 하한보다 낮은 상태로 관찰되고 있으며, 상세 이력과 함께 확인이 필요합니다.' },
@@ -37,12 +38,8 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     @track activeTab = 'overview';
     @track curMetric = 'flow';
     @track curRange = '8';
-    @track drawerOpen = false;
-    @track drawerMinimized = false;
     @track lightboxOpen = false;
     @track galIdx = 0;
-    @track chatMessages = [];
-    @track chatInput = '';
 
     // T5-07 — 2026-08-31: OTEquipDashboardController.getEquipmentDetail()에
     // 연결(사용자 요청 — 이 컴포넌트가 Apex를 전혀 호출 안 하고 있던 걸
@@ -90,6 +87,7 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
     }
 
     get assetName() { return this.detail ? this.detail.name : ''; }
+    get detailImageUrl() { return CDU_3Q; }
     get assetMeta() {
         if (!this.detail) return '';
         const d = this.detail;
@@ -274,21 +272,6 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
             { date:'2024-10-15', text:'서비스 작업 완료' }
         ];
     }
-
-    // Drawer
-    get drawerClass() {
-        if (this.drawerMinimized) return 'drawer minimized';
-        return this.drawerOpen ? 'drawer open' : 'drawer';
-    }
-    get scrimClass() { return this.drawerOpen && !this.drawerMinimized ? 'scrim open' : 'scrim'; }
-
-    handleOpenDrawer() {
-        this.drawerOpen = true;
-        this.drawerMinimized = false;
-    }
-    handleCloseDrawer() { this.drawerOpen = false; this.drawerMinimized = false; }
-    handleMinDrawer() { this.drawerMinimized = !this.drawerMinimized; }
-    handleScrimClick() { this.handleCloseDrawer(); }
 
     // T5-23 (2026-08-31 최종): MIAW를 LWR 사이트 Head Markup에 직접
     // 임베드하는 공식 경로로 붙는 데 성공(VF/iframe/새 창 우회책은 전부

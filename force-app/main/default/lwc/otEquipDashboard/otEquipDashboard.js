@@ -2,7 +2,13 @@ import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getEquipmentDashboard from '@salesforce/apex/OTEquipDashboardController.getEquipmentDashboard';
 import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
+import CDU_3Q from '@salesforce/resourceUrl/OT_CDU1350_3q';
+import CDU_FRONT from '@salesforce/resourceUrl/OT_CDU1350_front';
+import CDU_INTERNAL from '@salesforce/resourceUrl/OT_CDU1350_internal';
+import CDU_INSTALLED from '@salesforce/resourceUrl/OT_CDU1350_installed';
+import CDU_REAR from '@salesforce/resourceUrl/OT_CDU1350_rear';
 
+const CDU_IMAGES = [CDU_3Q, CDU_FRONT, CDU_INTERNAL, CDU_INSTALLED, CDU_REAR];
 const PAGE_SIZE = 7;
 
 /**
@@ -43,7 +49,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         }
         if (!data) return;
         this.kpis = data.kpis || this.kpis;
-        this.assets = (data.assets || []).map(a => ({
+        this.assets = (data.assets || []).map((a, idx) => ({
             id: a.assetId,
             name: a.name,
             type: a.assetType || '',
@@ -51,8 +57,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             loc: a.location || '',
             stateCode: a.stateCode,
             stateLabel: a.stateLabel,
-            // 알람 이력은 Apex에 아직 데이터 모델이 없음(위 클래스독 참고) —
-            // for:each={sel.alarms}가 undefined로 깨지지 않도록 빈 배열 유지.
+            imageUrl: CDU_IMAGES[idx % CDU_IMAGES.length],
             alarms: []
         }));
         if (!this.selectedId && this.assets.length > 0) {
@@ -124,6 +129,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         const g = this.primaryGauge;
         return {
             ...base,
+            imageUrl: base.imageUrl || null,
             assess: {
                 hl: this.assessHeadline,
                 ds: this.assessDesc,
@@ -215,6 +221,35 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get healthScore() { return this.isAdvisory ? 70 : 95; }
     get healthLabel() { return this.isAdvisory ? '관찰 필요' : '양호'; }
     get healthSubs() { return []; }
+    get healthFactors() {
+        if (this.isAdvisory) {
+            return [
+                { label: '운전 지표', value: '기준선 이탈', cls: 'hf-val warn' },
+                { label: '정비 이행', value: '양호', cls: 'hf-val ok' },
+                { label: '잔여 보증', value: '12개월', cls: 'hf-val' },
+                { label: '알람 이력', value: '1건 활성', cls: 'hf-val warn' }
+            ];
+        }
+        return [
+            { label: '운전 지표', value: '정상 범위', cls: 'hf-val ok' },
+            { label: '정비 이행', value: '양호', cls: 'hf-val ok' },
+            { label: '잔여 보증', value: '12개월', cls: 'hf-val' },
+            { label: '알람 이력', value: '없음', cls: 'hf-val ok' }
+        ];
+    }
+    get recentAlarms() {
+        if (this.isAdvisory) {
+            return [{
+                id: 'alarm-1',
+                tagLabel: '주의',
+                tagClass: 'alarm-tag warn',
+                title: '냉수 유량 저하',
+                asset: '대상 장비: CDU-A-07',
+                date: '2026-09-03 02:14'
+            }];
+        }
+        return [];
+    }
     get donutSvg() {
         const score = this.healthScore;
         const r = 34, c = 2 * Math.PI * r, off = c * (1 - score / 100);
