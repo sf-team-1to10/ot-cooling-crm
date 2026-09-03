@@ -55,7 +55,7 @@ export default class T5RepairMeasurement extends NavigationMixin(LightningElemen
     }
 
     get homeSubtitle() {
-        return '유사사례를 확인하거나 바로 측정을 시작할 수 있습니다.';
+        return '측정 시작 또는 유사 사례 확인';
     }
 
     get statusSummary() {

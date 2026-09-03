@@ -1,19 +1,23 @@
 import { LightningElement, api, wire } from 'lwc';
-import { CurrentPageReference } from 'lightning/navigation';
+import { NavigationMixin, CurrentPageReference } from 'lightning/navigation';
 import {
     EnclosingTabId,
     setTabLabel,
     setTabIcon
 } from 'lightning/platformWorkspaceApi';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getEvidence from '@salesforce/apex/T5AssetEvidenceController.getEvidence';
+import createProblemWithRca from '@salesforce/apex/T5AssetEvidenceController.createProblemWithRca';
 
-export default class OtCauseConfirm extends LightningElement {
+export default class OtCauseConfirm extends NavigationMixin(LightningElement) {
     @api recordId;
     _stateRecordId;
     _tabId;
     _tabLabeled = false;
 
     problemCreated = false;
+    createdProblemId;
+    creating = false;
 
     @wire(CurrentPageReference)
     setPageRef(pageRef) {
@@ -90,10 +94,39 @@ export default class OtCauseConfirm extends LightningElement {
         return this.timeline.length > 0;
     }
 
-    handleCreateProblem() {
-        this.problemCreated = true;
+    async handleCreateProblem() {
+        if (this.creating || this.problemCreated) return;
+        this.creating = true;
+        try {
+            const problemId = await createProblemWithRca({ recordId: this.effectiveRecordId });
+            this.createdProblemId = problemId;
+            this.problemCreated = true;
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Problem 생성 완료',
+                message: 'Problem이 생성되고 RCA 초안이 기록됐습니다.',
+                variant: 'success'
+            }));
+        } catch (e) {
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Problem 생성 실패',
+                message: e?.body?.message || '생성에 실패했습니다.',
+                variant: 'error'
+            }));
+        } finally {
+            this.creating = false;
+        }
     }
 
     handleGoRca() {
+        if (this.createdProblemId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: {
+                    recordId: this.createdProblemId,
+                    objectApiName: 'Problem',
+                    actionName: 'view'
+                }
+            });
+        }
     }
 }
