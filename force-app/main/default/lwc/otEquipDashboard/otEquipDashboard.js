@@ -5,6 +5,7 @@ import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getE
 import getLocationInfo from '@salesforce/apex/OTEquipDashboardController.getLocationInfo';
 import getAlerts from '@salesforce/apex/OTEquipDashboardController.getAlerts';
 import CDU_IMG from '@salesforce/resourceUrl/OT_Product_CDU';
+import CDU_A07_IMG from '@salesforce/resourceUrl/OT_CDU_Gallery_01';
 import CX_IMG from '@salesforce/resourceUrl/OT_Product_CX';
 import CRAH_IMG from '@salesforce/resourceUrl/OT_Product_CRAH';
 import COOLBIT_ALERT from '@salesforce/resourceUrl/OT_Coolbit_Alert';
