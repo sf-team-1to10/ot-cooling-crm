@@ -1,3 +1,20 @@
+:host {
+  --ot-c-brand: #0176d3;
+  --ot-c-brand-strong: #014486;
+  --ot-c-brand-soft: #eaf2fb;
+  --ot-c-success: #2e844a;
+  --ot-c-warning: #b46f00;
+  --ot-c-danger: #ba0517;
+  --ot-c-info: #005fb2;
+  --ot-c-bg: #ffffff;
+  --ot-c-bg-alt: #f3f3f3;
+  --ot-c-bg-shade: #f4f6f9;
+  --ot-c-border: #dddbda;
+  --ot-c-text: #181818;
+  --ot-c-text-weak: #444444;
+  --ot-c-text-muted: #706e6b;
+}
+
 /* ── Path 바 (프로토타입 v-cause/v-rca/v-actions) ── */
 .path {
     display: flex;
