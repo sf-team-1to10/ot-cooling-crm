@@ -8,12 +8,6 @@
     </accessMappings>
     <accessMappings>
         <accessLevel>Read</accessLevel>
-        <object>Asset</object>
-        <objectField>Account</objectField>
-        <userField>Contact.Account</userField>
-    </accessMappings>
-    <accessMappings>
-        <accessLevel>Read</accessLevel>
         <object>Case</object>
         <objectField>Account</objectField>
         <userField>Contact.Account</userField>
@@ -22,6 +16,12 @@
         <accessLevel>Read</accessLevel>
         <object>WorkOrder</object>
         <objectField>Account</objectField>
+        <userField>Contact.Account</userField>
+    </accessMappings>
+    <accessMappings>
+        <accessLevel>Read</accessLevel>
+        <object>Customer_Alert__c</object>
+        <objectField>Account__c</objectField>
         <userField>Contact.Account</userField>
     </accessMappings>
     <name>OT 고객사 자기 회사 데이터 조회</name>
