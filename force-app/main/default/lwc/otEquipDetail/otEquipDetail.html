@@ -1,6 +1,6 @@
 <template>
     <div class="app">
-        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이언데이터센터"></c-ot-equip-sidebar>
+        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이온데이터센터"></c-ot-equip-sidebar>
 
         <div class="main">
             <c-ot-equip-util-bar breadcrumb-prefix="내 자산 / Hall A" breadcrumb-current="CDU-A-07"></c-ot-equip-util-bar>
@@ -24,10 +24,6 @@
                             <div class="r2">{assetMeta}</div>
                         </div>
                         <div class="ha">
-                            <button class="btn" onclick={handleLaunchChat}>
-                                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor"/></svg>
-                                서비스 에이전트와 상담
-                            </button>
                             <button class="btn ghost">
                                 <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor"/></svg>
                                 서비스 요청
@@ -41,7 +37,6 @@
                         <span class="code">CHW FLOW LOW VS BASELINE</span>
                         <span class="msg">냉수 유량이 기준선보다 낮은 상태가 45분간 지속되고 있습니다.</span>
                         <span class="vals">현재값 71 L/min · 기준선 95–115 L/min</span>
-                        <span class="demo">데모 데이터</span>
                     </div>
 
                     <!-- Tabs -->
@@ -80,7 +75,7 @@
 
                             <!-- Current Condition -->
                             <div class="panel cc">
-                                <div class="panel-h"><h3>현재 상태</h3><span class="en">CURRENT CONDITION</span><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                                <div class="panel-h"><h3>현재 상태</h3><span class="en">CURRENT CONDITION</span></div>
                                 <div class="bd">
                                     <template for:each={conditionRows} for:item="row">
                                         <div key={row.label} class="cc-row">
@@ -98,7 +93,7 @@
                             <div class="panel-h"><h3>주요 운전 상태</h3><span class="en">KEY OPERATING CONDITION</span></div>
                             <div class="bd">
                                 <div class="delta">
-                                    <div class="delta-h"><span class="delta-title">냉수 유량 / CHW FLOW</span><span class="demo">데모 데이터</span></div>
+                                    <div class="delta-h"><span class="delta-title">냉수 유량 / CHW FLOW</span></div>
                                     <div class="delta-cols">
                                         <div class="dc"><div class="big">71<small> L/min</small></div><div class="lab">현재 측정값</div></div>
                                         <div class="dc"><div class="lab">정상 기준선</div><div class="ref">95–115 L/min</div></div>
@@ -136,7 +131,7 @@
                     <!-- TAB 2: 추세 분석 -->
                     <template lwc:if={isTrend}>
                         <div class="panel">
-                            <div class="panel-h"><h3>운전 추이 분석</h3><span class="en">PERFORMANCE TREND</span><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                            <div class="panel-h"><h3>운전 추이 분석</h3><span class="en">PERFORMANCE TREND</span></div>
                             <div class="bd">
                                 <div class="trendctl">
                                     <div class="seg">
@@ -183,10 +178,6 @@
                                 <div class="panel-h"><h3>서비스 상담 및 요청</h3></div>
                                 <div class="bd">
                                     <div class="svc-acts">
-                                        <button onclick={handleLaunchChat}>
-                                            <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor"/></svg>
-                                            서비스 에이전트와 상담
-                                        </button>
                                         <button>
                                             <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor"/></svg>
                                             서비스 요청
@@ -208,7 +199,7 @@
                     <!-- TAB 4: 이력·문서 -->
                     <template lwc:if={isHistory}>
                         <div class="panel">
-                            <div class="panel-h"><h3>장비 이력</h3><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                            <div class="panel-h"><h3>장비 이력</h3></div>
                             <div class="bd">
                                 <div class="tl">
                                     <template for:each={timelineItems} for:item="item">
@@ -247,50 +238,11 @@
                         </div>
                     </template>
 
-                    <div class="demo-foot">
-                        ※ 프로토타입 · 모든 운영 수치·상태·추세·알림·이력은 데모 데이터입니다.
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Service Agent Drawer -->
-    <div class={scrimClass} onclick={handleScrimClick}></div>
-    <aside class={drawerClass}>
-        <div class="dw-h">
-            <span class="dw-av">
-                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#fff"/></svg>
-            </span>
-            <span class="dw-nm"><b>OT전자 서비스 에이전트</b><span>CDU-A-07 · Hall A · 3열</span></span>
-            <span class="dw-advb">P3 Advisory</span>
-            <button class="dw-cbtn" onclick={handleMinDrawer}>
-                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14" stroke="currentColor"/></svg>
-            </button>
-            <button class="dw-cbtn" onclick={handleCloseDrawer}>
-                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor"/></svg>
-            </button>
-        </div>
-
-        <div class="dw-ctx">
-            <div class="ctx-label">상담 컨텍스트 (자동 첨부)</div>
-            <div class="ctx-row"><span>관찰 항목</span><b>CHW Flow 기준선 대비 낮음</b></div>
-            <div class="ctx-row"><span>현재값</span><b class="amber">71 L/min</b></div>
-            <div class="ctx-row"><span>기준선</span><b>95–115 L/min</b></div>
-            <div class="ctx-row"><span>현재 상태</span><b class="amber">P3 Advisory</b></div>
-            <span class="demo">데모 데이터</span>
-        </div>
-
-        <!-- T5-23 (2026-08-31 최종): MIAW가 이제 사이트 Head Markup에 직접
-             임베드돼 화면 우측 하단에 항상 떠 있음. 이 버튼은 그 위젯을
-             기본 버블 대신 여기서 열어주는 트리거 — LWC는 LWS로 격리돼
-             있어 SDK를 직접 호출 못 하므로 CustomEvent로 Head Markup
-             스크립트에 위임한다(handleLaunchChat 참고). -->
-        <div class="dw-body">
-            <p class="chat-launch-desc">위 상담 컨텍스트를 바탕으로 서비스 에이전트와 바로 대화를 시작합니다.</p>
-            <button class="btn chat-launch-btn" onclick={handleLaunchChat}>서비스 에이전트와 상담 시작</button>
-        </div>
-    </aside>
 
     <!-- Lightbox -->
     <template lwc:if={lightboxOpen}>

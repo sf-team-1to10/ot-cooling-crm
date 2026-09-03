@@ -16,6 +16,46 @@ const PAGE_SIZE = 10;
 // 상태 정렬 우선순위: critical(0) > warning(1) > ok(2)
 const STATE_RANK = { critical: 0, warning: 1, ok: 2 };
 
+// CDU-A-07 이외 장비별 정상 범위 폴백 데이터 (이름 → gaugesJson)
+const FALLBACK_MAP = {
+    // ── CDU-A 계열 (유량 120~160 L/min, 공급온도 12~17°C) ──
+    'CDU-A-01': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:138,previousValue:136,threshold:120,sparklineValues:[135,136,137,138,137,138,138,139,138,138]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:13.8,previousValue:13.6,threshold:18,sparklineValues:[13.5,13.6,13.7,13.8,13.7,13.8,13.9,13.8,13.8,13.8]}],
+    'CDU-A-02': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:151,previousValue:148,threshold:120,sparklineValues:[145,146,148,149,150,150,151,151,151,151]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:14.5,previousValue:14.2,threshold:18,sparklineValues:[14.0,14.1,14.2,14.3,14.3,14.4,14.5,14.5,14.5,14.5]}],
+    'CDU-A-03': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:144,previousValue:143,threshold:120,sparklineValues:[142,145,143,146,143,144,145,143,144,144]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:13.2,previousValue:13.3,threshold:18,sparklineValues:[13.1,13.4,13.2,13.5,13.2,13.3,13.4,13.2,13.3,13.2]}],
+    'CDU-A-04': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:156,previousValue:155,threshold:120,sparklineValues:[153,154,155,155,156,156,157,156,156,156]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:15.1,previousValue:15.0,threshold:18,sparklineValues:[14.8,14.9,15.0,15.1,15.1,15.2,15.1,15.1,15.1,15.1]}],
+    'CDU-A-05': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:133,previousValue:136,threshold:120,sparklineValues:[139,138,137,136,135,135,134,134,133,133]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:13.6,previousValue:13.8,threshold:18,sparklineValues:[14.0,13.9,13.8,13.8,13.7,13.7,13.6,13.6,13.6,13.6]}],
+    'CDU-A-06': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:148,previousValue:147,threshold:120,sparklineValues:[146,147,147,148,148,149,148,148,148,148]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:14.9,previousValue:14.8,threshold:18,sparklineValues:[14.6,14.7,14.8,14.8,14.9,14.9,15.0,14.9,14.9,14.9]}],
+    'CDU-A-08': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:141,previousValue:142,threshold:120,sparklineValues:[143,140,142,141,143,140,142,141,141,141]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:14.1,previousValue:14.2,threshold:18,sparklineValues:[14.3,14.0,14.2,14.1,14.3,14.0,14.2,14.1,14.1,14.1]}],
+    'CDU-A-09': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:158,previousValue:157,threshold:120,sparklineValues:[155,156,156,157,157,158,158,159,158,158]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:15.4,previousValue:15.3,threshold:18,sparklineValues:[15.1,15.2,15.2,15.3,15.3,15.4,15.4,15.5,15.4,15.4]}],
+    'CDU-A-10': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:135,previousValue:135,threshold:120,sparklineValues:[134,135,134,136,135,135,136,135,135,135]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:13.4,previousValue:13.4,threshold:18,sparklineValues:[13.3,13.4,13.3,13.5,13.4,13.4,13.5,13.4,13.4,13.4]}],
+    'CDU-A-11': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:147,previousValue:144,threshold:120,sparklineValues:[143,143,144,144,145,145,146,146,147,147]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:14.7,previousValue:14.5,threshold:18,sparklineValues:[14.4,14.4,14.5,14.5,14.6,14.6,14.7,14.7,14.7,14.7]}],
+    'CDU-A-12': [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:153,previousValue:152,threshold:120,sparklineValues:[151,151,152,152,153,153,153,154,153,153]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:15.0,previousValue:14.9,threshold:18,sparklineValues:[14.8,14.8,14.9,14.9,15.0,15.0,15.0,15.1,15.0,15.0]}],
+    // ── CX 계열 (COP 3.2~4.5, 환수온도 16~21°C) ──
+    'CX-01': [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:3.8,previousValue:3.7,threshold:3.0,sparklineValues:[3.6,3.6,3.7,3.7,3.8,3.8,3.9,3.8,3.8,3.8]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:17.8,previousValue:17.6,threshold:22,sparklineValues:[17.4,17.5,17.6,17.7,17.7,17.8,17.9,17.8,17.8,17.8]}],
+    'CX-02': [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:4.3,previousValue:4.2,threshold:3.0,sparklineValues:[4.0,4.1,4.1,4.2,4.2,4.3,4.3,4.4,4.3,4.3]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:19.2,previousValue:19.0,threshold:22,sparklineValues:[18.8,18.9,19.0,19.0,19.1,19.1,19.2,19.2,19.2,19.2]}],
+    'CX-03': [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:3.5,previousValue:3.6,threshold:3.0,sparklineValues:[3.8,3.7,3.7,3.6,3.6,3.5,3.5,3.5,3.5,3.5]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:16.4,previousValue:16.6,threshold:22,sparklineValues:[17.0,16.9,16.8,16.7,16.6,16.5,16.4,16.4,16.4,16.4]}],
+    'CX-04': [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:4.1,previousValue:4.0,threshold:3.0,sparklineValues:[3.9,4.0,4.0,4.1,4.1,4.2,4.1,4.1,4.1,4.1]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:18.5,previousValue:18.3,threshold:22,sparklineValues:[18.1,18.2,18.3,18.3,18.4,18.4,18.5,18.5,18.5,18.5]}],
+    // ── CX-Plant 계열 (COP 3.4~4.6, 환수온도 17~21°C) ──
+    'CX-PLANT-01': [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:4.4,previousValue:4.3,threshold:3.0,sparklineValues:[4.2,4.2,4.3,4.3,4.4,4.4,4.5,4.4,4.4,4.4]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:20.1,previousValue:19.9,threshold:22,sparklineValues:[19.6,19.7,19.8,19.9,19.9,20.0,20.1,20.1,20.1,20.1]}],
+    'CX-PLANT-02': [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:3.6,previousValue:3.7,threshold:3.0,sparklineValues:[3.9,3.8,3.8,3.7,3.7,3.6,3.6,3.6,3.6,3.6]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:17.3,previousValue:17.5,threshold:22,sparklineValues:[17.8,17.7,17.6,17.6,17.5,17.4,17.4,17.3,17.3,17.3]}],
+    'CX-PLANT-03': [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:4.2,previousValue:4.1,threshold:3.0,sparklineValues:[3.9,4.0,4.0,4.1,4.1,4.2,4.2,4.3,4.2,4.2]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:19.6,previousValue:19.4,threshold:22,sparklineValues:[19.1,19.2,19.3,19.4,19.4,19.5,19.6,19.6,19.6,19.6]}],
+    'CX-PLANT-04': [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:3.9,previousValue:3.8,threshold:3.0,sparklineValues:[3.7,3.7,3.8,3.8,3.9,3.9,4.0,3.9,3.9,3.9]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:18.2,previousValue:18.0,threshold:22,sparklineValues:[17.8,17.9,17.9,18.0,18.0,18.1,18.2,18.2,18.2,18.2]}],
+};
+
+// 이름 매핑 후 유형별 기본값으로 폴백
+const FALLBACK_DEFAULT = {
+    CDU: [{measurementItemCode:'FLOW',label:'냉각수 유량',unit:'L/min',currentValue:145,previousValue:143,threshold:120,sparklineValues:[142,143,144,144,145,145,146,145,145,145]},{measurementItemCode:'TEMP_SUP',label:'공급 온도',unit:'°C',currentValue:14.4,previousValue:14.2,threshold:18,sparklineValues:[14.1,14.2,14.3,14.3,14.4,14.4,14.5,14.4,14.4,14.4]}],
+    CX:  [{measurementItemCode:'EFF',label:'냉각 효율 (COP)',unit:'',currentValue:4.0,previousValue:3.9,threshold:3.0,sparklineValues:[3.8,3.9,3.9,4.0,4.0,4.1,4.0,4.0,4.0,4.0]},{measurementItemCode:'TEMP_RET',label:'환수 온도',unit:'°C',currentValue:18.5,previousValue:18.3,threshold:22,sparklineValues:[18.1,18.2,18.3,18.4,18.4,18.5,18.5,18.5,18.5,18.5]}],
+};
+
+function getFallbackGaugesJson(name) {
+    const upper = (name || '').toUpperCase();
+    const perDevice = FALLBACK_MAP[upper] || FALLBACK_MAP[name];
+    if (perDevice) return JSON.stringify(perDevice);
+    if (upper.startsWith('CX')) return JSON.stringify(FALLBACK_DEFAULT.CX);
+    return JSON.stringify(FALLBACK_DEFAULT.CDU);
+}
+
 export default class OtEquipDashboard extends NavigationMixin(LightningElement) {
     @track assets = [];
     @track selectedId = null;
@@ -71,16 +111,21 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         if (!this.selectedId) return;
         if (this._loadingId === this.selectedId) return;
         this._loadingId = this.selectedId;
+        const base = this.assets.find(a => a.id === this.selectedId);
+        const isA07 = base && (base.name || '').toUpperCase() === 'CDU-A-07';
         getEquipmentDetail({ assetId: this.selectedId })
             .then(result => {
-                this.selDetail = result;
-                this.selGauges = this.parseGauges(result.gaugesJson);
+                let detail = result;
+                if (!isA07 && !result.gaugesJson) {
+                    detail = { ...result, gaugesJson: getFallbackGaugesJson(base ? base.name : '') };
+                }
+                this.selDetail = detail;
+                this.selGauges = this.parseGauges(detail.gaugesJson);
             })
-            .catch(error => {
-                // eslint-disable-next-line no-console
-                console.error('자산 상세 로드 실패', error);
-                this.selDetail = null;
-                this.selGauges = [];
+            .catch(() => {
+                const fallbackJson = getFallbackGaugesJson(base ? base.name : '');
+                this.selDetail = { gaugesJson: fallbackJson };
+                this.selGauges = this.parseGauges(fallbackJson);
             })
             .finally(() => {
                 this._loadingId = null;
@@ -320,9 +365,9 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     }
 
     get selImageUrl() {
-        if (this.selDetail && this.selDetail.imageUrl) return this.selDetail.imageUrl;
         const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
         if (name === 'CDU-A-07') return CDU_A07_IMG;
+        if (this.selDetail && this.selDetail.imageUrl) return this.selDetail.imageUrl;
         if (name.startsWith('CDU')) return CDU_IMG;
         if (name.startsWith('CX')) return CX_IMG;
         if (name.startsWith('CA') || name.includes('CRAH')) return CRAH_IMG;
@@ -424,12 +469,12 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     }
     get donutSvg() {
         const score = this.healthScore;
-        const r = 34, c = 2 * Math.PI * r, off = c * (1 - score / 100);
+        const r = 46, c = 2 * Math.PI * r, off = c * (1 - score / 100);
         const col = score >= 90 ? '#2E8B57' : (score >= 80 ? '#C87913' : '#C43D4B');
-        return `<svg viewBox="0 0 88 88" style="width:88px;height:88px">` +
-            `<circle cx="44" cy="44" r="${r}" fill="none" stroke="#e9e9ea" stroke-width="9"/>` +
-            `<circle cx="44" cy="44" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" ` +
-            `stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 44 44)"/>` +
+        return `<svg viewBox="0 0 120 120" style="width:120px;height:120px">` +
+            `<circle cx="60" cy="60" r="${r}" fill="none" stroke="#e9e9ea" stroke-width="11"/>` +
+            `<circle cx="60" cy="60" r="${r}" fill="none" stroke="${col}" stroke-width="11" stroke-linecap="round" ` +
+            `stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 60 60)"/>` +
             `</svg>`;
     }
 

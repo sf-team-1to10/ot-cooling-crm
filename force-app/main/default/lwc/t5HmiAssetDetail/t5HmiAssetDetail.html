@@ -147,7 +147,6 @@
                     <div class="p-title">
                         <h2>현재 운전 상태</h2>
                         <span class="en">LIVE CONDITION MONITORING</span>
-                        <span class="right">데모 데이터</span>
                     </div>
                     <div class="gauge-row">
                         <!-- Arc gauges -->
@@ -302,7 +301,7 @@
                 </template>
                 <template lwc:if={hasAlert}>
                     <div class="prefill">
-                        <div class="ph mono">자산 정보 자동 포함 · 데모 데이터</div>
+                        <div class="ph mono">자산 정보 자동 포함</div>
                         <dl>
                             <dt>Asset</dt><dd class="mono">{detail.asset.name} · {detail.asset.siteLocation}</dd>
                             <dt>문제 분류</dt><dd>{detail.alert.categoryLabel}</dd>

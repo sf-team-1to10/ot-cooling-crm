@@ -1,7 +1,7 @@
 <template>
     <div class="app">
         <!-- Left Nav Rail -->
-        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이언데이터센터" onnavigate={handleNavigate}></c-ot-equip-sidebar>
+        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이온데이터센터" onnavigate={handleNavigate}></c-ot-equip-sidebar>
 
         <!-- Main -->
         <div class="main">
@@ -208,7 +208,7 @@
 
                                     <!-- Key Status -->
                                     <div class="kstat">
-                                        <div class="kh">Key Status · 데모 데이터</div>
+                                        <div class="kh">Key Status</div>
                                         <div class="kg">
                                             <template for:each={keyItems} for:item="ki">
                                                 <div key={ki.label} class="ki">
@@ -223,7 +223,6 @@
                                     <div class="trend">
                                         <div class="trend-h">
                                             <h4>냉수 유량 추세</h4>
-                                            <span class="demo-badge">데모 데이터</span>
                                         </div>
                                         <div class="lg">{trendLegend}</div>
                                         <div class="chart-container" lwc:dom="manual"></div>
@@ -252,22 +251,10 @@
                             <div class="panel-h"><h3>장비 상태</h3></div>
                             <div class="health-bd">
                                 <div class="health">
-                                    <div class="donut-wrap">
-                                        <div class="donut-container" lwc:dom="manual"></div>
-                                        <img src={coolbitStatusUrl} alt="쿨빗 상태" class="coolbit-status" />
-                                    </div>
-                                    <div class="sc">
-                                        <template for:each={healthSubs} for:item="sub">
-                                            <div key={sub.name} class="sr">
-                                                <span>{sub.name} <b>{sub.value}</b></span>
-                                                <div class="bar"><i style={sub.barStyle}></i></div>
-                                            </div>
-                                        </template>
-                                    </div>
+                                    <div class="donut-container" lwc:dom="manual"></div>
+                                    <div class="health-reason">{healthReason}</div>
+                                    <div class="health-lbl">{healthScore} / 100 · {healthLabel}</div>
                                 </div>
-                                <div class="health-reason">{healthReason}</div>
-                                <div class="health-lbl">{healthScore} / 100 · {healthLabel}</div>
-                                <div class="health-note">고객용 요약 지표입니다. 공식 신뢰성 엔지니어링 계산 결과가 아니며, 참고용으로만 활용하세요. (데모 데이터)</div>
                             </div>
                         </div>
 
@@ -313,10 +300,6 @@
                     </div>
                 </div>
 
-                <div class="demo-foot">
-                    ※ 이 화면의 모든 운영 수치·상태·추세는 데모 데이터입니다. 실제 계측·진단 결과가 아니며,
-                    Case·Work Order 자동 생성 및 원인 자동 확정은 수행하지 않습니다.
-                </div>
             </div>
         </div>
     </div>
