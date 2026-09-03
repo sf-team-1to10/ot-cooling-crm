@@ -1,0 +1,71 @@
+<template>
+    <div class="home">
+        <!-- ===== Header Bar ===== -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-mark"></span>
+                    <span class="logo-text">OT전자</span>
+                </div>
+                <span class="header-title">Cooling Continuity Operations</span>
+            </div>
+            <nav class="tab-nav" role="tablist">
+                <button
+                    class={todayTabClass}
+                    role="tab"
+                    aria-selected={isTodayActive}
+                    data-tab="today"
+                    onclick={handleTabClick}
+                >오늘</button>
+                <button
+                    class={rcaTabClass}
+                    role="tab"
+                    aria-selected={isRcaActive}
+                    data-tab="rca"
+                    onclick={handleTabClick}
+                >성과 · RCA</button>
+            </nav>
+            <div class="header-right">
+                <div class="site-select">
+                    <span>네오클라우드 수도권 AI 데이터센터 · Hall A</span>
+                    <span class="caret">▾</span>
+                </div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <span>검색...</span>
+                </div>
+                <div class="notif">
+                    <span class="bell-icon">🔔</span>
+                    <span class="notif-badge">3</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar"></div>
+                    <span class="user-name">오도면</span>
+                    <span class="caret">▾</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ===== Live Telemetry Bar ===== -->
+        <div class="telemetry-bar">
+            <span class="tele-live"><span class="tele-dot"></span> LIVE TELEMETRY</span>
+            <span class="tele-sep">·</span>
+            <span>Hall A</span>
+            <span class="tele-sep">·</span>
+            <span>CDU-A-07</span>
+            <span class="tele-sep">·</span>
+            <span class="tele-status">Normal / <span class="tele-watch">Watch</span></span>
+            <span class="tele-time">데이터 갱신: {currentTime} (•))</span>
+        </div>
+
+        <!-- ===== Tab Content ===== -->
+        <div class="tab-content">
+            <template lwc:if={isTodayActive}>
+                <c-ot-cooling-today></c-ot-cooling-today>
+            </template>
+            <template lwc:if={isRcaActive}>
+                <c-ot-cooling-rca></c-ot-cooling-rca>
+            </template>
+        </div>
+    </div>
+</template>

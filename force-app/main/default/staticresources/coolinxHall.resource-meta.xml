@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+    <cacheControl>Public</cacheControl>
+    <contentType>image/png</contentType>
+    <description>Coolinx 데이터센터 냉각 설비 아이소메트릭 조감도 (Overview 대시보드 중앙 이미지)</description>
+</StaticResource>

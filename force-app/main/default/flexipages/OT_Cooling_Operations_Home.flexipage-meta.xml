@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>OT전자 Cooling Continuity 운영 홈 — "오늘" / "성과·RCA" 탭 대시보드</description>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>otCoolingHome</componentName>
+                <identifier>c_otCoolingHome</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>top</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>bottomLeft</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>bottomRight</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>sidebar</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>OT Cooling Operations 홈</masterLabel>
+    <template>
+        <name>home:desktopTemplate</name>
+    </template>
+    <type>HomePage</type>
+</FlexiPage>
