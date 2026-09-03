@@ -84,6 +84,8 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
 
     loadSelectedDetail() {
         if (!this.selectedId) return;
+        if (this._loadingId === this.selectedId) return;
+        this._loadingId = this.selectedId;
         getEquipmentDetail({ assetId: this.selectedId })
             .then(result => {
                 this.selDetail = result;
@@ -94,6 +96,9 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
                 console.error('자산 상세 로드 실패', error);
                 this.selDetail = null;
                 this.selGauges = [];
+            })
+            .finally(() => {
+                this._loadingId = null;
             });
     }
 
@@ -407,10 +412,15 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
 
     // Handlers
     handleSelectAsset(event) {
-        this.selectedId = event.currentTarget.dataset.id;
-        this.loadSelectedDetail();
-        this.loadLocationInfo(this.selectedId);
-        this.loadAlerts(this.selectedId);
+        const id = event.currentTarget.dataset.id;
+        if (id === this.selectedId) return;
+        this.selectedId = id;
+        if (this._selectTimer) clearTimeout(this._selectTimer);
+        this._selectTimer = setTimeout(() => {
+            this.loadSelectedDetail();
+            this.loadLocationInfo(this.selectedId);
+            this.loadAlerts(this.selectedId);
+        }, 150);
     }
     handlePrevPage() { if (this.currentPage > 1) this.currentPage--; }
     handleNextPage() { if (this.currentPage < this.totalPages) this.currentPage++; }
