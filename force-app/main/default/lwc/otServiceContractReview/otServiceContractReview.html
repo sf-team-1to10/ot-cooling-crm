@@ -26,12 +26,14 @@
             </dl>
         </div>
 
-        <div class="slds-grid slds-gutters slds-wrap slds-m-top_small">
+        <div class="sc-grid">
             <!-- 중앙: 계약 정보 + 서비스 운영 성과 -->
-            <div class="slds-col slds-size_1-of-1 slds-large-size_2-of-3">
-                <lightning-card>
-                    <span slot="title" class="slds-text-heading_small">계약 정보</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+            <div class="sc-col sc-col--main">
+                <section class="sc-card">
+                    <header class="sc-card-head">
+                        <h2 class="sc-card-title">계약 정보</h2>
+                    </header>
+                    <div class="sc-card-body">
                         <dl class="kv">
                             <div class="kv-row"><dt>계약 시작일</dt><dd class="num">2022-06-09</dd></div>
                             <div class="kv-row"><dt>계약 종료일</dt><dd class="num">2026-09-30</dd></div>
@@ -40,28 +42,30 @@
                             <div class="kv-row"><dt>응답 SLA</dt><dd class="num">30분</dd></div>
                             <div class="kv-row"><dt>복구 SLA</dt><dd class="num">8시간</dd></div>
                             <div class="kv-row"><dt>계약 금액</dt><dd class="num">0.9억/년</dd></div>
-                            <div class="kv-row"><dt>계약 상태</dt><dd><span class="slds-badge sc-badge-ok">Active</span></dd></div>
+                            <div class="kv-row"><dt>계약 상태</dt><dd><span class="chip chip--ok">Active</span></dd></div>
                         </dl>
                     </div>
-                </lightning-card>
+                </section>
 
-                <lightning-card class="slds-m-top_small sc-perf-card">
-                    <span slot="title" class="slds-text-heading_small">서비스 운영 성과</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+                <section class="sc-card">
+                    <header class="sc-card-head">
+                        <h2 class="sc-card-title">서비스 운영 성과</h2>
+                    </header>
+                    <div class="sc-card-body">
                         <dl class="kv">
                             <div class="kv-row"><dt>최근 Case</dt><dd class="num">00001042</dd></div>
                             <div class="kv-row"><dt>최근 복구시간</dt><dd class="num">4시간 10분</dd></div>
                             <div class="kv-row"><dt>기존 대비</dt><dd class="num sc-green">39% 단축</dd></div>
-                            <div class="kv-row"><dt>RCA</dt><dd><span class="slds-badge sc-badge-ok">완료</span> PRB-0091</dd></div>
+                            <div class="kv-row"><dt>RCA</dt><dd><span class="chip chip--ok">완료</span> <span class="kv-suffix">PRB-0091</span></dd></div>
                             <div class="kv-row"><dt>시정조치</dt><dd class="num">1건</dd></div>
                             <div class="kv-row"><dt>예방점검</dt><dd class="num">11건 생성/완료</dd></div>
                             <div class="kv-row"><dt>미해결 중대 Case</dt><dd class="num sc-green">0건</dd></div>
                         </dl>
                     </div>
-                </lightning-card>
+                </section>
 
                 <template lwc:if={opportunityCreated}>
-                    <div class="callout co-green slds-m-top_small">
+                    <div class="callout co-green">
                         <span class="co-ico">&#x2713;</span>
                         <div><strong>갱신 Opportunity가 생성되었습니다</strong>
                             계약과 최근 서비스 성과가 영업 검토 근거로 연결되었습니다. Task 상태가 <b>완료</b>로 바뀌었습니다.</div>
@@ -69,12 +73,14 @@
                 </template>
             </div>
 
-            <!-- 우측: 추가 성장 신호 + 자동화 경계 -->
-            <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
-                <lightning-card>
-                    <span slot="title" class="slds-text-heading_small">추가 성장 신호</span>
-                    <span slot="actions" class="slds-badge sc-badge-neutral">참고</span>
-                    <div class="slds-p-horizontal_small slds-p-bottom_small">
+            <!-- 우측: 추가 성장 신호 -->
+            <div class="sc-col sc-col--side">
+                <section class="sc-card">
+                    <header class="sc-card-head">
+                        <h2 class="sc-card-title">추가 성장 신호</h2>
+                        <span class="chip chip--neutral">참고</span>
+                    </header>
+                    <div class="sc-card-body">
                         <div class="rl">
                             <div class="rl-row">
                                 <div class="rl-main">
@@ -84,10 +90,9 @@
                             </div>
                         </div>
                         <lightning-button label="확장 계획 확인" disabled
-                            class="slds-m-top_small" style="width:100%"></lightning-button>
+                            class="sc-full-btn"></lightning-button>
                     </div>
-                </lightning-card>
-
+                </section>
             </div>
         </div>
     </div>

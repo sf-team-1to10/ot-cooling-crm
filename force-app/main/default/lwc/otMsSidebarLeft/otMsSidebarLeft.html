@@ -35,42 +35,5 @@
             </div>
         </article>
 
-        <!-- ══ 메시지 사용자 상세 ══ -->
-        <article class="card">
-            <header class="card-head">
-                <h2 class="card-title">메시지 사용자 상세</h2>
-            </header>
-            <div class="card-body">
-                <template lwc:if={isLoadingMeu}>
-                    <div class="loading"><lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner></div>
-                </template>
-                <template lwc:else>
-                    <div class="user-hero">
-                        <span class="user-avatar" aria-hidden="true">{avatarInitial}</span>
-                        <div class="user-meta">
-                            <p class="user-name">{meuName}</p>
-                            <p class="user-type">{meuMessageType}</p>
-                        </div>
-                    </div>
-
-                    <p class="section-title">수신 상태</p>
-                    <dl class="kv">
-                        <div class="kv-row"><dt>수신 동의</dt><dd>{meuConsentStatus}</dd></div>
-                    </dl>
-
-                    <p class="section-title">연결 레코드</p>
-                    <dl class="kv">
-                        <div class="kv-row"><dt>고객사</dt><dd>{meuAccountName}</dd></div>
-                        <div class="kv-row"><dt>연락처</dt><dd>{meuContactName}</dd></div>
-                        <div class="kv-row"><dt>리드</dt><dd>{meuLeadName}</dd></div>
-                    </dl>
-
-                    <p class="section-title">플랫폼</p>
-                    <dl class="kv">
-                        <div class="kv-row"><dt>플랫폼 키</dt><dd class="mono wrap">{meuPlatformKey}</dd></div>
-                    </dl>
-                </template>
-            </div>
-        </article>
     </div>
 </template>
