@@ -3,7 +3,7 @@
     <fullName>Envelope_Max__c</fullName>
     <description>정상 운전 범위 상한(숫자). Envelope 막대 렌더링용.</description>
     <externalId>false</externalId>
-    <label>Envelope Max</label>
+    <label>정상 범위 상한</label>
     <precision>10</precision>
     <required>false</required>
     <scale>2</scale>

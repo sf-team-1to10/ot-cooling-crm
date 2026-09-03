@@ -2,6 +2,13 @@ import { LightningElement, track, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getEquipmentDashboard from '@salesforce/apex/OTEquipDashboardController.getEquipmentDashboard';
 import getEquipmentDetail from '@salesforce/apex/OTEquipDashboardController.getEquipmentDetail';
+import getLocationInfo from '@salesforce/apex/OTEquipDashboardController.getLocationInfo';
+import getAlerts from '@salesforce/apex/OTEquipDashboardController.getAlerts';
+import CDU_IMG from '@salesforce/resourceUrl/OT_Product_CDU';
+import CX_IMG from '@salesforce/resourceUrl/OT_Product_CX';
+import CRAH_IMG from '@salesforce/resourceUrl/OT_Product_CRAH';
+import COOLBIT_ALERT from '@salesforce/resourceUrl/OT_Coolbit_Alert';
+import COOLBIT_CLEAR from '@salesforce/resourceUrl/OT_Coolbit_Clear';
 
 const PAGE_SIZE = 7;
 
@@ -32,6 +39,13 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     @track location = { customerName: '', siteName: '마이클라우드 데이터센터', hall: 'Hall A' };
     @track selDetail = null; // getEquipmentDetail() 결과 (선택된 자산)
     @track selGauges = [];   // gaugesJson 파싱 결과
+    @track selAlarms = [];   // 최근 알람 목록
+
+    // 항목 7: 탭/필터 상태
+    @track activeTopTab = '전체';
+    @track filterType = '';   // '', 'CDU', 'CX', 'CX-Plant'
+    @track filterState = '';  // '', 'adv', 'ok'
+
 
     @wire(getEquipmentDashboard)
     wiredDashboard({ data, error }) {
@@ -42,21 +56,28 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         }
         if (!data) return;
         this.kpis = data.kpis || this.kpis;
-        this.assets = (data.assets || []).map(a => ({
+        const mapped = (data.assets || []).map(a => ({
             id: a.assetId,
             name: a.name,
+            displayName: a.assetType || a.name || a.assetId,
             type: a.assetType || '',
             family: a.family || '',
             loc: a.location || '',
             stateCode: a.stateCode,
             stateLabel: a.stateLabel,
-            // 알람 이력은 Apex에 아직 데이터 모델이 없음(위 클래스독 참고) —
-            // for:each={sel.alarms}가 undefined로 깨지지 않도록 빈 배열 유지.
             alarms: []
         }));
+        // 이상·주의 항목을 1페이지 상단으로 강제 정렬
+        this.assets = mapped.sort((a, b) => {
+            const rank = s => (s === 'adv' ? 0 : 1);
+            if (rank(a.stateCode) !== rank(b.stateCode)) return rank(a.stateCode) - rank(b.stateCode);
+            return (a.displayName || '').localeCompare(b.displayName || '', 'ko');
+        });
         if (!this.selectedId && this.assets.length > 0) {
             this.selectedId = this.assets[0].id;
             this.loadSelectedDetail();
+            this.loadLocationInfo(this.assets[0].id);
+            this.loadAlerts(this.assets[0].id);
         }
     }
 
@@ -75,6 +96,46 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             });
     }
 
+    loadLocationInfo(assetId) {
+        if (!assetId) return;
+        getLocationInfo({ assetId })
+            .then(result => {
+                this.location = {
+                    customerName: result.customerName || '',
+                    siteName: result.siteName || '마이클라우드 데이터센터',
+                    hall: result.hall || 'Hall A'
+                };
+            })
+            .catch(() => {});
+    }
+
+    // 항목 4: 알람 로드 (데이터 없으면 데모)
+    loadAlerts(assetId) {
+        if (!assetId) return;
+        getAlerts({ assetId })
+            .then(rows => {
+                if (rows && rows.length > 0) {
+                    this.selAlarms = rows.map(r => ({
+                        tagClass: r.tagClass,
+                        tagLabel: r.tagLabel,
+                        text: r.message || '',
+                        date: r.startedAt ? String(r.startedAt).substring(5, 16).replace('T', ' ') : ''
+                    }));
+                } else {
+                    this.selAlarms = [
+                        { tagClass: 'tag warn', tagLabel: 'P3', text: '유량 기준선 대비 -6.6% 감지', date: '09-03 09:14' },
+                        { tagClass: 'tag info', tagLabel: 'P4', text: '정기 점검 알림 (2026-09-15)', date: '09-01 08:00' }
+                    ];
+                }
+            })
+            .catch(() => {
+                this.selAlarms = [
+                    { tagClass: 'tag warn', tagLabel: 'P3', text: '유량 기준선 대비 -6.6% 감지', date: '09-03 09:14' },
+                    { tagClass: 'tag info', tagLabel: 'P4', text: '정기 점검 알림 (2026-09-15)', date: '09-01 08:00' }
+                ];
+            });
+    }
+
     parseGauges(gaugesJson) {
         if (!gaugesJson) return [];
         try {
@@ -86,26 +147,52 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         }
     }
 
+    // 항목 7: 필터/탭 적용된 자산 목록
     get filteredAssets() {
-        if (!this.searchTerm) return this.assets;
-        const q = this.searchTerm.toLowerCase();
-        return this.assets.filter(a =>
-            (a.id || '').toLowerCase().includes(q) ||
-            (a.type || '').toLowerCase().includes(q) ||
-            (a.loc || '').toLowerCase().includes(q)
-        );
+        let list = this.assets;
+        if (this.filterType) {
+            list = list.filter(a => (a.name || '').toUpperCase().startsWith(this.filterType.toUpperCase()));
+        }
+        if (this.filterState) {
+            list = list.filter(a => a.stateCode === this.filterState);
+        }
+        if (this.searchTerm) {
+            const q = this.searchTerm.toLowerCase();
+            list = list.filter(a =>
+                (a.displayName || '').toLowerCase().includes(q) ||
+                (a.name || '').toLowerCase().includes(q) ||
+                (a.type || '').toLowerCase().includes(q) ||
+                (a.loc || '').toLowerCase().includes(q)
+            );
+        }
+        return list;
     }
 
     get totalPages() { return Math.max(1, Math.ceil(this.filteredAssets.length / PAGE_SIZE)); }
 
+    // 항목 2: pageItems에 thumbUrl 추가
     get pageItems() {
         const start = (this.currentPage - 1) * PAGE_SIZE;
-        return this.filteredAssets.slice(start, start + PAGE_SIZE).map(a => ({
-            ...a,
-            rowClass: a.id === this.selectedId ? 'eqrow on' : 'eqrow',
-            chipVariant: a.stateCode === 'adv' ? 'adv' : 'ok',
-            chipLabel: a.stateCode === 'adv' ? '주의' : '정상'
-        }));
+        return this.filteredAssets.slice(start, start + PAGE_SIZE).map(a => {
+            const upper = (a.name || '').toUpperCase();
+            let thumbUrl;
+            if (upper.startsWith('CDU')) {
+                thumbUrl = CDU_IMG;
+            } else if (upper.startsWith('CX')) {
+                thumbUrl = CX_IMG;
+            } else if (upper.startsWith('CA') || upper.includes('CRAH')) {
+                thumbUrl = CRAH_IMG;
+            } else {
+                thumbUrl = CDU_IMG;
+            }
+            return {
+                ...a,
+                thumbUrl,
+                rowClass: a.id === this.selectedId ? 'eqrow on' : 'eqrow',
+                chipVariant: a.stateCode === 'adv' ? 'adv' : 'ok',
+                chipLabel: a.stateCode === 'adv' ? '주의' : '정상'
+            };
+        });
     }
 
     get pagerButtons() {
@@ -152,6 +239,70 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         return this.selGauges.find(g => /flow/i.test(g.measurementItemCode || '')) || this.selGauges[0];
     }
     get hasGaugeData() { return !!this.primaryGauge; }
+
+    // 항목 1: 게이지 아크 SVG
+    get gaugeArcSvg() {
+        const g = this.primaryGauge;
+        if (!g) {
+            return `<svg viewBox="0 0 120 80" style="width:120px;height:80px">` +
+                `<path d="M10,70 A50,50 0 0,1 110,70" fill="none" stroke="#e9e9ea" stroke-width="10" stroke-linecap="round"/>` +
+                `<text x="60" y="58" text-anchor="middle" font-size="18" font-weight="700" fill="#7f95a9" font-family="JetBrains Mono,monospace">--</text>` +
+                `</svg>`;
+        }
+        const cur = g.currentValue || 0;
+        const base = g.baselineValue || g.previousValue || 1;
+        const ratio = Math.min(Math.max(cur / base, 0), 1);
+        const isAdv = this.isAdvisory;
+        const color = isAdv ? '#f57c00' : '#16b8c8';
+        // 반원 아크: 좌(10,70) → 우(110,70), 반지름 50
+        const cx = 60, cy = 70, r = 50;
+        const startAngle = Math.PI; // 왼쪽
+        const endFull = 0;          // 오른쪽
+        const endAngle = startAngle - ratio * Math.PI;
+        const x1 = cx + r * Math.cos(startAngle);
+        const y1 = cy + r * Math.sin(startAngle);
+        const x2 = cx + r * Math.cos(endAngle);
+        const y2 = cy + r * Math.sin(endAngle);
+        const largeArc = ratio > 0.5 ? 1 : 0;
+        const arcPath = ratio > 0
+            ? `M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${largeArc},1 ${x2.toFixed(1)},${y2.toFixed(1)}`
+            : '';
+        const delta = base ? ((cur - base) / base * 100).toFixed(1) : '0.0';
+        const deltaStr = delta >= 0 ? `+${delta}%` : `${delta}%`;
+        const unit = g.measurementItemCode ? (g.measurementItemCode.includes('유량') ? 'L/min' : '') : '';
+        return `<svg viewBox="0 0 120 88" style="width:120px;height:88px">` +
+            `<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 1,1 110,70" fill="none" stroke="#e9e9ea" stroke-width="10" stroke-linecap="round"/>` +
+            (arcPath ? `<path d="${arcPath}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round"/>` : '') +
+            `<text x="60" y="56" text-anchor="middle" font-size="16" font-weight="700" fill="#1d1f20" font-family="JetBrains Mono,monospace">${cur}</text>` +
+            (unit ? `<text x="60" y="68" text-anchor="middle" font-size="9" fill="#7f95a9" font-family="inherit">${unit}</text>` : '') +
+            `<text x="60" y="82" text-anchor="middle" font-size="9" fill="${color}" font-family="inherit">${deltaStr}</text>` +
+            `</svg>`;
+    }
+
+    // Asset에 직접 첨부된 파일이 있으면 우선, 없으면 이름 패턴으로 Static Resource 매핑
+    get selImageUrl() {
+        if (this.selDetail && this.selDetail.imageUrl) return this.selDetail.imageUrl;
+        const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
+        if (name.startsWith('CDU')) return CDU_IMG;
+        if (name.startsWith('CX')) return CX_IMG;
+        if (name.startsWith('CA') || name.includes('CRAH')) return CRAH_IMG;
+        return CDU_IMG;
+    }
+    get hasSelImage() { return true; }
+    get coolbitStatusUrl() { return this.isAdvisory ? COOLBIT_ALERT : COOLBIT_CLEAR; }
+
+    // 이미지 로드 실패 시 (포털 권한 없는 첨부파일 URL) → Static Resource로 폴백
+    handleImageError(event) {
+        const name = (this.sel && this.sel.name) ? this.sel.name.toUpperCase() : '';
+        if (name.startsWith('CX')) {
+            event.target.src = CX_IMG;
+        } else if (name.startsWith('CA') || name.includes('CRAH')) {
+            event.target.src = CRAH_IMG;
+        } else {
+            event.target.src = CDU_IMG;
+        }
+        event.target.onerror = null;
+    }
 
     get assessHeadline() {
         if (!this.selDetail) return '';
@@ -233,16 +384,51 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
 
     get isNormal() { return this.sel.stateCode !== 'adv'; }
 
+    // 항목 7: 탭 버튼 클래스
+    get tabAllClass()    { return this.activeTopTab === '전체' ? 't on' : 't'; }
+    get tabTypeClass()   { return this.activeTopTab === '유형별' ? 't on' : 't'; }
+    get tabStateClass()  { return this.activeTopTab === '상태별' ? 't on' : 't'; }
+
+    // 항목 7: 필터 레이블 getter
+    get filterTypeLabel() {
+        return this.filterType ? `유형: ${this.filterType}` : '전체 장비 유형';
+    }
+    get filterStateLabel() {
+        if (this.filterState === 'adv') return '상태: 주의';
+        if (this.filterState === 'ok') return '상태: 정상';
+        return '전체 상태';
+    }
+
     // Handlers
     handleSelectAsset(event) {
         this.selectedId = event.currentTarget.dataset.id;
         this.loadSelectedDetail();
+        this.loadLocationInfo(this.selectedId);
+        this.loadAlerts(this.selectedId);
     }
     handlePrevPage() { if (this.currentPage > 1) this.currentPage--; }
     handleNextPage() { if (this.currentPage < this.totalPages) this.currentPage++; }
     handlePage(event) { this.currentPage = parseInt(event.currentTarget.dataset.num, 10); }
     handleSearch(event) {
         this.searchTerm = event.target.value;
+        this.currentPage = 1;
+    }
+
+    // 항목 7: 탭/필터 핸들러
+    handleTopTab(event) {
+        this.activeTopTab = event.currentTarget.dataset.tab;
+        this.currentPage = 1;
+    }
+    handleFilterType() {
+        const cycle = ['', 'CDU', 'CX', 'CX-Plant'];
+        const idx = cycle.indexOf(this.filterType);
+        this.filterType = cycle[(idx + 1) % cycle.length];
+        this.currentPage = 1;
+    }
+    handleFilterState() {
+        const cycle = ['', 'adv', 'ok'];
+        const idx = cycle.indexOf(this.filterState);
+        this.filterState = cycle[(idx + 1) % cycle.length];
         this.currentPage = 1;
     }
 
@@ -259,6 +445,14 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         this.handleGoDetail();
     }
 
+    // 사이드바 navigate 이벤트 — assistant 클릭 시 MIAW(Embedded Messaging) 실행
+    handleNavigate(event) {
+        const page = event.detail && event.detail.page;
+        if (page === 'assistant') {
+            document.dispatchEvent(new CustomEvent('ot_launch_chat', { detail: {} }));
+        }
+    }
+
     renderedCallback() {
         const trendEl = this.template.querySelector('.chart-container');
         if (trendEl) {
@@ -267,6 +461,10 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
         const donutEl = this.template.querySelector('.donut-container');
         if (donutEl) {
             donutEl.innerHTML = this.donutSvg;
+        }
+        const gaugeEl = this.template.querySelector('.gauge-container');
+        if (gaugeEl && this.isOverview) {
+            gaugeEl.innerHTML = this.gaugeArcSvg;
         }
     }
 }

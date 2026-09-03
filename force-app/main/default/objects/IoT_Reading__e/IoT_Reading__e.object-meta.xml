@@ -3,6 +3,6 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>T5-A 가상 IoT 데모 입력. 실제 센서 연동 아님 — Trend 계산·Alert 로직 검증용(DEC-T5-17).</description>
     <eventType>HighVolume</eventType>
-    <label>IoT Reading</label>
+    <label>IoT 측정값</label>
     <publishBehavior>PublishAfterCommit</publishBehavior>
 </CustomObject>

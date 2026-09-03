@@ -91,7 +91,7 @@
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
-    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
+    <isOmniPinnedViewEnabled>true</isOmniPinnedViewEnabled>
     <label>OT전자 Cooling Continuity</label>
     <navType>Console</navType>
     <tabs>standard-home</tabs>

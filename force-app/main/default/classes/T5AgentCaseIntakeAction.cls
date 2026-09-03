@@ -69,14 +69,7 @@ public without sharing class T5AgentCaseIntakeAction {
             // Case인지 알아야 Case 레코드로 이어갈 수 있다. MessagingSession
             // 표준 필드 CaseId에 방금 만든 Case를 바로 연결해둔다 — 이관은
             // 이 Case 생성 다음에 일어나므로, 이관 시점엔 이미 연결돼 있다.
-            if (String.isNotBlank(inp.sessionId)) {
-                try {
-                    Id sessionId = Id.valueOf(inp.sessionId);
-                    update new MessagingSession(Id = sessionId, CaseId = newCase.Id);
-                } catch (Exception ignoreLinkError) {
-                    // 세션 연결 실패는 Case 접수 자체를 막지 않는다 — 조용히 넘어감.
-                }
-            }
+            linkCaseToSession(inp.sessionId, newCase.Id);
 
             Case saved = [
                 SELECT CaseNumber, Account.Name,
@@ -201,6 +194,41 @@ public without sharing class T5AgentCaseIntakeAction {
             ORDER BY CreatedDate ASC LIMIT 1
         ];
         return contacts.isEmpty() ? null : contacts[0].Id;
+    }
+
+    /**
+     * sessionId가 유효하면 그 세션에 Case를 연결하고, 무효하거나 빈 값이면
+     * CaseId가 아직 null인 가장 최근 세션을 찾아 연결한다(데모용 heuristic —
+     * T5AgentAssetContextAction.resolveAssetIdForAgent과 동일 패턴).
+     */
+    private static void linkCaseToSession(String sessionIdStr, Id caseId) {
+        Id sessionId = null;
+        if (String.isNotBlank(sessionIdStr)) {
+            try {
+                sessionId = Id.valueOf(sessionIdStr);
+            } catch (Exception e) {
+                sessionId = null;
+            }
+        }
+        if (sessionId == null) {
+            List<MessagingSession> recent = [
+                SELECT Id FROM MessagingSession
+                WHERE CaseId = null
+                ORDER BY CreatedDate DESC
+                LIMIT 1
+            ];
+            if (!recent.isEmpty()) {
+                sessionId = recent[0].Id;
+            }
+        }
+        if (sessionId != null) {
+            try {
+                update new MessagingSession(Id = sessionId, CaseId = caseId);
+            } catch (Exception ignoreLinkError) {
+                System.debug(LoggingLevel.ERROR,
+                    '[T5-23] Case-Session link failed: ' + ignoreLinkError.getMessage());
+            }
+        }
     }
 
     public class CaseInput {

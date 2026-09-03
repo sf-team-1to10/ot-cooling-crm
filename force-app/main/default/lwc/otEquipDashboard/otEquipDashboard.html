@@ -1,7 +1,7 @@
 <template>
     <div class="app">
         <!-- Left Nav Rail -->
-        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이언데이터센터"></c-ot-equip-sidebar>
+        <c-ot-equip-sidebar active-nav="equipment" customer-name="아이언데이터센터" onnavigate={handleNavigate}></c-ot-equip-sidebar>
 
         <!-- Main -->
         <div class="main">
@@ -11,14 +11,14 @@
                 <!-- Page Header -->
                 <div class="page-h">
                     <h1>내 자산</h1>
-                    <span class="sub">마이클라우드 데이터센터 · Hall A</span>
+                    <span class="sub">{location.siteName} · {location.hall}</span>
                 </div>
 
                 <!-- Top Tabs -->
                 <div class="tabsrow">
-                    <button class="t on">전체 자산</button>
-                    <button class="t">장비 유형별</button>
-                    <button class="t">상태별</button>
+                    <button class={tabAllClass} data-tab="전체" onclick={handleTopTab}>전체 자산</button>
+                    <button class={tabTypeClass} data-tab="유형별" onclick={handleTopTab}>장비 유형별</button>
+                    <button class={tabStateClass} data-tab="상태별" onclick={handleTopTab}>상태별</button>
                     <span class="grow"></span>
                     <button class="btn" onclick={handleServiceRequest}>
                         <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor"/></svg>
@@ -32,8 +32,8 @@
                         <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor"/><path d="M21 21l-4.3-4.3" stroke="currentColor"/></svg>
                         <input type="text" placeholder="장비명, Asset ID 또는 설치 위치 검색" value={searchTerm} oninput={handleSearch}>
                     </div>
-                    <button class="sel">전체 장비 유형 <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
-                    <button class="sel">전체 상태 <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
+                    <button class="sel" onclick={handleFilterType}>{filterTypeLabel} <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
+                    <button class="sel" onclick={handleFilterState}>{filterStateLabel} <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
                     <button class="sel">Hall A <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor"/></svg></button>
                 </div>
 
@@ -72,10 +72,10 @@
                                 <template for:each={pageItems} for:item="asset">
                                     <div key={asset.id} class={asset.rowClass} data-id={asset.id} onclick={handleSelectAsset}>
                                         <div class="th">
-                                            <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#7f95a9"/><path d="M8 3v18M8 8h13M8 14h13" stroke="#7f95a9"/></svg>
+                                            <img src={asset.thumbUrl} alt={asset.displayName} />
                                         </div>
                                         <div class="ei">
-                                            <span class="n">{asset.id}</span>
+                                            <span class="n">{asset.displayName}</span>
                                             <span class="ty">{asset.type}</span>
                                             <span class="lo">{asset.loc}</span>
                                         </div>
@@ -101,7 +101,7 @@
                             <div class="selhead">
                                 <div class="ht">
                                     <div class="r1">
-                                        <b>{sel.id}</b>
+                                        <b>{sel.name}</b>
                                         <c-ot-equip-status-chip label={sel.stateLabel} variant={sel.stateCode}></c-ot-equip-status-chip>
                                     </div>
                                     <div class="r2">{sel.type} · {sel.family} · {sel.loc}</div>
@@ -129,9 +129,13 @@
                                                 </div>
                                                 <div class="hl">{sel.assess.hl}</div>
                                                 <div class="ds">{sel.assess.ds}</div>
-                                                <div class="vv">
-                                                    <div><span>현재 유량</span><b>{sel.assess.flow}</b></div>
-                                                    <div><span>기준선</span><b>{sel.assess.base}</b></div>
+                                                <!-- 항목 1: 게이지 아크 미터 -->
+                                                <div class="gauge-wrap">
+                                                    <div class="gauge-container" lwc:dom="manual"></div>
+                                                    <div class="vv">
+                                                        <div><span>현재 유량</span><b>{sel.assess.flow}</b></div>
+                                                        <div><span>기준선</span><b>{sel.assess.base}</b></div>
+                                                    </div>
                                                 </div>
                                                 <div class="ft">
                                                     <span class="demo-badge">데모 데이터</span>
@@ -140,8 +144,7 @@
                                             </div>
                                         </div>
                                         <div class="heroimg">
-                                            <svg fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#7f95a9"/><path d="M8 3v18M8 8h13M8 14h13" stroke="#7f95a9"/><circle cx="15.5" cy="11" r="1.2" stroke="#7f95a9"/></svg>
-                                            <span class="ph-text">제품 이미지</span>
+                                            <img src={selImageUrl} alt="장비 이미지" class="hero-photo" onerror={handleImageError}/>
                                         </div>
                                     </div>
 
@@ -191,7 +194,10 @@
                             <div class="panel-h"><h3>장비 상태</h3></div>
                             <div class="bd">
                                 <div class="health">
-                                    <div class="donut-container" lwc:dom="manual"></div>
+                                    <div class="donut-wrap">
+                                        <div class="donut-container" lwc:dom="manual"></div>
+                                        <img src={coolbitStatusUrl} alt="쿨빗 상태" class="coolbit-status" />
+                                    </div>
                                     <div class="sc">
                                         <template for:each={healthSubs} for:item="sub">
                                             <div key={sub.name} class="sr">
@@ -211,7 +217,7 @@
                             <div class="panel-h"><h3>최근 알람</h3></div>
                             <div class="bd">
                                 <div class="miniAl">
-                                    <template for:each={sel.alarms} for:item="alarm">
+                                    <template for:each={selAlarms} for:item="alarm">
                                         <div key={alarm.text} class="m">
                                             <span class={alarm.tagClass}>{alarm.tagLabel}</span>
                                             <p>{alarm.text}<br/><small>{alarm.date}</small></p>
@@ -258,4 +264,5 @@
 
     <!-- Service Request Modal -->
     <c-ot-service-request-modal is-open={modalOpen} onclose={handleModalClose} ongodetail={handleModalGoDetail}></c-ot-service-request-modal>
+
 </template>

@@ -2,12 +2,12 @@
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <deploymentStatus>Deployed</deploymentStatus>
     <description>The Asset Context Pending object bridges a MIAW chat race: the portal pushes a visitor UID and the Asset they were viewing before a MessagingSession exists. It holds UID (external ID, unique) and Asset Id so the session-create trigger can stamp Asset context regardless of arrival order. Commonly used for chat asset-context handoff.</description>
-    <label>Asset Context Pending</label>
+    <label>자산 맥락 대기</label>
     <nameField>
-        <label>UID Key</label>
+        <label>UID 키</label>
         <type>Text</type>
     </nameField>
-    <pluralLabel>Asset Context Pendings</pluralLabel>
+    <pluralLabel>자산 맥락 대기</pluralLabel>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>
 </CustomObject>

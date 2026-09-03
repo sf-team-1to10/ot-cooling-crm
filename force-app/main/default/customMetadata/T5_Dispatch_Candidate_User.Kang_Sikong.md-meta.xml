@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <label>강시공</label>
+    <protected>false</protected>
+    <values>
+        <field>User_Id__c</field>
+        <value xsi:type="xsd:string">005bm00000UFJyjAAH</value>
+    </values>
+    <values>
+        <field>ServiceResource_Id__c</field>
+        <value xsi:type="xsd:string">0Hnbm000000ST8jCAG</value>
+    </values>
+</CustomMetadata>

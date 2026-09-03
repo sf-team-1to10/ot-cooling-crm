@@ -3,8 +3,8 @@
     <deploymentStatus>Deployed</deploymentStatus>
     <description>T5-23: LWC에서 MessagingSession.Asset_Id__c를 설정하기 위한 Platform Event. Customer Community 사용자가 직접 MessagingSession DML을 할 수 없어서 이 이벤트로 시스템 컨텍스트 트리거에 위임.</description>
     <eventType>StandardVolume</eventType>
-    <label>Asset Context Event</label>
-    <pluralLabel>Asset Context Events</pluralLabel>
+    <label>자산 맥락 이벤트</label>
+    <pluralLabel>자산 맥락 이벤트</pluralLabel>
     <publishBehavior>PublishImmediately</publishBehavior>
     <fields>
         <fullName>UID__c</fullName>
@@ -13,7 +13,7 @@
         <isFilteringDisabled>false</isFilteringDisabled>
         <isNameField>false</isNameField>
         <isSortingDisabled>false</isSortingDisabled>
-        <label>UID</label>
+        <label>사용자 UID</label>
         <length>255</length>
         <required>true</required>
         <type>Text</type>
@@ -26,7 +26,7 @@
         <isFilteringDisabled>false</isFilteringDisabled>
         <isNameField>false</isNameField>
         <isSortingDisabled>false</isSortingDisabled>
-        <label>Asset Id</label>
+        <label>자산 ID</label>
         <length>18</length>
         <required>true</required>
         <type>Text</type>

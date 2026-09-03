@@ -1,0 +1,55 @@
+<template>
+    <div class="reply-panel">
+        <div class="reply-header">
+            <div class="reply-title-row">
+                <lightning-icon icon-name="utility:sparkles" size="xx-small"
+                    class="ai-icon"></lightning-icon>
+                <span class="reply-title">AI 추천 응답</span>
+            </div>
+        </div>
+
+        <template lwc:if={isGenerating}>
+            <div class="center-state">
+                <lightning-spinner alternative-text="생성 중" size="small"></lightning-spinner>
+                <p class="state-text">대화 맥락을 분석하고 있습니다…</p>
+            </div>
+        </template>
+
+        <template lwc:elseif={hasReply}>
+            <div class="reply-context-row">
+                <lightning-icon icon-name="utility:info_alt" size="xx-small"
+                    class="context-icon"></lightning-icon>
+                <span class="reply-context">{contextLabel}</span>
+            </div>
+            <div class="reply-body">
+                <p class="reply-text">{replyText}</p>
+            </div>
+            <div class="reply-actions">
+                <lightning-button label="다른 추천" variant="neutral"
+                    icon-name="utility:back" onclick={handleBack}
+                    class="action-btn"></lightning-button>
+                <lightning-button label={copyLabel} variant="brand"
+                    icon-name="utility:copy" onclick={handleCopy}
+                    class="action-btn"></lightning-button>
+            </div>
+        </template>
+
+        <template lwc:else>
+            <div class="select-area">
+                <lightning-combobox
+                    label="응답 유형"
+                    placeholder="어떤 응답을 생성할까요?"
+                    options={comboboxOptions}
+                    value={_selectedValue}
+                    onchange={handleComboChange}
+                    variant="label-hidden"
+                    class="reply-combo">
+                </lightning-combobox>
+                <lightning-button label="추천 생성" variant="brand"
+                    icon-name="utility:sparkles" onclick={handleGenerate}
+                    disabled={cannotGenerate}
+                    class="action-btn generate-btn"></lightning-button>
+            </div>
+        </template>
+    </div>
+</template>

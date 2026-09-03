@@ -28,27 +28,17 @@
 
 /* Brand */
 .brand {
+    padding: 4px 8px 20px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 6px 8px 20px;
 }
-.logo {
-    width: 32px;
-    height: 32px;
-    flex: none;
-    display: grid;
-    place-items: center;
-}
-.logo svg {
-    width: 28px;
-    height: 28px;
-}
-.brand-text {
-    color: var(--ot-surface);
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -.3px;
+.brand-logo {
+    width: 100%;
+    max-width: 130px;
+    height: auto;
+    /* 네이비 배경 위에서 흰색으로 보이도록 */
+    filter: brightness(0) invert(1);
+    object-fit: contain;
 }
 
 /* Nav */
@@ -85,10 +75,11 @@
     color: var(--ot-surface);
 }
 .nav-item--active {
-    background: var(--ot-cyan);
-    color: var(--ot-navy);
+    background: rgba(22, 184, 200, 0.12);
+    color: var(--ot-surface);
     font-weight: 700;
-    box-shadow: none;
+    border-left: 3px solid var(--ot-cyan);
+    padding-left: 7px;
 }
 
 /* Spacer */
@@ -131,15 +122,13 @@
     filter: blur(6px);
     pointer-events: none;
 }
-.robot-icon {
+.coolbit-img {
     position: relative;
-    display: block;
-    width: 72px;
-    height: 72px;
-}
-.robot-icon svg {
-    width: 100%;
-    height: 100%;
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    /* 검정 배경 제거 — PNG 검정 배경을 투명하게 */
+    mix-blend-mode: screen;
 }
 .assist-label {
     display: flex;
@@ -192,7 +181,11 @@
         width: 64px;
         padding: 18px 8px;
     }
-    .brand-text,
+    .brand-logo {
+        max-width: 36px;
+        /* 좁은 사이드바에서는 OT 로고의 O 부분만 보이도록 */
+        object-position: left center;
+    }
     .nav-label,
     .cust,
     .assist-label,
@@ -204,7 +197,7 @@
         padding: 9px;
     }
     .assist-glow,
-    .robot-icon {
+    .coolbit-img {
         width: 40px;
         height: 40px;
     }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>T5_Dispatch_Candidate_User__mdt</members>
+        <members>T5_Swarm_Fixed_Participant__mdt</members>
+        <name>CustomObject</name>
+    </types>
+    <types>
+        <members>T5_Dispatch_Candidate_User__mdt.User_Id__c</members>
+        <members>T5_Swarm_Fixed_Participant__mdt.User_Id__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>T5_Dispatch_Candidate_User.Kang_Sikong</members>
+        <members>T5_Swarm_Fixed_Participant.Odomyeon</members>
+        <name>CustomMetadata</name>
+    </types>
+    <version>62.0</version>
+</Package>

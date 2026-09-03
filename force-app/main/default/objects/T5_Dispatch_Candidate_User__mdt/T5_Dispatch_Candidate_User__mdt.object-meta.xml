@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>T5 배정 후보 매핑</label>
+    <pluralLabel>T5 배정 후보 매핑</pluralLabel>
+    <description>배정 카드에 노출되는 후보 라벨(강시공/임수리/전배관)을 실제 Salesforce User Id에 매핑. 데모 페르소나 → 실 User 교체는 이 CMDT record 값만 바꾸면 승계된다. record가 없으면 해당 후보는 실제 배정 로직에서 no-op(데모 장식).</description>
+    <visibility>Public</visibility>
+</CustomObject>

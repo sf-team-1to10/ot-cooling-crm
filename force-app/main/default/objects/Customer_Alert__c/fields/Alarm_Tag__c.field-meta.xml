@@ -3,7 +3,7 @@
     <fullName>Alarm_Tag__c</fullName>
     <description>SCADA/CMMS 알람 태그 표기(예: CHW_FLOW_LOW_BASELINE). 데모 표기용 텍스트, 실제 알람 엔진 연동 아님.</description>
     <externalId>false</externalId>
-    <label>Alarm Tag</label>
+    <label>알람 태그</label>
     <length>80</length>
     <required>true</required>
     <trackTrending>false</trackTrending>

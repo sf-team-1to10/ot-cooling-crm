@@ -75,7 +75,7 @@
         </inputParameters>
         <nameSegment>slackJoinChannel</nameSegment>
     </actionCalls>
-    <apiVersion>62.0</apiVersion>
+    <apiVersion>63.0</apiVersion>
     <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
     <assignments>
         <name>Add_Case_Owner</name>
@@ -90,26 +90,42 @@
             </value>
         </assignmentItems>
         <connector>
-            <targetReference>Loop_Resources</targetReference>
+            <targetReference>Get_WorkOrder</targetReference>
         </connector>
     </assignments>
     <assignments>
-        <name>Add_Resource_User</name>
-        <label>현장 담당자 누적</label>
-        <locationX>308</locationX>
-        <locationY>626</locationY>
+        <name>Add_WO_Owner</name>
+        <label>WorkOrder 소유자(=배정 담당자) 초대 대상 추가</label>
+        <locationX>176</locationX>
+        <locationY>464</locationY>
         <assignmentItems>
             <assignToReference>inviteUserIds</assignToReference>
             <operator>Add</operator>
             <value>
-                <elementReference>Loop_Resources.RelatedRecordId</elementReference>
+                <elementReference>Get_WorkOrder.OwnerId</elementReference>
             </value>
         </assignmentItems>
         <connector>
             <targetReference>Loop_Resources</targetReference>
         </connector>
     </assignments>
-    <description>Swarm에 Slack 채널이 붙는 순간(CollaborationUrl 채워짐) 자동으로 봇을 채널에 참여시키고, Case 소유자와 활성 Service Resource 담당자를 초대한 뒤 Case 요약을 발신한다. 채널 생성 자체는 표준 관리형 Flow swarming__Begin_Enhanced_Slack_Swarm이 수행하며, Swarm 레코드를 API로 만들면 채널이 생기지 않는다. Slack 콜아웃은 Record-Triggered 즉시 경로 불가로 AsyncAfterCommit 경로 실행. 발신은 T5_Send_Slack_Channel_Message subflow 재사용. T5-31.</description>
+    <assignments>
+        <name>Add_Resource_User</name>
+        <label>고정 참여자 UserId 누적</label>
+        <locationX>308</locationX>
+        <locationY>626</locationY>
+        <assignmentItems>
+            <assignToReference>inviteUserIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>Loop_Resources.User_Id__c</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Loop_Resources</targetReference>
+        </connector>
+    </assignments>
+    <description>Swarm에 Slack 채널이 붙는 순간(CollaborationUrl 채워짐) 자동으로 봇을 채널에 참여시키고, Case 소유자(=배정된 담당자)와 CMDT T5_Swarm_Fixed_Participant__mdt의 고정 참여자(오도면 등)를 초대한 뒤 Case 요약을 발신한다. 채널 생성 자체는 표준 관리형 Flow swarming__Begin_Enhanced_Slack_Swarm이 수행. Slack 콜아웃은 Record-Triggered 즉시 경로 불가로 AsyncAfterCommit 경로 실행. 발신은 T5_Send_Slack_Channel_Message subflow 재사용. T5-31 / T5-36.</description>
     <environments>Default</environments>
     <formulas>
         <name>ChannelIdFromUrl</name>
@@ -131,10 +147,10 @@
     <label>T5 Swarm Created Invite And Summary</label>
     <loops>
         <name>Loop_Resources</name>
-        <label>활성 Service Resource 순회</label>
+        <label>고정 참여자 순회</label>
         <locationX>176</locationX>
         <locationY>518</locationY>
-        <collectionReference>Get_Resources</collectionReference>
+        <collectionReference>Get_Fixed_Participants</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
             <targetReference>Add_Resource_User</targetReference>
@@ -163,7 +179,7 @@
         <locationY>302</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Add_Case_Owner</targetReference>
+            <targetReference>Get_Asset</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -178,40 +194,101 @@
         <queriedFields>Id</queriedFields>
         <queriedFields>CaseNumber</queriedFields>
         <queriedFields>Subject</queriedFields>
+        <queriedFields>Description</queriedFields>
         <queriedFields>OwnerId</queriedFields>
         <queriedFields>Priority</queriedFields>
         <queriedFields>Status</queriedFields>
+        <queriedFields>AccountId</queriedFields>
+        <queriedFields>AssetId</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
-        <name>Get_Resources</name>
-        <label>활성 Service Resource 조회</label>
+        <name>Get_Account</name>
+        <label>Account 조회</label>
+        <locationX>528</locationX>
+        <locationY>302</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_Case_Owner</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Case.AccountId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Account</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Asset</name>
+        <label>Asset 조회</label>
+        <locationX>352</locationX>
+        <locationY>302</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Account</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Case.AssetId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Asset</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>Site_Location__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_WorkOrder</name>
+        <label>WorkOrder 조회 (배정 담당자)</label>
+        <locationX>176</locationX>
+        <locationY>410</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Add_WO_Owner</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>CaseId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Case.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>OwnerId</queriedFields>
+        <queriedFields>WorkOrderNumber</queriedFields>
+        <sortField>CreatedDate</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Fixed_Participants</name>
+        <label>고정 참여자 CMDT 조회</label>
         <locationX>176</locationX>
         <locationY>194</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Get_Case</targetReference>
         </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>IsActive</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>ResourceType</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>T</stringValue>
-            </value>
-        </filters>
         <getFirstRecordOnly>false</getFirstRecordOnly>
-        <object>ServiceResource</object>
+        <object>T5_Swarm_Fixed_Participant__mdt</object>
         <queriedFields>Id</queriedFields>
-        <queriedFields>Name</queriedFields>
-        <queriedFields>RelatedRecordId</queriedFields>
+        <queriedFields>DeveloperName</queriedFields>
+        <queriedFields>User_Id__c</queriedFields>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
@@ -221,7 +298,7 @@
         <locationY>86</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Get_Resources</targetReference>
+            <targetReference>Get_Fixed_Participants</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -276,16 +353,26 @@
     <textTemplates>
         <name>Swarm_Summary</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
-        <text>:rotating_light: [협업 채널 개설] Case {!Get_Case.CaseNumber}
-제목: {!Get_Case.Subject}
-우선순위: {!Get_Case.Priority}
-상태: {!Get_Case.Status}
+        <text>:rotating_light: *[출동 채널 개설]* Case {!Get_Case.CaseNumber} · {!Get_Asset.Name}
 
-담당자 배정이 확정돼 이 채널이 열렸습니다.
-Case 담당자와 현장 담당자를 초대했습니다.
+*고객사:* {!Get_Account.Name}
+*자산:* {!Get_Asset.Name} · {!Get_Asset.Site_Location__c}
+*우선순위:* {!Get_Case.Priority} · *상태:* {!Get_Case.Status}
+*현재 단계:* 2 담당자 배정 → 다음: 3 현장 출동
 
-여기서 할 일: 과거 원기록과 브리핑 요약을 대조하고, 현장 도착 전에
-추가 자재 필요 여부를 확정합니다.</text>
+*증상 / 제목*
+{!Get_Case.Subject}
+
+*상세*
+{!Get_Case.Description}
+
+*배정:* 강시공
+*참관:* 오도면 (운영관제)
+
+*다음 할 일*
+1. 과거 원기록과 진단 브리핑 대조
+2. 현장 도착 전 추가 자재 필요 여부 확정
+3. 도착 시각을 이 채널에 공유</text>
     </textTemplates>
     <variables>
         <name>inviteUserIds</name>

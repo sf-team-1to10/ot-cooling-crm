@@ -1,5 +1,22 @@
 <template>
     <div class="slds-p-vertical_x-small">
+        <template lwc:if={showSwarmFlow}>
+            <section role="dialog" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <h2 class="slds-modal__title slds-hyphenate">Slack 협업 채널 생성</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning-flow flow-api-name="T5_Dispatch_Confirm_Swarm"
+                            flow-input-variables={swarmFlowInputs}
+                            onstatuschange={handleSwarmFlowStatusChange}>
+                        </lightning-flow>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </template>
+
         <template lwc:if={isLoading}>
             <lightning-spinner alternative-text="로딩 중" size="small"></lightning-spinner>
         </template>

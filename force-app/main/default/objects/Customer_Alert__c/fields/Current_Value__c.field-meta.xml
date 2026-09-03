@@ -3,7 +3,7 @@
     <fullName>Current_Value__c</fullName>
     <description>Envelope 막대에서 현재값 마커 위치를 계산하는 데 쓰는 숫자값. Current_Value_Text__c와 별개로 유지(표시 문구는 단위 포함 자유 텍스트, 이 필드는 순수 숫자만).</description>
     <externalId>false</externalId>
-    <label>Current Value</label>
+    <label>현재값</label>
     <precision>10</precision>
     <required>false</required>
     <scale>2</scale>

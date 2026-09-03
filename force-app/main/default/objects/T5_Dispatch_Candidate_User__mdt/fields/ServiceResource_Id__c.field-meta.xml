@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ServiceResource_Id__c</fullName>
+    <description>FSM 배정 시 AssignedResource가 참조할 ServiceResource Id (18자). 값이 비면 모바일 배정 단계 스킵. WO Owner 세팅(User_Id__c)과는 별개 · FSM Mobile은 SA/AssignedResource 경로로만 배정됨.</description>
+    <inlineHelpText>모바일 앱 배정용 ServiceResource Id (18자). 비면 FSM 배정 스킵.</inlineHelpText>
+    <label>ServiceResource Id</label>
+    <length>18</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
