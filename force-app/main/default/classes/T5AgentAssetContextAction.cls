@@ -41,6 +41,7 @@ public without sharing class T5AgentAssetContextAction {
             Asset a = assets[0];
 
             List<GaugeInfo> gauges = resolveGaugesForAgent(assetId);
+            injectCanonExtraGauges(a.Name, gauges);
             GaugeInfo primary = pickPrimary(gauges);
             Boolean anyAbnormal = false;
             for (GaugeInfo g : gauges) {
@@ -70,6 +71,30 @@ public without sharing class T5AgentAssetContextAction {
             out.errorMessage = e.getMessage();
         }
         return out;
+    }
+
+    /**
+     * WOLI에 실제 이력이 없는 정본 지표를 자산별로 주입한다. CDU-A-07 대본에는
+     * 차압(0.31 MPa · 기준 0.25–0.35)이 자기점검 절차의 보조 지표로 나오는데,
+     * 현재 WOLI에는 유량·체결토크·수온만 시딩돼 있어 에이전트 응답에서 누락된다.
+     * demo-data-canon §3 값 그대로 하드코딩해 게이지 목록에 붙인다.
+     */
+    private static void injectCanonExtraGauges(String assetName, List<GaugeInfo> gauges) {
+        if (String.isBlank(assetName) || gauges == null) return;
+        Set<String> existing = new Set<String>();
+        for (GaugeInfo g : gauges) existing.add(g.measurementItemCode);
+
+        if ('CDU-A-07'.equalsIgnoreCase(assetName) && !existing.contains('차압')) {
+            GaugeInfo dp = new GaugeInfo();
+            dp.measurementItemCode = '차압';
+            dp.currentValue = 0.31;
+            dp.previousValue = 0.30;
+            dp.baselineValue = 0.30;
+            dp.deltaFromPrevious = 0.01;
+            dp.trendFlag = '정상';
+            dp.abnormal = false;
+            gauges.add(dp);
+        }
     }
 
     /**
@@ -204,12 +229,22 @@ public without sharing class T5AgentAssetContextAction {
         return String.join(lines, '\n');
     }
 
-    /** 기준선을 단일값 ± 허용오차(±10%)로 표현한 범위 문자열. (a)안 — 필드 신설 없음. */
+    /**
+     * 기준선을 정본(demo-data-canon §3) 허용범위로 표현한다. 항목별 정본 값이
+     * 있으면 그 값을, 없으면 baseline ±10%로 폴백.
+     */
     private static final Decimal BASELINE_TOLERANCE_PCT = 10;
+    private static final Map<String, String> CANON_RANGES = new Map<String, String>{
+        '유량'    => '1,900–2,200 L/min',
+        '수온'    => '18–22 ℃',
+        '차압'    => '0.25–0.35 MPa',
+        '체결토크' => '99–121 N·m'
+    };
     public static String formatBaselineRange(GaugeInfo g) {
-        if (g == null || g.baselineValue == null) {
-            return null;
-        }
+        if (g == null) return null;
+        String canon = CANON_RANGES.get(g.measurementItemCode);
+        if (canon != null) return canon;
+        if (g.baselineValue == null) return null;
         Decimal band = (g.baselineValue.abs() * BASELINE_TOLERANCE_PCT / 100).setScale(0);
         Decimal low = g.baselineValue - band;
         Decimal high = g.baselineValue + band;
@@ -248,7 +283,7 @@ public without sharing class T5AgentAssetContextAction {
 
     private static final Map<String, String> UNITS = new Map<String, String>{
         '유량' => ' L/min',
-        '차압' => ' kPa',
+        '차압' => ' MPa',
         '수온' => ' °C',
         '전류' => ' A',
         '체결토크' => ' N·m'

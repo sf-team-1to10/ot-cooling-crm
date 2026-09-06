@@ -172,33 +172,49 @@ private class T5AgentAssetContextActionTest {
     }
 
     @IsTest
-    static void formatBaselineRange_returnsTolerantBand() {
+    static void formatBaselineRange_usesCanonRange() {
         T5AgentAssetContextAction.GaugeInfo g =
             new T5AgentAssetContextAction.GaugeInfo();
         g.measurementItemCode = '유량';
+        g.baselineValue = 2100;
+
+        Test.startTest();
+        String range = T5AgentAssetContextAction.formatBaselineRange(g);
+        Test.stopTest();
+
+        // 정본(demo-data-canon §3) — 계산치 아니라 정본 상수를 그대로
+        Assert.areEqual('1,900–2,200 L/min', range,
+            '유량 정본 허용범위(1,900–2,200)를 반환해야 한다');
+    }
+
+    @IsTest
+    static void formatBaselineRange_fallsBackToTolerantBand_ForUnknownCode() {
+        T5AgentAssetContextAction.GaugeInfo g =
+            new T5AgentAssetContextAction.GaugeInfo();
+        g.measurementItemCode = '알수없는지표';
         g.baselineValue = 2000;
 
         Test.startTest();
         String range = T5AgentAssetContextAction.formatBaselineRange(g);
         Test.stopTest();
 
-        // ±10% of 2000 = ±200 → 1800–2200
-        Assert.areEqual('1800–2200 L/min', range,
-            '기준선 ±10% 범위가 단위와 함께 표기되어야 한다');
+        // 정본에 없는 코드는 ±10% 폴백 (2000 ±200 → 1800–2200)
+        Assert.areEqual('1800–2200', range,
+            '정본 없는 코드는 ±10% 폴백 범위를 반환');
     }
 
     @IsTest
-    static void formatBaselineRange_returnsNull_WhenNoBaseline() {
+    static void formatBaselineRange_returnsNull_WhenNoBaseline_AndNoCanon() {
         T5AgentAssetContextAction.GaugeInfo g =
             new T5AgentAssetContextAction.GaugeInfo();
-        g.measurementItemCode = '유량';
+        g.measurementItemCode = '알수없는지표';
 
         Test.startTest();
         String range = T5AgentAssetContextAction.formatBaselineRange(g);
         String nullRange = T5AgentAssetContextAction.formatBaselineRange(null);
         Test.stopTest();
 
-        Assert.isNull(range, '기준선 값이 없으면 null');
+        Assert.isNull(range, '기준선 값 없고 정본에도 없으면 null');
         Assert.isNull(nullRange, 'null 게이지면 null');
     }
 

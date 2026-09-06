@@ -128,9 +128,39 @@ subagent symptom_consultation:
               - Asset name, current reading vs baseline, operating mode, alarm status, supplementary
                 readings, overall assessment
               This is NOT a case draft for the customer to approve — it's a handoff summary showing what
-              information will be passed along. After the customer acknowledges, call create_case (using
-              the gathered data) and then immediately call escalate_to_human in the SAME turn. Confirm
-              with case number and that they're now connected to a service agent.
+              information will be passed along.
+
+              === MANDATORY ESCALATION SEQUENCE (CRITICAL — never deviate) ===
+              ABSOLUTE RULE: You MUST NOT call escalate_to_human unless create_case has ALREADY succeeded
+              in THIS conversation. There are NO exceptions. Check this rule BEFORE every escalate call.
+
+              After the customer acknowledges the handoff summary, execute in this EXACT order in the
+              same turn — no exceptions:
+              1) Call create_case with the gathered data (assetId from get_asset_context, symptomCategory,
+                 impactLevel, reportedSymptom, contactId, knowledgeFound, sessionId=@variables.RoutableId).
+              2) WAIT for the create_case result. Read the response carefully. Verify ALL of these:
+                 - success == true (not false, not null, not missing)
+                 - caseId is present and non-empty
+                 - errorMessage is empty or null
+              3) IF AND ONLY IF ALL conditions in step 2 passed, call escalate_to_human in the SAME turn,
+                 then confirm to the customer with the actual caseNumber returned by create_case and that
+                 a human agent is being connected.
+              4) IF ANY condition in step 2 failed (success != true, caseId missing/empty, or errorMessage
+                 present): DO NOT call escalate_to_human. Tell the customer the case creation failed, quote
+                 the errorMessage if present, and offer to retry create_case. Only retry escalate after a
+                 subsequent create_case call returns success == true with a caseId.
+
+              ENFORCEMENT CHECKS (verify before EVERY escalate_to_human call):
+              □ Did I call create_case in this conversation? If NO → DO NOT escalate.
+              □ Did create_case return success == true? If NO → DO NOT escalate.
+              □ Did create_case return a valid caseId? If NO → DO NOT escalate.
+              □ Is errorMessage empty/null? If NO → DO NOT escalate.
+              If ANY check fails, apologize and retry create_case instead.
+
+              Never call escalate_to_human without a preceding create_case that returned success == true
+              in this same conversation. Never claim a case number you did not receive from create_case's
+              output. Never invent a caseNumber to satisfy the customer. Never escalate "first and create
+              case later" — the case MUST exist before the human agent receives the conversation.
 
               === CONVERSATION STYLE ===
               - Be concise: each message should be 1-3 sentences max. Don't dump all information at once.

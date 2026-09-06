@@ -33,9 +33,9 @@ const METRICS = {
 };
 // 대본 시각: 14:14 접수 → 15:30 도착 → 17:30 조치 완료 → 18:24 복구
 const RANGES = {
-    '1':['14:14','14:29','14:44','14:59','15:14'],
-    '8':['11:00','13:00','15:00','17:00','19:00'],
-    '24':['어제 19:00','23:00','03:00','07:00','오늘 19:00'],
+    '1':['13:16','13:31','13:46','14:01','14:16'],
+    '8':['06:16','08:16','10:16','12:16','14:16'],
+    '24':['어제 14:16','어제 20:16','02:16','08:16','14:16'],
     '168':['9/8','9/9','9/10','9/11','9/12','9/13','9/14']
 };
 const TIMELINE = [
@@ -289,17 +289,27 @@ export default class OtEquipDetail extends NavigationMixin(LightningElement) {
 
         let evtMarkers = '';
         if ((this.curRange === '8' || this.curRange === '1') && this.curMetric === 'flow') {
-            // 대본 §1 마커: 14:14 이상 감지 / 14:17 P3 Advisory
+            // 14:14 이상 감지, 14:17 P3 Advisory
+            // 8시간(06:16~14:16): 14:14 = (14*60+14 - (6*60+16)) / 480 = 478/480 ≈ 0.996
+            //                      14:17 = 차트 범위 초과이므로 오른쪽 끝 표시 생략
+            // 1시간(13:16~14:16): 14:14 = 58/60 ≈ 0.967
+            const frac14 = this.curRange === '1' ? 0.967 : 0.996;
             const events = [
-                { frac: this.curRange === '1' ? 0.02 : 0.42, color: '#5980a6', time: '14:14', label: '유량 저하 감지' },
-                { frac: this.curRange === '1' ? 0.20 : 0.44, color: '#f57c00', time: '14:17', label: 'P3 Advisory 발생' }
+                { frac: frac14, color: '#5980a6', time: '14:14', label: '유량 저하 감지', anchor: 'end', dx: -6 },
+                { frac: frac14, color: '#f57c00', time: '14:17', label: 'P3 Advisory', anchor: 'start', dx: 6 }
             ];
-            events.forEach(e => {
+            // 14:17은 8시간 범위(끝 14:16) 밖이므로 생략
+            const visibleEvents = this.curRange === '8'
+                ? [events[0]]
+                : events;
+            visibleEvents.forEach(e => {
                 const ex = pL + e.frac * iw;
+                const dotY = pT + 8;
+                const labelY = dotY - 12;
                 evtMarkers +=
-                    `<line x1="${ex.toFixed(1)}" y1="${pT}" x2="${ex.toFixed(1)}" y2="${(pT+ih)}" stroke="${e.color}" stroke-width="1.4" stroke-dasharray="4 3"/>` +
-                    `<circle cx="${ex.toFixed(1)}" cy="${pT}" r="4" fill="${e.color}"/>` +
-                    `<text x="${ex.toFixed(1)}" y="${(pT-6)}" text-anchor="middle" font-size="9.5" font-weight="700" fill="${e.color}" font-family="ui-monospace,Consolas,monospace">${e.time}</text>`;
+                    `<line x1="${ex.toFixed(1)}" y1="${dotY}" x2="${ex.toFixed(1)}" y2="${(pT+ih)}" stroke="${e.color}" stroke-width="1.4" stroke-dasharray="4 3"/>` +
+                    `<circle cx="${ex.toFixed(1)}" cy="${dotY}" r="4" fill="${e.color}"/>` +
+                    `<text x="${(ex + e.dx).toFixed(1)}" y="${labelY}" text-anchor="${e.anchor}" font-size="9.5" font-weight="700" fill="${e.color}" font-family="ui-monospace,Consolas,monospace">${e.time}</text>`;
             });
         }
 

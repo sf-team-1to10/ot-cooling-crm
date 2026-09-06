@@ -15,6 +15,7 @@ const PAGE_SIZE = 7;
 
 // OT전자 데모 채팅패널 10단계 대본 기준 — CDU-A-07 하드코딩 override.
 // 유량 1,961 L/min (기준 2,100), 차압 0.31 MPa, 45분 지속, 정기 점검 10-15.
+// 추세 12점: 정상(2,100 근처) → 서서히 하락 → 1,961 관측(대본 §1)
 const CDU_A_07_CANON = {
     name: 'CDU-A-07',
     stateCode: 'adv',
@@ -28,7 +29,15 @@ const CDU_A_07_CANON = {
     hall: 'Hall A',
     customer: '아이온데이터',
     metrics: {
-        flow: { cur: 1961, prev: 2100, band: [2100, 2200], unit: 'L/min', dev: -139, dur: '45분' }
+        flow: {
+            cur: 1961,
+            prev: 1976,
+            band: [2100, 2200],
+            unit: 'L/min',
+            dev: -139,
+            dur: '45분',
+            trend: [2102, 2098, 2091, 2078, 2065, 2050, 2033, 2015, 1998, 1985, 1976, 1961]
+        }
     },
     alarms: [
         { tagClass: 'tag warn', tagLabel: 'P3', text: '유량 기준선 대비 -139 L/min (45분 지속)', date: '14:17' },
@@ -255,6 +264,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
             : { ...base };
         return {
             ...merged,
+            row: base.loc || '—',
             assess: {
                 hl: this.assessHeadline,
                 ds: this.assessDesc,
@@ -289,7 +299,7 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
                 currentValue: m.cur,
                 previousValue: m.prev,
                 baselineValue: m.band[0],
-                sparklineValues: null
+                sparklineValues: m.trend
             };
         }
         if (!this.selGauges || this.selGauges.length === 0) return null;
@@ -434,6 +444,22 @@ export default class OtEquipDashboard extends NavigationMixin(LightningElement) 
     get healthScore() { return this.isAdvisory ? 70 : 95; }
     get healthLabel() { return this.isAdvisory ? '관찰 필요' : '양호'; }
     get healthSubs() { return []; }
+    // 도넛 아래 사유 — 주의 상태일 때만 렌더 (CDU-A-07 대본 기준 요약)
+    get healthReason() {
+        if (!this.isAdvisory) return null;
+        const g = this.primaryGauge;
+        if (this._isSelectedCduA07() && g) {
+            return {
+                title: '기준선 대비 유량 저하',
+                detail: `현재 ${g.currentValue} L/min · 기준 ${g.baselineValue} L/min · 45분 지속`
+            };
+        }
+        return g ? {
+            title: `${g.measurementItemCode} 이상 감지`,
+            detail: `현재 ${g.currentValue} · 기준 ${g.baselineValue}`
+        } : { title: '관찰 필요', detail: '지표가 기준선을 벗어난 상태입니다.' };
+    }
+    get hasHealthReason() { return !!this.healthReason; }
     get donutSvg() {
         const score = this.healthScore;
         const r = 34, c = 2 * Math.PI * r, off = c * (1 - score / 100);

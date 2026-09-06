@@ -40,15 +40,23 @@
             <template lwc:else>
                 <div class="select-area">
                     <p class="select-label">어떤 응답을 생성할까요?</p>
-                    <lightning-combobox
-                        label="응답 유형"
-                        placeholder="응답 유형을 선택하세요"
-                        options={comboboxOptions}
-                        value={_selectedValue}
-                        onchange={handleComboChange}
-                        variant="label-hidden"
-                        class="reply-combo">
-                    </lightning-combobox>
+                    <div class="custom-select" onclick={handleSelectToggle}>
+                        <span class={selectLabelClass}>{selectDisplayLabel}</span>
+                        <span class="custom-select__arrow" aria-hidden="true">▼</span>
+                        <template lwc:if={isDropdownOpen}>
+                            <ul class="custom-select__list" role="listbox">
+                                <template for:each={comboboxOptions} for:item="opt">
+                                    <li key={opt.value}
+                                        class={opt.liClass}
+                                        role="option"
+                                        data-value={opt.value}
+                                        onclick={handleOptionClick}>
+                                        {opt.label}
+                                    </li>
+                                </template>
+                            </ul>
+                        </template>
+                    </div>
                     <div class="generate-row">
                         <lightning-button label="추천 생성" variant="brand"
                             onclick={handleGenerate}

@@ -89,7 +89,6 @@
 
 /* AI Assistant */
 .assist {
-    border-top: 1px solid rgba(255, 255, 255, .12);
     margin-top: 8px;
     padding-top: 12px;
 }
@@ -114,9 +113,9 @@
 }
 .assist-glow {
     position: absolute;
-    top: 8px;
-    width: 84px;
-    height: 84px;
+    top: 6px;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(22, 184, 200, 0.4), rgba(22, 184, 200, 0) 70%);
     filter: blur(6px);
@@ -124,8 +123,8 @@
 }
 .coolbit-img {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 124px;
+    height: 124px;
     object-fit: contain;
     /* 검정 배경 제거 — PNG 검정 배경을 투명하게 */
     mix-blend-mode: screen;
@@ -156,7 +155,6 @@
 
 /* Customer info */
 .cust {
-    border-top: 1px solid rgba(255, 255, 255, .12);
     margin-top: 10px;
     padding: 11px 8px 2px;
     display: flex;
@@ -198,7 +196,7 @@
     }
     .assist-glow,
     .coolbit-img {
-        width: 40px;
-        height: 40px;
+        width: 62px;
+        height: 62px;
     }
 }

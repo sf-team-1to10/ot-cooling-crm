@@ -24,10 +24,6 @@
                             <div class="r2">{assetMeta}</div>
                         </div>
                         <div class="ha">
-                            <button class="btn" onclick={handleLaunchChat}>
-                                <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor"/></svg>
-                                서비스 에이전트와 상담
-                            </button>
                             <button class="btn ghost">
                                 <svg fill="none" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor"/></svg>
                                 서비스 요청
@@ -41,7 +37,6 @@
                         <span class="code">CHW FLOW LOW VS BASELINE</span>
                         <span class="msg">냉수 유량이 기준선보다 낮은 상태가 45분간 지속되고 있습니다.</span>
                         <span class="vals">현재값 1,961 L/min · 기준선 2,100 L/min</span>
-                        <span class="demo">데모 데이터</span>
                     </div>
 
                     <!-- Tabs -->
@@ -80,7 +75,7 @@
 
                             <!-- Current Condition -->
                             <div class="panel cc">
-                                <div class="panel-h"><h3>현재 상태</h3><span class="en">CURRENT CONDITION</span><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                                <div class="panel-h"><h3>현재 상태</h3><span class="en">CURRENT CONDITION</span></div>
                                 <div class="bd">
                                     <template for:each={conditionRows} for:item="row">
                                         <div key={row.label} class="cc-row">
@@ -98,7 +93,7 @@
                             <div class="panel-h"><h3>주요 운전 상태</h3><span class="en">KEY OPERATING CONDITION</span></div>
                             <div class="bd">
                                 <div class="delta">
-                                    <div class="delta-h"><span class="delta-title">냉수 유량 / CHW FLOW</span><span class="demo">데모 데이터</span></div>
+                                    <div class="delta-h"><span class="delta-title">냉수 유량 / CHW FLOW</span></div>
                                     <div class="delta-cols">
                                         <div class="dc"><div class="big">1,961<small> L/min</small></div><div class="lab">현재 측정값</div></div>
                                         <div class="dc"><div class="lab">정상 기준선</div><div class="ref">2,100 L/min</div></div>
@@ -136,7 +131,7 @@
                     <!-- TAB 2: 추세 분석 -->
                     <template lwc:if={isTrend}>
                         <div class="panel">
-                            <div class="panel-h"><h3>운전 추이 분석</h3><span class="en">PERFORMANCE TREND</span><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                            <div class="panel-h"><h3>운전 추이 분석</h3><span class="en">PERFORMANCE TREND</span></div>
                             <div class="bd">
                                 <div class="trendctl">
                                     <div class="seg">
@@ -208,7 +203,7 @@
                     <!-- TAB 4: 이력·문서 -->
                     <template lwc:if={isHistory}>
                         <div class="panel">
-                            <div class="panel-h"><h3>장비 이력</h3><span class="rt"><span class="demo">데모 데이터</span></span></div>
+                            <div class="panel-h"><h3>장비 이력</h3></div>
                             <div class="bd">
                                 <div class="tl">
                                     <template for:each={timelineItems} for:item="item">
@@ -247,9 +242,6 @@
                         </div>
                     </template>
 
-                    <div class="demo-foot">
-                        ※ 프로토타입 · 모든 운영 수치·상태·추세·알림·이력은 데모 데이터입니다.
-                    </div>
                 </div>
             </div>
         </div>
@@ -278,7 +270,6 @@
             <div class="ctx-row"><span>현재값</span><b class="amber">1,961 L/min</b></div>
             <div class="ctx-row"><span>기준선</span><b>2,100 L/min</b></div>
             <div class="ctx-row"><span>현재 상태</span><b class="amber">P3 Advisory</b></div>
-            <span class="demo">데모 데이터</span>
         </div>
 
         <!-- T5-23 (2026-08-31 최종): MIAW가 이제 사이트 Head Markup에 직접

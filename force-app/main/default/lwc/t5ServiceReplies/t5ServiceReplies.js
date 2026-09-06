@@ -111,9 +111,25 @@ export default class T5ServiceReplies extends LightningElement {
     _selectedValue = null;
     _state = 'select';
     _copied = false;
+    _dropdownOpen = false;
 
     get comboboxOptions() {
-        return REPLY_OPTIONS.map(o => ({ label: o.label, value: o.value }));
+        return REPLY_OPTIONS.map(o => ({
+            label: o.label,
+            value: o.value,
+            liClass: 'custom-select__item' + (this._selectedValue === o.value ? ' custom-select__item--selected' : '')
+        }));
+    }
+
+    get isDropdownOpen() { return this._dropdownOpen; }
+
+    get selectDisplayLabel() {
+        const opt = REPLY_OPTIONS.find(o => o.value === this._selectedValue);
+        return opt ? opt.label : '응답 유형을 선택하세요';
+    }
+
+    get selectLabelClass() {
+        return this._selectedValue ? 'custom-select__label' : 'custom-select__label custom-select__label--placeholder';
     }
 
     get isSelect() { return this._state === 'select'; }
@@ -137,6 +153,19 @@ export default class T5ServiceReplies extends LightningElement {
 
     get copyLabel() {
         return this._copied ? '복사됨 ✓' : '복사하기';
+    }
+
+    handleSelectToggle(event) {
+        event.stopPropagation();
+        this._dropdownOpen = !this._dropdownOpen;
+    }
+
+    handleOptionClick(event) {
+        event.stopPropagation();
+        this._selectedValue = event.currentTarget.dataset.value;
+        this._dropdownOpen = false;
+        this._state = 'select';
+        this._copied = false;
     }
 
     handleComboChange(event) {
