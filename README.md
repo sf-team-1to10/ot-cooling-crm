@@ -113,23 +113,23 @@ Experience Cloud 사이트와 Agentforce는 배포 후 org에서 활성화가 �
 
 ## 개발 워크플로
 
-`main` 대상 PR이 열리거나 새 커밋이 push되면 GitHub Actions가 자동으로 검증합니다.
+`main` 대상 PR에서 `force-app` 또는 워크플로 파일이 바뀌면 GitHub Actions가 자동으로 검증합니다.
 
 ```
 main 대상 PR
     ↓
-변경 메타데이터만 추출          sfdx-git-delta
+변경 메타데이터만 추출              sfdx-git-delta
     ↓
-배포 가능 여부 검사             --dry-run
+Production org 대상 배포 검증        --dry-run
     ↓
-전체 Apex 테스트                RunLocalTests
+Apex 변경이 있으면 테스트 실행       RunSpecifiedTests
     ↓
-Actions가 통과한 PR만 병합
+검증 통과 시 자동 병합              gh pr merge --auto
 ```
 
-병합 후 자동 배포(CD)는 도입하지 않았습니다. Salesforce는 Setup 화면에서 직접 변경한 설정이 Git에 남지 않아, 브랜치와 org의 상태가 어긋난 채 자동 배포가 돌면 최신 작업을 덮어쓸 수 있기 때문입니다.
+**Git은 기록용이고, 어떤 org에도 자동으로 배포하지 않습니다.** 워크플로는 검증(dry-run)까지만 수행하며 실제 배포는 org에서 직접 합니다.
 
-→ 검증 단계와 도입 조건: [CI/CD 운영 기준](docs/ci-cd.md)
+→ 검증 단계와 판단 배경: [CI/CD 운영 기준](docs/ci-cd.md)
 
 ---
 
