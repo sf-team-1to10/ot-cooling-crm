@@ -61,7 +61,7 @@ org 반영은 별도로 직접 수행
 
 | Secret | 용도 |
 | --- | --- |
-| `SFDX_PRODUCTION_URL` | Actions의 org 인증. SFDX Auth URL 전체를 저장하며 코드 · PR · 로그에 노출하지 않는다 |
+| `SFDX_INTEGRATION_URL` | Actions의 org 인증. SFDX Auth URL 전체를 저장하며 코드 · PR · 로그에 노출하지 않는다 |
 
 ---
 
